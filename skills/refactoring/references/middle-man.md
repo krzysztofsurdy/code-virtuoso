@@ -145,3 +145,27 @@ Do **not** remove the middle man class in these scenarios:
 - **Message Chains**: The opposite problem—too many intermediate objects. Fixing Message Chains sometimes creates Middle Man
 - **Feature Envy**: A class that relies too heavily on another class's methods
 - **Inappropriate Intimacy**: When a class knows too much about another class's internals
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+If a class performs only one action, delegating work to another class, why does it exist at all?
+
+### Reasons for the Problem
+
+- Over-elimination of Message Chains: developers may aggressively refactor chained calls and inadvertently create unnecessary intermediary classes.
+- Gradual work migration: over time, a class's functionality moves to other classes, leaving behind an empty shell that merely delegates.
+
+### Treatment
+
+- **Remove Middle Man**: If most of a class's methods delegate to another class, eliminate the intermediary and have clients interact directly with the end object.
+
+### Payoff
+
+- Less bulky code.
+
+### When to Ignore
+
+- Do not delete a middle man that has been created for a reason, such as avoiding interclass dependencies.
+- Do not remove classes that serve as intentional Proxy or Decorator patterns where intermediation has a deliberate architectural purpose.

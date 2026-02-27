@@ -167,3 +167,98 @@ echo $user->getStatus(); // Through getter
 - **Replace Temp with Query**: Extract field initialization logic into methods
 - **Hide Delegate**: Encapsulate dependencies within the class
 - **Introduce Parameter Object**: Group related fields into a single parameter object
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+class Range {
+  private int low, high;
+  boolean includes(int arg) {
+    return arg >= low && arg <= high;
+  }
+}
+```
+
+**After:**
+```java
+class Range {
+  private int low, high;
+  boolean includes(int arg) {
+    return arg >= getLow() && arg <= getHigh();
+  }
+  int getLow() {
+    return low;
+  }
+  int getHigh() {
+    return high;
+  }
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+class Range
+{
+  private int low, high;
+
+  bool Includes(int arg)
+  {
+    return arg >= low && arg <= high;
+  }
+}
+```
+
+**After:**
+```csharp
+class Range
+{
+  private int low, high;
+
+  int Low {
+    get { return low; }
+  }
+  int High {
+    get { return high; }
+  }
+
+  bool Includes(int arg)
+  {
+    return arg >= Low && arg <= High;
+  }
+}
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+class Range {
+  private low: number
+  private high: number;
+  includes(arg: number): boolean {
+    return arg >= low && arg <= high;
+  }
+}
+```
+
+**After:**
+```typescript
+class Range {
+  private low: number
+  private high: number;
+  includes(arg: number): boolean {
+    return arg >= getLow() && arg <= getHigh();
+  }
+  getLow(): number {
+    return low;
+  }
+  getHigh(): number {
+    return high;
+  }
+}
+```

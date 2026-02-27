@@ -133,3 +133,197 @@ foreach ($birds as $bird) {
 - **Template Method Pattern**: Define algorithm skeleton in base class, let subclasses fill in details
 - **Decorator Pattern**: Add behavior dynamically without subclassing
 - **Extract Method**: Often a prerequisite step before applying this refactoring
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+class Bird {
+  // ...
+  double getSpeed() {
+    switch (type) {
+      case EUROPEAN:
+        return getBaseSpeed();
+      case AFRICAN:
+        return getBaseSpeed() - getLoadFactor() * numberOfCoconuts;
+      case NORWEGIAN_BLUE:
+        return (isNailed) ? 0 : getBaseSpeed(voltage);
+    }
+    throw new RuntimeException("Should be unreachable");
+  }
+}
+```
+
+**After:**
+```java
+abstract class Bird {
+  // ...
+  abstract double getSpeed();
+}
+
+class European extends Bird {
+  double getSpeed() {
+    return getBaseSpeed();
+  }
+}
+class African extends Bird {
+  double getSpeed() {
+    return getBaseSpeed() - getLoadFactor() * numberOfCoconuts;
+  }
+}
+class NorwegianBlue extends Bird {
+  double getSpeed() {
+    return (isNailed) ? 0 : getBaseSpeed(voltage);
+  }
+}
+
+// Somewhere in client code
+speed = bird.getSpeed();
+```
+
+### C#
+
+**Before:**
+```csharp
+public class Bird
+{
+  // ...
+  public double GetSpeed()
+  {
+    switch (type)
+    {
+      case EUROPEAN:
+        return GetBaseSpeed();
+      case AFRICAN:
+        return GetBaseSpeed() - GetLoadFactor() * numberOfCoconuts;
+      case NORWEGIAN_BLUE:
+        return isNailed ? 0 : GetBaseSpeed(voltage);
+      default:
+        throw new Exception("Should be unreachable");
+    }
+  }
+}
+```
+
+**After:**
+```csharp
+public abstract class Bird
+{
+  // ...
+  public abstract double GetSpeed();
+}
+
+class European: Bird
+{
+  public override double GetSpeed()
+  {
+    return GetBaseSpeed();
+  }
+}
+class African: Bird
+{
+  public override double GetSpeed()
+  {
+    return GetBaseSpeed() - GetLoadFactor() * numberOfCoconuts;
+  }
+}
+class NorwegianBlue: Bird
+{
+  public override double GetSpeed()
+  {
+    return isNailed ? 0 : GetBaseSpeed(voltage);
+  }
+}
+
+// Somewhere in client code
+speed = bird.GetSpeed();
+```
+
+### Python
+
+**Before:**
+```python
+class Bird:
+    # ...
+    def getSpeed(self):
+        if self.type == EUROPEAN:
+            return self.getBaseSpeed()
+        elif self.type == AFRICAN:
+            return self.getBaseSpeed() - self.getLoadFactor() * self.numberOfCoconuts
+        elif self.type == NORWEGIAN_BLUE:
+            return 0 if self.isNailed else self.getBaseSpeed(self.voltage)
+        else:
+            raise Exception("Should be unreachable")
+```
+
+**After:**
+```python
+class Bird:
+    # ...
+    def getSpeed(self):
+        pass
+
+class European(Bird):
+    def getSpeed(self):
+        return self.getBaseSpeed()
+
+class African(Bird):
+    def getSpeed(self):
+        return self.getBaseSpeed() - self.getLoadFactor() * self.numberOfCoconuts
+
+class NorwegianBlue(Bird):
+    def getSpeed(self):
+        return 0 if self.isNailed else self.getBaseSpeed(self.voltage)
+
+# Somewhere in client code
+speed = bird.getSpeed()
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+class Bird {
+  // ...
+  getSpeed(): number {
+    switch (type) {
+      case EUROPEAN:
+        return getBaseSpeed();
+      case AFRICAN:
+        return getBaseSpeed() - getLoadFactor() * numberOfCoconuts;
+      case NORWEGIAN_BLUE:
+        return (isNailed) ? 0 : getBaseSpeed(voltage);
+    }
+    throw new Error("Should be unreachable");
+  }
+}
+```
+
+**After:**
+```typescript
+abstract class Bird {
+  // ...
+  abstract getSpeed(): number;
+}
+
+class European extends Bird {
+  getSpeed(): number {
+    return getBaseSpeed();
+  }
+}
+class African extends Bird {
+  getSpeed(): number {
+    return getBaseSpeed() - getLoadFactor() * numberOfCoconuts;
+  }
+}
+class NorwegianBlue extends Bird {
+  getSpeed(): number {
+    return (isNailed) ? 0 : getBaseSpeed(voltage);
+  }
+}
+
+// Somewhere in client code
+let speed = bird.getSpeed();
+```

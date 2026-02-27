@@ -200,3 +200,20 @@ When NOT to refactor:
 - **Primitive Obsession**: Using primitives instead of value objects
 - **Feature Envy**: Method using many values from another object (suggests moving the method)
 - **Message Chains**: Accessing deeply nested values (related to Preserve Whole Object solution)
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+More than three or four parameters for a method. The method has grown unwieldy with excessive parameters, making it difficult to understand and use effectively.
+
+### Reasons for the Problem
+Methods develop lengthy parameter lists when multiple algorithms merge into a single function or when code is refactored to increase class independence. Parameters may also accumulate when objects created elsewhere are passed as arguments instead of being accessed directly.
+
+### Treatment
+- **Replace Parameter with Method Call** when arguments are results of calling another object's methods
+- **Preserve Whole Object** instead of passing individual data points extracted from another object
+- **Introduce Parameter Object** to bundle related parameters from different sources into a single parameter
+
+### Payoff
+- More readable, shorter code
+- Refactoring may reveal previously unnoticed duplicate code, leading to further improvements and simplification

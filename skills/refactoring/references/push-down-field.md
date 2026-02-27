@@ -109,3 +109,132 @@ class Bicycle extends Vehicle
 - **Push Down Method**: Move methods that are only used by specific subclasses
 - **Extract Subclass**: Create new subclasses to hold specific fields and methods
 - **Refused Bequest**: Addresses the code smell where subclasses don't use parent functionality
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Employee {
+    String quota;
+}
+
+class Salesman extends Employee {
+}
+
+class Engineer extends Employee {
+}
+```
+
+**After:**
+
+```java
+class Employee {
+}
+
+class Salesman extends Employee {
+    String quota;
+}
+
+class Engineer extends Employee {
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class Employee
+{
+    string quota;
+}
+
+class Salesman : Employee
+{
+}
+
+class Engineer : Employee
+{
+}
+```
+
+**After:**
+
+```csharp
+class Employee
+{
+}
+
+class Salesman : Employee
+{
+    string quota;
+}
+
+class Engineer : Employee
+{
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class Employee:
+    def __init__(self):
+        self.quota = None
+
+class Salesman(Employee):
+    pass
+
+class Engineer(Employee):
+    pass
+```
+
+**After:**
+
+```python
+class Employee:
+    pass
+
+class Salesman(Employee):
+    def __init__(self):
+        super().__init__()
+        self.quota = None
+
+class Engineer(Employee):
+    pass
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Employee {
+    quota: string;
+}
+
+class Salesman extends Employee {
+}
+
+class Engineer extends Employee {
+}
+```
+
+**After:**
+
+```typescript
+class Employee {
+}
+
+class Salesman extends Employee {
+    quota: string;
+}
+
+class Engineer extends Employee {
+}
+```

@@ -219,3 +219,127 @@ In such cases, consider caching/memoization or keeping the temporary variable bu
 - **Introduce Variable**: Use temporary variables to simplify complex expressions before extracting methods
 - **Cache Query Result**: If performance is critical, cache the result of expensive query methods
 - **Remove Middle Man**: Avoid over-extracting query methods that simply delegate to other methods
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+double calculateTotal() {
+  double basePrice = quantity * itemPrice;
+  if (basePrice > 1000) {
+    return basePrice * 0.95;
+  }
+  else {
+    return basePrice * 0.98;
+  }
+}
+```
+
+**After:**
+```java
+double calculateTotal() {
+  if (basePrice() > 1000) {
+    return basePrice() * 0.95;
+  }
+  else {
+    return basePrice() * 0.98;
+  }
+}
+double basePrice() {
+  return quantity * itemPrice;
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+double CalculateTotal()
+{
+  double basePrice = quantity * itemPrice;
+
+  if (basePrice > 1000)
+  {
+    return basePrice * 0.95;
+  }
+  else
+  {
+    return basePrice * 0.98;
+  }
+}
+```
+
+**After:**
+```csharp
+double CalculateTotal()
+{
+  if (BasePrice() > 1000)
+  {
+    return BasePrice() * 0.95;
+  }
+  else
+  {
+    return BasePrice() * 0.98;
+  }
+}
+double BasePrice()
+{
+  return quantity * itemPrice;
+}
+```
+
+### Python
+
+**Before:**
+```python
+def calculateTotal():
+    basePrice = quantity * itemPrice
+    if basePrice > 1000:
+        return basePrice * 0.95
+    else:
+        return basePrice * 0.98
+```
+
+**After:**
+```python
+def calculateTotal():
+    if basePrice() > 1000:
+        return basePrice() * 0.95
+    else:
+        return basePrice() * 0.98
+
+def basePrice():
+    return quantity * itemPrice
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+calculateTotal(): number {
+  let basePrice = quantity * itemPrice;
+  if (basePrice > 1000) {
+    return basePrice * 0.95;
+  }
+  else {
+    return basePrice * 0.98;
+  }
+}
+```
+
+**After:**
+```typescript
+calculateTotal(): number {
+  if (basePrice() > 1000) {
+    return basePrice() * 0.95;
+  }
+  else {
+    return basePrice() * 0.98;
+  }
+}
+basePrice(): number {
+  return quantity * itemPrice;
+}
+```

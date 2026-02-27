@@ -130,3 +130,145 @@ final class Motorcycle extends Vehicle
 - **Push Down Field** - Similar concept applied to fields instead of methods
 - **Extract Subclass** - Often paired with Push Down Method to create specialized subclasses
 - **Replace Type Code with Subclasses** - May involve pushing down methods to create type-specific behavior
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Employee {
+    int getQuota() {
+        // ...
+    }
+}
+
+class Salesman extends Employee {
+}
+
+class Engineer extends Employee {
+}
+```
+
+**After:**
+
+```java
+class Employee {
+}
+
+class Salesman extends Employee {
+    int getQuota() {
+        // ...
+    }
+}
+
+class Engineer extends Employee {
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class Employee
+{
+    int GetQuota()
+    {
+        // ...
+    }
+}
+
+class Salesman : Employee
+{
+}
+
+class Engineer : Employee
+{
+}
+```
+
+**After:**
+
+```csharp
+class Employee
+{
+}
+
+class Salesman : Employee
+{
+    int GetQuota()
+    {
+        // ...
+    }
+}
+
+class Engineer : Employee
+{
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class Employee:
+    def get_quota(self) -> int:
+        # ...
+
+class Salesman(Employee):
+    pass
+
+class Engineer(Employee):
+    pass
+```
+
+**After:**
+
+```python
+class Employee:
+    pass
+
+class Salesman(Employee):
+    def get_quota(self) -> int:
+        # ...
+
+class Engineer(Employee):
+    pass
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Employee {
+    getQuota(): number {
+        // ...
+    }
+}
+
+class Salesman extends Employee {
+}
+
+class Engineer extends Employee {
+}
+```
+
+**After:**
+
+```typescript
+class Employee {
+}
+
+class Salesman extends Employee {
+    getQuota(): number {
+        // ...
+    }
+}
+
+class Engineer extends Employee {
+}
+```

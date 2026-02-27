@@ -196,3 +196,20 @@ Reduce coupling and improve testability by injecting dependencies rather than ma
 - **God Object**: A more severe version where one class handles too many responsibilities
 - **Feature Envy**: Classes accessing too much of another class's data, indicating misplaced methods
 - **Inappropriate Intimacy**: Classes that know too much about each other's internals
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+You find yourself having to change many unrelated methods when you make changes to a class. For example, when adding a new product type you have to change the methods for finding, displaying, and ordering products.
+
+### Reasons for the Problem
+Divergent modifications frequently stem from inadequate program architecture or repetitive coding practices (copy-paste programming).
+
+### Treatment
+- **Extract Class** to split up the behavior of the class into separate components
+- **Extract Superclass** and **Extract Subclass** when multiple classes exhibit identical behavior
+
+### Payoff
+- Improves code organization
+- Reduces code duplication
+- Simplifies support

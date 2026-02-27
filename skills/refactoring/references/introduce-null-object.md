@@ -158,3 +158,127 @@ echo $user2->getNotificationMethod(); // 'No notification configured'
 - **Strategy Pattern**: Similar structure but for selecting different algorithms rather than handling absence
 - **Specification Pattern**: Another way to handle optional behaviors and complex conditions
 - **Special Case Pattern**: A broader category encompassing the Null Object approach
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+if (customer == null) {
+  plan = BillingPlan.basic();
+}
+else {
+  plan = customer.getPlan();
+}
+```
+
+**After:**
+```java
+class NullCustomer extends Customer {
+  boolean isNull() {
+    return true;
+  }
+  Plan getPlan() {
+    return new NullPlan();
+  }
+  // Some other NULL functionality.
+}
+
+customer = (order.customer != null) ?
+  order.customer : new NullCustomer();
+
+plan = customer.getPlan();
+```
+
+### C#
+
+**Before:**
+```csharp
+if (customer == null)
+{
+  plan = BillingPlan.Basic();
+}
+else
+{
+  plan = customer.GetPlan();
+}
+```
+
+**After:**
+```csharp
+public sealed class NullCustomer: Customer
+{
+  public override bool IsNull
+  {
+    get { return true; }
+  }
+
+  public override Plan GetPlan()
+  {
+    return new NullPlan();
+  }
+  // Some other NULL functionality.
+}
+
+customer = order.customer ?? new NullCustomer();
+
+plan = customer.GetPlan();
+```
+
+### Python
+
+**Before:**
+```python
+if customer is None:
+    plan = BillingPlan.basic()
+else:
+    plan = customer.getPlan()
+```
+
+**After:**
+```python
+class NullCustomer(Customer):
+
+    def isNull(self):
+        return True
+
+    def getPlan(self):
+        return self.NullPlan()
+
+    # Some other NULL functionality.
+
+customer = order.customer or NullCustomer()
+
+plan = customer.getPlan()
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+if (customer == null) {
+  plan = BillingPlan.basic();
+}
+else {
+  plan = customer.getPlan();
+}
+```
+
+**After:**
+```typescript
+class NullCustomer extends Customer {
+  isNull(): boolean {
+    return true;
+  }
+  getPlan(): Plan {
+    return new NullPlan();
+  }
+  // Some other NULL functionality.
+}
+
+let customer = (order.customer != null) ?
+  order.customer : new NullCustomer();
+
+plan = customer.getPlan();
+```

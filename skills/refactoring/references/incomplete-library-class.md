@@ -196,3 +196,26 @@ It's acceptable to tolerate incomplete library classes when:
 - **Inappropriate Intimacy**: When extensions require deep library knowledge
 - **Data Clumps**: Often combined with workarounds for missing grouping methods
 - **Duplicated Code**: The natural result of multiple workarounds
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+Sooner or later, libraries stop meeting user needs. The only solution to the problem -- changing the library -- is often impossible since the library is read-only.
+
+### Reasons for the Problem
+
+The author of the library has not provided the features you need, or has refused to implement them.
+
+### Treatment
+
+- **Introduce Foreign Method**: For a few missing methods, add them as utility methods in your own codebase that take the library object as a parameter.
+- **Introduce Local Extension**: For substantial missing features, create a wrapper class (decorator) or subclass that adds the needed functionality.
+
+### Payoff
+
+- Reduces code duplication by extending an existing library rather than building a custom replacement from scratch.
+
+### When to Ignore
+
+Extending a library can generate additional work if the library's changes require corresponding updates in your extension code. Consider the long-term cost before committing.

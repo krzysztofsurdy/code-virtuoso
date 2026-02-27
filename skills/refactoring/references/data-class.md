@@ -167,3 +167,25 @@ The key distinction: intentional DTOs with clear purpose differ from accidental 
 ---
 
 **Key Takeaway**: Classes should encapsulate both data and the behavior that operates on that data. If your class exists only to hold data while client code performs the work, move that work into the class where it belongs.
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+A class contains only fields and crude methods for accessing them (getters and setters). It is simply a container for data used by other classes and cannot independently operate on the data it owns.
+
+### Reasons for the Problem
+
+It is normal when a newly created class contains only a few public fields. But the true power of objects is that they can contain behavior or operations on their data.
+
+### Treatment
+
+- **Encapsulate Field**: Make public fields private and provide controlled access through getters and setters.
+- **Encapsulate Collection**: Apply similar protection to collection data.
+- **Move Method** and **Extract Method**: Find operations in client code that logically belong in the data class and migrate them there.
+- **Remove Setting Method** and **Hide Method**: Once the class gains meaningful behavior, restrict overly permissive access to its internals.
+
+### Payoff
+
+- Improves understanding and organization of code by centralizing operations on related data.
+- Helps discover duplication of client code that operates on the same data.

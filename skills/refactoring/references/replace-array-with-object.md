@@ -159,3 +159,69 @@ $dist = $point->distance($moved);
 - **Replace Magic Numbers**: Use named constants alongside object properties
 - **Extract Value Object**: Create immutable objects that represent domain concepts
 - **Introduce Builder**: Use builders for complex object construction
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+String[] row = new String[2];
+row[0] = "Liverpool";
+row[1] = "15";
+```
+
+**After:**
+```java
+Performance row = new Performance();
+row.setName("Liverpool");
+row.setWins("15");
+```
+
+### C#
+
+**Before:**
+```csharp
+string[] row = new string[2];
+row[0] = "Liverpool";
+row[1] = "15";
+```
+
+**After:**
+```csharp
+Performance row = new Performance();
+row.SetName("Liverpool");
+row.SetWins("15");
+```
+
+### Python
+
+**Before:**
+```python
+row = [None * 2]
+row[0] = "Liverpool"
+row[1] = "15"
+```
+
+**After:**
+```python
+row = Performance()
+row.setName("Liverpool")
+row.setWins("15")
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+let row = new Array(2);
+row[0] = "Liverpool";
+row[1] = "15";
+```
+
+**After:**
+```typescript
+let row = new Performance();
+row.setName("Liverpool");
+row.setWins("15");
+```

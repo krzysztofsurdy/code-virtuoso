@@ -178,3 +178,109 @@ class OrderProcessor
 - **Introduce Parameter Object**: To simplify complex parameter lists
 - **Replace Temp with Query**: Eliminates local variables before extraction
 - **Remove Duplication**: Often precedes Extract Method to consolidate duplicated code
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+void printOwing() {
+  printBanner();
+
+  // Print details.
+  System.out.println("name: " + name);
+  System.out.println("amount: " + getOutstanding());
+}
+```
+
+**After:**
+```java
+void printOwing() {
+  printBanner();
+  printDetails(getOutstanding());
+}
+
+void printDetails(double outstanding) {
+  System.out.println("name: " + name);
+  System.out.println("amount: " + outstanding);
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+void PrintOwing()
+{
+  this.PrintBanner();
+
+  // Print details.
+  Console.WriteLine("name: " + this.name);
+  Console.WriteLine("amount: " + this.GetOutstanding());
+}
+```
+
+**After:**
+```csharp
+void PrintOwing()
+{
+  this.PrintBanner();
+  this.PrintDetails();
+}
+
+void PrintDetails()
+{
+  Console.WriteLine("name: " + this.name);
+  Console.WriteLine("amount: " + this.GetOutstanding());
+}
+```
+
+### Python
+
+**Before:**
+```python
+def printOwing(self):
+    self.printBanner()
+
+    # print details
+    print("name:", self.name)
+    print("amount:", self.getOutstanding())
+```
+
+**After:**
+```python
+def printOwing(self):
+    self.printBanner()
+    self.printDetails(self.getOutstanding())
+
+def printDetails(self, outstanding):
+    print("name:", self.name)
+    print("amount:", outstanding)
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+printOwing(): void {
+  printBanner();
+
+  // Print details.
+  console.log("name: " + name);
+  console.log("amount: " + getOutstanding());
+}
+```
+
+**After:**
+```typescript
+printOwing(): void {
+  printBanner();
+  printDetails(getOutstanding());
+}
+
+printDetails(outstanding: number): void {
+  console.log("name: " + name);
+  console.log("amount: " + outstanding);
+}
+```

@@ -148,3 +148,21 @@ If only partial functionality overlaps, extract a readonly base class with share
 - **Data Clumps**: Multiple classes operating on similar data structures
 - **Inappropriate Intimacy**: Classes may be too similar to remain separate
 - **Lazy Class**: One of the alternatives may be truly unnecessary
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+Two classes perform identical functions but have different method names.
+
+### Reasons for the Problem
+The programmer who created one of the classes probably did not know that a functionally equivalent class already existed. This typically arises from insufficient communication between team members or lack of code review processes.
+
+### Treatment
+- **Rename Methods** to make them identical in all alternative classes
+- **Move Method**, **Add Parameter**, and **Parameterize Method** to make the signature and implementation of methods the same
+- **Extract Superclass** when only partial functionality is duplicated, converting existing classes into subclasses
+- Delete one of the redundant classes after standardizing interfaces
+
+### Payoff
+- Eliminates unnecessary duplicated code, making the resulting code less bulky
+- Code becomes more readable and understandable as developers no longer need to determine why duplicate classes exist

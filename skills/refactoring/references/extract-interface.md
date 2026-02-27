@@ -150,3 +150,140 @@ readonly class RefundService
 - **Extract Class**: Move related responsibilities to a new class without inheritance
 - **Remove Middle Man**: Simplify excessive abstraction layers if they become confusing
 - **Interface Segregation**: Split overly broad interfaces into smaller, more focused ones
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Employee {
+    String getName() { /* ... */ }
+    int getRate() { /* ... */ }
+    boolean hasSpecialSkill() { /* ... */ }
+}
+
+// Client tightly coupled to concrete class
+void calculatePay(Employee employee) {
+    int rate = employee.getRate();
+}
+```
+
+**After:**
+
+```java
+interface Billable {
+    int getRate();
+    boolean hasSpecialSkill();
+}
+
+class Employee implements Billable {
+    String getName() { /* ... */ }
+    public int getRate() { /* ... */ }
+    public boolean hasSpecialSkill() { /* ... */ }
+}
+
+// Client depends on abstraction
+void calculatePay(Billable billable) {
+    int rate = billable.getRate();
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class Employee
+{
+    string GetName() { /* ... */ }
+    int GetRate() { /* ... */ }
+    bool HasSpecialSkill() { /* ... */ }
+}
+```
+
+**After:**
+
+```csharp
+interface IBillable
+{
+    int GetRate();
+    bool HasSpecialSkill();
+}
+
+class Employee : IBillable
+{
+    string GetName() { /* ... */ }
+    public int GetRate() { /* ... */ }
+    public bool HasSpecialSkill() { /* ... */ }
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class Employee:
+    def get_name(self) -> str:
+        # ...
+
+    def get_rate(self) -> int:
+        # ...
+
+    def has_special_skill(self) -> bool:
+        # ...
+```
+
+**After:**
+
+```python
+from abc import ABC, abstractmethod
+
+class Billable(ABC):
+    @abstractmethod
+    def get_rate(self) -> int:
+        pass
+
+    @abstractmethod
+    def has_special_skill(self) -> bool:
+        pass
+
+class Employee(Billable):
+    def get_name(self) -> str:
+        # ...
+
+    def get_rate(self) -> int:
+        # ...
+
+    def has_special_skill(self) -> bool:
+        # ...
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Employee {
+    getName(): string { /* ... */ }
+    getRate(): number { /* ... */ }
+    hasSpecialSkill(): boolean { /* ... */ }
+}
+```
+
+**After:**
+
+```typescript
+interface Billable {
+    getRate(): number;
+    hasSpecialSkill(): boolean;
+}
+
+class Employee implements Billable {
+    getName(): string { /* ... */ }
+    getRate(): number { /* ... */ }
+    hasSpecialSkill(): boolean { /* ... */ }
+}
+```

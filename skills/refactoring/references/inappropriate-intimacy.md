@@ -191,3 +191,25 @@ Appropriate Intimacy is acceptable in these cases:
 - **Middle Man**: A class exists only to delegate to another class
 - **Data Clumps**: Groups of variables that should be encapsulated together
 - **Temporal Coupling**: Methods must be called in a specific order, hidden in implementation details
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+One class uses the internal fields and methods of another class.
+
+### Reasons for the Problem
+
+Classes become overly dependent on each other's implementation details. Good classes should know as little about each other as possible. Such tightly coupled classes are harder to maintain, test, and reuse.
+
+### Treatment
+
+- **Move Method** and **Move Field**: Move parts of one class to the class where they are actually used, if the originating class truly does not need them.
+- **Extract Class** and **Hide Delegate**: Create proper boundaries and delegation patterns to formalize the relationship.
+- **Change Bidirectional Association to Unidirectional**: Reduce mutual interdependency by establishing a clear directional flow.
+- **Replace Delegation with Inheritance**: If appropriate for a subclass-superclass relationship.
+
+### Payoff
+
+- Improved code organization and separation of concerns.
+- Simplified maintenance and improved code reuse.

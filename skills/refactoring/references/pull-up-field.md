@@ -167,3 +167,145 @@ class Designer extends Employee
 - **Extract Superclass**: Create a new superclass when duplication spans unrelated classes
 - **Self Encapsulate Field**: Hide the field behind getter/setter methods for better control
 - **Replace Data with Object**: Convert primitive fields to dedicated objects for richer behavior
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Employee {
+    String name;
+}
+
+class Salesman extends Employee {
+    String department;
+}
+
+class Engineer extends Employee {
+    String department;
+}
+```
+
+**After:**
+
+```java
+class Employee {
+    String name;
+    String department;
+}
+
+class Salesman extends Employee {
+}
+
+class Engineer extends Employee {
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class Employee
+{
+    string name;
+}
+
+class Salesman : Employee
+{
+    string department;
+}
+
+class Engineer : Employee
+{
+    string department;
+}
+```
+
+**After:**
+
+```csharp
+class Employee
+{
+    string name;
+    string department;
+}
+
+class Salesman : Employee
+{
+}
+
+class Engineer : Employee
+{
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class Employee:
+    def __init__(self, name: str):
+        self.name = name
+
+class Salesman(Employee):
+    def __init__(self, name: str, department: str):
+        super().__init__(name)
+        self.department = department
+
+class Engineer(Employee):
+    def __init__(self, name: str, department: str):
+        super().__init__(name)
+        self.department = department
+```
+
+**After:**
+
+```python
+class Employee:
+    def __init__(self, name: str, department: str):
+        self.name = name
+        self.department = department
+
+class Salesman(Employee):
+    pass
+
+class Engineer(Employee):
+    pass
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Employee {
+    name: string;
+}
+
+class Salesman extends Employee {
+    department: string;
+}
+
+class Engineer extends Employee {
+    department: string;
+}
+```
+
+**After:**
+
+```typescript
+class Employee {
+    name: string;
+    department: string;
+}
+
+class Salesman extends Employee {
+}
+
+class Engineer extends Employee {
+}
+```

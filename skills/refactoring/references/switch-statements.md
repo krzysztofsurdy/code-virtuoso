@@ -153,3 +153,21 @@ Simple switches are acceptable in these cases:
 - **Long Method**: Complex switches signal methods doing too much
 - **Speculative Generality**: Over-engineered polymorphism for non-existent requirements
 - **Lazy Class**: Unnecessary classes created solely to replace switches
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+You have a complex `switch` operator or sequence of `if` statements. Code for a single switch can be scattered in different places in the program.
+
+### Reasons for the Problem
+Switch operators are relatively rare in well-designed object-oriented code. When you see `switch` you should think of polymorphism. When requirements change, developers must locate and update every instance of the switch.
+
+### Treatment
+- **Extract Method** and **Move Method** to isolate switch logic appropriately
+- **Replace Type Code with Subclasses** or **Replace Type Code with State/Strategy** for type code-based switches
+- **Replace Conditional with Polymorphism** after establishing inheritance structure
+- **Replace Parameter with Explicit Methods** when conditions call identical methods with different parameters
+- **Introduce Null Object** if null is a conditional option
+
+### Payoff
+- Improved code organization

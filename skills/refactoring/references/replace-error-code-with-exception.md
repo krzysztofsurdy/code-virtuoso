@@ -132,3 +132,106 @@ try {
 - **Replace Parameter with Method**: Can help reduce error-prone parameter passing
 - **Introduce Custom Exception**: Create domain-specific exceptions for better semantics
 - **Replace Magic Number**: Use exception types instead of numeric error codes
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+int withdraw(int amount) {
+  if (amount > _balance) {
+    return -1;
+  }
+  else {
+    balance -= amount;
+    return 0;
+  }
+}
+```
+
+**After:**
+```java
+void withdraw(int amount) throws BalanceException {
+  if (amount > _balance) {
+    throw new BalanceException();
+  }
+  balance -= amount;
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+int Withdraw(int amount)
+{
+  if (amount > _balance)
+  {
+    return -1;
+  }
+  else
+  {
+    balance -= amount;
+    return 0;
+  }
+}
+```
+
+**After:**
+```csharp
+///<exception cref="BalanceException">Thrown when amount > _balance</exception>
+void Withdraw(int amount)
+{
+  if (amount > _balance)
+  {
+    throw new BalanceException();
+  }
+  balance -= amount;
+}
+```
+
+### Python
+
+**Before:**
+```python
+def withdraw(self, amount):
+    if amount > self.balance:
+        return -1
+    else:
+        self.balance -= amount
+    return 0
+```
+
+**After:**
+```python
+def withdraw(self, amount):
+    if amount > self.balance:
+        raise BalanceException()
+    self.balance -= amount
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+withdraw(amount: number): number {
+  if (amount > _balance) {
+    return -1;
+  }
+  else {
+    balance -= amount;
+    return 0;
+  }
+}
+```
+
+**After:**
+```typescript
+withdraw(amount: number): void {
+  if (amount > _balance) {
+    throw new Error();
+  }
+  balance -= amount;
+}
+```

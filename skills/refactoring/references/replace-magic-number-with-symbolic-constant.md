@@ -186,3 +186,77 @@ class PricingCalculator
 - **Extract Class**: When many related magic numbers deserve a dedicated class
 - **Replace Type Code with Subclasses**: Alternative for representing different numeric categories
 - **Replace Magic Number with Symbolic Constant (Enum)**: PHP 8.3+ idiomatic approach using enums
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+double potentialEnergy(double mass, double height) {
+  return mass * height * 9.81;
+}
+```
+
+**After:**
+```java
+static final double GRAVITATIONAL_CONSTANT = 9.81;
+
+double potentialEnergy(double mass, double height) {
+  return mass * height * GRAVITATIONAL_CONSTANT;
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+double PotentialEnergy(double mass, double height)
+{
+  return mass * height * 9.81;
+}
+```
+
+**After:**
+```csharp
+const double GRAVITATIONAL_CONSTANT = 9.81;
+
+double PotentialEnergy(double mass, double height)
+{
+  return mass * height * GRAVITATIONAL_CONSTANT;
+}
+```
+
+### Python
+
+**Before:**
+```python
+def potentialEnergy(mass, height):
+    return mass * height * 9.81
+```
+
+**After:**
+```python
+GRAVITATIONAL_CONSTANT = 9.81
+
+def potentialEnergy(mass, height):
+    return mass * height * GRAVITATIONAL_CONSTANT
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+potentialEnergy(mass: number, height: number): number {
+  return mass * height * 9.81;
+}
+```
+
+**After:**
+```typescript
+static const GRAVITATIONAL_CONSTANT = 9.81;
+
+potentialEnergy(mass: number, height: number): number {
+  return mass * height * GRAVITATIONAL_CONSTANT;
+}
+```

@@ -181,3 +181,73 @@ $discount = $processor->determineDiscount(1500, true);
 - **Replace Temp with Query**: When a temp variable stores the result of a method call that could be called multiple times
 - **Simplify Expression**: Use before inlining if the original expression is overly complex
 - **Remove Dead Code**: Often identifies temp variables that are declared but never used
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+boolean hasDiscount(Order order) {
+  double basePrice = order.basePrice();
+  return basePrice > 1000;
+}
+```
+
+**After:**
+```java
+boolean hasDiscount(Order order) {
+  return order.basePrice() > 1000;
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+bool HasDiscount(Order order)
+{
+  double basePrice = order.BasePrice();
+  return basePrice > 1000;
+}
+```
+
+**After:**
+```csharp
+bool HasDiscount(Order order)
+{
+  return order.BasePrice() > 1000;
+}
+```
+
+### Python
+
+**Before:**
+```python
+def hasDiscount(order):
+    basePrice = order.basePrice()
+    return basePrice > 1000
+```
+
+**After:**
+```python
+def hasDiscount(order):
+    return order.basePrice() > 1000
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+hasDiscount(order: Order): boolean {
+  let basePrice: number = order.basePrice();
+  return basePrice > 1000;
+}
+```
+
+**After:**
+```typescript
+hasDiscount(order: Order): boolean {
+  return order.basePrice() > 1000;
+}
+```

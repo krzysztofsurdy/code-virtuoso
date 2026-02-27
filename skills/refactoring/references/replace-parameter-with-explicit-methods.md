@@ -174,3 +174,114 @@ Avoid this refactoring when:
 - **Replace Conditional with Polymorphism** - When variants represent different types, use inheritance/interfaces instead
 - **Extract Method** - Often used as a first step; extract conditional branches into helper methods
 - **Remove Middle Man** - Opposite pattern when explicit methods become excessive wrappers
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+void setValue(String name, int value) {
+  if (name.equals("height")) {
+    height = value;
+    return;
+  }
+  if (name.equals("width")) {
+    width = value;
+    return;
+  }
+  Assert.shouldNeverReachHere();
+}
+```
+
+**After:**
+```java
+void setHeight(int arg) {
+  height = arg;
+}
+void setWidth(int arg) {
+  width = arg;
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+void SetValue(string name, int value)
+{
+  if (name.Equals("height"))
+  {
+    height = value;
+    return;
+  }
+  if (name.Equals("width"))
+  {
+    width = value;
+    return;
+  }
+  Assert.Fail();
+}
+```
+
+**After:**
+```csharp
+void SetHeight(int arg)
+{
+  height = arg;
+}
+void SetWidth(int arg)
+{
+  width = arg;
+}
+```
+
+### Python
+
+**Before:**
+```python
+def output(self, name):
+    if name == "banner"
+        # Print the banner.
+        # ...
+    if name == "info"
+        # Print the info.
+        # ...
+```
+
+**After:**
+```python
+def outputBanner(self):
+    # Print the banner.
+    # ...
+
+def outputInfo(self):
+    # Print the info.
+    # ...
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+setValue(name: string, value: number): void {
+  if (name.equals("height")) {
+    height = value;
+    return;
+  }
+  if (name.equals("width")) {
+    width = value;
+    return;
+  }
+}
+```
+
+**After:**
+```typescript
+setHeight(arg: number): void {
+  height = arg;
+}
+setWidth(arg: number): number {
+  width = arg;
+}
+```

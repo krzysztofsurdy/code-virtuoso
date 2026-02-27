@@ -131,3 +131,102 @@ public function setDiscount(float $discount): void
 - **Guard Clauses**: Complement assertions by handling valid variations of preconditions
 - **Replace Error Code with Exception**: Alternative when failure is expected from external sources
 - **Introduce Parameter Object**: Reduces parameter count and makes preconditions clearer
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+double getExpenseLimit() {
+  // Should have either expense limit or
+  // a primary project.
+  return (expenseLimit != NULL_EXPENSE) ?
+    expenseLimit :
+    primaryProject.getMemberExpenseLimit();
+}
+```
+
+**After:**
+```java
+double getExpenseLimit() {
+  Assert.isTrue(expenseLimit != NULL_EXPENSE || primaryProject != null);
+
+  return (expenseLimit != NULL_EXPENSE) ?
+    expenseLimit:
+    primaryProject.getMemberExpenseLimit();
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+double GetExpenseLimit()
+{
+  // Should have either expense limit or
+  // a primary project.
+  return (expenseLimit != NULL_EXPENSE) ?
+    expenseLimit :
+    primaryProject.GetMemberExpenseLimit();
+}
+```
+
+**After:**
+```csharp
+double GetExpenseLimit()
+{
+  Assert.IsTrue(expenseLimit != NULL_EXPENSE || primaryProject != null);
+
+  return (expenseLimit != NULL_EXPENSE) ?
+    expenseLimit:
+    primaryProject.GetMemberExpenseLimit();
+}
+```
+
+### Python
+
+**Before:**
+```python
+def getExpenseLimit(self):
+    # Should have either expense limit or
+    # a primary project.
+    return self.expenseLimit if self.expenseLimit != NULL_EXPENSE else \
+        self.primaryProject.getMemberExpenseLimit()
+```
+
+**After:**
+```python
+def getExpenseLimit(self):
+    assert (self.expenseLimit != NULL_EXPENSE) or (self.primaryProject != None)
+
+    return self.expenseLimit if (self.expenseLimit != NULL_EXPENSE) else \
+        self.primaryProject.getMemberExpenseLimit()
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+getExpenseLimit(): number {
+  // Should have either expense limit or
+  // a primary project.
+  return (expenseLimit != NULL_EXPENSE) ?
+    expenseLimit:
+    primaryProject.getMemberExpenseLimit();
+}
+```
+
+**After:**
+```typescript
+getExpenseLimit(): number {
+  if (!(expenseLimit != NULL_EXPENSE ||
+       (typeof primaryProject !== 'undefined' && primaryProject))) {
+      console.error("Assertion failed: getExpenseLimit()");
+  }
+
+  return (expenseLimit != NULL_EXPENSE) ?
+    expenseLimit:
+    primaryProject.getMemberExpenseLimit();
+}
+```

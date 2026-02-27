@@ -128,3 +128,112 @@ final readonly class Vehicle
 - **Extract Superclass**: Create a common superclass for related classes
 - **Replace Type Code with Subclasses**: Opposite refactoring that creates subclasses for type variants
 - **Replace Type Code with State/Strategy**: Alternative to introducing subclasses
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Employee {
+    String getName() { /* ... */ }
+    int getSalary() { /* ... */ }
+}
+
+class Salesman extends Employee {
+    // No additional behavior - hierarchy is redundant
+}
+```
+
+**After:**
+
+```java
+class Employee {
+    String getName() { /* ... */ }
+    int getSalary() { /* ... */ }
+}
+// Salesman class removed entirely
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class Employee
+{
+    string GetName() { /* ... */ }
+    int GetSalary() { /* ... */ }
+}
+
+class Salesman : Employee
+{
+    // No additional behavior
+}
+```
+
+**After:**
+
+```csharp
+class Employee
+{
+    string GetName() { /* ... */ }
+    int GetSalary() { /* ... */ }
+}
+// Salesman class removed entirely
+```
+
+### Python
+
+**Before:**
+
+```python
+class Employee:
+    def get_name(self) -> str:
+        # ...
+
+    def get_salary(self) -> int:
+        # ...
+
+class Salesman(Employee):
+    pass  # No additional behavior
+```
+
+**After:**
+
+```python
+class Employee:
+    def get_name(self) -> str:
+        # ...
+
+    def get_salary(self) -> int:
+        # ...
+
+# Salesman class removed entirely
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Employee {
+    getName(): string { /* ... */ }
+    getSalary(): number { /* ... */ }
+}
+
+class Salesman extends Employee {
+    // No additional behavior
+}
+```
+
+**After:**
+
+```typescript
+class Employee {
+    getName(): string { /* ... */ }
+    getSalary(): number { /* ... */ }
+}
+// Salesman class removed entirely
+```

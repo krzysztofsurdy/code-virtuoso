@@ -169,3 +169,28 @@ Feature Envy is sometimes acceptable:
 - **Message Chains**: Calling multiple methods in sequence (like `object->method1()->method2()`) is often a symptom
 - **Lazy Class**: When an object doesn't do much and mostly delegates to others
 - **Anemic Domain Model**: Domain objects lack behavior, forcing logic into service classes
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+A method accesses the data of another object more than its own data.
+
+### Reasons for the Problem
+
+This smell may occur after fields are moved to a data class. If so, the operations on that data should be moved to the data class as well.
+
+### Treatment
+
+- **Move Method**: As a rule, if things change at the same time, keep them in the same place. Move the method to the class whose data it primarily uses.
+- **Extract Method**: If only a part of a method accesses another object's data, extract that part into its own method and move it.
+- When a method uses functions from several other classes, determine which class contains most of the data used and place the method there.
+
+### Payoff
+
+- Less code duplication (if the data-handling code is consolidated in a central location).
+- Better code organization (methods are next to the data they use).
+
+### When to Ignore
+
+Sometimes behavior is intentionally kept separate from the class that holds the data. The usual advantage of this is the ability to dynamically change the behavior (see Strategy, Visitor, and other patterns).

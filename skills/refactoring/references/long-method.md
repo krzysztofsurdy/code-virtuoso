@@ -195,3 +195,23 @@ class OrderProcessor
 - **Feature Envy**: Long methods frequently access other objects' data excessively
 - **Primitive Obsession**: Overuse of primitives instead of objects; see Introduce Parameter Object
 - **Data Clumps**: Groups of variables that move together; candidate for Parameter Object
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+A method contains too many lines of code. Generally, any method longer than ten lines should make you start asking questions.
+
+### Reasons for the Problem
+Methods grow incrementally without refactoring because developers find it simpler to add code than create new methods. It is often harder to create a new method than to add to an existing one, resulting in accumulated complexity and tangled code structures.
+
+### Treatment
+- **Extract Method** to reduce method body length
+- **Replace Temp with Query**, **Introduce Parameter Object**, or **Preserve Whole Object** when local variables interfere with extraction
+- **Replace Method with Method Object** when other approaches fail
+- **Decompose Conditional** for complex conditionals
+- **Extract Method** for loops with complex bodies
+
+### Payoff
+- Short methods improve code longevity and maintainability
+- Longer methods become difficult to understand and retain unwanted duplicate code
+- Performance concerns from additional method calls prove negligible in practice

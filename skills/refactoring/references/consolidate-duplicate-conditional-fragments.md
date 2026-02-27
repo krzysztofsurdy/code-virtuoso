@@ -126,3 +126,105 @@ In match expressions, duplicates at the end can be consolidated after the entire
 - **Consolidate Conditional Expression**: Similar pattern for simplifying complex conditionals
 - **Replace Conditional with Polymorphism**: For object-oriented alternatives to large conditional blocks
 - **Duplicate Code Smell**: This refactoring directly eliminates the duplicate code code smell
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+if (isSpecialDeal()) {
+  total = price * 0.95;
+  send();
+}
+else {
+  total = price * 0.98;
+  send();
+}
+```
+
+**After:**
+```java
+if (isSpecialDeal()) {
+  total = price * 0.95;
+}
+else {
+  total = price * 0.98;
+}
+send();
+```
+
+### C#
+
+**Before:**
+```csharp
+if (IsSpecialDeal())
+{
+  total = price * 0.95;
+  Send();
+}
+else
+{
+  total = price * 0.98;
+  Send();
+}
+```
+
+**After:**
+```csharp
+if (IsSpecialDeal())
+{
+  total = price * 0.95;
+}
+else
+{
+  total = price * 0.98;
+}
+Send();
+```
+
+### Python
+
+**Before:**
+```python
+if isSpecialDeal():
+    total = price * 0.95
+    send()
+else:
+    total = price * 0.98
+    send()
+```
+
+**After:**
+```python
+if isSpecialDeal():
+    total = price * 0.95
+else:
+    total = price * 0.98
+send()
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+if (isSpecialDeal()) {
+  total = price * 0.95;
+  send();
+}
+else {
+  total = price * 0.98;
+  send();
+}
+```
+
+**After:**
+```typescript
+if (isSpecialDeal()) {
+  total = price * 0.95;
+}
+else {
+  total = price * 0.98;
+}
+send();
+```

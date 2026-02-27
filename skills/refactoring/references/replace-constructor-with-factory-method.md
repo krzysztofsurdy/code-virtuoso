@@ -161,3 +161,81 @@ $conn2 = DatabaseConnection::create('localhost', 'mydb');
 - **Change Value to Reference**: Factory methods help implement object identity and caching
 - **Extract Method**: Use to simplify factory method logic
 - **Factory Method design pattern**: This refactoring implements this fundamental design pattern
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+class Employee {
+  Employee(int type) {
+    this.type = type;
+  }
+  // ...
+}
+```
+
+**After:**
+```java
+class Employee {
+  static Employee create(int type) {
+    employee = new Employee(type);
+    // do some heavy lifting.
+    return employee;
+  }
+  // ...
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+public class Employee
+{
+  public Employee(int type)
+  {
+    this.type = type;
+  }
+  // ...
+}
+```
+
+**After:**
+```csharp
+public class Employee
+{
+  public static Employee Create(int type)
+  {
+    employee = new Employee(type);
+    // Do some heavy lifting.
+    return employee;
+  }
+  // ...
+}
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+class Employee {
+  constructor(type: number) {
+    this.type = type;
+  }
+  // ...
+}
+```
+
+**After:**
+```typescript
+class Employee {
+  static create(type: number): Employee {
+    let employee = new Employee(type);
+    // Do some heavy lifting.
+    return employee;
+  }
+  // ...
+}
+```

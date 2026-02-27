@@ -171,3 +171,27 @@ The key difference: these are *designed* as chains, not *incidental* coupling.
 - **Feature Envy**: A related smell where a method uses more features from another object than its own
 - **Inappropriate Intimacy**: General coupling issue where classes know too much about each other
 - **Data Clumps**: When objects frequently passed together suggest they should be grouped
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+In code you see a series of calls resembling `$a->b()->c()->d()`.
+
+### Reasons for the Problem
+
+A message chain occurs when a client requests another object, that object requests yet another one, and so on. These chains mean the client is dependent on navigation along the class structure. Any changes in these relationships require modifying the client.
+
+### Treatment
+
+- **Hide Delegate**: Eliminate the chain by creating delegation methods on intermediate objects so the client only talks to its immediate neighbor.
+- **Extract Method** and **Move Method**: Look at what the end object is being used for. Consider extracting that functionality and moving it to the beginning of the chain.
+
+### Payoff
+
+- Reduces dependencies between classes of a chain.
+- Reduces the amount of bloated code.
+
+### When to Ignore
+
+Overly aggressive delegate hiding can cause the Middle Man smell, where it becomes unclear where the actual functionality resides. Balance is key.

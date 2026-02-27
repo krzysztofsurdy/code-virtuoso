@@ -258,3 +258,125 @@ class ExtendedDateTime
 4. **Missing documentation** - Always document why the foreign method exists
 5. **Static methods everywhere** - Consider instance methods or a wrapper class for readability
 
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Report {
+  // ...
+  void sendReport() {
+    Date nextDay = new Date(previousEnd.getYear(),
+      previousEnd.getMonth(), previousEnd.getDate() + 1);
+    // ...
+  }
+}
+```
+
+**After:**
+
+```java
+class Report {
+  // ...
+  void sendReport() {
+    Date newStart = nextDay(previousEnd);
+    // ...
+  }
+  private static Date nextDay(Date arg) {
+    return new Date(arg.getYear(), arg.getMonth(), arg.getDate() + 1);
+  }
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class Report
+{
+  // ...
+  void SendReport()
+  {
+    DateTime nextDay = previousEnd.AddDays(1);
+    // ...
+  }
+}
+```
+
+**After:**
+
+```csharp
+class Report
+{
+  // ...
+  void SendReport()
+  {
+    DateTime nextDay = NextDay(previousEnd);
+    // ...
+  }
+  private static DateTime NextDay(DateTime date)
+  {
+    return date.AddDays(1);
+  }
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class Report:
+    # ...
+    def sendReport(self):
+        nextDay = Date(self.previousEnd.getYear(),
+            self.previousEnd.getMonth(), self.previousEnd.getDate() + 1)
+        # ...
+```
+
+**After:**
+
+```python
+class Report:
+    # ...
+    def sendReport(self):
+        newStart = self._nextDay(self.previousEnd)
+        # ...
+
+    def _nextDay(self, arg):
+        return Date(arg.getYear(), arg.getMonth(), arg.getDate() + 1)
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Report {
+  // ...
+  sendReport(): void {
+    let nextDay: Date = new Date(previousEnd.getYear(),
+      previousEnd.getMonth(), previousEnd.getDate() + 1);
+    // ...
+  }
+}
+```
+
+**After:**
+
+```typescript
+class Report {
+  // ...
+  sendReport() {
+    let newStart: Date = nextDay(previousEnd);
+    // ...
+  }
+  private static nextDay(arg: Date): Date {
+    return new Date(arg.getFullYear(), arg.getMonth(), arg.getDate() + 1);
+  }
+}
+```
+

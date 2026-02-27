@@ -175,3 +175,25 @@ When dead code may be acceptable:
 - **Speculative Generality**: Over-engineering with unused parameters and branches
 - **Lazy Class**: Entire classes that do too little may have no callers
 - **Comments**: Dead code often accumulates alongside commented-out code
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+A variable, parameter, field, method, or class is no longer used (usually because it is obsolete).
+
+### Reasons for the Problem
+
+- When requirements change or corrections are made, nobody had time to clean up the old code.
+- Dead code can also appear in complex conditionals when certain branches become unreachable due to errors or changed circumstances.
+
+### Treatment
+
+- The quickest way to find dead code is to use a good IDE. Delete unused code and unneeded files.
+- **Inline Class** or **Collapse Hierarchy**: Use when dealing with unnecessary classes or subclasses.
+- **Remove Parameter**: Eliminate unneeded method parameters.
+
+### Payoff
+
+- Reduced code size.
+- Simpler, easier maintenance and support.

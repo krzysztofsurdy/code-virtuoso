@@ -150,3 +150,137 @@ class StringFormatter
 - **Replace Type Code with State/Strategy Pattern**: When algorithm choice depends on state or conditions
 - **Decompose Conditional**: Simplifies algorithm selection logic before substitution
 - **Replace Conditional with Polymorphism**: Enables different algorithms via inheritance or interfaces
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+String foundPerson(String[] people){
+  for (int i = 0; i < people.length; i++) {
+    if (people[i].equals("Don")){
+      return "Don";
+    }
+    if (people[i].equals("John")){
+      return "John";
+    }
+    if (people[i].equals("Kent")){
+      return "Kent";
+    }
+  }
+  return "";
+}
+```
+
+**After:**
+```java
+String foundPerson(String[] people){
+  List candidates =
+    Arrays.asList(new String[] {"Don", "John", "Kent"});
+  for (int i = 0; i < people.length; i++) {
+    if (candidates.contains(people[i])) {
+      return people[i];
+    }
+  }
+  return "";
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+string FoundPerson(string[] people)
+{
+  for (int i = 0; i < people.Length; i++)
+  {
+    if (people[i].Equals("Don"))
+    {
+      return "Don";
+    }
+    if (people[i].Equals("John"))
+    {
+      return "John";
+    }
+    if (people[i].Equals("Kent"))
+    {
+      return "Kent";
+    }
+  }
+  return String.Empty;
+}
+```
+
+**After:**
+```csharp
+string FoundPerson(string[] people)
+{
+  List<string> candidates = new List<string>() {"Don", "John", "Kent"};
+
+  for (int i = 0; i < people.Length; i++)
+  {
+    if (candidates.Contains(people[i]))
+    {
+      return people[i];
+    }
+  }
+
+  return String.Empty;
+}
+```
+
+### Python
+
+**Before:**
+```python
+def foundPerson(people):
+    for i in range(len(people)):
+        if people[i] == "Don":
+            return "Don"
+        if people[i] == "John":
+            return "John"
+        if people[i] == "Kent":
+            return "Kent"
+    return ""
+```
+
+**After:**
+```python
+def foundPerson(people):
+    candidates = ["Don", "John", "Kent"]
+    return people if people in candidates else ""
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+foundPerson(people: string[]): string {
+  for (let person of people) {
+    if (person.equals("Don")){
+      return "Don";
+    }
+    if (person.equals("John")){
+      return "John";
+    }
+    if (person.equals("Kent")){
+      return "Kent";
+    }
+  }
+  return "";
+}
+```
+
+**After:**
+```typescript
+foundPerson(people: string[]): string {
+  let candidates = ["Don", "John", "Kent"];
+  for (let person of people) {
+    if (candidates.includes(person)) {
+      return person;
+    }
+  }
+  return "";
+}
+```

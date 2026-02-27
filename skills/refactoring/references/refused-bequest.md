@@ -217,3 +217,19 @@ Refused Bequest is acceptable in these scenarios:
 - **Inappropriate Intimacy**: Classes that know too much about each other's internals
 - **Large Class**: Often the root cause when a parent class does too much
 - **Lazy Class**: Subclass that adds little value over its parent
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+A subclass uses only some of the methods and properties inherited from its parents. The hierarchy is off-kilter. The unneeded methods may simply go unused or be redefined to give off exceptions.
+
+### Reasons for the Problem
+Someone was motivated to create inheritance between classes only by the desire to reuse the code in a superclass. But the superclass and subclass are completely different.
+
+### Treatment
+- **Replace Inheritance with Delegation**: Use when the inheritance relationship does not actually make sense and the classes share little in common
+- **Extract Superclass**: Remove unneeded fields and methods from the subclass, then extract common elements into a new parent class that both the original classes can inherit from
+
+### Payoff
+- Improved code clarity and organization
+- Eliminates confusing hierarchies where unrelated concepts inherit from one another

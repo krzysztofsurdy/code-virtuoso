@@ -87,3 +87,99 @@ function divideNumbers(float $dividend, float $divisor): float
 - **Introduce Guard Clauses**: Use early returns with conditional tests
 - **Consolidate Duplicate Conditional Fragments**: Combine similar validation checks
 - **Replace Nested Conditionals with Guard Clauses**: Simplify complex validation hierarchies
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+double getValueForPeriod(int periodNumber) {
+  try {
+    return values[periodNumber];
+  } catch (ArrayIndexOutOfBoundsException e) {
+    return 0;
+  }
+}
+```
+
+**After:**
+```java
+double getValueForPeriod(int periodNumber) {
+  if (periodNumber >= values.length) {
+    return 0;
+  }
+  return values[periodNumber];
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+double GetValueForPeriod(int periodNumber)
+{
+  try
+  {
+    return values[periodNumber];
+  }
+  catch (IndexOutOfRangeException e)
+  {
+    return 0;
+  }
+}
+```
+
+**After:**
+```csharp
+double GetValueForPeriod(int periodNumber)
+{
+  if (periodNumber >= values.Length)
+  {
+    return 0;
+  }
+  return values[periodNumber];
+}
+```
+
+### Python
+
+**Before:**
+```python
+def getValueForPeriod(periodNumber):
+    try:
+        return values[periodNumber]
+    except IndexError:
+        return 0
+```
+
+**After:**
+```python
+def getValueForPeriod(self, periodNumber):
+    if periodNumber >= len(self.values):
+        return 0
+    return self.values[periodNumber]
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+getValueForPeriod(periodNumber: number): number {
+  try {
+    return values[periodNumber];
+  } catch (ArrayIndexOutOfBoundsException e) {
+    return 0;
+  }
+}
+```
+
+**After:**
+```typescript
+getValueForPeriod(periodNumber: number): number {
+  if (periodNumber >= values.length) {
+    return 0;
+  }
+  return values[periodNumber];
+}
+```

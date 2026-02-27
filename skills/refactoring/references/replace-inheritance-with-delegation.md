@@ -146,3 +146,156 @@ final class InstrumentedStack
 - **Strategy Pattern**: A design pattern often naturally emerges when using delegation
 - **Adapter Pattern**: Similar structure used when adapting one interface to another
 - **Decorator Pattern**: Another composition-based alternative for extending behavior
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class MyStack extends Vector {
+    public void push(Object element) {
+        insertElementAt(element, 0);
+    }
+
+    public Object pop() {
+        Object result = firstElement();
+        removeElementAt(0);
+        return result;
+    }
+}
+```
+
+**After:**
+
+```java
+class MyStack {
+    private Vector vector = new Vector();
+
+    public void push(Object element) {
+        vector.insertElementAt(element, 0);
+    }
+
+    public Object pop() {
+        Object result = vector.firstElement();
+        vector.removeElementAt(0);
+        return result;
+    }
+
+    public int size() {
+        return vector.size();
+    }
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class MyStack : List<object>
+{
+    public void Push(object element)
+    {
+        Insert(0, element);
+    }
+
+    public object Pop()
+    {
+        object result = this[0];
+        RemoveAt(0);
+        return result;
+    }
+}
+```
+
+**After:**
+
+```csharp
+class MyStack
+{
+    private List<object> list = new List<object>();
+
+    public void Push(object element)
+    {
+        list.Insert(0, element);
+    }
+
+    public object Pop()
+    {
+        object result = list[0];
+        list.RemoveAt(0);
+        return result;
+    }
+
+    public int Size => list.Count;
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class MyStack(list):
+    def push(self, element):
+        self.insert(0, element)
+
+    def pop_first(self):
+        return self.pop(0)
+```
+
+**After:**
+
+```python
+class MyStack:
+    def __init__(self):
+        self._items: list = []
+
+    def push(self, element):
+        self._items.insert(0, element)
+
+    def pop_first(self):
+        return self._items.pop(0)
+
+    def size(self) -> int:
+        return len(self._items)
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class MyStack extends Array {
+    push(element: unknown): number {
+        this.unshift(element);
+        return this.length;
+    }
+
+    pop(): unknown {
+        return this.shift();
+    }
+}
+```
+
+**After:**
+
+```typescript
+class MyStack {
+    private items: unknown[] = [];
+
+    push(element: unknown): void {
+        this.items.unshift(element);
+    }
+
+    pop(): unknown {
+        return this.items.shift();
+    }
+
+    size(): number {
+        return this.items.length;
+    }
+}
+```

@@ -142,3 +142,211 @@ $manager = new Manager('Bob', 75000, 'Engineering', 5000);
 - **Extract Superclass**: Create a superclass when multiple classes share common behavior
 - **Replace Type Code with Subclasses**: Use subclasses instead of type fields
 - **Replace Conditional with Polymorphism**: Use subclasses to handle different conditional branches
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class JobItem {
+    private int unitPrice;
+    private int quantity;
+    private boolean isLabor;
+    private Employee employee;
+
+    int getTotalPrice() {
+        return getUnitPrice() * quantity;
+    }
+
+    int getUnitPrice() {
+        return isLabor ? employee.getRate() : unitPrice;
+    }
+
+    Employee getEmployee() {
+        return employee;
+    }
+}
+```
+
+**After:**
+
+```java
+class JobItem {
+    private int unitPrice;
+    private int quantity;
+
+    int getTotalPrice() {
+        return getUnitPrice() * quantity;
+    }
+
+    int getUnitPrice() {
+        return unitPrice;
+    }
+}
+
+class LaborItem extends JobItem {
+    private Employee employee;
+
+    int getUnitPrice() {
+        return employee.getRate();
+    }
+
+    Employee getEmployee() {
+        return employee;
+    }
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class JobItem
+{
+    private int unitPrice;
+    private int quantity;
+    private bool isLabor;
+    private Employee employee;
+
+    int GetTotalPrice()
+    {
+        return GetUnitPrice() * quantity;
+    }
+
+    int GetUnitPrice()
+    {
+        return isLabor ? employee.GetRate() : unitPrice;
+    }
+}
+```
+
+**After:**
+
+```csharp
+class JobItem
+{
+    private int unitPrice;
+    private int quantity;
+
+    int GetTotalPrice()
+    {
+        return GetUnitPrice() * quantity;
+    }
+
+    virtual int GetUnitPrice()
+    {
+        return unitPrice;
+    }
+}
+
+class LaborItem : JobItem
+{
+    private Employee employee;
+
+    override int GetUnitPrice()
+    {
+        return employee.GetRate();
+    }
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class JobItem:
+    def __init__(self, unit_price: int, quantity: int,
+                 is_labor: bool, employee: Employee = None):
+        self.unit_price = unit_price
+        self.quantity = quantity
+        self.is_labor = is_labor
+        self.employee = employee
+
+    def get_total_price(self) -> int:
+        return self.get_unit_price() * self.quantity
+
+    def get_unit_price(self) -> int:
+        if self.is_labor:
+            return self.employee.get_rate()
+        return self.unit_price
+```
+
+**After:**
+
+```python
+class JobItem:
+    def __init__(self, unit_price: int, quantity: int):
+        self.unit_price = unit_price
+        self.quantity = quantity
+
+    def get_total_price(self) -> int:
+        return self.get_unit_price() * self.quantity
+
+    def get_unit_price(self) -> int:
+        return self.unit_price
+
+class LaborItem(JobItem):
+    def __init__(self, quantity: int, employee: Employee):
+        super().__init__(0, quantity)
+        self.employee = employee
+
+    def get_unit_price(self) -> int:
+        return self.employee.get_rate()
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class JobItem {
+    private unitPrice: number;
+    private quantity: number;
+    private isLabor: boolean;
+    private employee: Employee;
+
+    getTotalPrice(): number {
+        return this.getUnitPrice() * this.quantity;
+    }
+
+    getUnitPrice(): number {
+        return this.isLabor ? this.employee.getRate() : this.unitPrice;
+    }
+}
+```
+
+**After:**
+
+```typescript
+class JobItem {
+    constructor(
+        private unitPrice: number,
+        private quantity: number,
+    ) {}
+
+    getTotalPrice(): number {
+        return this.getUnitPrice() * this.quantity;
+    }
+
+    getUnitPrice(): number {
+        return this.unitPrice;
+    }
+}
+
+class LaborItem extends JobItem {
+    constructor(
+        quantity: number,
+        private employee: Employee,
+    ) {
+        super(0, quantity);
+    }
+
+    getUnitPrice(): number {
+        return this.employee.getRate();
+    }
+}
+```

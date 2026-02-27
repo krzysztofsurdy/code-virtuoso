@@ -179,3 +179,75 @@ $product->applyDiscount(10); // Controlled, validated change
 - **Extract Class**: Move related fields into a separate class
 - **Introduce Parameter Object**: Group related fields into a parameter object
 - **Remove Setter**: Make fields read-only by removing setter methods
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+class Person {
+  public String name;
+}
+```
+
+**After:**
+```java
+class Person {
+  private String name;
+
+  public String getName() {
+    return name;
+  }
+  public void setName(String arg) {
+    name = arg;
+  }
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+class Person
+{
+  public string name;
+}
+```
+
+**After:**
+```csharp
+class Person
+{
+  private string name;
+
+  public string Name
+  {
+    get { return name; }
+    set { name = value; }
+  }
+}
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+class Person {
+  name: string;
+}
+```
+
+**After:**
+```typescript
+class Person {
+  private _name: string;
+
+  get name() {
+    return this._name;
+  }
+  setName(arg: string): void {
+    this._name = arg;
+  }
+}
+```

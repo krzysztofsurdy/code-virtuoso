@@ -98,3 +98,69 @@ $price = $order->getPrice();
 - **Add Parameter**: The opposite refactoring when you need to increase flexibility
 - **Simplify Method Calls**: Parent category addressing long parameter lists
 - **Remove Parameter**: Similar technique for eliminating unused parameters
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+int basePrice = quantity * itemPrice;
+double seasonDiscount = this.getSeasonalDiscount();
+double fees = this.getFees();
+double finalPrice = discountedPrice(basePrice, seasonDiscount, fees);
+```
+
+**After:**
+```java
+int basePrice = quantity * itemPrice;
+double finalPrice = discountedPrice(basePrice);
+```
+
+### C#
+
+**Before:**
+```csharp
+int basePrice = quantity * itemPrice;
+double seasonDiscount = this.GetSeasonalDiscount();
+double fees = this.GetFees();
+double finalPrice = DiscountedPrice(basePrice, seasonDiscount, fees);
+```
+
+**After:**
+```csharp
+int basePrice = quantity * itemPrice;
+double finalPrice = DiscountedPrice(basePrice);
+```
+
+### Python
+
+**Before:**
+```python
+basePrice = quantity * itemPrice
+seasonalDiscount = self.getSeasonalDiscount()
+fees = self.getFees()
+finalPrice = discountedPrice(basePrice, seasonalDiscount, fees)
+```
+
+**After:**
+```python
+basePrice = quantity * itemPrice
+finalPrice = discountedPrice(basePrice)
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+let basePrice = quantity * itemPrice;
+const seasonDiscount = this.getSeasonalDiscount();
+const fees = this.getFees();
+const finalPrice = discountedPrice(basePrice, seasonDiscount, fees);
+```
+
+**After:**
+```typescript
+let basePrice = quantity * itemPrice;
+let finalPrice = discountedPrice(basePrice);
+```

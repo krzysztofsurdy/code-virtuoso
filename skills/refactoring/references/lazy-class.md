@@ -186,3 +186,28 @@ Keep a class (as a lazy class) when:
 - **Speculative Generality**: Building features "for the future" that aren't needed yet
 - **Middleware Classes**: Classes that exist only to connect other classes without adding logic
 - **Duplicate Code**: Similar functionality across multiple small classes that could be consolidated
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+Understanding and maintaining classes always costs time and money. So if a class does not do enough to earn your attention, it should be deleted.
+
+### Reasons for the Problem
+
+- A class may have been designed to be fully functional but after refactoring it has become ridiculously small.
+- A class may have been created to support planned future development work that never materialized.
+
+### Treatment
+
+- **Inline Class**: Merge the lazy class's functionality into another class that uses it.
+- **Collapse Hierarchy**: For subclasses or superclasses with minimal added functionality, merge them into their parent or child.
+
+### Payoff
+
+- Reduced code size.
+- Easier maintenance.
+
+### When to Ignore
+
+Sometimes a Lazy Class is created to delineate intentions for future development. In this case, try to maintain a balance between clarity and simplicity in your code.

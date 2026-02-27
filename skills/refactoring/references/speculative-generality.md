@@ -187,3 +187,30 @@ Replace method calls with direct code if the method adds no meaningful abstracti
 - **Lazy Class**: A class that does too little to justify its existence
 - **Middle Man**: A class that exists primarily to delegate to another
 - **Feature Envy**: Methods that use more features of another class than their own
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+There is an unused class, method, field, or parameter.
+
+### Reasons for the Problem
+
+Sometimes code is created "just in case" to support anticipated future features that never materialize. As a result, code becomes hard to understand and support.
+
+### Treatment
+
+- **Collapse Hierarchy**: Remove unnecessary abstract classes.
+- **Inline Class**: Remove unnecessary delegation classes.
+- **Inline Method**: Delete unused methods.
+- **Remove Parameter**: Eliminate unused method parameters.
+
+### Payoff
+
+- Slimmer code.
+- Easier maintenance.
+
+### When to Ignore
+
+- If you are working on a framework, it is eminently reasonable to create functionality not used in the framework itself, as long as it is needed by framework users.
+- Keep elements if unit tests require them for accessing class information or performing testing-specific actions.

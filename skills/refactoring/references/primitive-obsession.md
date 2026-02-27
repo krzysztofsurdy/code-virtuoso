@@ -186,3 +186,24 @@ Primitive Obsession is acceptable when:
 - **Magic Numbers**: Unexplained numeric constants lacking semantic meaning
 - **Duplicate Code**: Validation and constraints scattered across codebase
 - **Feature Envy**: Classes accessing primitive fields from other objects excessively
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+- Use of primitives instead of small objects for simple tasks (such as currency, ranges, special strings for phone numbers)
+- Using constants to encode information (e.g., `USER_ADMIN_ROLE = 1`)
+- Using string constants as field names in data arrays
+
+### Reasons for the Problem
+Creating a primitive field is much easier than making a whole new class, leading to accumulation of primitive fields over time. Programmers use primitives to simulate custom types through numbered or string-based constants, and sometimes use string constants as array indices for field simulation.
+
+### Treatment
+- **Replace Data Value with Object** for grouping related primitive fields
+- **Introduce Parameter Object** or **Preserve Whole Object** when primitives appear in method parameters
+- **Replace Type Code with Class**, **Replace Type Code with Subclasses**, or **Replace Type Code with State/Strategy** for coded data
+- **Replace Array with Object** when arrays contain mixed variables
+
+### Payoff
+- Improved code flexibility through object-oriented design
+- Enhanced clarity and organization with data operations grouped logically
+- Simplified duplicate code detection

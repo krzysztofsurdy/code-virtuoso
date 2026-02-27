@@ -129,3 +129,24 @@ Shotgun Surgery is acceptable in these scenarios:
 - **Feature Envy**: Classes that rely too heavily on other classes' data suggest consolidation opportunities
 - **Duplicate Code**: Often appears alongside Shotgun Surgery when similar changes are made across classes
 - **Long Parameter List**: May indicate that a new class could better encapsulate related data
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+Making any modifications requires that you make many small changes to many different classes.
+
+### Reasons for the Problem
+
+A single responsibility has been split up among a large number of classes. This can happen after overzealous application of Divergent Change refactoring.
+
+### Treatment
+
+- **Move Method** and **Move Field**: Consolidate dispersed behaviors by moving them into a single class that logically owns the responsibility.
+- **Inline Class**: If moving code leaves original classes nearly empty, merge those classes into the target class to eliminate structural clutter.
+
+### Payoff
+
+- Better code organization
+- Less code duplication
+- Easier maintenance

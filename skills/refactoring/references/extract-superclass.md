@@ -160,3 +160,222 @@ final class Contractor extends Person
 - **Extract Subclass** - The inverse operation; extract specialized behavior into subclasses
 - **Pull Up Field/Method** - Individual steps in the Extract Superclass process
 - **Move Method** - Move functionality between classes without creating a hierarchy
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Employee {
+    private String name;
+    private int annualCost;
+
+    String getName() { return name; }
+    int getAnnualCost() { return annualCost; }
+}
+
+class Department {
+    private String name;
+    private List<Employee> staff;
+
+    String getName() { return name; }
+    int getAnnualCost() {
+        return staff.stream().mapToInt(Employee::getAnnualCost).sum();
+    }
+}
+```
+
+**After:**
+
+```java
+abstract class Party {
+    protected String name;
+
+    String getName() { return name; }
+    abstract int getAnnualCost();
+}
+
+class Employee extends Party {
+    private int annualCost;
+
+    int getAnnualCost() { return annualCost; }
+}
+
+class Department extends Party {
+    private List<Employee> staff;
+
+    int getAnnualCost() {
+        return staff.stream().mapToInt(Employee::getAnnualCost).sum();
+    }
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class Employee
+{
+    private string name;
+    private int annualCost;
+
+    string GetName() => name;
+    int GetAnnualCost() => annualCost;
+}
+
+class Department
+{
+    private string name;
+    private List<Employee> staff;
+
+    string GetName() => name;
+    int GetAnnualCost() => staff.Sum(e => e.GetAnnualCost());
+}
+```
+
+**After:**
+
+```csharp
+abstract class Party
+{
+    protected string name;
+
+    string GetName() => name;
+    abstract int GetAnnualCost();
+}
+
+class Employee : Party
+{
+    private int annualCost;
+
+    override int GetAnnualCost() => annualCost;
+}
+
+class Department : Party
+{
+    private List<Employee> staff;
+
+    override int GetAnnualCost() => staff.Sum(e => e.GetAnnualCost());
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class Employee:
+    def __init__(self, name: str, annual_cost: int):
+        self.name = name
+        self.annual_cost = annual_cost
+
+    def get_name(self) -> str:
+        return self.name
+
+    def get_annual_cost(self) -> int:
+        return self.annual_cost
+
+class Department:
+    def __init__(self, name: str, staff: list):
+        self.name = name
+        self.staff = staff
+
+    def get_name(self) -> str:
+        return self.name
+
+    def get_annual_cost(self) -> int:
+        return sum(e.get_annual_cost() for e in self.staff)
+```
+
+**After:**
+
+```python
+from abc import ABC, abstractmethod
+
+class Party(ABC):
+    def __init__(self, name: str):
+        self.name = name
+
+    def get_name(self) -> str:
+        return self.name
+
+    @abstractmethod
+    def get_annual_cost(self) -> int:
+        pass
+
+class Employee(Party):
+    def __init__(self, name: str, annual_cost: int):
+        super().__init__(name)
+        self.annual_cost = annual_cost
+
+    def get_annual_cost(self) -> int:
+        return self.annual_cost
+
+class Department(Party):
+    def __init__(self, name: str, staff: list):
+        super().__init__(name)
+        self.staff = staff
+
+    def get_annual_cost(self) -> int:
+        return sum(e.get_annual_cost() for e in self.staff)
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Employee {
+    constructor(
+        private name: string,
+        private annualCost: number,
+    ) {}
+
+    getName(): string { return this.name; }
+    getAnnualCost(): number { return this.annualCost; }
+}
+
+class Department {
+    constructor(
+        private name: string,
+        private staff: Employee[],
+    ) {}
+
+    getName(): string { return this.name; }
+    getAnnualCost(): number {
+        return this.staff.reduce((sum, e) => sum + e.getAnnualCost(), 0);
+    }
+}
+```
+
+**After:**
+
+```typescript
+abstract class Party {
+    constructor(protected name: string) {}
+
+    getName(): string { return this.name; }
+    abstract getAnnualCost(): number;
+}
+
+class Employee extends Party {
+    constructor(name: string, private annualCost: number) {
+        super(name);
+    }
+
+    getAnnualCost(): number { return this.annualCost; }
+}
+
+class Department extends Party {
+    constructor(name: string, private staff: Employee[]) {
+        super(name);
+    }
+
+    getAnnualCost(): number {
+        return this.staff.reduce((sum, e) => sum + e.getAnnualCost(), 0);
+    }
+}
+```

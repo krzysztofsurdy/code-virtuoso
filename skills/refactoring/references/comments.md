@@ -150,3 +150,29 @@ Comments are valuable and appropriate when:
 - **Poor Naming**: Comments often compensate for unclear variable and method names
 - **Duplicate Code**: Repeated logic that's explained separately via comments
 - **Magic Numbers**: Unexplained constants that force developers to add clarifying comments
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+A method is filled with explanatory comments that attempt to clarify what the code does.
+
+### Reasons for the Problem
+
+Comments are usually created with the best of intentions, when the author realizes that their code is not intuitive or obvious. The best comment is a good name for a method or class.
+
+### Treatment
+
+- **Extract Variable**: If a comment explains a complex expression, break the expression into understandable sub-expressions using well-named intermediate variables.
+- **Extract Method**: If a comment explains a section of code, turn that section into a separate method. The method name should replace the comment.
+- **Rename Method**: If a method has been extracted but still needs a comment to explain what it does, give the method a self-explanatory name.
+- **Introduce Assertion**: If you need to assert rules about the state of the system, use an assertion instead of a comment.
+
+### Payoff
+
+- Code becomes more intuitive and self-documenting.
+
+### When to Ignore
+
+- Comments explaining **why** something is done (not what) remain valuable.
+- Comments documenting complex algorithms where simplification is not feasible.

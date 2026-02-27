@@ -140,3 +140,93 @@ class UserValidator
 - **Guard Clauses**: A specific application of decompose conditional for handling preconditions
 - **Introduce Explaining Variable**: Before full decomposition, extract variables for intermediate clarity
 - **Replace Temp with Query**: To eliminate temporary variables in conditionals
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+if (date.before(SUMMER_START) || date.after(SUMMER_END)) {
+  charge = quantity * winterRate + winterServiceCharge;
+}
+else {
+  charge = quantity * summerRate;
+}
+```
+
+**After:**
+```java
+if (isSummer(date)) {
+  charge = summerCharge(quantity);
+}
+else {
+  charge = winterCharge(quantity);
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+if (date < SUMMER_START || date > SUMMER_END)
+{
+  charge = quantity * winterRate + winterServiceCharge;
+}
+else
+{
+  charge = SummerCharge(quantity);
+}
+```
+
+**After:**
+```csharp
+if (isSummer(date))
+{
+  charge = SummerCharge(quantity);
+}
+else
+{
+  charge = WinterCharge(quantity);
+}
+```
+
+### Python
+
+**Before:**
+```python
+if date.before(SUMMER_START) or date.after(SUMMER_END):
+    charge = quantity * winterRate + winterServiceCharge
+else:
+    charge = quantity * summerRate
+```
+
+**After:**
+```python
+if isSummer(date):
+    charge = summerCharge(quantity)
+else:
+    charge = winterCharge(quantity)
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+if (date.before(SUMMER_START) || date.after(SUMMER_END)) {
+  charge = quantity * winterRate + winterServiceCharge;
+}
+else {
+  charge = quantity * summerRate;
+}
+```
+
+**After:**
+```typescript
+if (isSummer(date)) {
+  charge = summerCharge(quantity);
+}
+else {
+  charge = winterCharge(quantity);
+}
+```

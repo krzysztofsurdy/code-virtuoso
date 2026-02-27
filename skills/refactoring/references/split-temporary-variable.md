@@ -132,3 +132,77 @@ function calculatePrice(
 - **Rename Variable**: Use meaningful names when introducing split variables
 - **Introduce Parameter Object**: When many variables emerge, consider grouping related parameters
 - **Replace Temp with Query**: Transform temporary variables into method calls for better encapsulation
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+double temp = 2 * (height + width);
+System.out.println(temp);
+temp = height * width;
+System.out.println(temp);
+```
+
+**After:**
+```java
+final double perimeter = 2 * (height + width);
+System.out.println(perimeter);
+final double area = height * width;
+System.out.println(area);
+```
+
+### C#
+
+**Before:**
+```csharp
+double temp = 2 * (height + width);
+Console.WriteLine(temp);
+temp = height * width;
+Console.WriteLine(temp);
+```
+
+**After:**
+```csharp
+readonly double perimeter = 2 * (height + width);
+Console.WriteLine(perimeter);
+readonly double area = height * width;
+Console.WriteLine(area);
+```
+
+### Python
+
+**Before:**
+```python
+temp = 2 * (height + width)
+print(temp)
+temp = height * width
+print(temp)
+```
+
+**After:**
+```python
+perimeter = 2 * (height + width)
+print(perimeter)
+area = height * width
+print(area)
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+let temp = 2 * (height + width);
+console.log(temp);
+temp = height * width;
+console.log(temp);
+```
+
+**After:**
+```typescript
+const perimeter = 2 * (height + width);
+console.log(perimeter);
+const area = height * width;
+console.log(area);
+```

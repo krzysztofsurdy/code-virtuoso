@@ -140,3 +140,98 @@ class PriceCalculator
 - **Introduce Parameter Object**: Groups related parameters to reduce reassignment of individual parameters
 - **Replace Method with Method Object**: When parameter reassignment indicates the method is doing too much
 - **Decompose Conditional**: Breaks complex logic that causes multiple parameter reassignments
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+int discount(int inputVal, int quantity) {
+  if (quantity > 50) {
+    inputVal -= 2;
+  }
+  // ...
+}
+```
+
+**After:**
+```java
+int discount(int inputVal, int quantity) {
+  int result = inputVal;
+  if (quantity > 50) {
+    result -= 2;
+  }
+  // ...
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+int Discount(int inputVal, int quantity)
+{
+  if (quantity > 50)
+  {
+    inputVal -= 2;
+  }
+  // ...
+}
+```
+
+**After:**
+```csharp
+int Discount(int inputVal, int quantity)
+{
+  int result = inputVal;
+
+  if (quantity > 50)
+  {
+    result -= 2;
+  }
+  // ...
+}
+```
+
+### Python
+
+**Before:**
+```python
+def discount(inputVal, quantity):
+    if quantity > 50:
+        inputVal -= 2
+    # ...
+```
+
+**After:**
+```python
+def discount(inputVal, quantity):
+    result = inputVal
+    if quantity > 50:
+        result -= 2
+    # ...
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+discount(inputVal: number, quantity: number): number {
+  if (quantity > 50) {
+    inputVal -= 2;
+  }
+  // ...
+}
+```
+
+**After:**
+```typescript
+discount(inputVal: number, quantity: number): number {
+  let result = inputVal;
+  if (quantity > 50) {
+    result -= 2;
+  }
+  // ...
+}
+```

@@ -159,3 +159,198 @@ final readonly class JSONExporter extends Exporter
 - **Extract Method** - Often a prerequisite step to identify discrete algorithm steps
 - **Pull Up Method** - Used to move identical methods to the base class during this refactoring
 - **Template Method Design Pattern** - The pattern this refactoring helps implement
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class ResidentialSite {
+    double getBillableAmount() {
+        double base = units * rate;
+        double tax = base * Site.TAX_RATE;
+        return base + tax;
+    }
+}
+
+class LifelineSite {
+    double getBillableAmount() {
+        double base = units * rate * 0.5;
+        double tax = base * Site.TAX_RATE * 0.2;
+        return base + tax;
+    }
+}
+```
+
+**After:**
+
+```java
+abstract class Site {
+    double getBillableAmount() {
+        return getBaseAmount() + getTaxAmount();
+    }
+
+    abstract double getBaseAmount();
+    abstract double getTaxAmount();
+}
+
+class ResidentialSite extends Site {
+    double getBaseAmount() { return units * rate; }
+    double getTaxAmount() { return getBaseAmount() * TAX_RATE; }
+}
+
+class LifelineSite extends Site {
+    double getBaseAmount() { return units * rate * 0.5; }
+    double getTaxAmount() { return getBaseAmount() * TAX_RATE * 0.2; }
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class ResidentialSite
+{
+    double GetBillableAmount()
+    {
+        double baseAmount = units * rate;
+        double tax = baseAmount * Site.TaxRate;
+        return baseAmount + tax;
+    }
+}
+
+class LifelineSite
+{
+    double GetBillableAmount()
+    {
+        double baseAmount = units * rate * 0.5;
+        double tax = baseAmount * Site.TaxRate * 0.2;
+        return baseAmount + tax;
+    }
+}
+```
+
+**After:**
+
+```csharp
+abstract class Site
+{
+    double GetBillableAmount()
+    {
+        return GetBaseAmount() + GetTaxAmount();
+    }
+
+    abstract double GetBaseAmount();
+    abstract double GetTaxAmount();
+}
+
+class ResidentialSite : Site
+{
+    override double GetBaseAmount() => units * rate;
+    override double GetTaxAmount() => GetBaseAmount() * TaxRate;
+}
+
+class LifelineSite : Site
+{
+    override double GetBaseAmount() => units * rate * 0.5;
+    override double GetTaxAmount() => GetBaseAmount() * TaxRate * 0.2;
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class ResidentialSite:
+    def get_billable_amount(self) -> float:
+        base = self.units * self.rate
+        tax = base * self.TAX_RATE
+        return base + tax
+
+class LifelineSite:
+    def get_billable_amount(self) -> float:
+        base = self.units * self.rate * 0.5
+        tax = base * self.TAX_RATE * 0.2
+        return base + tax
+```
+
+**After:**
+
+```python
+from abc import ABC, abstractmethod
+
+class Site(ABC):
+    def get_billable_amount(self) -> float:
+        return self.get_base_amount() + self.get_tax_amount()
+
+    @abstractmethod
+    def get_base_amount(self) -> float:
+        pass
+
+    @abstractmethod
+    def get_tax_amount(self) -> float:
+        pass
+
+class ResidentialSite(Site):
+    def get_base_amount(self) -> float:
+        return self.units * self.rate
+
+    def get_tax_amount(self) -> float:
+        return self.get_base_amount() * self.TAX_RATE
+
+class LifelineSite(Site):
+    def get_base_amount(self) -> float:
+        return self.units * self.rate * 0.5
+
+    def get_tax_amount(self) -> float:
+        return self.get_base_amount() * self.TAX_RATE * 0.2
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class ResidentialSite {
+    getBillableAmount(): number {
+        const base = this.units * this.rate;
+        const tax = base * Site.TAX_RATE;
+        return base + tax;
+    }
+}
+
+class LifelineSite {
+    getBillableAmount(): number {
+        const base = this.units * this.rate * 0.5;
+        const tax = base * Site.TAX_RATE * 0.2;
+        return base + tax;
+    }
+}
+```
+
+**After:**
+
+```typescript
+abstract class Site {
+    getBillableAmount(): number {
+        return this.getBaseAmount() + this.getTaxAmount();
+    }
+
+    abstract getBaseAmount(): number;
+    abstract getTaxAmount(): number;
+}
+
+class ResidentialSite extends Site {
+    getBaseAmount(): number { return this.units * this.rate; }
+    getTaxAmount(): number { return this.getBaseAmount() * Site.TAX_RATE; }
+}
+
+class LifelineSite extends Site {
+    getBaseAmount(): number { return this.units * this.rate * 0.5; }
+    getTaxAmount(): number { return this.getBaseAmount() * Site.TAX_RATE * 0.2; }
+}
+```

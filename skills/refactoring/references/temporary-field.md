@@ -161,3 +161,18 @@ In these cases, clearly document the temporary nature and usage scope.
 - **Message Chain**: Hidden temporary state can mask complex object collaborations
 - **Data Clumps**: Temporary fields often group together and could become a dedicated class
 - **Primitive Obsession**: Temporary state using primitives instead of meaningful objects
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+Temporary fields get their values (and thus are needed by objects) only under certain circumstances. Outside of these circumstances, they are empty. This causes confusion because developers expect object data to be consistently populated.
+
+### Reasons for the Problem
+Temporary fields typically arise when algorithms require numerous inputs. Rather than creating extensive method parameters, programmers add fields to the class for this data. The fields serve the algorithm but remain unused otherwise, making code difficult to comprehend.
+
+### Treatment
+- **Extract Class**: Move temporary fields and their associated code into a separate class, effectively creating a method object
+- **Introduce Null Object**: Integrate a null object to replace conditional code that checks whether temporary field values exist
+
+### Payoff
+- Better code clarity and organization

@@ -188,3 +188,27 @@ Duplication is acceptable in these cases:
 - **Long Parameter List**: May indicate missing abstraction that could consolidate duplicated parameters
 - **Divergent Change**: When one class changes for multiple reasons, it may contain diverse duplicate patterns
 - **Primitive Obsession**: Type-specific duplication that could be consolidated with proper objects
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+
+Two code fragments look almost identical.
+
+### Reasons for the Problem
+
+- Multiple programmers working on different parts of the same program simultaneously without awareness of each other's work.
+- Certain parts of code look different but actually perform the same job (harder to detect).
+- Copy-paste programming under deadline pressure.
+
+### Treatment
+
+- **Same class**: Apply **Extract Method** to consolidate identical code into a single reusable method.
+- **Sibling subclasses**: Use **Extract Method** combined with **Pull Up Field**, or apply **Pull Up Constructor Body** for constructor duplication. If the algorithms are similar but not identical, use **Form Template Method**.
+- **Different classes**: Use **Extract Superclass** for a shared parent class, or **Extract Class** if inheritance is not appropriate.
+- **Conditional expressions**: Merge duplicate conditions with **Consolidate Conditional Expression** and extract the combined logic.
+
+### Payoff
+
+- Merging duplicate code simplifies the structure and makes it shorter.
+- Simplification plus reduced size equals code that is easier to maintain and cheaper to support.

@@ -188,3 +188,125 @@ class StatusHandler
 - **Replace Nested Conditionals with Guard Clauses**: Simplify deeply nested conditions
 - **Decompose Conditional**: Break complex conditions into easier-to-understand parts
 - **Replace Conditional with Polymorphism**: For complex conditional logic based on type
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+double disabilityAmount() {
+  if (seniority < 2) {
+    return 0;
+  }
+  if (monthsDisabled > 12) {
+    return 0;
+  }
+  if (isPartTime) {
+    return 0;
+  }
+  // Compute the disability amount.
+  // ...
+}
+```
+
+**After:**
+```java
+double disabilityAmount() {
+  if (isNotEligibleForDisability()) {
+    return 0;
+  }
+  // Compute the disability amount.
+  // ...
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+double DisabilityAmount()
+{
+  if (seniority < 2)
+  {
+    return 0;
+  }
+  if (monthsDisabled > 12)
+  {
+    return 0;
+  }
+  if (isPartTime)
+  {
+    return 0;
+  }
+  // Compute the disability amount.
+  // ...
+}
+```
+
+**After:**
+```csharp
+double DisabilityAmount()
+{
+  if (IsNotEligibleForDisability())
+  {
+    return 0;
+  }
+  // Compute the disability amount.
+  // ...
+}
+```
+
+### Python
+
+**Before:**
+```python
+def disabilityAmount():
+    if seniority < 2:
+        return 0
+    if monthsDisabled > 12:
+        return 0
+    if isPartTime:
+        return 0
+    # Compute the disability amount.
+    # ...
+```
+
+**After:**
+```python
+def disabilityAmount():
+    if isNotEligibleForDisability():
+        return 0
+    # Compute the disability amount.
+    # ...
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+disabilityAmount(): number {
+  if (seniority < 2) {
+    return 0;
+  }
+  if (monthsDisabled > 12) {
+    return 0;
+  }
+  if (isPartTime) {
+    return 0;
+  }
+  // Compute the disability amount.
+  // ...
+}
+```
+
+**After:**
+```typescript
+disabilityAmount(): number {
+  if (isNotEligibleForDisability()) {
+    return 0;
+  }
+  // Compute the disability amount.
+  // ...
+}
+```

@@ -150,3 +150,21 @@ When parallel hierarchies represent different concerns (e.g., export format vs. 
 - **Feature Envy**: When methods in one hierarchy frequently reference another hierarchy's structure.
 - **God Class**: Parallel hierarchies sometimes emerge when a single domain concept is split incorrectly.
 - **Middle Man**: Composition can introduce unnecessary delegation if not designed carefully.
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+Whenever you create a subclass for a class, you find yourself needing to create a subclass for another class. Class hierarchies grow in tandem, creating unnecessary structural coupling.
+
+### Reasons for the Problem
+While small hierarchies pose no issues, problems emerge as new classes accumulate. The difficulty in implementing changes increases proportionally with hierarchy expansion.
+
+### Treatment
+- First, establish references between instances of one hierarchy to instances of another
+- Then eliminate the redundant hierarchy by employing **Move Method** and **Move Field** refactoring techniques
+
+### Payoff
+- Reduces code duplication
+- Can improve overall code organization and structure
+
+Note: If deduplication attempts produce messier code, abandoning the refactoring may be the pragmatic choice.

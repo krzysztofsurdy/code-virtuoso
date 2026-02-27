@@ -225,3 +225,21 @@ Large classes are acceptable when:
 ---
 
 **Metrics to Watch**: Classes over 500 LOC, methods over 20, cyclomatic complexity per method > 10
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+A class contains many fields, methods, and lines of code. Classes accumulate functionality over time as programs grow, with developers often preferring to add features to existing classes rather than creating new ones.
+
+### Reasons for the Problem
+Classes begin small but expand gradually. Programmers tend to take the path of least resistance by placing new functionality into established classes instead of establishing separate components.
+
+### Treatment
+- **Extract Class**: Helps if part of the behavior of the large class can be spun off into a separate component
+- **Extract Subclass**: Helps if part of the behavior can be implemented in different ways or is used in rare cases
+- **Extract Interface**: Helps if it is necessary to have a list of the operations and behaviors that the client can use
+- **Duplicate Observed Data**: Useful when splitting graphical interface classes, requiring data storage in multiple locations
+
+### Payoff
+- Developers avoid memorizing extensive class attributes
+- Dividing large classes frequently eliminates code duplication and redundant functionality

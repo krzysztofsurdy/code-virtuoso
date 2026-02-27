@@ -133,3 +133,61 @@ class Client
 - **Extract Class**: Helps identify cohesive data that should be passed together
 - **Encapsulate Query**: Focuses on hiding data access logic within objects
 - **Replace Parameter with Query**: Removes parameters by querying for values internally
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+int low = daysTempRange.getLow();
+int high = daysTempRange.getHigh();
+boolean withinPlan = plan.withinRange(low, high);
+```
+
+**After:**
+```java
+boolean withinPlan = plan.withinRange(daysTempRange);
+```
+
+### C#
+
+**Before:**
+```csharp
+int low = daysTempRange.GetLow();
+int high = daysTempRange.GetHigh();
+bool withinPlan = plan.WithinRange(low, high);
+```
+
+**After:**
+```csharp
+bool withinPlan = plan.WithinRange(daysTempRange);
+```
+
+### Python
+
+**Before:**
+```python
+low = daysTempRange.getLow()
+high = daysTempRange.getHigh()
+withinPlan = plan.withinRange(low, high)
+```
+
+**After:**
+```python
+withinPlan = plan.withinRange(daysTempRange)
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+let low = daysTempRange.getLow();
+let high = daysTempRange.getHigh();
+let withinPlan = plan.withinRange(low, high);
+```
+
+**After:**
+```typescript
+let withinPlan = plan.withinRange(daysTempRange);
+```

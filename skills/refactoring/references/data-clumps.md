@@ -183,3 +183,21 @@ Avoid over-engineering by creating classes for every small group of parameters.
 - **Primitive Obsession**: Using primitives instead of small value objects (data clumps are a symptom)
 - **Feature Envy**: Classes using another object's data heavily (may indicate a data clump in the wrong location)
 - **Divergent Change**: When multiple reasons to change the same class, data clumps might be mixed concerns
+
+## Refactoring.guru Guidance
+
+### Signs and Symptoms
+Different parts of the code contain identical groups of variables (such as parameters for connecting to a database). These clumps should be turned into their own classes.
+
+### Reasons for the Problem
+Repeated data groups frequently arise from inadequate program design or duplicative coding practices. A useful test: remove one data value and check whether the remaining values retain coherence. If not, combining them into a dedicated object is advisable.
+
+### Treatment
+- **Extract Class** when data clumps constitute class fields
+- **Introduce Parameter Object** for recurring method parameters
+- **Preserve Whole Object** to pass complete objects rather than individual fields
+- Evaluate relocating code that operates on these fields to the new data class
+
+### Payoff
+- Improves understanding and organization of code. Operations on particular data are now gathered in a single place, instead of haphazardly throughout the code
+- Reduces code size

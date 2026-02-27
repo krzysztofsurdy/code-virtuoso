@@ -157,3 +157,121 @@ final class Employee extends PersonAddress
 - **Replace Type Code with Subclasses**: Use inheritance to handle variant behaviors
 - **Form Template Method**: When subclasses have similar structure, extract common behavior
 - **Introduce Strategy Pattern**: Use composition when multiple algorithms apply to same data
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Employee {
+    Person person = new Person();
+
+    String getName() {
+        return person.getName();
+    }
+
+    void setName(String name) {
+        person.setName(name);
+    }
+
+    String toString() {
+        return "Employee: " + person.getLastName();
+    }
+}
+```
+
+**After:**
+
+```java
+class Employee extends Person {
+    String toString() {
+        return "Employee: " + getLastName();
+    }
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class Employee
+{
+    Person person = new Person();
+
+    string GetName() => person.GetName();
+    void SetName(string name) => person.SetName(name);
+
+    string ToString() => "Employee: " + person.GetLastName();
+}
+```
+
+**After:**
+
+```csharp
+class Employee : Person
+{
+    override string ToString() => "Employee: " + GetLastName();
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class Employee:
+    def __init__(self):
+        self._person = Person()
+
+    def get_name(self) -> str:
+        return self._person.get_name()
+
+    def set_name(self, name: str):
+        self._person.set_name(name)
+
+    def __str__(self) -> str:
+        return f"Employee: {self._person.get_last_name()}"
+```
+
+**After:**
+
+```python
+class Employee(Person):
+    def __str__(self) -> str:
+        return f"Employee: {self.get_last_name()}"
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Employee {
+    private person: Person = new Person();
+
+    getName(): string {
+        return this.person.getName();
+    }
+
+    setName(name: string): void {
+        this.person.setName(name);
+    }
+
+    toString(): string {
+        return `Employee: ${this.person.getLastName()}`;
+    }
+}
+```
+
+**After:**
+
+```typescript
+class Employee extends Person {
+    toString(): string {
+        return `Employee: ${this.getLastName()}`;
+    }
+}
+```

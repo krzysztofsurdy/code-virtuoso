@@ -145,3 +145,104 @@ class Motorcycle extends Vehicle
 - **Extract Superclass** - Often used in conjunction when creating new common parent classes
 - **Replace Constructor with Factory Method** - Alternative for complex initialization logic
 - **Move Method** - For moving constructor logic to utility classes instead of up the hierarchy
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Manager extends Employee {
+    public Manager(String name, String id, int grade) {
+        this.name = name;
+        this.id = id;
+        this.grade = grade;
+    }
+}
+```
+
+**After:**
+
+```java
+class Manager extends Employee {
+    public Manager(String name, String id, int grade) {
+        super(name, id);
+        this.grade = grade;
+    }
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+public class Manager : Employee
+{
+    public Manager(string name, string id, int grade)
+    {
+        this.name = name;
+        this.id = id;
+        this.grade = grade;
+    }
+}
+```
+
+**After:**
+
+```csharp
+public class Manager : Employee
+{
+    public Manager(string name, string id, int grade) : base(name, id)
+    {
+        this.grade = grade;
+    }
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class Manager(Employee):
+    def __init__(self, name: str, id: str, grade: int):
+        self.name = name
+        self.id = id
+        self.grade = grade
+```
+
+**After:**
+
+```python
+class Manager(Employee):
+    def __init__(self, name: str, id: str, grade: int):
+        super().__init__(name, id)
+        self.grade = grade
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Manager extends Employee {
+    constructor(name: string, id: string, grade: number) {
+        this.name = name;
+        this.id = id;
+        this.grade = grade;
+    }
+}
+```
+
+**After:**
+
+```typescript
+class Manager extends Employee {
+    constructor(name: string, id: string, grade: number) {
+        super(name, id);
+        this.grade = grade;
+    }
+}
+```

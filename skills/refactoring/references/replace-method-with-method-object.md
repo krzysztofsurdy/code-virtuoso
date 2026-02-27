@@ -160,3 +160,165 @@ class OrderProcessor
 - **Decompose Conditional**: Useful for breaking down complex conditional logic before extracting a Method Object
 - **Introduce Parameter Object**: Combine with this pattern to group related parameters
 - **Strategy Pattern**: Method Objects often evolve into Strategy implementations with multiple variants
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+class Order {
+  // ...
+  public double price() {
+    double primaryBasePrice;
+    double secondaryBasePrice;
+    double tertiaryBasePrice;
+    // Perform long computation.
+  }
+}
+```
+
+**After:**
+```java
+class Order {
+  // ...
+  public double price() {
+    return new PriceCalculator(this).compute();
+  }
+}
+
+class PriceCalculator {
+  private double primaryBasePrice;
+  private double secondaryBasePrice;
+  private double tertiaryBasePrice;
+
+  public PriceCalculator(Order order) {
+    // Copy relevant information from the
+    // order object.
+  }
+
+  public double compute() {
+    // Perform long computation.
+  }
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+public class Order
+{
+  // ...
+  public double Price()
+  {
+    double primaryBasePrice;
+    double secondaryBasePrice;
+    double tertiaryBasePrice;
+    // Perform long computation.
+  }
+}
+```
+
+**After:**
+```csharp
+public class Order
+{
+  // ...
+  public double Price()
+  {
+    return new PriceCalculator(this).Compute();
+  }
+}
+
+public class PriceCalculator
+{
+  private double primaryBasePrice;
+  private double secondaryBasePrice;
+  private double tertiaryBasePrice;
+
+  public PriceCalculator(Order order)
+  {
+    // Copy relevant information from the
+    // order object.
+  }
+
+  public double Compute()
+  {
+    // Perform long computation.
+  }
+}
+```
+
+### Python
+
+**Before:**
+```python
+class Order:
+    # ...
+    def price(self):
+        primaryBasePrice = 0
+        secondaryBasePrice = 0
+        tertiaryBasePrice = 0
+        # Perform long computation.
+```
+
+**After:**
+```python
+class Order:
+    # ...
+    def price(self):
+        return PriceCalculator(self).compute()
+
+
+class PriceCalculator:
+    def __init__(self, order):
+        self._primaryBasePrice = 0
+        self._secondaryBasePrice = 0
+        self._tertiaryBasePrice = 0
+        # Copy relevant information from the
+        # order object.
+
+    def compute(self):
+        # Perform long computation.
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+class Order {
+  // ...
+  price(): number {
+    let primaryBasePrice;
+    let secondaryBasePrice;
+    let tertiaryBasePrice;
+    // Perform long computation.
+  }
+}
+```
+
+**After:**
+```typescript
+class Order {
+  // ...
+  price(): number {
+    return new PriceCalculator(this).compute();
+  }
+}
+
+class PriceCalculator {
+  private _primaryBasePrice: number;
+  private _secondaryBasePrice: number;
+  private _tertiaryBasePrice: number;
+
+  constructor(order: Order) {
+    // Copy relevant information from the
+    // order object.
+  }
+
+  compute(): number {
+    // Perform long computation.
+  }
+}
+```

@@ -90,3 +90,159 @@ class Designer extends Employee {}
 - **Pull Up Field**: Consolidates fields from subclasses into the superclass
 - **Extract Method**: Often used in conjunction to identify and isolate duplicate logic before pulling up
 - **Template Method Pattern**: Can be formed by pulling up methods and leaving specific steps to be overridden by subclasses
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+
+```java
+class Employee {
+    // ...
+}
+
+class Salesman extends Employee {
+    String getName() {
+        // ...
+    }
+}
+
+class Engineer extends Employee {
+    String getName() {
+        // ...
+    }
+}
+```
+
+**After:**
+
+```java
+class Employee {
+    String getName() {
+        // ...
+    }
+}
+
+class Salesman extends Employee {
+}
+
+class Engineer extends Employee {
+}
+```
+
+### C#
+
+**Before:**
+
+```csharp
+class Employee
+{
+    // ...
+}
+
+class Salesman : Employee
+{
+    string GetName()
+    {
+        // ...
+    }
+}
+
+class Engineer : Employee
+{
+    string GetName()
+    {
+        // ...
+    }
+}
+```
+
+**After:**
+
+```csharp
+class Employee
+{
+    string GetName()
+    {
+        // ...
+    }
+}
+
+class Salesman : Employee
+{
+}
+
+class Engineer : Employee
+{
+}
+```
+
+### Python
+
+**Before:**
+
+```python
+class Employee:
+    pass
+
+class Salesman(Employee):
+    def get_name(self) -> str:
+        # ...
+
+class Engineer(Employee):
+    def get_name(self) -> str:
+        # ...
+```
+
+**After:**
+
+```python
+class Employee:
+    def get_name(self) -> str:
+        # ...
+
+class Salesman(Employee):
+    pass
+
+class Engineer(Employee):
+    pass
+```
+
+### TypeScript
+
+**Before:**
+
+```typescript
+class Employee {
+    // ...
+}
+
+class Salesman extends Employee {
+    getName(): string {
+        // ...
+    }
+}
+
+class Engineer extends Employee {
+    getName(): string {
+        // ...
+    }
+}
+```
+
+**After:**
+
+```typescript
+class Employee {
+    getName(): string {
+        // ...
+    }
+}
+
+class Salesman extends Employee {
+}
+
+class Engineer extends Employee {
+}
+```

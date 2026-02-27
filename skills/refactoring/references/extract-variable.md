@@ -186,3 +186,111 @@ class PricingCalculator
 - **Introduce Explaining Variable**: A specialized form of Extract Variable focused on breaking down complex expressions
 - **Rename Variable**: Complement this refactoring by ensuring variables have optimal names
 - **Decompose Conditional**: Use this technique to simplify complex conditional statements
+
+## Examples in Other Languages
+
+### Java
+
+**Before:**
+```java
+void renderBanner() {
+  if ((platform.toUpperCase().indexOf("MAC") > -1) &&
+       (browser.toUpperCase().indexOf("IE") > -1) &&
+        wasInitialized() && resize > 0 )
+  {
+    // do something
+  }
+}
+```
+
+**After:**
+```java
+void renderBanner() {
+  final boolean isMacOs = platform.toUpperCase().indexOf("MAC") > -1;
+  final boolean isIE = browser.toUpperCase().indexOf("IE") > -1;
+  final boolean wasResized = resize > 0;
+
+  if (isMacOs && isIE && wasInitialized() && wasResized) {
+    // do something
+  }
+}
+```
+
+### C#
+
+**Before:**
+```csharp
+void RenderBanner()
+{
+  if ((platform.ToUpper().IndexOf("MAC") > -1) &&
+       (browser.ToUpper().IndexOf("IE") > -1) &&
+        wasInitialized() && resize > 0 )
+  {
+    // do something
+  }
+}
+```
+
+**After:**
+```csharp
+void RenderBanner()
+{
+  readonly bool isMacOs = platform.ToUpper().IndexOf("MAC") > -1;
+  readonly bool isIE = browser.ToUpper().IndexOf("IE") > -1;
+  readonly bool wasResized = resize > 0;
+
+  if (isMacOs && isIE && wasInitialized() && wasResized)
+  {
+    // do something
+  }
+}
+```
+
+### Python
+
+**Before:**
+```python
+def renderBanner(self):
+    if (self.platform.toUpperCase().indexOf("MAC") > -1) and \
+       (self.browser.toUpperCase().indexOf("IE") > -1) and \
+       self.wasInitialized() and (self.resize > 0):
+        # do something
+```
+
+**After:**
+```python
+def renderBanner(self):
+    isMacOs = self.platform.toUpperCase().indexOf("MAC") > -1
+    isIE = self.browser.toUpperCase().indexOf("IE") > -1
+    wasResized = self.resize > 0
+
+    if isMacOs and isIE and self.wasInitialized() and wasResized:
+        # do something
+```
+
+### TypeScript
+
+**Before:**
+```typescript
+renderBanner(): void {
+  if ((platform.toUpperCase().indexOf("MAC") > -1) &&
+       (browser.toUpperCase().indexOf("IE") > -1) &&
+        wasInitialized() && resize > 0 )
+  {
+    // do something
+  }
+}
+```
+
+**After:**
+```typescript
+renderBanner(): void {
+  const isMacOs = platform.toUpperCase().indexOf("MAC") > -1;
+  const isIE = browser.toUpperCase().indexOf("IE") > -1;
+  const wasResized = resize > 0;
+
+  if (isMacOs && isIE && wasInitialized() && wasResized) {
+    // do something
+  }
+}
+```
