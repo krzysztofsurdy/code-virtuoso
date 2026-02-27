@@ -1,3 +1,4 @@
+![Logo](logo.png)
 # Code Virtuoso
 
 AI agent skill sets for software engineering — built on the [Agent Skills](https://agentskills.io) open standard. Knowledge, Setup, and Frameworks.
