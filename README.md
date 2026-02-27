@@ -1,16 +1,12 @@
 # Code Virtuoso
 
-AI agent skill sets for **Symfony components**, **Design Patterns**, **Refactoring**, and **SOLID Principles** — built on the [Agent Skills](https://agentskills.io) open standard.
+AI agent skill sets for **Design Patterns**, **Refactoring**, and **SOLID Principles** — built on the [Agent Skills](https://agentskills.io) open standard.
 
 Each plugin is a single consolidated skill with an overview SKILL.md and individual reference files for progressive disclosure. AI agents get the index automatically and load detailed references on demand.
 
+> **Looking for Symfony?** See [symfony-virtuoso](https://github.com/krzysztofsurdy/symfony-virtuoso).
+
 ## Plugins
-
-### Symfony Virtuoso (38 components)
-
-Covers all 38 Symfony components grouped by domain: HTTP & Runtime, Messaging, Console, Dependency Injection, Forms & Validation, Cache/Lock/Semaphore, Events & Workflow, Configuration & Expressions, Filesystem/Finder/Process, Serialization & Types, Testing, and Data & Text Utilities.
-
-See [skills/symfony/SKILL.md](skills/symfony/SKILL.md) for the full component index.
 
 ### Design Patterns Virtuoso (26 patterns)
 
@@ -47,7 +43,6 @@ git clone https://github.com/krzysztofsurdy/code-virtuoso.git
 /plugin marketplace add krzysztofsurdy/code-virtuoso
 
 # Install a specific plugin
-/plugin install symfony-virtuoso@krzysztofsurdy-code-virtuoso
 /plugin install design-patterns-virtuoso@krzysztofsurdy-code-virtuoso
 /plugin install refactoring-virtuoso@krzysztofsurdy-code-virtuoso
 /plugin install solid-virtuoso@krzysztofsurdy-code-virtuoso
@@ -59,12 +54,10 @@ Or browse interactively: run `/plugin`, go to **Discover**, and install individu
 
 ```bash
 # Project-level (committed to your repo)
-cp -r code-virtuoso/skills/symfony .claude/skills/
 cp -r code-virtuoso/skills/design-patterns .claude/skills/
 cp -r code-virtuoso/skills/refactoring .claude/skills/
 
 # User-level (available in all projects)
-cp -r code-virtuoso/skills/symfony ~/.claude/skills/
 ```
 
 Skills are discovered automatically — just mention a component in conversation.
@@ -72,14 +65,12 @@ Skills are discovered automatically — just mention a component in conversation
 ### OpenAI Codex CLI
 
 ```bash
-cp -r code-virtuoso/skills/symfony .codex/skills/
 cp -r code-virtuoso/skills/design-patterns .codex/skills/
 ```
 
 ### Gemini CLI
 
 ```bash
-cat code-virtuoso/skills/symfony/SKILL.md >> GEMINI.md
 cat code-virtuoso/skills/design-patterns/SKILL.md >> GEMINI.md
 ```
 
@@ -87,14 +78,12 @@ cat code-virtuoso/skills/design-patterns/SKILL.md >> GEMINI.md
 
 ```bash
 mkdir -p .github/instructions
-cp code-virtuoso/skills/symfony/SKILL.md .github/instructions/symfony.instructions.md
 cp code-virtuoso/skills/design-patterns/SKILL.md .github/instructions/design-patterns.instructions.md
 ```
 
 ### Amp / OpenCode / Kimi
 
 ```bash
-cp -r code-virtuoso/skills/symfony .agents/skills/
 cp -r code-virtuoso/skills/design-patterns .agents/skills/
 cp -r code-virtuoso/skills/refactoring .agents/skills/
 ```
@@ -103,7 +92,6 @@ cp -r code-virtuoso/skills/refactoring .agents/skills/
 
 ```bash
 mkdir -p .cursor/rules
-cp code-virtuoso/skills/symfony/SKILL.md .cursor/rules/symfony.mdc
 cp code-virtuoso/skills/design-patterns/SKILL.md .cursor/rules/design-patterns.mdc
 ```
 
@@ -111,7 +99,6 @@ cp code-virtuoso/skills/design-patterns/SKILL.md .cursor/rules/design-patterns.m
 
 ```bash
 mkdir -p .windsurf/rules
-cp code-virtuoso/skills/symfony/SKILL.md .windsurf/rules/symfony.md
 cp code-virtuoso/skills/design-patterns/SKILL.md .windsurf/rules/design-patterns.md
 ```
 
@@ -120,9 +107,6 @@ cp code-virtuoso/skills/design-patterns/SKILL.md .windsurf/rules/design-patterns
 ```
 code-virtuoso/
 ├── skills/
-│   ├── symfony/
-│   │   ├── SKILL.md              # Overview + component index
-│   │   └── references/           # 38 individual component docs
 │   ├── design-patterns/
 │   │   ├── SKILL.md              # Overview + pattern index
 │   │   └── references/           # 26 individual pattern docs

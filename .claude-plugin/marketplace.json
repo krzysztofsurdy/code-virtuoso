@@ -4,19 +4,10 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "Agent AI skill sets for Symfony, Design Patterns, and Refactoring",
+    "description": "Agent AI skill sets for Design Patterns, Refactoring, and SOLID Principles",
     "version": "2.0.0"
   },
   "plugins": [
-    {
-      "name": "symfony-virtuoso",
-      "description": "All 38 Symfony component skills — APIs, code patterns, configuration, and common use cases",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/symfony"
-      ]
-    },
     {
       "name": "design-patterns-virtuoso",
       "description": "26 design pattern skills — creational, structural, and behavioral patterns with PHP 8.3+ examples",
