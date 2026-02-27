@@ -161,9 +161,7 @@ For each found skill:
 1. Read the YAML frontmatter to extract `name` and `description`
 2. Build a mapping: `When [situation matching description] -> use /skill-name`
 
-Also detect which skills are NOT installed and build a recommendations list. The full skill catalog across both repositories:
-
-**code-virtuoso skills (public)** — `krzysztofsurdy/code-virtuoso`
+Also detect which **code-virtuoso** skills are NOT installed and build a recommendations list. The full code-virtuoso skill catalog:
 
 | Skill | Description |
 |---|---|
@@ -172,21 +170,7 @@ Also detect which skills are NOT installed and build a recommendations list. The
 | solid | 5 SOLID principles for OO design |
 | debugging | Systematic debugging methodology and root cause analysis |
 | symfony | 38 Symfony component references (PHP projects) |
-
-**dev-virtuoso skills (private)** — `krzysztofsurdy/dev-virtuoso`
-
-| Skill | Description |
-|---|---|
-| ticket-workflow | End-to-end ticket lifecycle from analysis to PR |
-| pr-message-writer | Structured PR messages with technical documentation |
-| report-generator | Polished HTML reports for investigations and changes |
 | agentic-rules-writer | This skill (already installed) |
-| product-manager | Agent team role: requirements, PRD, prioritization |
-| architect | Agent team role: system design, ADRs, tech decisions |
-| backend-dev | Agent team role: backend implementation and testing |
-| frontend-dev | Agent team role: frontend implementation and testing |
-| qa-engineer | Agent team role: test planning, execution, bug reporting |
-| project-manager | Agent team role: PRINCE2 project delivery and controls |
 
 ---
 
@@ -230,18 +214,10 @@ When [situation] -> use /skill-name
 ...
 
 ## Agent Roles
-[If any role skills are installed, list them here]
-When coordinating a multi-agent team:
-- product-manager: owns requirements and PRD
-- architect: owns system design and tech decisions
-- backend-dev: owns backend implementation
-- frontend-dev: owns UI implementation
-- qa-engineer: owns testing and quality sign-off
-- project-manager: owns delivery planning and risk management
+[If any role skills (product-manager, architect, backend-dev, frontend-dev, qa-engineer, project-manager) are detected during Phase 4 scan, list them here with their responsibilities. If no role skills are installed, omit this section entirely.]
 
 ## Recommended (not installed)
 - Install [skill] from krzysztofsurdy/code-virtuoso — [what it helps with]
-- Install [skill] from krzysztofsurdy/dev-virtuoso — [what it helps with]
 ```
 
 ### Project Team-Shared Structure
