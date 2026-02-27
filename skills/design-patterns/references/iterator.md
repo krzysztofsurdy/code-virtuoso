@@ -280,3 +280,213 @@ foreach ($reverseIterator as $key => $item) {
 - **Memento**: Iterators can capture and restore iteration state
 - **Template Method**: Defines skeleton of iteration algorithm
 - **Visitor**: Works with iterators to process collection elements
+
+## Examples in Other Languages
+
+### Java
+
+Before and after: encapsulating iteration to prevent external access to internal collection:
+
+```java
+class IntegerBox {
+    private List<Integer> list = new ArrayList<>();
+
+    public class Iterator {
+        private IntegerBox box;
+        private java.util.Iterator iterator;
+        private int value;
+
+        public Iterator(IntegerBox integerBox) {
+            box = integerBox;
+        }
+
+        public void first() {
+            iterator = box.list.iterator();
+            next();
+        }
+
+        public void next() {
+            try {
+                value = (Integer)iterator.next();
+            } catch (NoSuchElementException ex) {
+                value = -1;
+            }
+        }
+
+        public boolean isDone() {
+            return value == -1;
+        }
+
+        public int currentValue() {
+            return value;
+        }
+    }
+
+    public void add(int in) {
+        list.add(in);
+    }
+
+    public Iterator getIterator() {
+        return new Iterator(this);
+    }
+}
+
+public class IteratorDemo {
+    public static void main(String[] args) {
+        IntegerBox integerBox = new IntegerBox();
+        for (int i = 9; i > 0; --i) {
+            integerBox.add(i);
+        }
+        // Supports multiple simultaneous iterators
+        IntegerBox.Iterator firstItr = integerBox.getIterator();
+        IntegerBox.Iterator secondItr = integerBox.getIterator();
+        for (firstItr.first(); !firstItr.isDone(); firstItr.next()) {
+            System.out.print(firstItr.currentValue() + "  ");
+        }
+        System.out.println();
+        for (firstItr.first(), secondItr.first(); !firstItr.isDone();
+             firstItr.next(), secondItr.next()) {
+            System.out.print(firstItr.currentValue() + " "
+                + secondItr.currentValue() + "  ");
+        }
+    }
+}
+```
+
+### Python
+
+```python
+import collections.abc
+
+
+class ConcreteAggregate(collections.abc.Iterable):
+    """
+    Implement the Iterator creation interface to return an instance of
+    the proper ConcreteIterator.
+    """
+
+    def __init__(self):
+        self._data = None
+
+    def __iter__(self):
+        return ConcreteIterator(self)
+
+
+class ConcreteIterator(collections.abc.Iterator):
+    """
+    Implement the Iterator interface.
+    """
+
+    def __init__(self, concrete_aggregate):
+        self._concrete_aggregate = concrete_aggregate
+
+    def __next__(self):
+        if True:  # if no_elements_to_traverse:
+            raise StopIteration
+        return None  # return element
+
+
+def main():
+    concrete_aggregate = ConcreteAggregate()
+    for _ in concrete_aggregate:
+        pass
+
+
+if __name__ == "__main__":
+    main()
+```
+
+### C++
+
+Stack iterator with friend class access and operator overloading for equality comparison:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Stack
+{
+    int items[10];
+    int sp;
+  public:
+    friend class StackIter;
+    Stack()
+    {
+        sp = -1;
+    }
+    void push(int in)
+    {
+        items[++sp] = in;
+    }
+    int pop()
+    {
+        return items[sp--];
+    }
+    bool isEmpty()
+    {
+        return (sp == -1);
+    }
+    StackIter *createIterator() const;
+};
+
+class StackIter
+{
+    const Stack *stk;
+    int index;
+  public:
+    StackIter(const Stack *s)
+    {
+        stk = s;
+    }
+    void first()
+    {
+        index = 0;
+    }
+    void next()
+    {
+        index++;
+    }
+    bool isDone()
+    {
+        return index == stk->sp + 1;
+    }
+    int currentItem()
+    {
+        return stk->items[index];
+    }
+};
+
+StackIter *Stack::createIterator() const
+{
+  return new StackIter(this);
+}
+
+bool operator == (const Stack &l, const Stack &r)
+{
+  StackIter *itl = l.createIterator();
+  StackIter *itr = r.createIterator();
+  for (itl->first(), itr->first(); !itl->isDone(); itl->next(), itr->next())
+    if (itl->currentItem() != itr->currentItem())
+      break;
+  bool ans = itl->isDone() && itr->isDone();
+  delete itl;
+  delete itr;
+  return ans;
+}
+
+int main()
+{
+  Stack s1;
+  for (int i = 1; i < 5; i++)
+    s1.push(i);
+  Stack s2(s1), s3(s1), s4(s1), s5(s1);
+  s3.pop();
+  s5.pop();
+  s4.push(2);
+  s5.push(9);
+  cout << "1 == 2 is " << (s1 == s2) << endl;
+  cout << "1 == 3 is " << (s1 == s3) << endl;
+  cout << "1 == 4 is " << (s1 == s4) << endl;
+  cout << "1 == 5 is " << (s1 == s5) << endl;
+}
+```

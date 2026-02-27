@@ -465,3 +465,237 @@ echo "Memory: " . $pool->memoryUsed() . " bytes\n";  // 10 bytes total
 ---
 
 *Last updated: February 2026*
+
+## Examples in Other Languages
+
+### Java
+
+#### Before Refactoring
+
+```java
+class Gazillion {
+    private static int num = 0;
+    private int row, col;
+
+    public Gazillion(int maxPerRow) {
+        row = num / maxPerRow;
+        col = num % maxPerRow;
+        num++;
+    }
+
+    void report() {
+        System.out.print(" " + row + col);
+    }
+}
+
+public class FlyweightDemo {
+    public static final int ROWS = 6, COLS = 10;
+
+    public static void main(String[] args) {
+        Gazillion[][] matrix = new Gazillion[ROWS][COLS];
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                matrix[i][j] = new Gazillion(COLS);
+            }
+        }
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                matrix[i][j].report();
+            }
+            System.out.println();
+        }
+    }
+}
+```
+
+#### After Refactoring (with Flyweight Factory)
+
+```java
+class Gazillion {
+    private int row;
+
+    public Gazillion(int row) {
+        this.row = row;
+        System.out.println("ctor: " + this.row);
+    }
+
+    void report(int col) {
+        System.out.print(" " + row + col);
+    }
+}
+
+class Factory {
+    private Gazillion[] pool;
+
+    public Factory(int maxRows) {
+        pool = new Gazillion[maxRows];
+    }
+
+    public Gazillion getFlyweight(int row) {
+        if (pool[row] == null) {
+            pool[row] = new Gazillion(row);
+        }
+        return pool[row];
+    }
+}
+
+public class FlyweightDemo {
+    public static final int ROWS = 6, COLS = 10;
+
+    public static void main(String[] args) {
+        Factory theFactory = new Factory(ROWS);
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++)
+                theFactory.getFlyweight(i).report(j);
+            System.out.println();
+        }
+    }
+}
+```
+
+### C++
+
+#### Before Refactoring
+
+```cpp
+class Gazillion {
+  public:
+    Gazillion() {
+        m_value_one = s_num / Y;
+        m_value_two = s_num % Y;
+        ++s_num;
+    }
+    void report() {
+        cout << m_value_one << m_value_two << ' ';
+    }
+    static int X, Y;
+  private:
+    int m_value_one;
+    int m_value_two;
+    static int s_num;
+};
+
+int Gazillion::X = 6, Gazillion::Y = 10, Gazillion::s_num = 0;
+
+int main() {
+    Gazillion matrix[Gazillion::X][Gazillion::Y];
+    for (int i = 0; i < Gazillion::X; ++i) {
+        for (int j = 0; j < Gazillion::Y; ++j)
+            matrix[i][j].report();
+        cout << '\n';
+    }
+}
+```
+
+#### After Refactoring (with Flyweight Factory)
+
+```cpp
+class Gazillion {
+  public:
+    Gazillion(int value_one) {
+        m_value_one = value_one;
+        cout << "ctor: " << m_value_one << '\n';
+    }
+    ~Gazillion() {
+        cout << m_value_one << ' ';
+    }
+    void report(int value_two) {
+        cout << m_value_one << value_two << ' ';
+    }
+  private:
+    int m_value_one;
+};
+
+class Factory {
+  public:
+    static Gazillion *get_fly(int in) {
+        if (!s_pool[in])
+            s_pool[in] = new Gazillion(in);
+        return s_pool[in];
+    }
+    static void clean_up() {
+        cout << "dtors: ";
+        for (int i = 0; i < X; ++i)
+            if (s_pool[i])
+                delete s_pool[i];
+        cout << '\n';
+    }
+    static int X, Y;
+  private:
+    static Gazillion *s_pool[];
+};
+
+int Factory::X = 6, Factory::Y = 10;
+Gazillion *Factory::s_pool[] = {0, 0, 0, 0, 0, 0};
+
+int main() {
+    for (int i = 0; i < Factory::X; ++i) {
+        for (int j = 0; j < Factory::Y; ++j)
+            Factory::get_fly(i)->report(j);
+        cout << '\n';
+    }
+    Factory::clean_up();
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class FlyweightFactory:
+    """
+    Create and manage flyweight objects.
+    Ensure that flyweights are shared properly. When a client requests a
+    flyweight, the FlyweightFactory object supplies an existing instance
+    or creates one, if none exists.
+    """
+
+    def __init__(self):
+        self._flyweights = {}
+
+    def get_flyweight(self, key):
+        try:
+            flyweight = self._flyweights[key]
+        except KeyError:
+            flyweight = ConcreteFlyweight()
+            self._flyweights[key] = flyweight
+        return flyweight
+
+
+class Flyweight(metaclass=abc.ABCMeta):
+    """
+    Declare an interface through which flyweights can receive and act on
+    extrinsic state.
+    """
+
+    def __init__(self):
+        self.intrinsic_state = None
+
+    @abc.abstractmethod
+    def operation(self, extrinsic_state):
+        pass
+
+
+class ConcreteFlyweight(Flyweight):
+    """
+    Implement the Flyweight interface and add storage for intrinsic
+    state, if any. A ConcreteFlyweight object must be sharable. Any
+    state it stores must be intrinsic; that is, it must be independent
+    of the ConcreteFlyweight object's context.
+    """
+
+    def operation(self, extrinsic_state):
+        pass
+
+
+def main():
+    flyweight_factory = FlyweightFactory()
+    concrete_flyweight = flyweight_factory.get_flyweight("key")
+    concrete_flyweight.operation(None)
+
+
+if __name__ == "__main__":
+    main()
+```

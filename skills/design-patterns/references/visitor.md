@@ -209,3 +209,225 @@ echo "Total: " . $pricer->getTotal() . "\n";
 ## Key Takeaways
 
 The Visitor pattern is powerful for scenarios where you have a stable object structure but frequently need to add new operations. By separating operations from the objects themselves, it maintains clean separation of concerns and adheres to SOLID principles. However, it's most effective when element types are stable, as adding new types requires updating all visitors.
+
+## Examples in Other Languages
+
+### Java
+
+```java
+interface Element {
+    void accept(Visitor v);
+}
+
+class FOO implements Element {
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
+    public String getFOO() {
+        return "FOO";
+    }
+}
+
+class BAR implements Element {
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
+    public String getBAR() {
+        return "BAR";
+    }
+}
+
+class BAZ implements Element {
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
+    public String getBAZ() {
+        return "BAZ";
+    }
+}
+
+interface Visitor {
+    void visit(FOO foo);
+    void visit(BAR bar);
+    void visit(BAZ baz);
+}
+
+class UpVisitor implements Visitor {
+    public void visit(FOO foo) {
+        System.out.println("do Up on " + foo.getFOO());
+    }
+    public void visit(BAR bar) {
+        System.out.println("do Up on " + bar.getBAR());
+    }
+    public void visit(BAZ baz) {
+        System.out.println("do Up on " + baz.getBAZ());
+    }
+}
+
+class DownVisitor implements Visitor {
+    public void visit(FOO foo) {
+        System.out.println("do Down on " + foo.getFOO());
+    }
+    public void visit(BAR bar) {
+        System.out.println("do Down on " + bar.getBAR());
+    }
+    public void visit(BAZ baz) {
+        System.out.println("do Down on " + baz.getBAZ());
+    }
+}
+
+public class VisitorDemo {
+    public static void main(String[] args) {
+        Element[] list = {new FOO(), new BAR(), new BAZ()};
+        UpVisitor up = new UpVisitor();
+        DownVisitor down = new DownVisitor();
+        for (Element element : list) {
+            element.accept(up);
+        }
+        for (Element element : list) {
+            element.accept(down);
+        }
+    }
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Element(metaclass=abc.ABCMeta):
+    """Define an Accept operation that takes a visitor as an argument."""
+
+    @abc.abstractmethod
+    def accept(self, visitor):
+        pass
+
+
+class ConcreteElementA(Element):
+    def accept(self, visitor):
+        visitor.visit_concrete_element_a(self)
+
+
+class ConcreteElementB(Element):
+    def accept(self, visitor):
+        visitor.visit_concrete_element_b(self)
+
+
+class Visitor(metaclass=abc.ABCMeta):
+    """Declare a Visit operation for each class of ConcreteElement."""
+
+    @abc.abstractmethod
+    def visit_concrete_element_a(self, concrete_element_a):
+        pass
+
+    @abc.abstractmethod
+    def visit_concrete_element_b(self, concrete_element_b):
+        pass
+
+
+class ConcreteVisitor1(Visitor):
+    def visit_concrete_element_a(self, concrete_element_a):
+        pass
+
+    def visit_concrete_element_b(self, concrete_element_b):
+        pass
+
+
+class ConcreteVisitor2(Visitor):
+    def visit_concrete_element_a(self, concrete_element_a):
+        pass
+
+    def visit_concrete_element_b(self, concrete_element_b):
+        pass
+
+
+def main():
+    concrete_visitor_1 = ConcreteVisitor1()
+    concrete_element_a = ConcreteElementA()
+    concrete_element_a.accept(concrete_visitor_1)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+### C++
+
+Before -- operations embedded directly in element classes:
+
+```cpp
+class Color {
+  public:
+    virtual void count() = 0;
+    virtual void call() = 0;
+    static void report_num() {
+        cout << "Reds " << s_num_red << ", Blus " << s_num_blu << '\n';
+    }
+  protected:
+    static int s_num_red, s_num_blu;
+};
+
+class Red: public Color {
+  public:
+    void count() { ++s_num_red; }
+    void call() { eye(); }
+    void eye() { cout << "Red::eye\n"; }
+};
+
+class Blu: public Color {
+  public:
+    void count() { ++s_num_blu; }
+    void call() { sky(); }
+    void sky() { cout << "Blu::sky\n"; }
+};
+```
+
+After -- visitor separates operations from element classes:
+
+```cpp
+class Color {
+  public:
+    virtual void accept(class Visitor*) = 0;
+};
+
+class Red: public Color {
+  public:
+    void accept(Visitor *v);
+    void eye() { cout << "Red::eye\n"; }
+};
+
+class Blu: public Color {
+  public:
+    void accept(Visitor *v);
+    void sky() { cout << "Blu::sky\n"; }
+};
+
+class Visitor {
+  public:
+    virtual void visit(Red*) = 0;
+    virtual void visit(Blu*) = 0;
+};
+
+class CountVisitor: public Visitor {
+  public:
+    CountVisitor() : m_num_red(0), m_num_blu(0) {}
+    void visit(Red*) { ++m_num_red; }
+    void visit(Blu*) { ++m_num_blu; }
+    void report_num() {
+        cout << "Reds " << m_num_red << ", Blus " << m_num_blu << '\n';
+    }
+  private:
+    int m_num_red, m_num_blu;
+};
+
+class CallVisitor: public Visitor {
+  public:
+    void visit(Red *r) { r->eye(); }
+    void visit(Blu *b) { b->sky(); }
+};
+
+void Red::accept(Visitor *v) { v->visit(this); }
+void Blu::accept(Visitor *v) { v->visit(this); }
+```

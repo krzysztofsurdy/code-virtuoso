@@ -255,3 +255,145 @@ $dbHost = ConfigurationManager::getInstance()->get('database.host');
 - **Observer**: Singleton registries can manage observer lists
 - **Service Locator**: Anti-pattern that often uses Singletons to locate services
 - **Dependency Injection**: Modern alternative that reduces Singleton dependency through constructor injection
+
+## Examples in Other Languages
+
+### Java
+
+```java
+public class Singleton {
+    private Singleton() {}
+
+    private static class SingletonHolder {
+        private static final Singleton INSTANCE = new Singleton();
+    }
+
+    public static Singleton getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+}
+```
+
+### C++
+
+**Before: manual global pointer management**
+
+```cpp
+class GlobalClass {
+    int m_value;
+  public:
+    GlobalClass(int v = 0) {
+        m_value = v;
+    }
+    int get_value() {
+        return m_value;
+    }
+    void set_value(int v) {
+        m_value = v;
+    }
+};
+
+GlobalClass *global_ptr = 0;
+
+void foo(void) {
+  if (!global_ptr)
+    global_ptr = new GlobalClass;
+  global_ptr->set_value(1);
+  cout << "foo: global_ptr is " << global_ptr->get_value() << '\n';
+}
+
+void bar(void) {
+  if (!global_ptr)
+    global_ptr = new GlobalClass;
+  global_ptr->set_value(2);
+  cout << "bar: global_ptr is " << global_ptr->get_value() << '\n';
+}
+
+int main() {
+  if (!global_ptr)
+    global_ptr = new GlobalClass;
+  cout << "main: global_ptr is " << global_ptr->get_value() << '\n';
+  foo();
+  bar();
+}
+```
+
+**After: Singleton pattern with controlled access**
+
+```cpp
+class GlobalClass {
+    int m_value;
+    static GlobalClass *s_instance;
+    GlobalClass(int v = 0) {
+        m_value = v;
+    }
+  public:
+    int get_value() {
+        return m_value;
+    }
+    void set_value(int v) {
+        m_value = v;
+    }
+    static GlobalClass *instance() {
+        if (!s_instance)
+          s_instance = new GlobalClass;
+        return s_instance;
+    }
+};
+
+GlobalClass *GlobalClass::s_instance = 0;
+
+void foo(void) {
+  GlobalClass::instance()->set_value(1);
+  cout << "foo: global_ptr is " << GlobalClass::instance()->get_value() << '\n';
+}
+
+void bar(void) {
+  GlobalClass::instance()->set_value(2);
+  cout << "bar: global_ptr is " << GlobalClass::instance()->get_value() << '\n';
+}
+
+int main() {
+  cout << "main: global_ptr is " << GlobalClass::instance()->get_value() << '\n';
+  foo();
+  bar();
+}
+```
+
+### Python
+
+```python
+class Singleton(type):
+    """
+    Define an Instance operation that lets clients access its unique
+    instance.
+    """
+
+    def __init__(cls, name, bases, attrs, **kwargs):
+        super().__init__(name, bases, attrs)
+        cls._instance = None
+
+    def __call__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__call__(*args, **kwargs)
+        return cls._instance
+
+
+class MyClass(metaclass=Singleton):
+    """
+    Example class.
+    """
+    pass
+
+
+def main():
+    m1 = MyClass()
+    m2 = MyClass()
+    assert m1 is m2
+
+
+if __name__ == "__main__":
+    main()
+```
+
+*Source: [sourcemaking.com/design_patterns/singleton](https://sourcemaking.com/design_patterns/singleton)*

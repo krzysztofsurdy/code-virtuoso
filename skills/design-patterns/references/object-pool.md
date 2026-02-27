@@ -264,3 +264,237 @@ $pool->releaseWorker($worker);
 - **Flyweight**: Similar goal of sharing objects, but focuses on intrinsic/extrinsic state
 - **Proxy**: Can wrap pooled objects to track acquisition and release
 - **Observer**: Notify listeners when pool availability changes
+
+## Examples in Other Languages
+
+### Java
+
+```java
+public abstract class ObjectPool<T> {
+  private long expirationTime;
+  private Hashtable<T, Long> locked, unlocked;
+
+  public ObjectPool() {
+    expirationTime = 30000; // 30 seconds
+    locked = new Hashtable<T, Long>();
+    unlocked = new Hashtable<T, Long>();
+  }
+
+  protected abstract T create();
+  public abstract boolean validate(T o);
+  public abstract void expire(T o);
+
+  public synchronized T checkOut() {
+    long now = System.currentTimeMillis();
+    T t;
+    if (unlocked.size() > 0) {
+      Enumeration<T> e = unlocked.keys();
+      while (e.hasMoreElements()) {
+        t = e.nextElement();
+        if ((now - unlocked.get(t)) > expirationTime) {
+          unlocked.remove(t);
+          expire(t);
+          t = null;
+        } else {
+          if (validate(t)) {
+            unlocked.remove(t);
+            locked.put(t, now);
+            return (t);
+          } else {
+            unlocked.remove(t);
+            expire(t);
+            t = null;
+          }
+        }
+      }
+    }
+    t = create();
+    locked.put(t, now);
+    return (t);
+  }
+
+  public synchronized void checkIn(T t) {
+    locked.remove(t);
+    unlocked.put(t, System.currentTimeMillis());
+  }
+}
+
+public class JDBCConnectionPool extends ObjectPool<Connection> {
+  private String dsn, usr, pwd;
+
+  public JDBCConnectionPool(String driver, String dsn, String usr, String pwd) {
+    super();
+    try {
+      Class.forName(driver).newInstance();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    this.dsn = dsn;
+    this.usr = usr;
+    this.pwd = pwd;
+  }
+
+  @Override
+  protected Connection create() {
+    try {
+      return (DriverManager.getConnection(dsn, usr, pwd));
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return (null);
+    }
+  }
+
+  @Override
+  public void expire(Connection o) {
+    try {
+      ((Connection) o).close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override
+  public boolean validate(Connection o) {
+    try {
+      return (!((Connection) o).isClosed());
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return (false);
+    }
+  }
+}
+
+public class Main {
+  public static void main(String args[]) {
+    JDBCConnectionPool pool = new JDBCConnectionPool(
+      "org.hsqldb.jdbcDriver", "jdbc:hsqldb://localhost/mydb",
+      "sa", "secret");
+
+    Connection con = pool.checkOut();
+    // Use the connection
+    pool.checkIn(con);
+  }
+}
+```
+
+### C++
+
+```cpp
+#include <string>
+#include <iostream>
+#include <list>
+
+class Resource {
+    int value;
+    public:
+        Resource() {
+            value = 0;
+        }
+        void reset() {
+            value = 0;
+        }
+        int getValue() {
+            return value;
+        }
+        void setValue(int number) {
+            value = number;
+        }
+};
+
+/* Note, that this class is a singleton. */
+class ObjectPool {
+    private:
+        std::list<Resource*> resources;
+        static ObjectPool* instance;
+        ObjectPool() {}
+    public:
+        static ObjectPool* getInstance() {
+            if (instance == 0) {
+                instance = new ObjectPool;
+            }
+            return instance;
+        }
+
+        Resource* getResource() {
+            if (resources.empty()) {
+                std::cout << "Creating new." << std::endl;
+                return new Resource;
+            } else {
+                std::cout << "Reusing existing." << std::endl;
+                Resource* resource = resources.front();
+                resources.pop_front();
+                return resource;
+            }
+        }
+
+        void returnResource(Resource* object) {
+            object->reset();
+            resources.push_back(object);
+        }
+};
+
+ObjectPool* ObjectPool::instance = 0;
+
+int main() {
+    ObjectPool* pool = ObjectPool::getInstance();
+    Resource* one;
+    Resource* two;
+
+    one = pool->getResource();
+    one->setValue(10);
+    std::cout << "one = " << one->getValue() << " [" << one << "]" << std::endl;
+
+    two = pool->getResource();
+    two->setValue(20);
+    std::cout << "two = " << two->getValue() << " [" << two << "]" << std::endl;
+
+    pool->returnResource(one);
+    pool->returnResource(two);
+
+    one = pool->getResource();
+    std::cout << "one = " << one->getValue() << " [" << one << "]" << std::endl;
+
+    two = pool->getResource();
+    std::cout << "two = " << two->getValue() << " [" << two << "]" << std::endl;
+
+    return 0;
+}
+```
+
+### Python
+
+```python
+class ReusablePool:
+    """
+    Manage Reusable objects for use by Client objects.
+    """
+
+    def __init__(self, size):
+        self._reusables = [Reusable() for _ in range(size)]
+
+    def acquire(self):
+        return self._reusables.pop()
+
+    def release(self, reusable):
+        self._reusables.append(reusable)
+
+
+class Reusable:
+    """
+    Collaborate with other objects for a limited amount of time, then
+    they are no longer needed for that collaboration.
+    """
+    pass
+
+
+def main():
+    reusable_pool = ReusablePool(10)
+    reusable = reusable_pool.acquire()
+    reusable_pool.release(reusable)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+*Source: [sourcemaking.com/design_patterns/object_pool](https://sourcemaking.com/design_patterns/object_pool)*

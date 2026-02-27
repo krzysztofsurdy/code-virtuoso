@@ -204,3 +204,199 @@ $rect->draw(); // Output: Drawing rectangle on Windows...
 - **Strategy**: Similar structure, but different intent (algorithms vs. implementations)
 - **Decorator**: Both use composition, but for different purposes (adding features vs. varying implementation)
 - **Facade**: Provides simplified interface; Bridge provides abstraction-implementation separation
+
+## Examples in Other Languages
+
+### Java
+
+Decoupling stack abstraction from implementation (array-based vs linked-list storage):
+
+```java
+class Node {
+    public int value;
+    public Node prev, next;
+    public Node(int value) { this.value = value; }
+}
+
+class StackArray {
+    private int[] items;
+    private int size = -1;
+
+    public StackArray() { this.items = new int[12]; }
+    public StackArray(int cells) { this.items = new int[cells]; }
+
+    public void push(int i) {
+        if (!isFull()) { items[++size] = i; }
+    }
+    public boolean isEmpty() { return size == -1; }
+    public boolean isFull() { return size == items.length - 1; }
+    public int top() { return isEmpty() ? -1 : items[size]; }
+    public int pop() { return isEmpty() ? -1 : items[size--]; }
+}
+
+class StackList {
+    private Node last;
+
+    public void push(int i) {
+        if (last == null) {
+            last = new Node(i);
+        } else {
+            last.next = new Node(i);
+            last.next.prev = last;
+            last = last.next;
+        }
+    }
+    public boolean isEmpty() { return last == null; }
+    public boolean isFull() { return false; }
+    public int top() { return isEmpty() ? -1 : last.value; }
+    public int pop() {
+        if (isEmpty()) return -1;
+        int ret = last.value;
+        last = last.prev;
+        return ret;
+    }
+}
+
+class StackFIFO extends StackArray {
+    private StackArray stackArray = new StackArray();
+    public int pop() {
+        while (!isEmpty()) { stackArray.push(super.pop()); }
+        int ret = stackArray.pop();
+        while (!stackArray.isEmpty()) { push(stackArray.pop()); }
+        return ret;
+    }
+}
+
+class StackHanoi extends StackArray {
+    private int totalRejected = 0;
+    public int reportRejected() { return totalRejected; }
+    public void push(int in) {
+        if (!isEmpty() && in > top()) { totalRejected++; }
+        else { super.push(in); }
+    }
+}
+```
+
+### C++
+
+Bridge pattern with time display: separating time abstraction from civilian/military formatting:
+
+```cpp
+#include <iostream>
+#include <iomanip>
+#include <cstring>
+using namespace std;
+
+class TimeImp {
+  public:
+    TimeImp(int hr, int min) : hr_(hr), min_(min) {}
+    virtual void tell() {
+        cout << "time is " << setw(2) << setfill('0') << hr_ << min_ << endl;
+    }
+  protected:
+    int hr_, min_;
+};
+
+class CivilianTimeImp: public TimeImp {
+  public:
+    CivilianTimeImp(int hr, int min, int pm) : TimeImp(hr, min) {
+        if (pm) strcpy(whichM_, " PM");
+        else strcpy(whichM_, " AM");
+    }
+    void tell() {
+        cout << "time is " << hr_ << ":" << min_ << whichM_ << endl;
+    }
+  protected:
+    char whichM_[4];
+};
+
+class ZuluTimeImp: public TimeImp {
+  public:
+    ZuluTimeImp(int hr, int min, int zone) : TimeImp(hr, min) {
+        if (zone == 5) strcpy(zone_, " Eastern Standard Time");
+        else if (zone == 6) strcpy(zone_, " Central Standard Time");
+    }
+    void tell() {
+        cout << "time is " << setw(2) << setfill('0') << hr_ << min_ << zone_ << endl;
+    }
+  protected:
+    char zone_[30];
+};
+
+class Time {
+  public:
+    Time() {}
+    Time(int hr, int min) { imp_ = new TimeImp(hr, min); }
+    virtual void tell() { imp_->tell(); }
+  protected:
+    TimeImp *imp_;
+};
+
+class CivilianTime: public Time {
+  public:
+    CivilianTime(int hr, int min, int pm) { imp_ = new CivilianTimeImp(hr, min, pm); }
+};
+
+class ZuluTime: public Time {
+  public:
+    ZuluTime(int hr, int min, int zone) { imp_ = new ZuluTimeImp(hr, min, zone); }
+};
+
+int main() {
+    Time *times[3];
+    times[0] = new Time(14, 30);
+    times[1] = new CivilianTime(2, 30, 1);
+    times[2] = new ZuluTime(14, 30, 6);
+    for (int i = 0; i < 3; i++)
+        times[i]->tell();
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Abstraction:
+    """
+    Define the abstraction's interface.
+    Maintain a reference to an object of type Implementor.
+    """
+    def __init__(self, imp):
+        self._imp = imp
+
+    def operation(self):
+        self._imp.operation_imp()
+
+
+class Implementor(metaclass=abc.ABCMeta):
+    """
+    Define the interface for implementation classes. This interface
+    doesn't have to correspond exactly to Abstraction's interface;
+    in fact the two interfaces can be quite different.
+    """
+    @abc.abstractmethod
+    def operation_imp(self):
+        pass
+
+
+class ConcreteImplementorA(Implementor):
+    def operation_imp(self):
+        pass
+
+
+class ConcreteImplementorB(Implementor):
+    def operation_imp(self):
+        pass
+
+
+def main():
+    concrete_implementor_a = ConcreteImplementorA()
+    abstraction = Abstraction(concrete_implementor_a)
+    abstraction.operation()
+
+
+if __name__ == "__main__":
+    main()
+```

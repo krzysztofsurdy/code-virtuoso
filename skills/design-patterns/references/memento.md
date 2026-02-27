@@ -242,3 +242,219 @@ if ($history->canRedo()) {
 - Implement delta-based mementos storing only changes
 - Use weak references for automatic cleanup
 - Combine with Command pattern for sophisticated transaction systems
+
+## Examples in Other Languages
+
+### Java
+
+```java
+import java.util.ArrayList;
+
+class Memento {
+    private String state;
+
+    public Memento(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+}
+
+class Originator {
+    private String state;
+
+    public void setState(String state) {
+        System.out.println("Originator: Setting state to " + state);
+        this.state = state;
+    }
+
+    public Memento save() {
+        System.out.println("Originator: Saving to Memento.");
+        return new Memento(state);
+    }
+
+    public void restore(Memento m) {
+        state = m.getState();
+        System.out.println("Originator: State after restoring from Memento: " + state);
+    }
+}
+
+class Caretaker {
+    private ArrayList<Memento> mementos = new ArrayList<>();
+
+    public void addMemento(Memento m) {
+        mementos.add(m);
+    }
+
+    public Memento getMemento() {
+        return mementos.get(1);
+    }
+}
+
+public class MementoDemo {
+    public static void main(String[] args) {
+        Caretaker caretaker = new Caretaker();
+        Originator originator = new Originator();
+        originator.setState("State1");
+        originator.setState("State2");
+        caretaker.addMemento(originator.save());
+        originator.setState("State3");
+        caretaker.addMemento(originator.save());
+        originator.setState("State4");
+        originator.restore(caretaker.getMemento());
+    }
+}
+```
+
+### C++
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Number;
+
+class Memento {
+  public:
+    Memento(int val) {
+        _state = val;
+    }
+  private:
+    friend class Number;
+    int _state;
+};
+
+class Number {
+  public:
+    Number(int value) {
+        _value = value;
+    }
+    void dubble() {
+        _value = 2 * _value;
+    }
+    void half() {
+        _value = _value / 2;
+    }
+    int getValue() {
+        return _value;
+    }
+    Memento *createMemento() {
+        return new Memento(_value);
+    }
+    void reinstateMemento(Memento *mem) {
+        _value = mem->_state;
+    }
+  private:
+    int _value;
+};
+
+class Command {
+  public:
+    typedef void(Number::*Action)();
+    Command(Number *receiver, Action action) {
+        _receiver = receiver;
+        _action = action;
+    }
+    virtual void execute() {
+        _mementoList[_numCommands] = _receiver->createMemento();
+        _commandList[_numCommands] = this;
+        if (_numCommands > _highWater)
+            _highWater = _numCommands;
+        _numCommands++;
+        (_receiver->*_action)();
+    }
+    static void undo() {
+        if (_numCommands == 0) {
+            cout << "*** Attempt to run off the end!! ***" << endl;
+            return;
+        }
+        _commandList[_numCommands - 1]->_receiver->reinstateMemento(
+            _mementoList[_numCommands - 1]);
+        _numCommands--;
+    }
+    void static redo() {
+        if (_numCommands > _highWater) {
+            cout << "*** Attempt to run off the end!! ***" << endl;
+            return;
+        }
+        (_commandList[_numCommands]->_receiver
+            ->*(_commandList[_numCommands]->_action))();
+        _numCommands++;
+    }
+  protected:
+    Number *_receiver;
+    Action _action;
+    static Command *_commandList[20];
+    static Memento *_mementoList[20];
+    static int _numCommands;
+    static int _highWater;
+};
+
+Command *Command::_commandList[];
+Memento *Command::_mementoList[];
+int Command::_numCommands = 0;
+int Command::_highWater = 0;
+
+int main() {
+    int i;
+    cout << "Integer: ";
+    cin >> i;
+    Number *object = new Number(i);
+
+    Command *commands[3];
+    commands[1] = new Command(object, &Number::dubble);
+    commands[2] = new Command(object, &Number::half);
+
+    cout << "Exit[0], Double[1], Half[2], Undo[3], Redo[4]: ";
+    cin >> i;
+
+    while (i) {
+        if (i == 3)
+            Command::undo();
+        else if (i == 4)
+            Command::redo();
+        else
+            commands[i]->execute();
+        cout << "   " << object->getValue() << endl;
+        cout << "Exit[0], Double[1], Half[2], Undo[3], Redo[4]: ";
+        cin >> i;
+    }
+}
+```
+
+### Python
+
+```python
+import pickle
+
+
+class Originator:
+    """
+    Create a memento containing a snapshot of its current internal state.
+    Use the memento to restore its internal state.
+    """
+
+    def __init__(self):
+        self._state = None
+
+    def set_memento(self, memento):
+        previous_state = pickle.loads(memento)
+        vars(self).clear()
+        vars(self).update(previous_state)
+
+    def create_memento(self):
+        return pickle.dumps(vars(self))
+
+
+def main():
+    originator = Originator()
+    memento = originator.create_memento()
+    originator._state = True
+    originator.set_memento(memento)
+
+
+if __name__ == "__main__":
+    main()
+```

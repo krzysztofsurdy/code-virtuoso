@@ -269,3 +269,243 @@ $migration = $factory->createMigration();
 - **Prototype**: Can be combined to handle object cloning within families
 - **Builder**: Alternative pattern when constructing complex objects with many variants
 - **Strategy**: Both encapsulate interchangeable alternatives but at different levels
+
+## Examples in Other Languages
+
+### Java
+
+**Example 1: Hardware Architecture Factory**
+
+```java
+abstract class CPU {}
+abstract class MMU {}
+
+class EmberCPU extends CPU {}
+class EmberMMU extends MMU {}
+class EnginolaCPU extends CPU {}
+class EnginolaMMU extends MMU {}
+
+enum Architecture {
+    ENGINOLA, EMBER
+}
+
+abstract class AbstractFactory {
+    private static final EmberToolkit EMBER_TOOLKIT = new EmberToolkit();
+    private static final EnginolaToolkit ENGINOLA_TOOLKIT = new EnginolaToolkit();
+
+    static AbstractFactory getFactory(Architecture architecture) {
+        AbstractFactory factory = null;
+        switch (architecture) {
+            case ENGINOLA:
+                factory = ENGINOLA_TOOLKIT;
+                break;
+            case EMBER:
+                factory = EMBER_TOOLKIT;
+                break;
+        }
+        return factory;
+    }
+
+    public abstract CPU createCPU();
+    public abstract MMU createMMU();
+}
+
+class EmberToolkit extends AbstractFactory {
+    @Override
+    public CPU createCPU() {
+        return new EmberCPU();
+    }
+
+    @Override
+    public MMU createMMU() {
+        return new EmberMMU();
+    }
+}
+
+class EnginolaToolkit extends AbstractFactory {
+    @Override
+    public CPU createCPU() {
+        return new EnginolaCPU();
+    }
+
+    @Override
+    public MMU createMMU() {
+        return new EnginolaMMU();
+    }
+}
+
+public class Client {
+    public static void main(String[] args) {
+        AbstractFactory factory = AbstractFactory.getFactory(Architecture.EMBER);
+        CPU cpu = factory.createCPU();
+    }
+}
+```
+
+### C++
+
+```cpp
+#include <iostream.h>
+
+class Shape {
+  public:
+    Shape() {
+      id_ = total_++;
+    }
+    virtual void draw() = 0;
+  protected:
+    int id_;
+    static int total_;
+};
+int Shape::total_ = 0;
+
+class Circle : public Shape {
+  public:
+    void draw() {
+      cout << "circle " << id_ << ": draw" << endl;
+    }
+};
+class Square : public Shape {
+  public:
+    void draw() {
+      cout << "square " << id_ << ": draw" << endl;
+    }
+};
+class Ellipse : public Shape {
+  public:
+    void draw() {
+      cout << "ellipse " << id_ << ": draw" << endl;
+    }
+};
+class Rectangle : public Shape {
+  public:
+    void draw() {
+      cout << "rectangle " << id_ << ": draw" << endl;
+    }
+};
+
+class Factory {
+  public:
+    virtual Shape* createCurvedInstance() = 0;
+    virtual Shape* createStraightInstance() = 0;
+};
+
+class SimpleShapeFactory : public Factory {
+  public:
+    Shape* createCurvedInstance() {
+      return new Circle;
+    }
+    Shape* createStraightInstance() {
+      return new Square;
+    }
+};
+class RobustShapeFactory : public Factory {
+  public:
+    Shape* createCurvedInstance() {
+      return new Ellipse;
+    }
+    Shape* createStraightInstance() {
+      return new Rectangle;
+    }
+};
+
+int main() {
+#ifdef SIMPLE
+  Factory* factory = new SimpleShapeFactory;
+#elif ROBUST
+  Factory* factory = new RobustShapeFactory;
+#endif
+  Shape* shapes[3];
+
+  shapes[0] = factory->createCurvedInstance();
+  shapes[1] = factory->createStraightInstance();
+  shapes[2] = factory->createCurvedInstance();
+
+  for (int i=0; i < 3; i++) {
+    shapes[i]->draw();
+  }
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class AbstractFactory(metaclass=abc.ABCMeta):
+
+    @abc.abstractmethod
+    def create_product_a(self):
+        pass
+
+    @abc.abstractmethod
+    def create_product_b(self):
+        pass
+
+
+class ConcreteFactory1(AbstractFactory):
+
+    def create_product_a(self):
+        return ConcreteProductA1()
+
+    def create_product_b(self):
+        return ConcreteProductB1()
+
+
+class ConcreteFactory2(AbstractFactory):
+
+    def create_product_a(self):
+        return ConcreteProductA2()
+
+    def create_product_b(self):
+        return ConcreteProductB2()
+
+
+class AbstractProductA(metaclass=abc.ABCMeta):
+
+    @abc.abstractmethod
+    def interface_a(self):
+        pass
+
+
+class ConcreteProductA1(AbstractProductA):
+    def interface_a(self):
+        pass
+
+
+class ConcreteProductA2(AbstractProductA):
+    def interface_a(self):
+        pass
+
+
+class AbstractProductB(metaclass=abc.ABCMeta):
+
+    @abc.abstractmethod
+    def interface_b(self):
+        pass
+
+
+class ConcreteProductB1(AbstractProductB):
+    def interface_b(self):
+        pass
+
+
+class ConcreteProductB2(AbstractProductB):
+    def interface_b(self):
+        pass
+
+
+def main():
+    for factory in (ConcreteFactory1(), ConcreteFactory2()):
+        product_a = factory.create_product_a()
+        product_b = factory.create_product_b()
+        product_a.interface_a()
+        product_b.interface_b()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+*Source: [sourcemaking.com/design_patterns/abstract_factory](https://sourcemaking.com/design_patterns/abstract_factory)*

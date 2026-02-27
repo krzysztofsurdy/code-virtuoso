@@ -314,3 +314,221 @@ echo $doc2->describe(); // Document: title=Report, author=John Doe
 ---
 
 *Last updated: February 2026*
+
+## Examples in Other Languages
+
+### Java
+
+```java
+interface Person {
+    Person clone();
+}
+
+class Tom implements Person {
+    private final String NAME = "Tom";
+
+    @Override
+    public Person clone() {
+        return new Tom();
+    }
+
+    @Override
+    public String toString() {
+        return NAME;
+    }
+}
+
+class Dick implements Person {
+    private final String NAME = "Dick";
+
+    @Override
+    public Person clone() {
+        return new Dick();
+    }
+
+    @Override
+    public String toString() {
+        return NAME;
+    }
+}
+
+class Harry implements Person {
+    private final String NAME = "Harry";
+
+    @Override
+    public Person clone() {
+        return new Harry();
+    }
+
+    @Override
+    public String toString() {
+        return NAME;
+    }
+}
+
+class Factory {
+    private static final Map<String, Person> prototypes = new HashMap<>();
+
+    static {
+        prototypes.put("tom", new Tom());
+        prototypes.put("dick", new Dick());
+        prototypes.put("harry", new Harry());
+    }
+
+    public static Person getPrototype(String type) {
+        try {
+            return prototypes.get(type).clone();
+        } catch (NullPointerException ex) {
+            System.out.println("Prototype with name: " + type + ", doesn't exist");
+            return null;
+        }
+    }
+}
+
+public class PrototypeFactory {
+    public static void main(String[] args) {
+        if (args.length > 0) {
+            for (String type : args) {
+                Person prototype = Factory.getPrototype(type);
+                if (prototype != null) {
+                    System.out.println(prototype);
+                }
+            }
+        } else {
+            System.out.println("Run again with arguments of command string ");
+        }
+    }
+}
+```
+
+### C++
+
+**Before: client depends on concrete classes**
+
+```cpp
+class Stooge {
+  public:
+    virtual void slap_stick() = 0;
+};
+
+class Larry: public Stooge {
+  public:
+    void slap_stick() {
+        cout << "Larry: poke eyes\n";
+    }
+};
+class Moe: public Stooge {
+  public:
+    void slap_stick() {
+        cout << "Moe: slap head\n";
+    }
+};
+class Curly: public Stooge {
+  public:
+    void slap_stick() {
+        cout << "Curly: suffer abuse\n";
+    }
+};
+
+int main() {
+  vector roles;
+  int choice;
+  while (true) {
+    cout << "Larry(1) Moe(2) Curly(3) Go(0): ";
+    cin >> choice;
+    if (choice == 0) break;
+    else if (choice == 1) roles.push_back(new Larry);
+    else if (choice == 2) roles.push_back(new Moe);
+    else roles.push_back(new Curly);
+  }
+  for (int i = 0; i < roles.size(); i++)
+    roles[i]->slap_stick();
+  for (int i = 0; i < roles.size(); i++)
+    delete roles[i];
+}
+```
+
+**After: prototype-based creation with clone()**
+
+```cpp
+class Stooge {
+public:
+   virtual Stooge* clone() = 0;
+   virtual void slap_stick() = 0;
+};
+
+class Factory {
+public:
+   static Stooge* make_stooge(int choice);
+private:
+   static Stooge* s_prototypes[4];
+};
+
+class Larry : public Stooge {
+public:
+   Stooge* clone() { return new Larry; }
+   void slap_stick() {
+      cout << "Larry: poke eyes\n"; }
+};
+
+class Moe : public Stooge {
+public:
+   Stooge* clone() { return new Moe; }
+   void slap_stick() {
+      cout << "Moe: slap head\n"; }
+};
+
+class Curly : public Stooge {
+public:
+   Stooge* clone() { return new Curly; }
+   void slap_stick() {
+      cout << "Curly: suffer abuse\n"; }
+};
+
+Stooge* Factory::s_prototypes[] = {
+   0, new Larry, new Moe, new Curly
+};
+
+Stooge* Factory::make_stooge(int choice) {
+   return s_prototypes[choice]->clone();
+}
+
+int main() {
+   vector roles;
+   int choice;
+   while (true) {
+      cout << "Larry(1) Moe(2) Curly(3) Go(0): ";
+      cin >> choice;
+      if (choice == 0) break;
+      roles.push_back(Factory::make_stooge(choice));
+   }
+   for (int i=0; i < roles.size(); ++i)
+      roles[i]->slap_stick();
+   for (int i=0; i < roles.size(); ++i)
+      delete roles[i];
+}
+```
+
+### Python
+
+```python
+import copy
+
+
+class Prototype:
+    """
+    Example class to be copied.
+    """
+    pass
+
+
+def main():
+    prototype = Prototype()
+    prototype_copy = copy.deepcopy(prototype)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+*Source: [sourcemaking.com/design_patterns/prototype](https://sourcemaking.com/design_patterns/prototype)*

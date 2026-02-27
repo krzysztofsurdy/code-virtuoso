@@ -175,3 +175,181 @@ echo $processor->process('<script>alert("xss")</script>') . PHP_EOL;
 
 **Common Pitfall:**
 Don't use Decorator if the object doesn't need dynamic extension. Inheritance may be simpler for fixed functionality hierarchies. Decorator shines when you need runtime flexibility with multiple optional features.
+
+## Examples in Other Languages
+
+### Java
+
+Before and after example showing how decoration replaces inheritance explosion:
+
+```java
+// Common interface
+interface I {
+    void doIt();
+}
+
+// Concrete component
+class A implements I {
+    public void doIt() { System.out.print('A'); }
+}
+
+// Abstract decorator
+abstract class D implements I {
+    private I core;
+    public D(I inner) { core = inner; }
+    public void doIt() { core.doIt(); }
+}
+
+// Concrete decorators
+class X extends D {
+    public X(I inner) { super(inner); }
+    public void doIt() { super.doIt(); doX(); }
+    private void doX() { System.out.print('X'); }
+}
+
+class Y extends D {
+    public Y(I inner) { super(inner); }
+    public void doIt() { super.doIt(); doY(); }
+    private void doY() { System.out.print('Y'); }
+}
+
+class Z extends D {
+    public Z(I inner) { super(inner); }
+    public void doIt() { super.doIt(); doZ(); }
+    private void doZ() { System.out.print('Z'); }
+}
+
+public class DecoratorDemo {
+    public static void main(String[] args) {
+        I[] array = {new X(new A()), new Y(new X(new A())),
+                new Z(new Y(new X(new A())))};
+        for (I anArray : array) {
+            anArray.doIt();
+            System.out.print("  ");
+        }
+    }
+}
+// Output: AX  AXY  AXYZ
+```
+
+### C++
+
+Decorator pattern replacing multiple inheritance with wrapping and delegation:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class I {
+  public:
+    virtual ~I() {}
+    virtual void do_it() = 0;
+};
+
+class A: public I {
+  public:
+    ~A() { cout << "A dtor" << '\n'; }
+    void do_it() { cout << 'A'; }
+};
+
+class D: public I {
+  public:
+    D(I *inner) { m_wrappee = inner; }
+    ~D() { delete m_wrappee; }
+    void do_it() { m_wrappee->do_it(); }
+  private:
+    I *m_wrappee;
+};
+
+class X: public D {
+  public:
+    X(I *core): D(core) {}
+    ~X() { cout << "X dtor" << "   "; }
+    void do_it() { D::do_it(); cout << 'X'; }
+};
+
+class Y: public D {
+  public:
+    Y(I *core): D(core) {}
+    ~Y() { cout << "Y dtor" << "   "; }
+    void do_it() { D::do_it(); cout << 'Y'; }
+};
+
+class Z: public D {
+  public:
+    Z(I *core): D(core) {}
+    ~Z() { cout << "Z dtor" << "   "; }
+    void do_it() { D::do_it(); cout << 'Z'; }
+};
+
+int main() {
+    I *anX = new X(new A);
+    I *anXY = new Y(new X(new A));
+    I *anXYZ = new Z(new Y(new X(new A)));
+    anX->do_it();   cout << '\n';
+    anXY->do_it();  cout << '\n';
+    anXYZ->do_it(); cout << '\n';
+    delete anX;
+    delete anXY;
+    delete anXYZ;
+}
+// Output: AX  AXY  AXYZ
+```
+
+### Python
+
+```python
+import abc
+
+
+class Component(metaclass=abc.ABCMeta):
+    """
+    Define the interface for objects that can have responsibilities
+    added to them dynamically.
+    """
+    @abc.abstractmethod
+    def operation(self):
+        pass
+
+
+class Decorator(Component, metaclass=abc.ABCMeta):
+    """
+    Maintain a reference to a Component object and define an interface
+    that conforms to Component's interface.
+    """
+    def __init__(self, component):
+        self._component = component
+
+    @abc.abstractmethod
+    def operation(self):
+        pass
+
+
+class ConcreteDecoratorA(Decorator):
+    def operation(self):
+        self._component.operation()
+
+
+class ConcreteDecoratorB(Decorator):
+    def operation(self):
+        self._component.operation()
+
+
+class ConcreteComponent(Component):
+    """
+    Define an object to which additional responsibilities can be attached.
+    """
+    def operation(self):
+        pass
+
+
+def main():
+    concrete_component = ConcreteComponent()
+    concrete_decorator_a = ConcreteDecoratorA(concrete_component)
+    concrete_decorator_b = ConcreteDecoratorB(concrete_decorator_a)
+    concrete_decorator_b.operation()
+
+
+if __name__ == "__main__":
+    main()
+```

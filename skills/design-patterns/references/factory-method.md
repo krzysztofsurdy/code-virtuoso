@@ -342,3 +342,224 @@ echo $response->message;
 4. **Consider a simple factory class**: When you only have one factory, use a static factory method or simple factory class
 5. **Prefer composition over inheritance**: Use factory interface implementations rather than factory base classes when possible
 6. **Document the creation strategy**: Make it clear why different implementations exist
+
+## Examples in Other Languages
+
+### Java
+
+```java
+interface ImageReader {
+    DecodedImage getDecodeImage();
+}
+
+class DecodedImage {
+    private String image;
+
+    public DecodedImage(String image) {
+        this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return image + ": is decoded";
+    }
+}
+
+class GifReader implements ImageReader {
+    private DecodedImage decodedImage;
+
+    public GifReader(String image) {
+        this.decodedImage = new DecodedImage(image);
+    }
+
+    @Override
+    public DecodedImage getDecodeImage() {
+        return decodedImage;
+    }
+}
+
+class JpegReader implements ImageReader {
+    private DecodedImage decodedImage;
+
+    public JpegReader(String image) {
+        decodedImage = new DecodedImage(image);
+    }
+
+    @Override
+    public DecodedImage getDecodeImage() {
+        return decodedImage;
+    }
+}
+
+public class FactoryMethodDemo {
+    public static void main(String[] args) {
+        DecodedImage decodedImage;
+        ImageReader reader = null;
+        String image = args[0];
+        String format = image.substring(image.indexOf('.') + 1, (image.length()));
+        if (format.equals("gif")) {
+            reader = new GifReader(image);
+        }
+        if (format.equals("jpeg")) {
+            reader = new JpegReader(image);
+        }
+        assert reader != null;
+        decodedImage = reader.getDecodeImage();
+        System.out.println(decodedImage);
+    }
+}
+```
+
+### C++
+
+**Before: client depends on concrete classes**
+
+```cpp
+class Stooge {
+  public:
+    virtual void slap_stick() = 0;
+};
+
+class Larry: public Stooge {
+  public:
+    void slap_stick() {
+        cout << "Larry: poke eyes\n";
+    }
+};
+class Moe: public Stooge {
+  public:
+    void slap_stick() {
+        cout << "Moe: slap head\n";
+    }
+};
+class Curly: public Stooge {
+  public:
+    void slap_stick() {
+        cout << "Curly: suffer abuse\n";
+    }
+};
+
+int main() {
+  vector<Stooge*> roles;
+  int choice;
+  while (true) {
+    cout << "Larry(1) Moe(2) Curly(3) Go(0): ";
+    cin >> choice;
+    if (choice == 0) break;
+    else if (choice == 1) roles.push_back(new Larry);
+    else if (choice == 2) roles.push_back(new Moe);
+    else roles.push_back(new Curly);
+  }
+  for (int i = 0; i < roles.size(); i++)
+    roles[i]->slap_stick();
+  for (int i = 0; i < roles.size(); i++)
+    delete roles[i];
+}
+```
+
+**After: factory method encapsulates creation**
+
+```cpp
+class Stooge {
+  public:
+    static Stooge *make_stooge(int choice);
+    virtual void slap_stick() = 0;
+};
+
+class Larry: public Stooge {
+  public:
+    void slap_stick() {
+        cout << "Larry: poke eyes\n";
+    }
+};
+class Moe: public Stooge {
+  public:
+    void slap_stick() {
+        cout << "Moe: slap head\n";
+    }
+};
+class Curly: public Stooge {
+  public:
+    void slap_stick() {
+        cout << "Curly: suffer abuse\n";
+    }
+};
+
+Stooge *Stooge::make_stooge(int choice) {
+  if (choice == 1) return new Larry;
+  else if (choice == 2) return new Moe;
+  else return new Curly;
+}
+
+int main() {
+  vector<Stooge*> roles;
+  int choice;
+  while (true) {
+    cout << "Larry(1) Moe(2) Curly(3) Go(0): ";
+    cin >> choice;
+    if (choice == 0) break;
+    roles.push_back(Stooge::make_stooge(choice));
+  }
+  for (int i = 0; i < roles.size(); i++)
+    roles[i]->slap_stick();
+  for (int i = 0; i < roles.size(); i++)
+    delete roles[i];
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Creator(metaclass=abc.ABCMeta):
+
+    def __init__(self):
+        self.product = self._factory_method()
+
+    @abc.abstractmethod
+    def _factory_method(self):
+        pass
+
+    def some_operation(self):
+        self.product.interface()
+
+
+class ConcreteCreator1(Creator):
+    def _factory_method(self):
+        return ConcreteProduct1()
+
+
+class ConcreteCreator2(Creator):
+    def _factory_method(self):
+        return ConcreteProduct2()
+
+
+class Product(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def interface(self):
+        pass
+
+
+class ConcreteProduct1(Product):
+    def interface(self):
+        pass
+
+
+class ConcreteProduct2(Product):
+    def interface(self):
+        pass
+
+
+def main():
+    concrete_creator = ConcreteCreator1()
+    concrete_creator.product.interface()
+    concrete_creator.some_operation()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+*Source: [sourcemaking.com/design_patterns/factory_method](https://sourcemaking.com/design_patterns/factory_method)*

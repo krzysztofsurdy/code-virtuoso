@@ -285,3 +285,225 @@ echo $xmlProcessor->process($data);
 ## Key Takeaways
 
 The Template Method pattern is essential for managing code reuse and algorithm variations. It's particularly valuable in framework design and when you have multiple classes implementing similar algorithms with minor variations. Use hook methods liberally to provide extension points without requiring subclass implementation. Be cautious of inheritance depth and consider refactoring to composition-based approaches (Strategy pattern) if hierarchies become complex.
+
+## Examples in Other Languages
+
+### Java
+
+```java
+abstract class Generalization {
+    // Template method - defines algorithm skeleton
+    void findSolution() {
+        stepOne();
+        stepTwo();
+        stepThr();
+        stepFor();
+    }
+
+    private void stepOne() {
+        System.out.println("Generalization.stepOne");
+    }
+
+    abstract void stepTwo();
+    abstract void stepThr();
+
+    void stepFor() {
+        System.out.println("Generalization.stepFor");
+    }
+}
+
+abstract class Specialization extends Generalization {
+    protected void stepThr() {
+        step3_1();
+        step3_2();
+        step3_3();
+    }
+
+    private void step3_1() {
+        System.out.println("Specialization.step3_1");
+    }
+
+    abstract protected void step3_2();
+
+    private void step3_3() {
+        System.out.println("Specialization.step3_3");
+    }
+}
+
+class Realization extends Specialization {
+    protected void stepTwo() {
+        System.out.println("Realization.stepTwo");
+    }
+
+    protected void step3_2() {
+        System.out.println("Realization.step3_2");
+    }
+
+    protected void stepFor() {
+        System.out.println("Realization.stepFor");
+        super.stepFor();
+    }
+}
+
+public class TemplateMethodDemo {
+    public static void main(String[] args) {
+        Generalization algorithm = new Realization();
+        algorithm.findSolution();
+    }
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class AbstractClass(metaclass=abc.ABCMeta):
+    """
+    Define abstract primitive operations that concrete subclasses define
+    to implement steps of an algorithm.
+    Implement a template method defining the skeleton of an algorithm.
+    """
+
+    def template_method(self):
+        self._primitive_operation_1()
+        self._primitive_operation_2()
+
+    @abc.abstractmethod
+    def _primitive_operation_1(self):
+        pass
+
+    @abc.abstractmethod
+    def _primitive_operation_2(self):
+        pass
+
+
+class ConcreteClass(AbstractClass):
+    """
+    Implement the primitive operations to carry out
+    subclass-specific steps of the algorithm.
+    """
+
+    def _primitive_operation_1(self):
+        pass
+
+    def _primitive_operation_2(self):
+        pass
+
+
+def main():
+    concrete_class = ConcreteClass()
+    concrete_class.template_method()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+### C++
+
+#### Example 1: Basic Template Method
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Base {
+    void a() { cout << "a  "; }
+    void c() { cout << "c  "; }
+    void e() { cout << "e  "; }
+    virtual void ph1() = 0;
+    virtual void ph2() = 0;
+  public:
+    void execute() {
+        a();
+        ph1();
+        c();
+        ph2();
+        e();
+    }
+};
+
+class One: public Base {
+    void ph1() { cout << "b  "; }
+    void ph2() { cout << "d  "; }
+};
+
+class Two: public Base {
+    void ph1() { cout << "2  "; }
+    void ph2() { cout << "4  "; }
+};
+
+int main() {
+    Base *array[] = { new One(), new Two() };
+    for (int i = 0; i < 2; i++) {
+        array[i]->execute();
+        cout << '\n';
+    }
+}
+```
+
+Output:
+```
+a  b  c  d  e
+a  2  c  4  e
+```
+
+#### Example 2: Before and After Refactoring
+
+Before -- duplicated sort logic:
+
+```cpp
+class SortUp {
+public:
+    void sort(int v[], int n) {
+        for (int g = n / 2; g > 0; g /= 2)
+          for (int i = g; i < n; i++)
+            for (int j = i - g; j >= 0; j -= g)
+              if (v[j] > v[j + g])
+                doSwap(v[j], v[j + g]);
+    }
+private:
+    void doSwap(int &a, int &b) { int t = a; a = b; b = t; }
+};
+
+class SortDown {
+public:
+    void sort(int v[], int n) {
+        for (int g = n / 2; g > 0; g /= 2)
+          for (int i = g; i < n; i++)
+            for (int j = i - g; j >= 0; j -= g)
+              if (v[j] < v[j + g])
+                doSwap(v[j], v[j + g]);
+    }
+private:
+    void doSwap(int &a, int &b) { int t = a; a = b; b = t; }
+};
+```
+
+After -- template method extracts the common algorithm:
+
+```cpp
+class AbstractSort {
+public:
+    void sort(int v[], int n) {
+        for (int g = n / 2; g > 0; g /= 2)
+          for (int i = g; i < n; i++)
+            for (int j = i - g; j >= 0; j -= g)
+              if (needSwap(v[j], v[j + g]))
+                doSwap(v[j], v[j + g]);
+    }
+private:
+    virtual int needSwap(int, int) = 0;
+    void doSwap(int &a, int &b) { int t = a; a = b; b = t; }
+};
+
+class SortUp: public AbstractSort {
+    int needSwap(int a, int b) { return (a > b); }
+};
+
+class SortDown: public AbstractSort {
+    int needSwap(int a, int b) { return (a < b); }
+};
+```

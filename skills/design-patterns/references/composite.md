@@ -176,3 +176,164 @@ echo "Total children: " . $root->getChildCount(); // Output: Total children: 4
 - **File System Model**: With operations like `getSize()`, `getPath()`
 - **UI Component Model**: With rendering operations and event handling
 - **Tree Iterator**: Integrated iteration strategies (preorder, postorder, levelorder)
+
+## Examples in Other Languages
+
+### Java
+
+Before and after example using a file system hierarchy:
+
+```java
+// Common interface for leaves and composites
+interface AbstractFile {
+    void ls();
+}
+
+class File implements AbstractFile {
+    private String name;
+    public File(String name) { this.name = name; }
+    public void ls() {
+        System.out.println(CompositeDemo.compositeBuilder + name);
+    }
+}
+
+class Directory implements AbstractFile {
+    private String name;
+    private ArrayList includedFiles = new ArrayList();
+
+    public Directory(String name) { this.name = name; }
+    public void add(Object obj) { includedFiles.add(obj); }
+
+    public void ls() {
+        System.out.println(CompositeDemo.compositeBuilder + name);
+        CompositeDemo.compositeBuilder.append("   ");
+        for (Object includedFile : includedFiles) {
+            AbstractFile obj = (AbstractFile) includedFile;
+            obj.ls();
+        }
+        CompositeDemo.compositeBuilder.setLength(
+            CompositeDemo.compositeBuilder.length() - 3);
+    }
+}
+
+public class CompositeDemo {
+    public static StringBuffer compositeBuilder = new StringBuffer();
+
+    public static void main(String[] args) {
+        Directory music = new Directory("MUSIC");
+        Directory scorpions = new Directory("SCORPIONS");
+        Directory dio = new Directory("DIO");
+        File track1 = new File("Don't wary, be happy.mp3");
+        File track2 = new File("track2.m3u");
+        File track3 = new File("Wind of change.mp3");
+        File track4 = new File("Big city night.mp3");
+        File track5 = new File("Rainbow in the dark.mp3");
+        music.add(track1);
+        music.add(scorpions);
+        music.add(track2);
+        scorpions.add(track3);
+        scorpions.add(track4);
+        scorpions.add(dio);
+        dio.add(track5);
+        music.ls();
+    }
+}
+```
+
+### C++
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Component {
+  public:
+    virtual void traverse() = 0;
+};
+
+class Leaf: public Component {
+    int value;
+  public:
+    Leaf(int val) { value = val; }
+    void traverse() { cout << value << ' '; }
+};
+
+class Composite: public Component {
+    vector<Component*> children;
+  public:
+    void add(Component *ele) { children.push_back(ele); }
+    void traverse() {
+        for (int i = 0; i < children.size(); i++)
+            children[i]->traverse();
+    }
+};
+
+int main() {
+    Composite containers[4];
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 3; j++)
+            containers[i].add(new Leaf(i * 3 + j));
+
+    for (int i = 1; i < 4; i++)
+        containers[0].add(&(containers[i]));
+
+    for (int i = 0; i < 4; i++) {
+        containers[i].traverse();
+        cout << endl;
+    }
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Component(metaclass=abc.ABCMeta):
+    """
+    Declare the interface for objects in the composition.
+    """
+    @abc.abstractmethod
+    def operation(self):
+        pass
+
+
+class Composite(Component):
+    """
+    Define behavior for components having children.
+    Store child components.
+    """
+    def __init__(self):
+        self._children = set()
+
+    def operation(self):
+        for child in self._children:
+            child.operation()
+
+    def add(self, component):
+        self._children.add(component)
+
+    def remove(self, component):
+        self._children.discard(component)
+
+
+class Leaf(Component):
+    """
+    Represent leaf objects in the composition. A leaf has no children.
+    """
+    def operation(self):
+        pass
+
+
+def main():
+    leaf = Leaf()
+    composite = Composite()
+    composite.add(leaf)
+    composite.operation()
+
+
+if __name__ == "__main__":
+    main()
+```

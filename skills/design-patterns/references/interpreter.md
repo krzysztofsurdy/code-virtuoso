@@ -201,3 +201,296 @@ $result = $ast->interpret($context); // 50
 
 Use a parser generator or parsing library for complex grammars (ANTLR, Lemon). Consider caching interpretation results for frequently-evaluated expressions. For recursive descent parsing, implement proper error handling and recovery strategies. Combine with pattern matching for more elegant implementations in PHP 8.1+.
 
+## Examples in Other Languages
+
+### Java
+
+Before and after: building an expression syntax tree for a Celsius-to-Fahrenheit converter:
+
+```java
+interface Operand {
+    double evaluate(Map<String, Integer> context);
+    void traverse(int level);
+}
+
+class Expression implements Operand {
+    private char operation;
+    public Operand left, right;
+
+    public Expression(char operation) {
+        this.operation = operation;
+    }
+
+    public void traverse(int level) {
+        left.traverse(level + 1);
+        System.out.print("" + level + operation + level + " ");
+        right.traverse(level + 1);
+    }
+
+    public double evaluate(Map<String, Integer> context) {
+        double result = 0;
+        double a = left.evaluate(context);
+        double b = right.evaluate(context);
+        if (operation == '+') result = a + b;
+        if (operation == '-') result = a - b;
+        if (operation == '*') result = a * b;
+        if (operation == '/') result = a / b;
+        return result;
+    }
+}
+
+class Variable implements Operand {
+    private String name;
+
+    public Variable(String name) {
+        this.name = name;
+    }
+
+    public void traverse(int level) {
+        System.out.print(name + " ");
+    }
+
+    public double evaluate(Map<String, Integer> context) {
+        return context.get(name);
+    }
+}
+
+class Number implements Operand {
+    private double value;
+
+    public Number(double value) {
+        this.value = value;
+    }
+
+    public void traverse(int level) {
+        System.out.print(value + " ");
+    }
+
+    public double evaluate(Map context) {
+        return value;
+    }
+}
+
+public class InterpreterDemo {
+    public static Operand buildSyntaxTree(String tree) {
+        Stack<Operand> stack = new Stack<>();
+        String operations = "+-*/";
+        String[] tokens = tree.split(" ");
+        for (String token : tokens)
+            if (operations.indexOf(token.charAt(0)) == -1) {
+                Operand term;
+                try {
+                    term = new Number(Double.parseDouble(token));
+                } catch (NumberFormatException ex) {
+                    term = new Variable(token);
+                }
+                stack.push(term);
+            } else {
+                Expression expr = new Expression(token.charAt(0));
+                expr.right = stack.pop();
+                expr.left = stack.pop();
+                stack.push(expr);
+            }
+        return stack.pop();
+    }
+
+    public static void main(String[] args) {
+        String postfix = "celsius 9 * 5 / thirty + ";
+        Operand expr = buildSyntaxTree(postfix);
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("thirty", 30);
+        for (int i = 0; i <= 100; i += 10) {
+            map.put("celsius", i);
+            System.out.println("C is " + i + ",  F is " + expr.evaluate(map));
+        }
+    }
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class AbstractExpression(metaclass=abc.ABCMeta):
+    """
+    Declare an abstract Interpret operation that is common to all nodes
+    in the abstract syntax tree.
+    """
+
+    @abc.abstractmethod
+    def interpret(self):
+        pass
+
+
+class NonterminalExpression(AbstractExpression):
+    """
+    Implement an Interpret operation for nonterminal symbols in the grammar.
+    """
+
+    def __init__(self, expression):
+        self._expression = expression
+
+    def interpret(self):
+        self._expression.interpret()
+
+
+class TerminalExpression(AbstractExpression):
+    """
+    Implement an Interpret operation associated with terminal symbols in
+    the grammar.
+    """
+
+    def interpret(self):
+        pass
+
+
+def main():
+    abstract_syntax_tree = NonterminalExpression(TerminalExpression())
+    abstract_syntax_tree.interpret()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+### C++
+
+Roman numeral interpreter using hierarchical expression classes:
+
+```cpp
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class RNInterpreter
+{
+  public:
+    RNInterpreter();
+    RNInterpreter(int){}
+    int interpret(char*);
+    virtual void interpret(char *input, int &total)
+    {
+        int index = 0;
+        if (!strncmp(input, nine(), 2))
+        {
+            total += 9 * multiplier();
+            index += 2;
+        }
+        else if (!strncmp(input, four(), 2))
+        {
+            total += 4 * multiplier();
+            index += 2;
+        }
+        else
+        {
+            if (input[0] == five())
+            {
+                total += 5 * multiplier();
+                index = 1;
+            }
+            else
+              index = 0;
+            for (int end = index + 3; index < end; index++)
+              if (input[index] == one())
+                total += 1 * multiplier();
+              else
+                break;
+        }
+        strcpy(input, &(input[index]));
+    }
+  protected:
+    virtual char one(){}
+    virtual char *four(){}
+    virtual char five(){}
+    virtual char *nine(){}
+    virtual int multiplier(){}
+  private:
+    RNInterpreter *thousands;
+    RNInterpreter *hundreds;
+    RNInterpreter *tens;
+    RNInterpreter *ones;
+};
+
+class Thousand: public RNInterpreter
+{
+  public:
+    Thousand(int): RNInterpreter(1){}
+  protected:
+    char one()      { return 'M'; }
+    char *four()    { return ""; }
+    char five()     { return '\0'; }
+    char *nine()    { return ""; }
+    int multiplier(){ return 1000; }
+};
+
+class Hundred: public RNInterpreter
+{
+  public:
+    Hundred(int): RNInterpreter(1){}
+  protected:
+    char one()      { return 'C'; }
+    char *four()    { return "CD"; }
+    char five()     { return 'D'; }
+    char *nine()    { return "CM"; }
+    int multiplier(){ return 100; }
+};
+
+class Ten: public RNInterpreter
+{
+  public:
+    Ten(int): RNInterpreter(1){}
+  protected:
+    char one()      { return 'X'; }
+    char *four()    { return "XL"; }
+    char five()     { return 'L'; }
+    char *nine()    { return "XC"; }
+    int multiplier(){ return 10; }
+};
+
+class One: public RNInterpreter
+{
+  public:
+    One(int): RNInterpreter(1){}
+  protected:
+    char one()      { return 'I'; }
+    char *four()    { return "IV"; }
+    char five()     { return 'V'; }
+    char *nine()    { return "IX"; }
+    int multiplier(){ return 1; }
+};
+
+RNInterpreter::RNInterpreter()
+{
+  thousands = new Thousand(1);
+  hundreds = new Hundred(1);
+  tens = new Ten(1);
+  ones = new One(1);
+}
+
+int RNInterpreter::interpret(char *input)
+{
+  int total = 0;
+  thousands->interpret(input, total);
+  hundreds->interpret(input, total);
+  tens->interpret(input, total);
+  ones->interpret(input, total);
+  if (strcmp(input, ""))
+    return 0;
+  return total;
+}
+
+int main()
+{
+  RNInterpreter interpreter;
+  char input[20];
+  cout << "Enter Roman Numeral: ";
+  while (cin >> input)
+  {
+    cout << "   interpretation is " << interpreter.interpret(input) << endl;
+    cout << "Enter Roman Numeral: ";
+  }
+}
+```
+

@@ -293,3 +293,271 @@ echo json_encode($sorter->sortData([5, 2, 8, 1, 9]));
 - **Dependency Injection**: Preferred modern approach to inject strategies
 - **Decorator**: Can combine with decorators for algorithm composition
 - **Observer**: Strategies can notify observers when execution completes
+
+## Examples in Other Languages
+
+### Java
+
+```java
+interface Strategy {
+    void solve();
+}
+
+abstract class StrategySolution implements Strategy {
+    public void solve() {
+        start();
+        while (nextTry() && !isSolution()) {}
+        stop();
+    }
+
+    abstract void start();
+    abstract boolean nextTry();
+    abstract boolean isSolution();
+    abstract void stop();
+}
+
+class FOO extends StrategySolution {
+    private int state = 1;
+
+    protected void start() {
+        System.out.print("Start  ");
+    }
+
+    protected void stop() {
+        System.out.println("Stop");
+    }
+
+    protected boolean nextTry() {
+        System.out.print("NextTry-" + state++ + "  ");
+        return true;
+    }
+
+    protected boolean isSolution() {
+        System.out.print("IsSolution-" + (state == 3) + "  ");
+        return (state == 3);
+    }
+}
+
+abstract class StrategySearch implements Strategy {
+    public void solve() {
+        while (true) {
+            preProcess();
+            if (search()) {
+                break;
+            }
+            postProcess();
+        }
+    }
+
+    abstract void preProcess();
+    abstract boolean search();
+    abstract void postProcess();
+}
+
+class BAR extends StrategySearch {
+    private int state = 1;
+
+    protected void preProcess() {
+        System.out.print("PreProcess  ");
+    }
+
+    protected void postProcess() {
+        System.out.print("PostProcess  ");
+    }
+
+    protected boolean search() {
+        System.out.print("Search-" + state++ + "  ");
+        return state == 3 ? true : false;
+    }
+}
+
+public class StrategyDemo {
+    private static void execute(Strategy strategy) {
+        strategy.solve();
+    }
+
+    public static void main(String[] args) {
+        Strategy[] algorithms = {new FOO(), new BAR()};
+        for (Strategy algorithm : algorithms) {
+            execute(algorithm);
+        }
+    }
+}
+```
+
+### C++
+
+```cpp
+#include <iostream>
+#include <fstream>
+#include <cstring>
+using namespace std;
+
+class Strategy;
+
+class TestBed {
+  public:
+    enum StrategyType {
+        Dummy, Left, Right, Center
+    };
+    TestBed() {
+        strategy_ = NULL;
+    }
+    void setStrategy(int type, int width);
+    void doIt();
+  private:
+    Strategy *strategy_;
+};
+
+class Strategy {
+  public:
+    Strategy(int width) : width_(width) {}
+    void format() {
+        char line[80], word[30];
+        ifstream inFile("quote.txt", ios::in);
+        line[0] = '\0';
+
+        inFile >> word;
+        strcat(line, word);
+        while (inFile >> word) {
+            if (strlen(line) + strlen(word) + 1 > width_)
+                justify(line);
+            else
+                strcat(line, " ");
+            strcat(line, word);
+        }
+        justify(line);
+    }
+  protected:
+    int width_;
+  private:
+    virtual void justify(char *line) = 0;
+};
+
+class LeftStrategy : public Strategy {
+  public:
+    LeftStrategy(int width) : Strategy(width) {}
+  private:
+    void justify(char *line) {
+        cout << line << endl;
+        line[0] = '\0';
+    }
+};
+
+class RightStrategy : public Strategy {
+  public:
+    RightStrategy(int width) : Strategy(width) {}
+  private:
+    void justify(char *line) {
+        char buf[80];
+        int offset = width_ - strlen(line);
+        memset(buf, ' ', 80);
+        strcpy(&(buf[offset]), line);
+        cout << buf << endl;
+        line[0] = '\0';
+    }
+};
+
+class CenterStrategy : public Strategy {
+  public:
+    CenterStrategy(int width) : Strategy(width) {}
+  private:
+    void justify(char *line) {
+        char buf[80];
+        int offset = (width_ - strlen(line)) / 2;
+        memset(buf, ' ', 80);
+        strcpy(&(buf[offset]), line);
+        cout << buf << endl;
+        line[0] = '\0';
+    }
+};
+
+void TestBed::setStrategy(int type, int width) {
+    delete strategy_;
+    if (type == Left)
+        strategy_ = new LeftStrategy(width);
+    else if (type == Right)
+        strategy_ = new RightStrategy(width);
+    else if (type == Center)
+        strategy_ = new CenterStrategy(width);
+}
+
+void TestBed::doIt() {
+    strategy_->format();
+}
+
+int main() {
+    TestBed test;
+    int answer, width;
+    cout << "Exit(0) Left(1) Right(2) Center(3): ";
+    cin >> answer;
+    while (answer) {
+        cout << "Width: ";
+        cin >> width;
+        test.setStrategy(answer, width);
+        test.doIt();
+        cout << "Exit(0) Left(1) Right(2) Center(3): ";
+        cin >> answer;
+    }
+    return 0;
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Context:
+    """
+    Define the interface of interest to clients.
+    Maintain a reference to a Strategy object.
+    """
+
+    def __init__(self, strategy):
+        self._strategy = strategy
+
+    def context_interface(self):
+        self._strategy.algorithm_interface()
+
+
+class Strategy(metaclass=abc.ABCMeta):
+    """
+    Declare an interface common to all supported algorithms. Context
+    uses this interface to call the algorithm defined by a
+    ConcreteStrategy.
+    """
+
+    @abc.abstractmethod
+    def algorithm_interface(self):
+        pass
+
+
+class ConcreteStrategyA(Strategy):
+    """
+    Implement the algorithm using the Strategy interface.
+    """
+
+    def algorithm_interface(self):
+        pass
+
+
+class ConcreteStrategyB(Strategy):
+    """
+    Implement the algorithm using the Strategy interface.
+    """
+
+    def algorithm_interface(self):
+        pass
+
+
+def main():
+    concrete_strategy_a = ConcreteStrategyA()
+    context = Context(concrete_strategy_a)
+    context.context_interface()
+
+
+if __name__ == "__main__":
+    main()
+```

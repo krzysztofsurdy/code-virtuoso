@@ -233,3 +233,143 @@ $service->alertUser('Error occurred');  // Sends email
 ```
 
 This pattern is particularly valuable in large applications where null checks can become scattered and difficult to maintain.
+
+## Examples in Other Languages
+
+### Java
+
+Example 1: Null output stream that silently discards debug output.
+
+```java
+import java.io.*;
+
+class NullOutputStream extends OutputStream {
+    public void write(int b) {
+        // Do nothing
+    }
+}
+
+class NullPrintStream extends PrintStream {
+    public NullPrintStream() {
+        super(new NullOutputStream());
+    }
+}
+
+class Application {
+    private PrintStream debugOut;
+
+    public Application(PrintStream debugOut) {
+        this.debugOut = debugOut;
+    }
+
+    public void doSomething() {
+        int sum = 0;
+        for (int i = 0; i < 10; i++) {
+            sum += i;
+            debugOut.println("i = " + i);
+        }
+        System.out.println("sum = " + sum);
+    }
+}
+
+public class NullObjectDemo {
+    public static void main(String[] args) {
+        Application app = new Application(new NullPrintStream());
+        app.doSomething();
+    }
+}
+```
+
+Example 2: Null object with visitor pattern for list processing.
+
+```java
+interface ListVisitor {
+    Object whenNonNullList(NonNullList host, Object param);
+    Object whenNullList(NullList host, Object param);
+}
+
+abstract class List {
+    public abstract List getTail();
+    public abstract Object accept(ListVisitor visitor, Object param);
+}
+
+class NonNullList extends List {
+    private Object head;
+    private List tail;
+
+    public NonNullList(Object head, List tail) {
+        this.head = head;
+        this.tail = tail;
+    }
+
+    public Object getHead() {
+        return head;
+    }
+
+    public List getTail() {
+        return tail;
+    }
+
+    public Object accept(ListVisitor visitor, Object param) {
+        return visitor.whenNonNullList(this, param);
+    }
+}
+
+class NullList extends List {
+    private static final NullList instance = new NullList();
+
+    private NullList() {}
+
+    public static NullList singleton() {
+        return instance;
+    }
+
+    public List getTail() {
+        return this;
+    }
+
+    public Object accept(ListVisitor visitor, Object param) {
+        return visitor.whenNullList(this, param);
+    }
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class AbstractObject(metaclass=abc.ABCMeta):
+    """
+    Declare the interface for Client's collaborator.
+    Implement default behavior for the interface common to all classes,
+    as appropriate.
+    """
+
+    @abc.abstractmethod
+    def request(self):
+        pass
+
+
+class RealObject(AbstractObject):
+    """
+    Define a concrete subclass of AbstractObject whose instances provide
+    useful behavior that Client expects.
+    """
+
+    def request(self):
+        pass
+
+
+class NullObject(AbstractObject):
+    """
+    Provide an interface identical to AbstractObject's so that a null
+    object can be substituted for a real object.
+    Implement its interface to do nothing. What exactly it means to do
+    nothing depends on what sort of behavior Client is expecting.
+    """
+
+    def request(self):
+        pass
+```

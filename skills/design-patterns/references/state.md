@@ -337,3 +337,234 @@ echo $order->getStatus() . "\n";
 - **Template Method**: State classes can use Template Method for similar state behaviors
 - **Memento**: Useful to save/restore state transitions
 - **Builder**: Can combine to build complex state machines
+
+## Examples in Other Languages
+
+### Java
+
+Example 1: Ceiling fan pull chain - before and after applying the State pattern.
+
+Before (using conditionals):
+
+```java
+class CeilingFanPullChain {
+    private int currentState;
+
+    public CeilingFanPullChain() {
+        currentState = 0;
+    }
+
+    public void pull() {
+        if (currentState == 0) {
+            currentState = 1;
+            System.out.println("low speed");
+        } else if (currentState == 1) {
+            currentState = 2;
+            System.out.println("medium speed");
+        } else if (currentState == 2) {
+            currentState = 3;
+            System.out.println("high speed");
+        } else {
+            currentState = 0;
+            System.out.println("turning off");
+        }
+    }
+}
+```
+
+After (using the State pattern):
+
+```java
+interface State {
+    void pull(CeilingFanPullChain wrapper);
+}
+
+class CeilingFanPullChain {
+    private State currentState;
+
+    public CeilingFanPullChain() {
+        currentState = new Off();
+    }
+
+    public void set_state(State s) {
+        currentState = s;
+    }
+
+    public void pull() {
+        currentState.pull(this);
+    }
+}
+
+class Off implements State {
+    public void pull(CeilingFanPullChain wrapper) {
+        wrapper.set_state(new Low());
+        System.out.println("low speed");
+    }
+}
+
+class Low implements State {
+    public void pull(CeilingFanPullChain wrapper) {
+        wrapper.set_state(new Medium());
+        System.out.println("medium speed");
+    }
+}
+
+class Medium implements State {
+    public void pull(CeilingFanPullChain wrapper) {
+        wrapper.set_state(new High());
+        System.out.println("high speed");
+    }
+}
+
+class High implements State {
+    public void pull(CeilingFanPullChain wrapper) {
+        wrapper.set_state(new Off());
+        System.out.println("turning off");
+    }
+}
+```
+
+### C++
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Machine {
+    class State *current;
+  public:
+    Machine();
+    void setCurrent(State *s) {
+        current = s;
+    }
+    void on();
+    void off();
+};
+
+class State {
+  public:
+    virtual void on(Machine *m) {
+        cout << "   already ON\n";
+    }
+    virtual void off(Machine *m) {
+        cout << "   already OFF\n";
+    }
+};
+
+void Machine::on() {
+    current->on(this);
+}
+
+void Machine::off() {
+    current->off(this);
+}
+
+class ON : public State {
+  public:
+    ON() {
+        cout << "   ON-ctor ";
+    };
+    ~ON() {
+        cout << "   dtor-ON\n";
+    };
+    void off(Machine *m);
+};
+
+class OFF : public State {
+  public:
+    OFF() {
+        cout << "   OFF-ctor ";
+    };
+    ~OFF() {
+        cout << "   dtor-OFF\n";
+    };
+    void on(Machine *m) {
+        cout << "   going from OFF to ON";
+        m->setCurrent(new ON());
+        delete this;
+    }
+};
+
+void ON::off(Machine *m) {
+    cout << "   going from ON to OFF";
+    m->setCurrent(new OFF());
+    delete this;
+}
+
+Machine::Machine() {
+    current = new OFF();
+    cout << '\n';
+}
+
+int main() {
+    void(Machine::*ptrs[])() = {
+        Machine::off, Machine::on
+    };
+    Machine fsm;
+    int num;
+    while (1) {
+        cout << "Enter 0/1: ";
+        cin >> num;
+        (fsm.*ptrs[num])();
+    }
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Context:
+    """
+    Define the interface of interest to clients.
+    Maintain an instance of a ConcreteState subclass that defines the
+    current state.
+    """
+
+    def __init__(self, state):
+        self._state = state
+
+    def request(self):
+        self._state.handle()
+
+
+class State(metaclass=abc.ABCMeta):
+    """
+    Define an interface for encapsulating the behavior associated with a
+    particular state of the Context.
+    """
+
+    @abc.abstractmethod
+    def handle(self):
+        pass
+
+
+class ConcreteStateA(State):
+    """
+    Implement a behavior associated with a state of the Context.
+    """
+
+    def handle(self):
+        pass
+
+
+class ConcreteStateB(State):
+    """
+    Implement a behavior associated with a state of the Context.
+    """
+
+    def handle(self):
+        pass
+
+
+def main():
+    concrete_state_a = ConcreteStateA()
+    context = Context(concrete_state_a)
+    context.request()
+
+
+if __name__ == "__main__":
+    main()
+```

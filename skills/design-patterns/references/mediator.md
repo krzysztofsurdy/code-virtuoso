@@ -263,3 +263,266 @@ class Button extends DialogElement {
 - **Facade**: Both simplify complex subsystems, but Facade exposes a simpler interface while Mediator manages object interactions
 - **State**: Often used together; Mediator defines how state transitions trigger object communications
 - **Strategy**: Both encapsulate logic but Strategy is about behavior algorithms, Mediator is about interaction coordination
+
+## Examples in Other Languages
+
+### Java
+
+Producer-Consumer coordination through a mediator with synchronized slot:
+
+```java
+class Mediator {
+    private boolean slotFull = false;
+    private int number;
+
+    public synchronized void storeMessage(int num) {
+        while (slotFull == true) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        slotFull = true;
+        number = num;
+        notifyAll();
+    }
+
+    public synchronized int retrieveMessage() {
+        while (slotFull == false) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        slotFull = false;
+        notifyAll();
+        return number;
+    }
+}
+
+class Producer implements Runnable {
+    private Mediator med;
+    private int id;
+    private static int num = 1;
+
+    public Producer(Mediator m) {
+        med = m;
+        id = num++;
+    }
+
+    @Override
+    public void run() {
+        int num;
+        while (true) {
+            med.storeMessage(num = (int)(Math.random() * 100));
+            System.out.print("p" + id + "-" + num + "  ");
+        }
+    }
+}
+
+class Consumer implements Runnable {
+    private Mediator med;
+    private int id;
+    private static int num = 1;
+
+    public Consumer(Mediator m) {
+        med = m;
+        id = num++;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            System.out.print("c" + id + "-" + med.retrieveMessage() + "  ");
+        }
+    }
+}
+
+public class MediatorDemo {
+    public static void main(String[] args) {
+        Mediator mb = new Mediator();
+        new Thread(new Producer(mb)).start();
+        new Thread(new Producer(mb)).start();
+        new Thread(new Consumer(mb)).start();
+        new Thread(new Consumer(mb)).start();
+    }
+}
+```
+
+### Python
+
+```python
+class Mediator:
+    """
+    Implement cooperative behavior by coordinating Colleague objects.
+    Know and maintains its colleagues.
+    """
+
+    def __init__(self):
+        self._colleague_1 = Colleague1(self)
+        self._colleague_2 = Colleague2(self)
+
+
+class Colleague1:
+    """
+    Know its Mediator object.
+    Communicate with its mediator whenever it would have otherwise
+    communicated with another colleague.
+    """
+
+    def __init__(self, mediator):
+        self._mediator = mediator
+
+
+class Colleague2:
+    """
+    Know its Mediator object.
+    Communicate with its mediator whenever it would have otherwise
+    communicated with another colleague.
+    """
+
+    def __init__(self, mediator):
+        self._mediator = mediator
+
+
+def main():
+    mediator = Mediator()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+### C++
+
+File selection dialog mediator coordinating widget interactions:
+
+```cpp
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class FileSelectionDialog;
+
+class Widget
+{
+  public:
+    Widget(FileSelectionDialog *mediator, char *name)
+    {
+        _mediator = mediator;
+        strcpy(_name, name);
+    }
+    virtual void changed();
+    virtual void updateWidget() = 0;
+    virtual void queryWidget() = 0;
+  protected:
+    char _name[20];
+  private:
+    FileSelectionDialog *_mediator;
+};
+
+class List: public Widget
+{
+  public:
+    List(FileSelectionDialog *dir, char *name): Widget(dir, name){}
+    void queryWidget()
+    {
+        cout << "   " << _name << " list queried" << endl;
+    }
+    void updateWidget()
+    {
+        cout << "   " << _name << " list updated" << endl;
+    }
+};
+
+class Edit: public Widget
+{
+  public:
+    Edit(FileSelectionDialog *dir, char *name): Widget(dir, name){}
+    void queryWidget()
+    {
+        cout << "   " << _name << " edit queried" << endl;
+    }
+    void updateWidget()
+    {
+        cout << "   " << _name << " edit updated" << endl;
+    }
+};
+
+class FileSelectionDialog
+{
+  public:
+    enum Widgets
+    {
+        FilterEdit, DirList, FileList, SelectionEdit
+    };
+    FileSelectionDialog()
+    {
+        _components[FilterEdit] = new Edit(this, "filter");
+        _components[DirList] = new List(this, "dir");
+        _components[FileList] = new List(this, "file");
+        _components[SelectionEdit] = new Edit(this, "selection");
+    }
+    virtual ~FileSelectionDialog();
+    void handleEvent(int which)
+    {
+        _components[which]->changed();
+    }
+    virtual void widgetChanged(Widget *theChangedWidget)
+    {
+        if (theChangedWidget == _components[FilterEdit])
+        {
+            _components[FilterEdit]->queryWidget();
+            _components[DirList]->updateWidget();
+            _components[FileList]->updateWidget();
+            _components[SelectionEdit]->updateWidget();
+        }
+        else if (theChangedWidget == _components[DirList])
+        {
+            _components[DirList]->queryWidget();
+            _components[FileList]->updateWidget();
+            _components[FilterEdit]->updateWidget();
+            _components[SelectionEdit]->updateWidget();
+        }
+        else if (theChangedWidget == _components[FileList])
+        {
+            _components[FileList]->queryWidget();
+            _components[SelectionEdit]->updateWidget();
+        }
+        else if (theChangedWidget == _components[SelectionEdit])
+        {
+            _components[SelectionEdit]->queryWidget();
+            cout << "   file opened" << endl;
+        }
+    }
+  private:
+    Widget *_components[4];
+};
+
+FileSelectionDialog::~FileSelectionDialog()
+{
+  for (int i = 0; i < 4; i++)
+    delete _components[i];
+}
+
+void Widget::changed()
+{
+  _mediator->widgetChanged(this);
+}
+
+int main()
+{
+  FileSelectionDialog fileDialog;
+  int i;
+  cout << "Exit[0], Filter[1], Dir[2], File[3], Selection[4]: ";
+  cin >> i;
+  while (i)
+  {
+    fileDialog.handleEvent(i - 1);
+    cout << "Exit[0], Filter[1], Dir[2], File[3], Selection[4]: ";
+    cin >> i;
+  }
+}
+```

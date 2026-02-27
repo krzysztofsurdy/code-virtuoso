@@ -232,3 +232,277 @@ try {
 - **Virtual Proxy vs Lazy Initialization:** Virtual Proxy is a specific use case of Proxy for lazy initialization
 - **Protection Proxy vs Access Control:** Protection Proxy controls access; useful with Authentication/Authorization patterns
 - **Remote Proxy:** Specialized proxy for distributed systems, coordinates with RPC frameworks
+
+## Examples in Other Languages
+
+### Java
+
+```java
+// Interface for plug-compatibility between wrapper and target
+interface SocketInterface {
+    String readLine();
+    void  writeLine(String str);
+    void  dispose();
+}
+
+class SocketProxy implements SocketInterface {
+    // Wrapper for a remote, expensive, or sensitive target
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
+
+    public SocketProxy(String host, int port, boolean wait) {
+        try {
+            if (wait) {
+                // Encapsulate the complexity/overhead of the target
+                ServerSocket server = new ServerSocket(port);
+                socket = server.accept();
+            } else {
+                socket = new Socket(host, port);
+            }
+            in  = new BufferedReader(
+                new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String readLine() {
+        String str = null;
+        try {
+            str = in.readLine();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+    public void writeLine(String str) {
+        // Wrapper delegates to the target
+        out.println(str);
+    }
+
+    public void dispose() {
+        try {
+            socket.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+public class ProxyDemo {
+    public static void main(String[] args) {
+        // Client deals with the wrapper
+        SocketInterface socket = new SocketProxy(
+            "127.0.0.1", 8080,
+            args[0].equals("first") ? true : false
+        );
+        String str;
+        boolean skip = true;
+        while (true) {
+            if (args[0].equals("second") && skip) {
+                skip = !skip;
+            } else {
+                str = socket.readLine();
+                System.out.println("Receive - " + str);
+                if (str.equals(null)) break;
+            }
+            System.out.print("Send ---- ");
+            str = new Scanner(System.in).nextLine();
+            socket.writeLine(str);
+            if (str.equals("quit")) break;
+        }
+        socket.dispose();
+    }
+}
+```
+
+### C++
+
+#### Example 1: Lazy Initialization Proxy
+
+Before (all objects created eagerly):
+
+```cpp
+class Image {
+    int m_id;
+    static int s_next;
+  public:
+    Image() {
+        m_id = s_next++;
+        cout << "   $$ ctor: " << m_id << '\n';
+    }
+    ~Image() {
+        cout << "   dtor: " << m_id << '\n';
+    }
+    void draw() {
+        cout << "   drawing image " << m_id << '\n';
+    }
+};
+int Image::s_next = 1;
+
+int main() {
+    Image images[5];
+    for (int i; true;) {
+        cout << "Exit[0], Image[1-5]: ";
+        cin >> i;
+        if (i == 0) break;
+        images[i - 1].draw();
+    }
+}
+```
+
+After (objects created on demand via Proxy):
+
+```cpp
+class RealImage {
+    int m_id;
+  public:
+    RealImage(int i) {
+        m_id = i;
+        cout << "   $$ ctor: " << m_id << '\n';
+    }
+    ~RealImage() {
+        cout << "   dtor: " << m_id << '\n';
+    }
+    void draw() {
+        cout << "   drawing image " << m_id << '\n';
+    }
+};
+
+class Image {
+    RealImage *m_the_real_thing;
+    int m_id;
+    static int s_next;
+  public:
+    Image() {
+        m_id = s_next++;
+        m_the_real_thing = 0;
+    }
+    ~Image() {
+        delete m_the_real_thing;
+    }
+    void draw() {
+        if (!m_the_real_thing)
+            m_the_real_thing = new RealImage(m_id);
+        m_the_real_thing->draw();
+    }
+};
+int Image::s_next = 1;
+
+int main() {
+    Image images[5];
+    for (int i; true;) {
+        cout << "Exit[0], Image[1-5]: ";
+        cin >> i;
+        if (i == 0) break;
+        images[i - 1].draw();
+    }
+}
+```
+
+#### Example 2: Operator Overloading Proxy
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Subject {
+  public:
+    virtual void execute() = 0;
+};
+
+class RealSubject: public Subject {
+    string str;
+  public:
+    RealSubject(string s) { str = s; }
+    void execute() { cout << str << '\n'; }
+};
+
+class ProxySubject: public Subject {
+    string first, second, third;
+    RealSubject *ptr;
+  public:
+    ProxySubject(string s) {
+        int num = s.find_first_of(' ');
+        first = s.substr(0, num);
+        s = s.substr(num + 1);
+        num = s.find_first_of(' ');
+        second = s.substr(0, num);
+        s = s.substr(num + 1);
+        num = s.find_first_of(' ');
+        third = s.substr(0, num);
+        s = s.substr(num + 1);
+        ptr = new RealSubject(s);
+    }
+    ~ProxySubject() { delete ptr; }
+    RealSubject *operator->() {
+        cout << first << ' ' << second << ' ';
+        return ptr;
+    }
+    void execute() {
+        cout << first << ' ' << third << ' ';
+        ptr->execute();
+    }
+};
+
+int main() {
+    ProxySubject obj(string("the quick brown fox jumped over the dog"));
+    obj->execute();  // the quick fox jumped over the dog
+    obj.execute();   // the brown fox jumped over the dog
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Subject(metaclass=abc.ABCMeta):
+    """
+    Define the common interface for RealSubject and Proxy so that a
+    Proxy can be used anywhere a RealSubject is expected.
+    """
+
+    @abc.abstractmethod
+    def request(self):
+        pass
+
+
+class Proxy(Subject):
+    """
+    Maintain a reference that lets the proxy access the real subject.
+    Provide an interface identical to Subject's.
+    """
+
+    def __init__(self, real_subject):
+        self._real_subject = real_subject
+
+    def request(self):
+        # ...
+        self._real_subject.request()
+        # ...
+
+
+class RealSubject(Subject):
+    """
+    Define the real object that the proxy represents.
+    """
+
+    def request(self):
+        pass
+
+
+def main():
+    real_subject = RealSubject()
+    proxy = Proxy(real_subject)
+    proxy.request()
+
+
+if __name__ == "__main__":
+    main()
+```

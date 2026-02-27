@@ -354,3 +354,296 @@ Then says "prepare order" (build method) and receives the complete meal.
 ---
 
 **Key Takeaway:** Use the Builder pattern when constructing complex objects with multiple parameters or configuration options. It improves readability, maintainability, and provides a clear separation between construction logic and the product itself.
+
+## Examples in Other Languages
+
+### Java
+
+```java
+/* "Product" */
+class Pizza {
+    private String dough = "";
+    private String sauce = "";
+    private String topping = "";
+
+    public void setDough(String dough) {
+        this.dough = dough;
+    }
+
+    public void setSauce(String sauce) {
+        this.sauce = sauce;
+    }
+
+    public void setTopping(String topping) {
+        this.topping = topping;
+    }
+}
+
+/* "Abstract Builder" */
+abstract class PizzaBuilder {
+    protected Pizza pizza;
+
+    public Pizza getPizza() {
+        return pizza;
+    }
+
+    public void createNewPizzaProduct() {
+        pizza = new Pizza();
+    }
+
+    public abstract void buildDough();
+    public abstract void buildSauce();
+    public abstract void buildTopping();
+}
+
+/* "ConcreteBuilder" */
+class HawaiianPizzaBuilder extends PizzaBuilder {
+    public void buildDough() {
+        pizza.setDough("cross");
+    }
+
+    public void buildSauce() {
+        pizza.setSauce("mild");
+    }
+
+    public void buildTopping() {
+        pizza.setTopping("ham+pineapple");
+    }
+}
+
+/* "ConcreteBuilder" */
+class SpicyPizzaBuilder extends PizzaBuilder {
+    public void buildDough() {
+        pizza.setDough("pan baked");
+    }
+
+    public void buildSauce() {
+        pizza.setSauce("hot");
+    }
+
+    public void buildTopping() {
+        pizza.setTopping("pepperoni+salami");
+    }
+}
+
+/* "Director" */
+class Waiter {
+    private PizzaBuilder pizzaBuilder;
+
+    public void setPizzaBuilder(PizzaBuilder pb) {
+        pizzaBuilder = pb;
+    }
+
+    public Pizza getPizza() {
+        return pizzaBuilder.getPizza();
+    }
+
+    public void constructPizza() {
+        pizzaBuilder.createNewPizzaProduct();
+        pizzaBuilder.buildDough();
+        pizzaBuilder.buildSauce();
+        pizzaBuilder.buildTopping();
+    }
+}
+
+public class PizzaBuilderDemo {
+    public static void main(String[] args) {
+        Waiter waiter = new Waiter();
+        PizzaBuilder hawaiianPizzabuilder = new HawaiianPizzaBuilder();
+        PizzaBuilder spicyPizzaBuilder = new SpicyPizzaBuilder();
+
+        waiter.setPizzaBuilder(hawaiianPizzabuilder);
+        waiter.constructPizza();
+
+        Pizza pizza = waiter.getPizza();
+    }
+}
+```
+
+### C++
+
+```cpp
+#include <iostream.h>
+#include <stdio.h>
+#include <string.h>
+
+enum PersistenceType {
+  File, Queue, Pathway
+};
+
+struct PersistenceAttribute {
+  PersistenceType type;
+  char value[30];
+};
+
+class DistrWorkPackage {
+  public:
+    DistrWorkPackage(char *type) {
+        sprintf(_desc, "Distributed Work Package for: %s", type);
+    }
+    void setFile(char *f, char *v) {
+        sprintf(_temp, "\n  File(%s): %s", f, v);
+        strcat(_desc, _temp);
+    }
+    void setQueue(char *q, char *v) {
+        sprintf(_temp, "\n  Queue(%s): %s", q, v);
+        strcat(_desc, _temp);
+    }
+    void setPathway(char *p, char *v) {
+        sprintf(_temp, "\n  Pathway(%s): %s", p, v);
+        strcat(_desc, _temp);
+    }
+    const char *getState() {
+        return _desc;
+    }
+  private:
+    char _desc[200], _temp[80];
+};
+
+class Builder {
+  public:
+    virtual void configureFile(char*) = 0;
+    virtual void configureQueue(char*) = 0;
+    virtual void configurePathway(char*) = 0;
+    DistrWorkPackage *getResult() {
+        return _result;
+    }
+  protected:
+    DistrWorkPackage *_result;
+};
+
+class UnixBuilder: public Builder {
+  public:
+    UnixBuilder() {
+        _result = new DistrWorkPackage("Unix");
+    }
+    void configureFile(char *name) {
+        _result->setFile("flatFile", name);
+    }
+    void configureQueue(char *queue) {
+        _result->setQueue("FIFO", queue);
+    }
+    void configurePathway(char *type) {
+        _result->setPathway("thread", type);
+    }
+};
+
+class VmsBuilder: public Builder {
+  public:
+    VmsBuilder() {
+        _result = new DistrWorkPackage("Vms");
+    }
+    void configureFile(char *name) {
+        _result->setFile("ISAM", name);
+    }
+    void configureQueue(char *queue) {
+        _result->setQueue("priority", queue);
+    }
+    void configurePathway(char *type) {
+        _result->setPathway("LWP", type);
+    }
+};
+
+class Reader {
+  public:
+    void setBuilder(Builder *b) {
+        _builder = b;
+    }
+    void construct(PersistenceAttribute[], int);
+  private:
+    Builder *_builder;
+};
+
+void Reader::construct(PersistenceAttribute list[], int num) {
+  for (int i = 0; i < num; i++)
+    if (list[i].type == File)
+      _builder->configureFile(list[i].value);
+    else if (list[i].type == Queue)
+      _builder->configureQueue(list[i].value);
+    else if (list[i].type == Pathway)
+      _builder->configurePathway(list[i].value);
+}
+
+const int NUM_ENTRIES = 6;
+PersistenceAttribute input[NUM_ENTRIES] = {
+  {File, "state.dat"}, {File, "config.sys"},
+  {Queue, "compute"}, {Queue, "log"},
+  {Pathway, "authentication"}, {Pathway, "error processing"}
+};
+
+int main() {
+  UnixBuilder unixBuilder;
+  VmsBuilder vmsBuilder;
+  Reader reader;
+
+  reader.setBuilder(&unixBuilder);
+  reader.construct(input, NUM_ENTRIES);
+  cout << unixBuilder.getResult()->getState() << endl;
+
+  reader.setBuilder(&vmsBuilder);
+  reader.construct(input, NUM_ENTRIES);
+  cout << vmsBuilder.getResult()->getState() << endl;
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Director:
+    def __init__(self):
+        self._builder = None
+
+    def construct(self, builder):
+        self._builder = builder
+        self._builder._build_part_a()
+        self._builder._build_part_b()
+        self._builder._build_part_c()
+
+
+class Builder(metaclass=abc.ABCMeta):
+    def __init__(self):
+        self.product = Product()
+
+    @abc.abstractmethod
+    def _build_part_a(self):
+        pass
+
+    @abc.abstractmethod
+    def _build_part_b(self):
+        pass
+
+    @abc.abstractmethod
+    def _build_part_c(self):
+        pass
+
+
+class ConcreteBuilder(Builder):
+    def _build_part_a(self):
+        pass
+
+    def _build_part_b(self):
+        pass
+
+    def _build_part_c(self):
+        pass
+
+
+class Product:
+    pass
+
+
+def main():
+    concrete_builder = ConcreteBuilder()
+    director = Director()
+    director.construct(concrete_builder)
+    product = concrete_builder.product
+
+
+if __name__ == "__main__":
+    main()
+```
+
+*Source: [sourcemaking.com/design_patterns/builder](https://sourcemaking.com/design_patterns/builder)*

@@ -269,3 +269,208 @@ $console->log(new LogEntry('Database connection failed', 'CRITICAL'));
 - **Strategy**: Both encapsulate algorithms but Strategy is typically chosen upfront
 - **Composite**: Often used together when building tree structures
 - **Responsibility Pattern**: Chain of Responsibility implements the Single Responsibility Principle
+
+## Examples in Other Languages
+
+### Java
+
+Before and after comparison showing how the Chain of Responsibility pattern eliminates explicit handler selection logic:
+
+```java
+// After: handlers are linked in a chain and delegate automatically
+class Handler {
+    private final static Random RANDOM = new Random();
+    private static int nextID = 1;
+    private int id = nextID++;
+    private Handler nextInChain;
+
+    public void add(Handler next) {
+        if (nextInChain == null) {
+            nextInChain = next;
+        } else {
+            nextInChain.add(next);
+        }
+    }
+
+    public void wrapAround(Handler root) {
+        if (nextInChain == null) {
+            nextInChain = root;
+        } else {
+            nextInChain.wrapAround(root);
+        }
+    }
+
+    public void execute(int num) {
+        if (RANDOM.nextInt(4) != 0) {
+            System.out.println("   " + id + "-busy  ");
+            nextInChain.execute(num);
+        } else {
+            System.out.println(id + "-handled-" + num);
+        }
+    }
+}
+
+public class ChainDemo {
+    public static void main(String[] args) {
+        Handler rootChain = new Handler();
+        rootChain.add(new Handler());
+        rootChain.add(new Handler());
+        rootChain.add(new Handler());
+        rootChain.wrapAround(rootChain);
+        for (int i = 1; i < 6; i++) {
+            System.out.println("Operation #" + i + ":");
+            rootChain.execute(i);
+            System.out.println();
+        }
+    }
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Handler(metaclass=abc.ABCMeta):
+    """
+    Define an interface for handling requests.
+    Implement the successor link.
+    """
+
+    def __init__(self, successor=None):
+        self._successor = successor
+
+    @abc.abstractmethod
+    def handle_request(self):
+        pass
+
+
+class ConcreteHandler1(Handler):
+    """
+    Handle request, otherwise forward it to the successor.
+    """
+
+    def handle_request(self):
+        if True:  # if can_handle:
+            pass
+        elif self._successor is not None:
+            self._successor.handle_request()
+
+
+class ConcreteHandler2(Handler):
+    """
+    Handle request, otherwise forward it to the successor.
+    """
+
+    def handle_request(self):
+        if False:  # if can_handle:
+            pass
+        elif self._successor is not None:
+            self._successor.handle_request()
+
+
+def main():
+    concrete_handler_1 = ConcreteHandler1()
+    concrete_handler_2 = ConcreteHandler2(concrete_handler_1)
+    concrete_handler_2.handle_request()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+### C++
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <ctime>
+using namespace std;
+
+class Base
+{
+    Base *next;
+  public:
+    Base()
+    {
+        next = 0;
+    }
+    void setNext(Base *n)
+    {
+        next = n;
+    }
+    void add(Base *n)
+    {
+        if (next)
+          next->add(n);
+        else
+          next = n;
+    }
+    virtual void handle(int i)
+    {
+        next->handle(i);
+    }
+};
+
+class Handler1: public Base
+{
+  public:
+     void handle(int i)
+    {
+        if (rand() % 3)
+        {
+            cout << "H1 passed " << i << "  ";
+            Base::handle(i);
+        }
+        else
+          cout << "H1 handled " << i << "  ";
+    }
+};
+
+class Handler2: public Base
+{
+  public:
+     void handle(int i)
+    {
+        if (rand() % 3)
+        {
+            cout << "H2 passed " << i << "  ";
+            Base::handle(i);
+        }
+        else
+          cout << "H2 handled " << i << "  ";
+    }
+};
+
+class Handler3: public Base
+{
+  public:
+     void handle(int i)
+    {
+        if (rand() % 3)
+        {
+            cout << "H3 passed " << i << "  ";
+            Base::handle(i);
+        }
+        else
+          cout << "H3 handled " << i << "  ";
+    }
+};
+
+int main()
+{
+  srand(time(0));
+  Handler1 root;
+  Handler2 two;
+  Handler3 thr;
+  root.add(&two);
+  root.add(&thr);
+  thr.setNext(&root);
+  for (int i = 1; i < 10; i++)
+  {
+    root.handle(i);
+    cout << '\n';
+  }
+}
+```

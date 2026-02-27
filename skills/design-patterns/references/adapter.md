@@ -137,3 +137,194 @@ if ($adapter->process(99.99)) {
 
 **Common Pitfall:**
 Don't use Adapter to patch poor design. If you need adapters everywhere, reconsider your architecture design.
+
+## Examples in Other Languages
+
+### Java
+
+Before and after example showing how adapters provide a common interface to legacy-specific interfaces:
+
+```java
+// Legacy classes with incompatible interfaces
+class Line {
+    public void draw(int x1, int y1, int x2, int y2) {
+        System.out.println("Line from point A(" + x1 + ";" + y1 + "), to point B(" + x2 + ";" + y2 + ")");
+    }
+}
+
+class Rectangle {
+    public void draw(int x, int y, int width, int height) {
+        System.out.println("Rectangle with coordinate left-down point (" + x + ";" + y + "), width: " + width
+                + ", height: " + height);
+    }
+}
+
+// Common target interface
+interface Shape {
+    void draw(int x, int y, int z, int j);
+}
+
+class LineAdapter implements Shape {
+    private Line adaptee;
+    public LineAdapter(Line line) { this.adaptee = line; }
+    @Override
+    public void draw(int x1, int y1, int x2, int y2) {
+        adaptee.draw(x1, y1, x2, y2);
+    }
+}
+
+class RectangleAdapter implements Shape {
+    private Rectangle adaptee;
+    public RectangleAdapter(Rectangle rectangle) { this.adaptee = rectangle; }
+    @Override
+    public void draw(int x1, int y1, int x2, int y2) {
+        int x = Math.min(x1, x2);
+        int y = Math.min(y1, y2);
+        int width = Math.abs(x2 - x1);
+        int height = Math.abs(y2 - y1);
+        adaptee.draw(x, y, width, height);
+    }
+}
+
+public class AdapterDemo {
+    public static void main(String[] args) {
+        Shape[] shapes = {new RectangleAdapter(new Rectangle()),
+                          new LineAdapter(new Line())};
+        int x1 = 10, y1 = 20, x2 = 30, y2 = 60;
+        for (Shape shape : shapes) {
+            shape.draw(x1, y1, x2, y2);
+        }
+    }
+}
+```
+
+Square peg / round hole example:
+
+```java
+class SquarePeg {
+    private double width;
+    public SquarePeg(double width) { this.width = width; }
+    public double getWidth() { return width; }
+    public void setWidth(double width) { this.width = width; }
+}
+
+class RoundHole {
+    private final int radius;
+    public RoundHole(int radius) {
+        this.radius = radius;
+        System.out.println("RoundHole: max SquarePeg is " + radius * Math.sqrt(2));
+    }
+    public int getRadius() { return radius; }
+}
+
+class SquarePegAdapter {
+    private final SquarePeg squarePeg;
+    public SquarePegAdapter(double w) { squarePeg = new SquarePeg(w); }
+
+    public void makeFit(RoundHole roundHole) {
+        double amount = squarePeg.getWidth() - roundHole.getRadius() * Math.sqrt(2);
+        System.out.println("reducing SquarePeg " + squarePeg.getWidth() + " by " +
+            ((amount < 0) ? 0 : amount) + " amount");
+        if (amount > 0) {
+            squarePeg.setWidth(squarePeg.getWidth() - amount);
+            System.out.println("   width is now " + squarePeg.getWidth());
+        }
+    }
+}
+```
+
+### C++
+
+Class adapter using multiple inheritance to adapt a legacy rectangle interface:
+
+```cpp
+#include <iostream>
+
+typedef int Coordinate;
+typedef int Dimension;
+
+// Desired interface
+class Rectangle {
+  public:
+    virtual void draw() = 0;
+};
+
+// Legacy component
+class LegacyRectangle {
+  public:
+    LegacyRectangle(Coordinate x1, Coordinate y1, Coordinate x2, Coordinate y2)
+    {
+        x1_ = x1; y1_ = y1; x2_ = x2; y2_ = y2;
+        std::cout << "LegacyRectangle: create. (" << x1_ << "," << y1_
+                  << ") => (" << x2_ << "," << y2_ << ")" << std::endl;
+    }
+    void oldDraw() {
+        std::cout << "LegacyRectangle: oldDraw. (" << x1_ << "," << y1_
+                  << ") => (" << x2_ << "," << y2_ << ")" << std::endl;
+    }
+  private:
+    Coordinate x1_, y1_, x2_, y2_;
+};
+
+// Adapter wrapper
+class RectangleAdapter: public Rectangle, private LegacyRectangle {
+  public:
+    RectangleAdapter(Coordinate x, Coordinate y, Dimension w, Dimension h)
+      : LegacyRectangle(x, y, x + w, y + h) {
+        std::cout << "RectangleAdapter: create. (" << x << "," << y
+                  << "), width = " << w << ", height = " << h << std::endl;
+    }
+    virtual void draw() {
+        std::cout << "RectangleAdapter: draw." << std::endl;
+        oldDraw();
+    }
+};
+
+int main() {
+    Rectangle *r = new RectangleAdapter(120, 200, 60, 40);
+    r->draw();
+}
+```
+
+### Python
+
+```python
+import abc
+
+
+class Target(metaclass=abc.ABCMeta):
+    """
+    Define the domain-specific interface that Client uses.
+    """
+    def __init__(self):
+        self._adaptee = Adaptee()
+
+    @abc.abstractmethod
+    def request(self):
+        pass
+
+
+class Adapter(Target):
+    """
+    Adapt the interface of Adaptee to the Target interface.
+    """
+    def request(self):
+        self._adaptee.specific_request()
+
+
+class Adaptee:
+    """
+    Define an existing interface that needs adapting.
+    """
+    def specific_request(self):
+        pass
+
+
+def main():
+    adapter = Adapter()
+    adapter.request()
+
+
+if __name__ == "__main__":
+    main()
+```

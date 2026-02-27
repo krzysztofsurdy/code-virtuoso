@@ -226,3 +226,122 @@ echo "Annual Benefit Value: $" . number_format($employee->getAnnualBenefitValue(
 
 **Snapshot Pattern**: Similar in approach but focuses on capturing object state at a point in time.
 
+## Examples in Other Languages
+
+### C#
+
+Before (mutable attributes exposed):
+
+```csharp
+public class Circle {
+    private double radius;
+    private Color color;
+    private Point origin;
+
+    public Circle(double radius, Color color, Point origin) {
+        this.radius = radius;
+        this.color = color;
+        this.origin = origin;
+    }
+
+    public double Circumference {
+        get { return 2 * Math.PI * this.radius; }
+    }
+
+    public double Diameter {
+        get { return 2 * this.radius; }
+    }
+
+    public void Draw(Graphics graphics) {
+        //...
+    }
+}
+```
+
+After (data encapsulated in private class):
+
+```csharp
+public class CircleData {
+    private double radius;
+    private Color color;
+    private Point origin;
+
+    public CircleData(double radius, Color color, Point origin) {
+        this.radius = radius;
+        this.color = color;
+        this.origin = origin;
+    }
+
+    public double Radius {
+        get { return this.radius; }
+    }
+
+    public Color Color {
+        get { return this.color; }
+    }
+
+    public Point Origin {
+        get { return this.origin; }
+    }
+}
+
+public class Circle {
+    private CircleData circleData;
+
+    public Circle(double radius, Color color, Point origin) {
+        this.circleData = new CircleData(radius, color, origin);
+    }
+
+    public double Circumference {
+        get { return this.circleData.Radius * Math.PI; }
+    }
+
+    public double Diameter {
+        get { return this.circleData.Radius * 2; }
+    }
+
+    public void Draw(Graphics graphics) {
+        //...
+    }
+}
+```
+
+### Python
+
+```python
+class DataClass:
+    """
+    Hide all the attributes.
+    Uses Python descriptor protocol to enforce write-once semantics.
+    """
+
+    def __init__(self):
+        self.value = None
+
+    def __get__(self, instance, owner):
+        return self.value
+
+    def __set__(self, instance, value):
+        if self.value is None:
+            self.value = value
+
+
+class MainClass:
+    """
+    Initialize data class through the data class's constructor.
+    """
+
+    attribute = DataClass()
+
+    def __init__(self, value):
+        self.attribute = value
+
+
+def main():
+    m = MainClass(True)
+    m.attribute = False  # This assignment is silently ignored (write-once)
+
+
+if __name__ == "__main__":
+    main()
+```
