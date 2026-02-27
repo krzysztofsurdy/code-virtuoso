@@ -1,6 +1,6 @@
 # Code Virtuoso
 
-AI agent skill sets for **Symfony components**, **Design Patterns**, and **Refactoring** — built on the [Agent Skills](https://agentskills.io) open standard.
+AI agent skill sets for **Symfony components**, **Design Patterns**, **Refactoring**, and **SOLID Principles** — built on the [Agent Skills](https://agentskills.io) open standard.
 
 Each plugin is a single consolidated skill with an overview SKILL.md and individual reference files for progressive disclosure. AI agents get the index automatically and load detailed references on demand.
 
@@ -24,6 +24,12 @@ Covers 67 refactoring techniques (composing methods, moving features, organizing
 
 See [skills/refactoring/SKILL.md](skills/refactoring/SKILL.md) for the full technique and smell index.
 
+### SOLID Virtuoso (5 principles)
+
+Covers all five SOLID principles — Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion — with original explanations, violation detection, before/after PHP 8.3+ examples, and multi-language examples (Java, Python, TypeScript, C++).
+
+See [skills/solid/SKILL.md](skills/solid/SKILL.md) for the full principle index.
+
 ## Installation
 
 Clone (or add as a submodule) and copy the skills you need into the location your tool expects.
@@ -44,6 +50,7 @@ git clone https://github.com/krzysztofsurdy/code-virtuoso.git
 /plugin install symfony-virtuoso@krzysztofsurdy-code-virtuoso
 /plugin install design-patterns-virtuoso@krzysztofsurdy-code-virtuoso
 /plugin install refactoring-virtuoso@krzysztofsurdy-code-virtuoso
+/plugin install solid-virtuoso@krzysztofsurdy-code-virtuoso
 ```
 
 Or browse interactively: run `/plugin`, go to **Discover**, and install individual plugins.
@@ -119,9 +126,12 @@ code-virtuoso/
 │   ├── design-patterns/
 │   │   ├── SKILL.md              # Overview + pattern index
 │   │   └── references/           # 26 individual pattern docs
-│   └── refactoring/
-│       ├── SKILL.md              # Overview + technique/smell index
-│       └── references/           # 89 individual technique/smell docs
+│   ├── refactoring/
+│   │   ├── SKILL.md              # Overview + technique/smell index
+│   │   └── references/           # 89 individual technique/smell docs
+│   └── solid/
+│       ├── SKILL.md              # Overview + principle index
+│       └── references/           # 5 individual principle docs
 ├── spec/
 │   └── agent-skills-spec.md
 ├── CONTRIBUTING.md

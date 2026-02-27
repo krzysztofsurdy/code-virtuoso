@@ -34,6 +34,15 @@
       "skills": [
         "./skills/refactoring"
       ]
+    },
+    {
+      "name": "solid-virtuoso",
+      "description": "SOLID principles for object-oriented design — SRP, OCP, LSP, ISP, DIP with multi-language examples (PHP, Java, Python, TypeScript, C++)",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/solid"
+      ]
     }
   ]
 }
