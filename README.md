@@ -5,7 +5,7 @@ AI agent skill sets for software engineering — built on the [Agent Skills](htt
 
 Three categories of skills, installable independently or as bundles:
 
-- **Knowledge** — Design Patterns, Refactoring, SOLID Principles, Debugging, Clean Architecture, Testing, API Design, Security, Scrum. Reference material with progressive disclosure.
+- **Knowledge** — Design Patterns, Refactoring, SOLID Principles, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance. Reference material with progressive disclosure.
 - **Tools** — Agentic Rules Writer. Agent configuration and bootstrapping tools.
 - **Frameworks** — Symfony. Component-level reference for framework-specific development.
 
@@ -76,6 +76,7 @@ printf '#!/bin/sh\nnpx skills update --yes >/dev/null 2>&1 &\n' > .git/hooks/pos
 | [API Design](skills/knowledge/api-design/SKILL.md) | REST and GraphQL design principles and evolution strategies |
 | [Security](skills/knowledge/security/SKILL.md) | OWASP Top 10, auth patterns, secure coding practices |
 | [Scrum](skills/knowledge/scrum/SKILL.md) | Sprint goals, events, roles, and facilitation templates |
+| [Performance](skills/knowledge/performance/SKILL.md) | Profiling, caching, database optimization, N+1 prevention |
 
 ## Tool Skills
 
@@ -108,6 +109,7 @@ code-virtuoso/
 │   │   ├── debugging/
 │   │   ├── design-patterns/
 │   │   ├── refactoring/
+│   │   ├── performance/
 │   │   ├── scrum/
 │   │   │   └── agents/           # Co-located agents
 │   │   ├── security/
