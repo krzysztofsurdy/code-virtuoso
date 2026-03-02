@@ -1,6 +1,7 @@
 ---
 name: refactoring
 description: Comprehensive skill for 89 refactoring techniques and code smells with PHP 8.3+ examples. Covers composing methods, moving features, organizing data, simplifying conditionals, simplifying method calls, dealing with generalization, and detecting 22 code smells across bloaters, OO abusers, change preventers, dispensables, and couplers.
+user-invocable: false
 ---
 
 # Refactoring

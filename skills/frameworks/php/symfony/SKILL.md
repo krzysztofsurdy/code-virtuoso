@@ -1,6 +1,7 @@
 ---
 name: symfony
 description: Comprehensive skill for all Symfony framework components. Covers HTTP handling, dependency injection, forms, validation, caching, messaging, console commands, event dispatching, workflows, serialization, testing, filesystem operations, configuration, and utility components. Use when working with any Symfony component.
+user-invocable: false
 ---
 
 # Symfony Components

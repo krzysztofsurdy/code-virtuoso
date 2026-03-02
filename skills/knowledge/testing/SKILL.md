@@ -1,6 +1,7 @@
 ---
 name: testing
 description: Testing principles, strategies, and patterns. Covers the testing pyramid, test design, TDD, test doubles, and common testing antipatterns. Stack-agnostic.
+user-invocable: false
 ---
 
 # Testing

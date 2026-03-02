@@ -1,6 +1,7 @@
 ---
 name: api-design
 description: REST and GraphQL API design principles. Covers resource modeling, endpoint design, error handling, versioning, pagination, authentication patterns, and API evolution strategies.
+user-invocable: false
 ---
 
 # API Design

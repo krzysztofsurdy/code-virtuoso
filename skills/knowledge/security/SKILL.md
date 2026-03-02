@@ -1,6 +1,7 @@
 ---
 name: security
 description: Application security principles and OWASP Top 10. Covers injection prevention, authentication, authorization, data protection, secrets management, and security review practices.
+user-invocable: false
 ---
 
 # Security

@@ -1,6 +1,7 @@
 ---
 name: debugging
 description: Systematic debugging workflow — reproduce, investigate, hypothesize, fix, and prevent. Covers root cause analysis, bug category strategies, evidence-based diagnosis, and post-mortem documentation.
+user-invocable: false
 ---
 
 # Debugging

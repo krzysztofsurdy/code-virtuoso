@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Agent AI skill sets — Knowledge (Design Patterns, Refactoring, SOLID, Debugging, Clean Architecture, Testing, API Design, Security), Setup (Agentic Rules Writer), and Frameworks (Symfony)",
-    "version": "6.3.0"
+    "version": "6.4.0"
   },
   "plugins": [
     {

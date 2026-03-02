@@ -1,6 +1,7 @@
 ---
 name: design-patterns
 description: Comprehensive skill for all 26 Gang of Four design patterns with PHP 8.3+ implementations. Covers creational (Abstract Factory, Builder, Factory Method, Prototype, Singleton), structural (Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy), and behavioral patterns (Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor) plus Null Object, Object Pool, and Private Class Data.
+user-invocable: false
 ---
 
 # Design Patterns

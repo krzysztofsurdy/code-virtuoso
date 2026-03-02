@@ -1,6 +1,7 @@
 ---
 name: clean-architecture
 description: Clean Architecture, Hexagonal Architecture (Ports & Adapters), and Domain-Driven Design fundamentals. Layer boundaries, dependency rules, and tactical patterns for maintainable systems.
+user-invocable: false
 ---
 
 # Clean Architecture & DDD

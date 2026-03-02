@@ -1,6 +1,7 @@
 ---
 name: solid
 description: SOLID principles for object-oriented design — Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion. Covers motivation, violations, fixes, and multi-language examples (PHP, Java, Python, TypeScript, C++) for building maintainable, extensible software.
+user-invocable: false
 ---
 
 # SOLID Principles
