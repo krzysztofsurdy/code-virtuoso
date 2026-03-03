@@ -4,13 +4,13 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "Agent AI skill sets — Knowledge (Design Patterns, Refactoring, SOLID, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices), Tools (Agentic Rules Writer), Frameworks (Symfony), and Agents (Scrum Master)",
-    "version": "7.2.0"
+    "description": "Agent AI skill sets — Knowledge (Design Patterns, Refactoring, SOLID, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices, Git Workflow), Tools (Agentic Rules Writer), Frameworks (Symfony), and Agents (Scrum Master)",
+    "version": "7.4.0"
   },
   "plugins": [
     {
       "name": "knowledge-virtuoso",
-      "description": "All knowledge skills — design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, scrum, performance, and microservices. Includes Scrum Master agent.",
+      "description": "All knowledge skills — design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, scrum, performance, microservices, and git workflow. Includes Scrum Master agent.",
       "source": "./",
       "strict": false,
       "skills": [
@@ -24,7 +24,8 @@
         "./skills/knowledge/security",
         "./skills/knowledge/scrum",
         "./skills/knowledge/performance",
-        "./skills/knowledge/microservices"
+        "./skills/knowledge/microservices",
+        "./skills/knowledge/git-workflow"
       ],
       "agents": [
         "./skills/knowledge/scrum/agents/scrum-master.md"
