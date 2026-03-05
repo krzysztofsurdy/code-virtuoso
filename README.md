@@ -30,6 +30,37 @@ npx skills add krzysztofsurdy/code-virtuoso -g
 npx skills add krzysztofsurdy/code-virtuoso --list
 ```
 
+### Keeping Skills Updated
+
+```bash
+# Check for available updates
+npx skills check
+
+# Update all installed skills to latest versions
+npx skills update
+```
+
+#### Auto-update (once daily, background)
+
+**macOS / Linux** — runs silently on each new shell, at most once per day:
+
+```bash
+echo '_skills_marker="${TMPDIR:-/tmp}/.skills-updated-$(date +%Y%m%d)"
+[ ! -f "$_skills_marker" ] && (npx skills update --yes >/dev/null 2>&1 && touch "$_skills_marker" &)' >> ~/.zshrc
+```
+
+**Windows (PowerShell)** — same behavior, once per day on shell startup:
+
+```powershell
+Add-Content $PROFILE '$marker = "$env:TEMP\.skills-updated-$(Get-Date -Format yyyyMMdd)"; if (-not (Test-Path $marker)) { Start-Job { npx skills update --yes *> $null; New-Item $using:marker -Force } | Out-Null }'
+```
+
+**Project-level** — auto-update after every `git pull` via post-merge hook:
+
+```bash
+printf '#!/bin/sh\nnpx skills update --yes >/dev/null 2>&1 &\n' > .git/hooks/post-merge && chmod +x .git/hooks/post-merge
+```
+
 ---
 
 ## Knowledge Skills
@@ -105,6 +136,12 @@ code-virtuoso/
 [github.com/steveyegge/beads](https://github.com/steveyegge/beads)
 
 A distributed, git-backed graph issue tracker that gives AI agents persistent, structured memory for long-horizon tasks. Replaces ad-hoc markdown planning files with a dependency-aware task graph stored in a version-controlled database.
+
+### GSD — Spec-Driven Development
+
+[github.com/gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done)
+
+A meta-prompting and context engineering system for Claude Code, OpenCode, Gemini CLI, and Codex. Solves context rot — the quality degradation that happens as Claude fills its context window. Spec-driven development with subagent orchestration and state management.
 
 ### Grepika — Token-Efficient Code Search
 
