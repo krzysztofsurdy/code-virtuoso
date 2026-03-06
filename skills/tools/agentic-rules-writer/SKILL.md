@@ -27,7 +27,7 @@ Generate a tailored rules/instruction file for any AI coding agent. Runs an inte
 
 ## Phase 1: Agent Selection
 
-If `$ARGUMENTS` is provided, map it to an agent from the table below (case-insensitive, partial match OK — e.g. "wind" matches Windsurf). If no argument or no match, ask the user to pick.
+If `$ARGUMENTS` is provided, map it to an agent from the table below (case-insensitive, partial match OK — e.g. "wind" matches Windsurf). If no argument or no match, present a selectable menu using `AskUserQuestion` (or the agent's equivalent interactive prompt tool).
 
 | Agent | Format Notes |
 |---|---|
@@ -45,7 +45,7 @@ See [references/agent-targets.md](references/agent-targets.md) for full details 
 
 ## Phase 2: Scope Selection
 
-Ask the user which scope to generate rules for:
+Present a selectable menu (using `AskUserQuestion` or the agent's equivalent) to ask the user which scope to generate rules for:
 
 | Scope | Description | Typical Path (Claude Code example) |
 |---|---|---|
@@ -55,7 +55,7 @@ Ask the user which scope to generate rules for:
 
 See [references/agent-targets.md](references/agent-targets.md) for the exact path for each agent + scope combination.
 
-**If the target file already exists**, ask the user:
+**If the target file already exists**, present a selectable menu to ask the user:
 1. **Overwrite** — replace entirely with generated content
 2. **Merge** — append generated content below existing content (separated by `---`)
 3. **Abort** — cancel and leave the file untouched
@@ -64,7 +64,9 @@ See [references/agent-targets.md](references/agent-targets.md) for the exact pat
 
 ## Phase 3: Workflow Questionnaire
 
-Ask questions **one at a time**, wait for the user's answer before proceeding to the next. Accept short answers, numbers, or the exact option text.
+**IMPORTANT: Always present questions using a structured interactive menu, never as plain text.** If `AskUserQuestion` is available, use it. Otherwise, use whatever equivalent interactive prompt tool the agent CLI provides. The goal is a selectable option list, not a wall of text the user has to parse and type answers to. Batch up to 4 independent questions per call when the tool supports it. If a question has more than 4 options, present the most common 4 and let the "Other" / free-text fallback cover the rest.
+
+Wait for the user's answers before proceeding to the next batch.
 
 Which questions to ask depends on the scope:
 
@@ -90,10 +92,21 @@ Which questions to ask depends on the scope:
 
 See [references/questionnaire.md](references/questionnaire.md) for the full question reference with descriptions, option mappings, and example outputs.
 
+### Suggested Batching
+
+For **Global** scope (all 15 questions), batch as follows:
+- Batch 1: Q1 (stack), Q2 (planning), Q3 (testing), Q4 (branches)
+- Batch 2: Q5 (commits), Q6 (quality), Q7 (autonomy), Q8 (tracking)
+- Batch 3: Q9 (self-improvement), Q10 (parallelization), Q11 (communication), Q12 (directory)
+- Batch 4: Q13 (error handling), Q14 (persona)
+- Then ask Q5/Q6 follow-ups and Q15 (free text) as needed
+
+For other scopes, adjust batches to skip irrelevant questions per the table above.
+
 ### Questions
 
 **Q1. Primary stack**
-Options: PHP+Symfony / TypeScript+React / Python+Django / Go / Rust / Java+Spring / Other
+Options (pick 4 most relevant, "Other" is added automatically): PHP+Symfony / TypeScript+React / Python+Django / Go / Rust / Java+Spring
 (If "Other", ask them to specify.)
 
 **Q2. Planning discipline**
