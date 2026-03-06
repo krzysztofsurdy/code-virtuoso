@@ -1,13 +1,14 @@
 ![Logo](logo.png)
 # Code Virtuoso
 
-AI agent skill sets for software engineering — built on the [Agent Skills](https://agentskills.io) open standard. Knowledge, Tools, and Frameworks.
+AI agent skill sets for software engineering — built on the [Agent Skills](https://agentskills.io) open standard. Knowledge, Tools, Frameworks, and Playbooks.
 
-Three categories of skills, installable independently or as bundles:
+Four categories of skills, installable independently or as bundles:
 
 - **Knowledge** — Design Patterns, Refactoring, SOLID Principles, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices, Git Workflow, CI/CD, Accessibility, Database Design. Reference material with progressive disclosure.
 - **Tools** — Agentic Rules Writer. Agent configuration and bootstrapping tools.
-- **Frameworks** — Symfony. Component-level reference for framework-specific development.
+- **Frameworks** — Symfony Components, Symfony Upgrade. Component-level reference and version upgrade guides for framework-specific development.
+- **Playbooks** — PHP Upgrade, Composer Dependencies. Step-by-step operational procedures for recurring maintenance tasks.
 
 ---
 
@@ -93,7 +94,15 @@ printf '#!/bin/sh\nnpx skills update --yes >/dev/null 2>&1 &\n' > .git/hooks/pos
 
 | Skill | Summary |
 |-------|---------|
-| [Symfony](skills/frameworks/symfony/SKILL.md) | 38 Symfony components for PHP 8.3+ and Symfony 7.x |
+| [Symfony Components](skills/frameworks/symfony/symfony-components/SKILL.md) | 38 Symfony components for PHP 8.3+ and Symfony 7.x |
+| [Symfony Upgrade](skills/frameworks/symfony/symfony-upgrade/SKILL.md) | Deprecation-first upgrade guide for minor and major Symfony versions |
+
+## Playbook Skills
+
+| Skill | Summary |
+|-------|---------|
+| [PHP Upgrade](skills/playbooks/php-upgrade/SKILL.md) | PHP version upgrade process with Rector, PHPCompatibility, and per-version breaking changes |
+| [Composer Dependencies](skills/playbooks/composer-dependencies/SKILL.md) | Safe dependency update strategies, security auditing, and automated update tools |
 
 ## Agents
 
@@ -127,6 +136,11 @@ code-virtuoso/
 │   │   └── testing/
 │   ├── frameworks/
 │   │   └── symfony/
+│   │       ├── symfony-components/
+│   │       └── symfony-upgrade/
+│   ├── playbooks/
+│   │   ├── php-upgrade/
+│   │   └── composer-dependencies/
 │   └── tools/
 │       └── agentic-rules-writer/
 ├── spec/                          # Format specifications
