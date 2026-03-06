@@ -4,7 +4,9 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-## Claude Code
+## Tier 1 — Full Support
+
+### Claude Code
 
 | Scope | Output File |
 |---|---|
@@ -28,7 +30,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-## Cursor
+### Cursor
 
 | Scope | Output File |
 |---|---|
@@ -56,7 +58,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-## Windsurf
+### Windsurf
 
 | Scope | Output File |
 |---|---|
@@ -78,7 +80,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-## GitHub Copilot
+### GitHub Copilot
 
 | Scope | Output File |
 |---|---|
@@ -100,7 +102,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-## Gemini CLI
+### Gemini CLI
 
 | Scope | Output File |
 |---|---|
@@ -122,7 +124,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-## Roo Code
+### Roo Code
 
 | Scope | Output File |
 |---|---|
@@ -143,7 +145,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-## Amp
+### Amp
 
 | Scope | Output File |
 |---|---|
@@ -161,3 +163,150 @@ Output file paths, format requirements, limits, and testing instructions for eac
 - Add footer note on global: `For project-specific rules, use .claude/rules/*.md files.`
 
 **Testing:** Start a new Amp session and ask about the rules.
+
+---
+
+### Codex (OpenAI)
+
+| Scope | Output File |
+|---|---|
+| Global | `~/.codex/instructions.md` |
+| Project (team-shared) | `AGENTS.md` (project root) |
+| Project (dev-specific) | `.agents/dev-rules.md` (add to `.gitignore`) |
+
+| Property | Value |
+|---|---|
+| Format | Plain Markdown |
+| Character limit | No hard limit |
+
+**Format notes:**
+- Project-level convention is `AGENTS.md` at project root (emerging cross-tool standard)
+- Plain Markdown, no special syntax
+- Global instructions at `~/.codex/instructions.md`
+
+**Testing:** Run `codex` in the project directory and ask about the rules.
+
+---
+
+### Cline
+
+| Scope | Output File |
+|---|---|
+| Global | `~/.agents/rules/global-rules.md` |
+| Project (team-shared) | `.agents/rules/team-rules.md` |
+| Project (dev-specific) | `.agents/rules/dev-rules.md` (add to `.gitignore`) |
+
+| Property | Value |
+|---|---|
+| Format | Plain Markdown |
+| Character limit | No hard limit |
+
+**Format notes:**
+- Plain Markdown
+- Rules in `.agents/rules/` are loaded automatically
+
+**Testing:** Open VS Code with Cline extension and ask about the rules.
+
+---
+
+### OpenCode
+
+| Scope | Output File |
+|---|---|
+| Global | `~/.config/opencode/rules/global-rules.md` |
+| Project (team-shared) | `.agents/rules/team-rules.md` |
+| Project (dev-specific) | `.agents/rules/dev-rules.md` (add to `.gitignore`) |
+
+| Property | Value |
+|---|---|
+| Format | Plain Markdown |
+| Character limit | No hard limit |
+
+**Format notes:**
+- Global path differs from project path
+- Plain Markdown, no special syntax
+
+**Testing:** Run `opencode` and ask about the rules.
+
+---
+
+### Continue
+
+| Scope | Output File |
+|---|---|
+| Global | `~/.continue/rules/global-rules.md` |
+| Project (team-shared) | `.continue/rules/team-rules.md` |
+| Project (dev-specific) | `.continue/rules/dev-rules.md` (add to `.gitignore`) |
+
+| Property | Value |
+|---|---|
+| Format | Plain Markdown |
+| Character limit | No hard limit |
+
+**Format notes:**
+- Plain Markdown
+- Rules in `.continue/rules/` are loaded by the Continue extension
+
+**Testing:** Open IDE with Continue extension and ask about the rules.
+
+---
+
+### Trae
+
+| Scope | Output File |
+|---|---|
+| Global | `~/.trae/rules/global-rules.md` |
+| Project (team-shared) | `.trae/rules/team-rules.md` |
+| Project (dev-specific) | `.trae/rules/dev-rules.md` (add to `.gitignore`) |
+
+| Property | Value |
+|---|---|
+| Format | Plain Markdown |
+| Character limit | No hard limit |
+
+**Format notes:**
+- Plain Markdown
+- Trae (by ByteDance) uses `.trae/rules/` directory
+
+**Testing:** Open Trae and ask about the rules.
+
+---
+
+## Tier 2 — Generic Markdown Support
+
+These agents use plain Markdown with no special formatting. Paths follow vercel-labs/skills conventions.
+
+### Goose
+
+| Scope | Output File |
+|---|---|
+| Global | `~/.config/goose/rules/global-rules.md` |
+| Project (team-shared) | `.goose/rules/team-rules.md` |
+| Project (dev-specific) | `.goose/rules/dev-rules.md` (add to `.gitignore`) |
+
+### Augment
+
+| Scope | Output File |
+|---|---|
+| Global | `~/.augment/rules/global-rules.md` |
+| Project (team-shared) | `.augment/rules/team-rules.md` |
+| Project (dev-specific) | `.augment/rules/dev-rules.md` (add to `.gitignore`) |
+
+### Kilo Code
+
+| Scope | Output File |
+|---|---|
+| Global | `~/.kilocode/rules/global-rules.md` |
+| Project (team-shared) | `.kilocode/rules/team-rules.md` |
+| Project (dev-specific) | `.kilocode/rules/dev-rules.md` (add to `.gitignore`) |
+
+---
+
+## Other / Universal
+
+For agents not listed above, ask the user for the output path and write plain Markdown. No special formatting is applied.
+
+Common conventions that may apply:
+- Most agents look for rules in a dotfile directory (`.agent-name/rules/`)
+- `AGENTS.md` at project root is an emerging cross-tool standard
+- Global rules typically go under `~/` in the agent's config directory

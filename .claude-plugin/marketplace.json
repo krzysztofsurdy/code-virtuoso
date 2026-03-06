@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Agent AI skill sets — Knowledge (Design Patterns, Refactoring, SOLID, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices, Git Workflow, CI/CD, Accessibility, Database Design), Tools (Agentic Rules Writer), Frameworks (Symfony), and Agents (Scrum Master)",
-    "version": "7.8.0"
+    "version": "7.9.0"
   },
   "plugins": [
     {
@@ -36,7 +36,7 @@
     },
     {
       "name": "setup-rules-writer",
-      "description": "Generate a rules file for any AI coding agent. Interactive setup that scans installed skills, asks about workflow preferences, and writes a tailored instruction file for Claude Code, Cursor, Windsurf, Copilot, Gemini, Roo Code, or Amp",
+      "description": "Generate a rules file for any AI coding agent. Interactive setup that scans installed skills, asks about workflow preferences, and writes a tailored instruction file for Claude Code, Cursor, Windsurf, Copilot, Gemini, Codex, Cline, OpenCode, Continue, Trae, Roo Code, Amp, and more",
       "source": "./",
       "strict": false,
       "skills": [
