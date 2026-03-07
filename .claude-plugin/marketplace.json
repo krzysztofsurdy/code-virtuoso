@@ -4,8 +4,8 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "Agent AI skill sets — Knowledge (Design Patterns, Refactoring, SOLID, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices, Git Workflow, CI/CD, Accessibility, Database Design), Tools (Agentic Rules Writer), Frameworks (Symfony Components, Symfony Upgrade), Playbooks (PHP Upgrade, Composer Dependencies), and Agents (Scrum Master)",
-    "version": "7.10.1"
+    "description": "Agent AI skill sets — Knowledge (Design Patterns, Refactoring, SOLID, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices, Git Workflow, CI/CD, Accessibility, Database Design), Tools (Agentic Rules Writer), Frameworks (Symfony Components, Symfony Upgrade, Django Components), Playbooks (PHP Upgrade, Composer Dependencies), and Agents (Scrum Master)",
+    "version": "7.11.0"
   },
   "plugins": [
     {
@@ -51,6 +51,15 @@
       "skills": [
         "./skills/frameworks/symfony/symfony-components",
         "./skills/frameworks/symfony/symfony-upgrade"
+      ]
+    },
+    {
+      "name": "django-virtuoso",
+      "description": "Django framework skills — 33 component references (APIs, patterns, configuration for Python 3.10+ and Django 6.0) covering models, views, templates, forms, admin, auth, caching, testing, middleware, signals, async, deployment, and more",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/frameworks/django/django-components"
       ]
     },
     {

@@ -7,7 +7,7 @@ Four categories of skills, installable independently or as bundles:
 
 - **Knowledge** — Design Patterns, Refactoring, SOLID Principles, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices, Git Workflow, CI/CD, Accessibility, Database Design. Reference material with progressive disclosure.
 - **Tools** — Agentic Rules Writer. Agent configuration and bootstrapping tools.
-- **Frameworks** — Symfony Components, Symfony Upgrade. Component-level reference and version upgrade guides for framework-specific development.
+- **Frameworks** — Symfony Components, Symfony Upgrade, Django Components. Component-level reference and version upgrade guides for framework-specific development.
 - **Playbooks** — PHP Upgrade, Composer Dependencies. Step-by-step operational procedures for recurring maintenance tasks.
 
 ---
@@ -96,6 +96,7 @@ printf '#!/bin/sh\nnpx skills update --yes >/dev/null 2>&1 &\n' > .git/hooks/pos
 |-------|---------|
 | [Symfony Components](skills/frameworks/symfony/symfony-components/SKILL.md) | 38 Symfony components for PHP 8.3+ and Symfony 7.x |
 | [Symfony Upgrade](skills/frameworks/symfony/symfony-upgrade/SKILL.md) | Deprecation-first upgrade guide for minor and major Symfony versions |
+| [Django Components](skills/frameworks/django/django-components/SKILL.md) | 33 Django components for Python 3.10+ and Django 6.0 |
 
 ## Playbook Skills
 
@@ -135,6 +136,8 @@ code-virtuoso/
 │   │   ├── solid/
 │   │   └── testing/
 │   ├── frameworks/
+│   │   ├── django/
+│   │   │   └── django-components/
 │   │   └── symfony/
 │   │       ├── symfony-components/
 │   │       └── symfony-upgrade/
