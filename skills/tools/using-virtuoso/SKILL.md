@@ -103,7 +103,12 @@ The most-asked situations and their canonical answers. Full table in [decision-m
 | Designing an API | `api-design` knowledge + `architect` role |
 | Security review | `security` knowledge + `reviewer` agent |
 | Database schema change or migration | `database-design` + `database-migration` + `migration-planner` agent |
-| Finishing a branch and opening a PR | `finishing-branch` playbook + `pr-message-writer` |
+| Finishing a branch and opening a PR | `finishing-branch` playbook + `pr-message-writer` tool |
+| Writing a PR description | `pr-message-writer` tool |
+| Generating a standalone HTML report | `report-writer` tool |
+| Communicating status to stakeholders | `stakeholder-update-writer` tool |
+| Working on a ticket end-to-end | `ticket-delivery` playbook |
+| Managing parallel git worktrees | `worktree-ops` playbook |
 | Before claiming work done | `verification-before-completion` knowledge |
 | Writing a ticket or user story | `ticket-writer` tool |
 | Creating a new skill or agent | `skill-creator` + `agent-creator` tools |
@@ -130,21 +135,23 @@ Chains are guidelines, not rituals. Skip steps that do not apply. Add steps that
 
 ---
 
-## Plugin Distribution Tiers
+## Plugin Distribution
 
-Users can install at three granularities. See [plugin-tiers](references/plugin-tiers.md) for the full list.
+Five bundles, one per category. See [plugin-tiers](references/plugin-tiers.md) for install recommendations.
 
-| Tier | Pattern | Example | Contents |
-|---|---|---|---|
-| **Individual** | `role-{name}`, `agent-{name}`, `tool-{name}` | `role-architect`, `agent-reviewer`, `tool-ticket-writer` | One skill + one agent (roles); one agent (specialists); one skill (tools) |
-| **Category bundle** | `{category}-virtuoso` | `knowledge-virtuoso`, `playbooks-virtuoso`, `symfony-virtuoso` | All skills in a category |
-| **Agents bundle** | `agents-virtuoso` | `agents-virtuoso` | All agents plus all role skills |
+| Bundle | Contents |
+|---|---|
+| `knowledge-virtuoso` | All 18 knowledge reference skills |
+| `tools-virtuoso` | All 9 interactive tool skills |
+| `frameworks-virtuoso` | All 4 framework skills (Symfony, Django, LangChain) |
+| `playbooks-virtuoso` | All 5 operational playbook skills |
+| `agents-virtuoso` | All 15 agents + all 7 role skills |
 
 When recommending an install:
 
-- New project, uncertain scope → `agents-virtuoso` plus relevant framework bundle
-- Solo developer, narrow need → individual plugins only
-- Team adoption → category bundles plus `agents-virtuoso`
+- New project, uncertain scope → `agents-virtuoso` + `knowledge-virtuoso` + relevant framework bundle
+- Solo developer, narrow need → `tools-virtuoso` + one framework bundle
+- Team adoption → all five bundles
 
 ---
 

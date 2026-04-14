@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Agent AI skill sets — Knowledge (Design Patterns, Refactoring, SOLID, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices, Git Workflow, CI/CD, Accessibility, Database Design, Verification Before Completion, Dispatching Parallel Agents, Subagent-Driven Development), Tools (Agentic Rules Writer, Ticket Writer, Agent Creator, Plugin Creator, Brainstorming, Using Virtuoso), Frameworks (Symfony Components, Symfony Upgrade, Django Components, LangChain Components), Playbooks (PHP Upgrade, Composer Dependencies, Finishing Branch), Roles (Product Manager, Architect, Backend Dev, Frontend Dev, QA Engineer, Project Manager, Scrum Master), and Agents (15 specialist and role agents)",
-    "version": "8.4.0"
+    "version": "8.5.0"
   },
   "plugins": [
     {
@@ -36,7 +36,7 @@
     },
     {
       "name": "tools-virtuoso",
-      "description": "All tool skills — agentic rules writer, ticket writer, agent creator, plugin creator, brainstorming, and ecosystem discovery advisor",
+      "description": "All tool skills — agentic rules writer, ticket writer, agent creator, plugin creator, brainstorming, ecosystem discovery advisor, PR message writer, report writer, and stakeholder update writer",
       "source": "./",
       "strict": false,
       "skills": [
@@ -45,7 +45,10 @@
         "./skills/tools/agent-creator",
         "./skills/tools/plugin-creator",
         "./skills/tools/brainstorming",
-        "./skills/tools/using-virtuoso"
+        "./skills/tools/using-virtuoso",
+        "./skills/tools/pr-message-writer",
+        "./skills/tools/report-writer",
+        "./skills/tools/stakeholder-update-writer"
       ]
     },
     {
@@ -62,13 +65,15 @@
     },
     {
       "name": "playbooks-virtuoso",
-      "description": "Operational playbooks — PHP version upgrade (Rector, PHPCompatibility, per-version breaking changes), Composer dependency management (safe update strategies, security auditing, Dependabot/Renovate), and finishing a development branch (pre-push verification, integration strategies, PR messages, cleanup, and recovery)",
+      "description": "Operational playbooks — PHP version upgrade, Composer dependency management, branch finishing, end-to-end ticket delivery (analysis through TDD to PR), and git worktree operations for parallel development sessions",
       "source": "./",
       "strict": false,
       "skills": [
         "./skills/playbooks/php-upgrade",
         "./skills/playbooks/composer-dependencies",
-        "./skills/playbooks/finishing-branch"
+        "./skills/playbooks/finishing-branch",
+        "./skills/playbooks/ticket-delivery",
+        "./skills/playbooks/worktree-ops"
       ]
     },
     {

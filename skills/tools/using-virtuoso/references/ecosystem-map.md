@@ -39,6 +39,9 @@ Interactive generators and advisors. User-invocable as slash commands.
 | `plugin-creator` | Scaffolds a complete plugin manifest and directory structure |
 | `brainstorming` | Turns a vague idea into a written spec with hard approval gate |
 | `using-virtuoso` | This skill. Guided tour and discovery advisor for the ecosystem |
+| `pr-message-writer` | Writes structured PR messages with technical documentation and testing instructions |
+| `report-writer` | Generates standalone HTML reports summarizing changes, investigations, or decisions |
+| `stakeholder-update-writer` | Drafts stakeholder Slack or email updates about status, blockers, and decisions |
 
 ## Playbook Skills
 
@@ -49,6 +52,8 @@ Step-by-step operational procedures. User-invocable.
 | `php-upgrade` | PHP version upgrade process with Rector and PHPCompatibility |
 | `composer-dependencies` | Safe dependency update strategies, audits, automation |
 | `finishing-branch` | End-to-end branch finishing: verify, review, integrate, clean up |
+| `ticket-delivery` | End-to-end ticket workflow: analysis, investigation, planning, TDD, commit, PR |
+| `worktree-ops` | Create, list, switch, and remove git worktrees for parallel development |
 
 ## Role Skills
 
@@ -106,18 +111,14 @@ Domain ownership. Dev roles run in worktrees. Several carry project-level memory
 
 ## Plugin Bundles
 
-Installable units in `.claude-plugin/marketplace.json`.
+Five category bundles in `.claude-plugin/marketplace.json`. One plugin per `skills/` subdirectory, plus one for agents.
 
 | Plugin | Contains |
 |---|---|
-| `knowledge-virtuoso` | All knowledge skills |
-| `playbooks-virtuoso` | All playbook skills |
-| `symfony-virtuoso` | All Symfony framework skills |
-| `django-virtuoso` | All Django framework skills |
-| `langchain-virtuoso` | All LangChain framework skills |
-| `agents-virtuoso` | All 15 agents plus all role skills |
-| `role-{name}` | One role skill + its matching role agent (seven plugins) |
-| `agent-{name}` | One specialist agent (eight plugins) |
-| `tool-{name}` | One tool skill (one plugin per tool) |
+| `knowledge-virtuoso` | All 18 knowledge skills |
+| `tools-virtuoso` | All 9 tool skills |
+| `frameworks-virtuoso` | All 4 framework skills (Symfony, Django, LangChain) |
+| `playbooks-virtuoso` | All 5 playbook skills |
+| `agents-virtuoso` | All 15 agents plus all 7 role skills |
 
 Versioning follows semantic rules: patch for content edits, minor for additions, major for restructuring or breaking changes.

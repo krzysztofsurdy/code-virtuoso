@@ -78,9 +78,9 @@ That is the whole tour. For fine-grained install modes (per-skill, global, offli
 | Category | Count | Summary |
 |---|---|---|
 | [Knowledge](#knowledge-skills) | 18 | Principles, craft, process, and agent workflow references |
-| [Tools](#tool-skills) | 6 | Interactive generators -- rules files, tickets, agents, plugins |
+| [Tools](#tool-skills) | 9 | Interactive generators -- rules files, tickets, agents, plugins, PR messages, reports, updates |
 | [Frameworks](#framework-skills) | 4 | Symfony, Django, LangChain component libraries and upgrade guides |
-| [Playbooks](#playbook-skills) | 3 | Step-by-step procedures for recurring operational tasks |
+| [Playbooks](#playbook-skills) | 5 | Step-by-step procedures for recurring operational tasks |
 | [Roles](#role-skills) | 6 | Team-role reference skills used by role agents |
 | [Agents](#agents) | 15 | 8 specialist + 7 role sub-agents with tool, isolation, and memory metadata |
 
@@ -142,6 +142,9 @@ Interactive generators. Each is user-invocable via `/skill-name`.
 | [Plugin Creator](skills/tools/plugin-creator/SKILL.md) | Scaffold a complete Claude Code plugin -- manifest, skills, agents, hooks, MCP/LSP servers |
 | [Brainstorming](skills/tools/brainstorming/SKILL.md) | Pre-implementation design exploration -- turn a vague idea into an approved spec |
 | [Using Virtuoso](skills/tools/using-virtuoso/SKILL.md) | Guided tour and discovery advisor for the ecosystem |
+| [PR Message Writer](skills/tools/pr-message-writer/SKILL.md) | Write structured pull request messages with technical documentation and testing instructions |
+| [Report Writer](skills/tools/report-writer/SKILL.md) | Generate standalone HTML reports summarizing changes, investigations, or architectural decisions |
+| [Stakeholder Update Writer](skills/tools/stakeholder-update-writer/SKILL.md) | Draft stakeholder Slack or email updates about project status, blockers, and decisions |
 
 ---
 
@@ -163,6 +166,8 @@ Interactive generators. Each is user-invocable via `/skill-name`.
 | [PHP Upgrade](skills/playbooks/php-upgrade/SKILL.md) | PHP version upgrade process with Rector, PHPCompatibility, breaking changes |
 | [Composer Dependencies](skills/playbooks/composer-dependencies/SKILL.md) | Safe dependency updates, security auditing, automated update tools |
 | [Finishing Branch](skills/playbooks/finishing-branch/SKILL.md) | End-to-end branch finishing -- pre-push checks, PR messages, cleanup, recovery |
+| [Ticket Delivery](skills/playbooks/ticket-delivery/SKILL.md) | End-to-end ticket delivery -- analysis, investigation, planning, TDD implementation, commit, and PR |
+| [Worktree Ops](skills/playbooks/worktree-ops/SKILL.md) | Create, list, switch, and remove git worktrees for parallel development sessions |
 
 ---
 
@@ -388,14 +393,19 @@ code-virtuoso/
 │   ├── playbooks/
 │   │   ├── php-upgrade/
 │   │   ├── composer-dependencies/
-│   │   └── finishing-branch/
+│   │   ├── finishing-branch/
+│   │   ├── ticket-delivery/
+│   │   └── worktree-ops/
 │   └── tools/
 │       ├── agentic-rules-writer/
 │       ├── ticket-writer/
 │       ├── agent-creator/
 │       ├── plugin-creator/
 │       ├── brainstorming/
-│       └── using-virtuoso/
+│       ├── using-virtuoso/
+│       ├── pr-message-writer/
+│       ├── report-writer/
+│       └── stakeholder-update-writer/
 ├── spec/                          # Format specifications
 │   ├── agent-skills-spec.md
 │   ├── skill-spec.md

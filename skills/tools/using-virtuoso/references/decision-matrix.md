@@ -15,7 +15,11 @@ Situation-to-skill and situation-to-agent lookups. Use when you need to pick the
 | Implementation | Writing production code with tests | `implementer` agent or a `-dev` role agent |
 | Review | Code ready for review | `reviewer` agent + `code-review-excellence` skill |
 | Verification | About to claim done | `verification-before-completion` knowledge |
+| Ticket delivery | Working through a ticket end-to-end | `ticket-delivery` playbook |
 | Finishing | Ready to push and open PR | `finishing-branch` playbook |
+| PR description | Writing the pull request message | `pr-message-writer` tool |
+| Reporting | Generating a report for the work done | `report-writer` tool |
+| Stakeholder comms | Updating stakeholders on progress | `stakeholder-update-writer` tool |
 | Post-merge cleanup | Closing tickets, retrospective | `scrum-master` role + `scrum` knowledge |
 
 ## By Bug or Quality Task
@@ -51,8 +55,11 @@ Situation-to-skill and situation-to-agent lookups. Use when you need to pick the
 | Write a sprint goal | `scrum` knowledge (sprint goal section) |
 | Run a retrospective | `scrum-master` role |
 | Write a ticket | `ticket-writer` tool |
-| Write a PR message | `pr-message-writer` skill |
-| Stakeholder update | `project-manager` role + `stakeholder-update` skill |
+| Write a PR message | `pr-message-writer` tool |
+| Generate an HTML report | `report-writer` tool |
+| Stakeholder update | `stakeholder-update-writer` tool + `project-manager` role |
+| Work a ticket end-to-end | `ticket-delivery` playbook |
+| Manage parallel worktrees | `worktree-ops` playbook |
 | Risk register | `project-manager` role |
 
 ## By Framework or Upgrade Task

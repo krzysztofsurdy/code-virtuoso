@@ -5,6 +5,7 @@ tools: Read, Grep, Glob, Bash, Edit, Write
 skills:
   - testing
   - design-patterns
+  - ticket-delivery
 isolation: worktree
 ---
 

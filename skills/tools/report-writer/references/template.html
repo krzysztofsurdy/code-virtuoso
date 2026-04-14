@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{REPORT_TITLE}}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Semantic color tokens -- swap the entire palette by editing this block
+                        primary:   { light: '#3D79F215', DEFAULT: '#3D79F2', dark: '#2656BF' },
+                        secondary: { light: '#F2BA5220', DEFAULT: '#F2BA52', dark: '#D9A033' },
+                        surface:   { light: '#FAFAFA', DEFAULT: '#F2F2F2', dark: '#D9D9D9' },
+                        warning:   { light: '#F29C5015', DEFAULT: '#F29C50', dark: '#D97D2E' },
+                        danger:    { light: '#F2784B15', DEFAULT: '#F2784B', dark: '#D95A2E' },
+                    },
+                    fontFamily: {
+                        sans: ["'Inter'", "system-ui", "-apple-system", "sans-serif"],
+                        mono: ["'JetBrains Mono'", "'SF Mono'", "'Fira Code'", "monospace"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+        }
+        @media print {
+            body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .w-full, [class*="md\:w-"] { width: 90% !important; max-width: none !important; }
+            pre { background: #f1f5f9 !important; color: #334155 !important; box-shadow: none !important; border: 1px solid #cbd5e1; }
+            pre code { white-space: pre-wrap !important; word-break: break-word !important; }
+            .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; }
+            .backdrop-blur-sm { backdrop-filter: none !important; }
+            [class*="bg-white/"] { background: white !important; }
+            .section { page-break-inside: avoid; }
+            .section h2 { page-break-after: avoid; }
+            table { page-break-inside: avoid; }
+            tr { page-break-inside: avoid; }
+            .relative.pl-9 { page-break-inside: avoid; }
+            .grid { page-break-inside: avoid; }
+            pre + *, .grid + *, table + * { page-break-before: auto; }
+            [class*="border-l-4"] { border-left-width: 4px !important; }
+            [class*="rounded-xl"] { border-radius: 8px !important; }
+            a { text-decoration: none !important; color: #334155 !important; }
+            a[href]::after { content: none !important; }
+            button { display: none !important; }
+            .text-center.mb-14 { margin-bottom: 2rem !important; padding-bottom: 1.5rem !important; }
+            .text-center.mt-16 { margin-top: 2rem !important; padding-top: 1rem !important; }
+        }
+    </style>
+</head>
+<body class="bg-surface-light text-slate-800 antialiased leading-relaxed text-[15px] min-h-screen">
+    <div class="w-full px-4 md:w-[80%] md:px-8 mx-auto py-12">
+
+        <!-- Header -->
+        <div class="text-center mb-14 pb-10 border-b border-surface-dark">
+            <div class="w-full max-w-md h-2 mx-auto mb-8 bg-gradient-to-r from-primary via-secondary to-warning rounded-full opacity-80"></div>
+            <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 mb-3">{{REPORT_TITLE}}</h1>
+            <p class="text-lg text-slate-500 mb-6 font-light">{{REPORT_SUBTITLE}}</p>
+            <div class="flex justify-center gap-8 flex-wrap text-sm text-slate-500">
+                <span class="inline-flex items-center gap-1.5"><span class="font-semibold text-slate-700">Date</span> {{REPORT_DATE}}</span>
+                <span class="inline-flex items-center gap-1.5"><span class="font-semibold text-slate-700">Ticket</span> {{TICKET_ID}}</span>
+                <span class="inline-flex items-center gap-1.5"><span class="font-semibold text-slate-700">Branch</span> {{BRANCH_NAME}}</span>
+                <span class="inline-flex items-center gap-1.5"><span class="font-semibold text-slate-700">Author</span> {{AUTHOR_NAME}}</span>
+            </div>
+        </div>
+
+        <!-- Replace {{REPORT_CONTENT}} with generated sections -->
+        {{REPORT_CONTENT}}
+
+        <!-- Footer -->
+        <div class="text-center mt-16 pt-8 border-t border-surface-dark">
+            <div class="w-full max-w-md h-2 mx-auto mt-8 mb-6 bg-gradient-to-r from-primary via-secondary to-warning rounded-full opacity-80"></div>
+            <p class="text-sm text-slate-400">Generated with <a href="https://github.com/krzysztofsurdy/code-virtuoso" class="text-slate-400 hover:text-primary transition-colors font-semibold">https://github.com/krzysztofsurdy/code-virtuoso</a> &middot; {{REPORT_DATE}}</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Component Reference -- copy these into {{REPORT_CONTENT}}
+
+         Semantic color usage:
+           primary   (#60A685 teal)    -- success, positive, accepted, added
+           secondary (#F2B705 gold)    -- highlights, secondary accent, info notes
+           surface   (#F2EBD5 cream)   -- backgrounds, borders, structural
+           warning   (#F29F05 amber)   -- caution, risk, modified
+           danger    (#A62F24 brick)   -- critical, deleted, rejected, negative
+         ============================================================ -->
+
+    <!--
+    =====================================
+    SECTION HEADING
+    =====================================
+    <div class="section mb-10">
+        <h2 class="text-xl font-bold text-slate-900 mb-5 pb-3 border-b border-surface-dark flex items-center gap-2.5">
+            <i class="bi bi-search text-primary"></i> Section Title
+        </h2>
+        <p class="mb-3 text-slate-600 leading-relaxed">Content here.</p>
+    </div>
+
+    =====================================
+    SUBSECTION
+    =====================================
+    <h3 class="text-base font-semibold text-slate-800 mt-6 mb-3">Subsection</h3>
+
+    =====================================
+    CARD (plain)
+    =====================================
+    <div class="bg-white/80 backdrop-blur-sm border border-surface-dark rounded-xl p-5 px-6 my-4 shadow-sm hover:shadow-md transition-shadow">
+        Content.
+    </div>
+
+    =====================================
+    CARD (success)
+    =====================================
+    <div class="bg-primary-light border border-primary/20 border-l-4 border-l-primary rounded-xl p-5 px-6 my-4">
+        <strong class="text-primary-dark">Success:</strong> Content.
+    </div>
+
+    =====================================
+    CARD (info / highlight)
+    =====================================
+    <div class="bg-secondary-light border border-secondary/20 border-l-4 border-l-secondary rounded-xl p-5 px-6 my-4">
+        <strong class="text-secondary-dark">Note:</strong> Content.
+    </div>
+
+    =====================================
+    CARD (warning)
+    =====================================
+    <div class="bg-warning-light border border-warning/20 border-l-4 border-l-warning rounded-xl p-5 px-6 my-4">
+        <strong class="text-warning-dark">Warning:</strong> Content.
+    </div>
+
+    =====================================
+    CARD (danger)
+    =====================================
+    <div class="bg-danger-light border border-danger/20 border-l-4 border-l-danger rounded-xl p-5 px-6 my-4">
+        <strong class="text-danger-dark">Critical:</strong> Content.
+    </div>
+
+    =====================================
+    CODE BLOCK
+    =====================================
+    <pre class="bg-slate-900 text-slate-200 rounded-xl p-6 overflow-x-auto my-5 shadow-lg leading-normal relative"><code class="font-mono text-[13px]">code</code></pre>
+
+    =====================================
+    INLINE CODE
+    =====================================
+    <code class="font-mono text-[13px] bg-surface px-1.5 py-0.5 rounded-md text-slate-700 ring-1 ring-surface-dark">code</code>
+
+    =====================================
+    STATS BAR
+    =====================================
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 my-5">
+        <div class="bg-white/80 backdrop-blur-sm border border-surface-dark rounded-xl p-5 text-center shadow-sm">
+            <div class="text-3xl font-extrabold text-primary leading-tight">42</div>
+            <div class="text-xs text-slate-500 uppercase tracking-wider mt-1.5 font-medium">Label</div>
+        </div>
+        <div class="bg-white/80 backdrop-blur-sm border border-surface-dark rounded-xl p-5 text-center shadow-sm">
+            <div class="text-3xl font-extrabold text-secondary-dark leading-tight">7</div>
+            <div class="text-xs text-slate-500 uppercase tracking-wider mt-1.5 font-medium">Label</div>
+        </div>
+        <div class="bg-white/80 backdrop-blur-sm border border-surface-dark rounded-xl p-5 text-center shadow-sm">
+            <div class="text-3xl font-extrabold text-warning leading-tight">3</div>
+            <div class="text-xs text-slate-500 uppercase tracking-wider mt-1.5 font-medium">Label</div>
+        </div>
+    </div>
+
+    =====================================
+    TIMELINE (vertical)
+    =====================================
+    <div class="relative pl-9 my-5 before:content-[''] before:absolute before:left-[9px] before:top-2 before:bottom-2 before:w-0.5 before:bg-gradient-to-b before:from-primary before:to-secondary">
+        <div class="relative mb-6">
+            <div class="absolute -left-[29px] top-1.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-white shadow-[0_0_0_3px_theme(colors.primary.light)]"></div>
+            <div class="bg-white/80 backdrop-blur-sm border border-surface-dark rounded-xl p-4 px-5 shadow-sm">
+                <strong class="block mb-1 text-slate-800">Event</strong>
+                <p class="text-sm text-slate-500 m-0">Description.</p>
+            </div>
+        </div>
+    </div>
+
+    =====================================
+    HORIZONTAL TIMELINE (phases)
+    =====================================
+    <div class="flex items-center justify-center my-8 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-surface-dark flex-wrap gap-0">
+        <div class="flex flex-col items-center gap-2">
+            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-md">1</div>
+            <span class="text-xs font-semibold text-primary-dark">Done</span>
+        </div>
+        <div class="w-14 h-0.5 bg-primary mx-1.5 mb-6"></div>
+        <div class="flex flex-col items-center gap-2">
+            <div class="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center font-bold text-sm shadow-md ring-4 ring-secondary-light">2</div>
+            <span class="text-xs font-semibold text-secondary-dark">Active</span>
+        </div>
+        <div class="w-14 h-0.5 bg-gradient-to-r from-primary to-surface-dark mx-1.5 mb-6"></div>
+        <div class="flex flex-col items-center gap-2">
+            <div class="w-10 h-10 rounded-full bg-surface text-slate-400 flex items-center justify-center font-bold text-sm border border-surface-dark">3</div>
+            <span class="text-xs font-semibold text-slate-400">Pending</span>
+        </div>
+    </div>
+
+    =====================================
+    PHASE GROUP
+    =====================================
+    <div class="my-5">
+        <div class="text-base font-bold text-primary-dark mb-3 py-2.5 px-5 bg-primary-light rounded-lg border-l-4 border-primary">
+            Phase Name
+        </div>
+        <p class="text-slate-600 mb-3">Content.</p>
+    </div>
+
+    =====================================
+    DATA TABLE
+    =====================================
+    <div class="my-5 rounded-xl overflow-hidden border border-surface-dark shadow-sm">
+        <table class="w-full border-collapse bg-white/80">
+            <thead>
+                <tr>
+                    <th class="bg-surface/60 p-3.5 px-5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 border-b-2 border-surface-dark">Column</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="hover:bg-surface-light transition-colors">
+                    <td class="p-3 px-5 border-b border-surface text-sm">Data</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    =====================================
+    IMPACT GRID
+    =====================================
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 my-5">
+        <div class="p-5 rounded-xl border border-primary/20 bg-white/80 border-l-4 border-l-primary shadow-sm">
+            <strong class="block mb-1.5 text-xs uppercase tracking-wider text-primary-dark">Low</strong>
+            <span class="text-sm text-slate-600">Description.</span>
+        </div>
+        <div class="p-5 rounded-xl border border-warning/20 bg-white/80 border-l-4 border-l-warning shadow-sm">
+            <strong class="block mb-1.5 text-xs uppercase tracking-wider text-warning-dark">Medium</strong>
+            <span class="text-sm text-slate-600">Description.</span>
+        </div>
+        <div class="p-5 rounded-xl border border-danger/20 bg-white/80 border-l-4 border-l-danger shadow-sm">
+            <strong class="block mb-1.5 text-xs uppercase tracking-wider text-danger">High</strong>
+            <span class="text-sm text-slate-600">Description.</span>
+        </div>
+    </div>
+
+    =====================================
+    DECISION LOG
+    =====================================
+    <div class="my-5 space-y-3">
+        <div class="bg-white/80 border border-primary/20 rounded-xl p-5 px-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="font-semibold mb-2 text-primary-dark flex items-center gap-2">
+                <i class="bi bi-check-circle-fill text-primary"></i> Accepted: Title
+            </div>
+            <div class="text-sm text-slate-500">Rationale.</div>
+        </div>
+        <div class="bg-white/80 border border-danger/20 rounded-xl p-5 px-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="font-semibold mb-2 text-danger flex items-center gap-2">
+                <i class="bi bi-x-circle-fill text-danger-muted"></i> Rejected: Title
+            </div>
+            <div class="text-sm text-slate-500">Rationale.</div>
+        </div>
+    </div>
+
+    =====================================
+    FILE LIST -- badges: added (primary), modified (warning), deleted (danger)
+    =====================================
+    <div class="my-5 space-y-2">
+        <div class="flex items-start flex-wrap gap-2 p-3 px-5 border border-surface-dark rounded-xl bg-white/80 hover:shadow-sm transition-shadow">
+            <span class="font-mono text-[13px] text-slate-800 font-medium">path/file.ext</span>
+            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide bg-primary-light text-primary-dark ring-1 ring-primary/20">added</span>
+            <span class="w-full text-[13px] text-slate-500 mt-0.5">Description.</span>
+        </div>
+        <div class="flex items-start flex-wrap gap-2 p-3 px-5 border border-surface-dark rounded-xl bg-white/80 hover:shadow-sm transition-shadow">
+            <span class="font-mono text-[13px] text-slate-800 font-medium">path/file.ext</span>
+            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide bg-warning-light text-warning-dark ring-1 ring-warning/20">modified</span>
+            <span class="w-full text-[13px] text-slate-500 mt-0.5">Description.</span>
+        </div>
+        <div class="flex items-start flex-wrap gap-2 p-3 px-5 border border-surface-dark rounded-xl bg-white/80 hover:shadow-sm transition-shadow">
+            <span class="font-mono text-[13px] text-slate-800 font-medium">path/file.ext</span>
+            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide bg-danger-light text-danger ring-1 ring-danger/20">deleted</span>
+            <span class="w-full text-[13px] text-slate-500 mt-0.5">Description.</span>
+        </div>
+    </div>
+
+    =====================================
+    ARROW ANNOTATION
+    =====================================
+    <div class="flex items-center gap-4 my-5 p-5 px-6 bg-white/80 border border-surface-dark rounded-xl flex-wrap shadow-sm">
+        <div class="py-2.5 px-5 bg-surface rounded-lg border border-surface-dark font-mono text-sm">From()</div>
+        <div class="text-2xl text-danger font-bold">&rarr;</div>
+        <div class="py-2.5 px-5 bg-surface rounded-lg border border-surface-dark font-mono text-sm">To()</div>
+        <div class="w-full text-center text-[13px] text-danger font-semibold mt-1.5">Annotation</div>
+    </div>
+
+    =====================================
+    END COMPONENT REFERENCE
+    =====================================
+    -->
+
+    <!-- JavaScript -->
+    <script>
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        (function() {
+            var sections = document.querySelectorAll('.section h2');
+            if (sections.length < 3) return;
+            var toc = document.createElement('div');
+            toc.className = 'section mb-10';
+            toc.innerHTML = '<h2 class="text-xl font-bold text-slate-900 mb-5 pb-3 border-b border-surface-dark flex items-center gap-2.5"><i class="bi bi-list-nested text-secondary-dark"></i> Table of Contents</h2>';
+            var list = document.createElement('ol');
+            list.className = 'ml-6 space-y-2';
+            sections.forEach(function(heading, index) {
+                var id = 'section-' + index;
+                heading.parentElement.id = id;
+                var li = document.createElement('li');
+                var link = document.createElement('a');
+                link.href = '#' + id;
+                link.textContent = heading.textContent;
+                link.className = 'text-primary hover:text-primary-dark hover:underline decoration-primary/30 underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded';
+                li.appendChild(link);
+                list.appendChild(li);
+            });
+            toc.appendChild(list);
+            var header = document.querySelector('.text-center.mb-14');
+            if (header && header.nextSibling) { header.parentNode.insertBefore(toc, header.nextSibling); }
+        })();
+
+        document.querySelectorAll('pre').forEach(function(pre) {
+            var button = document.createElement('button');
+            button.textContent = 'Copy';
+            button.className = 'absolute top-3 right-3 px-3 py-1 text-[11px] bg-white/10 text-slate-400 border border-white/10 rounded-lg cursor-pointer font-sans hover:bg-white/20 hover:text-slate-200 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
+            button.addEventListener('click', function() {
+                var code = pre.querySelector('code');
+                navigator.clipboard.writeText(code ? code.textContent : pre.textContent).then(function() {
+                    button.textContent = 'Copied!';
+                    button.classList.add('text-green-400');
+                    setTimeout(function() { button.textContent = 'Copy'; button.classList.remove('text-green-400'); }, 2000);
+                });
+            });
+            pre.classList.add('relative');
+            pre.appendChild(button);
+        });
+    </script>
+</body>
+</html>

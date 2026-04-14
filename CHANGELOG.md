@@ -9,17 +9,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - `skills/tools/brainstorming` -- interactive pre-implementation design exploration with hard approval gate
 - `skills/tools/using-virtuoso` -- meta-skill ecosystem discovery advisor covering skill categories, agent tiers, chaining patterns, and plugin tiers
+- `skills/tools/pr-message-writer` -- structured pull request message generation with testing instructions (migrated from dev-virtuoso, made CLI/language/tracker-agnostic)
+- `skills/tools/report-writer` -- standalone HTML report generation with Tailwind styling, semantic color tokens, Bootstrap Icons, and print/PDF support (migrated from dev-virtuoso)
+- `skills/tools/stakeholder-update-writer` -- stakeholder Slack/email update drafting (migrated from dev-virtuoso)
+- `skills/playbooks/ticket-delivery` -- end-to-end ticket workflow from analysis through TDD to PR creation (migrated from dev-virtuoso, made CLI/language/tracker-agnostic)
+- `skills/playbooks/worktree-ops` -- git worktree management (create, list, switch, remove) merged from 4 separate skills (migrated from dev-virtuoso)
 - `skills/knowledge/verification-before-completion` -- evidence-based completion discipline with tiered definition of done
 - `skills/knowledge/dispatching-parallel-agents` -- fan-out/fan-in patterns, briefing, context isolation, result synthesis
 - `skills/knowledge/subagent-driven-development` -- one-fresh-agent-per-task with two-stage review gates and structured hand-offs
 - `skills/playbooks/finishing-branch` -- end-to-end branch finishing workflow
-- `tool-brainstorming` and `tool-using-virtuoso` plugins in marketplace
+- CHANGELOG.md covering full git history (25 versions, 167 commits)
 
 ### Changed
+- Consolidated marketplace from 27 individual plugins down to 5 category bundles (knowledge-virtuoso, tools-virtuoso, frameworks-virtuoso, playbooks-virtuoso, agents-virtuoso)
 - agentic-rules-writer: removed filesystem scanning for skills and agents, deferred ecosystem inventory to `using-virtuoso` as single source of truth
+- `using-virtuoso` ecosystem map, decision matrix, and plugin tiers updated with all new skills and 5-bundle model
 - `knowledge-virtuoso` plugin expanded from 15 to 18 skills
-- `playbooks-virtuoso` plugin expanded from 2 to 3 skills
-- README updated with new skill tables and repository tree
+- `tools-virtuoso` plugin expanded from 6 to 9 skills
+- `playbooks-virtuoso` plugin expanded from 3 to 5 skills
+- README rewritten with centered hero, quickstart, grouped knowledge tables, merged agent table, FAQ, collapsible sections
+- CONTRIBUTING.md updated to reflect simplified plugin distribution model
 
 ## [8.2.0] - 2026-04-13
 
