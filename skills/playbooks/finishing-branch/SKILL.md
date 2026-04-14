@@ -1,6 +1,6 @@
 ---
 name: finishing-branch
-description: End-to-end workflow for finishing a development branch. Use when implementation is complete and the branch is ready to ship -- runs verification checks, reviews the diff, picks the integration path (direct merge, pull request, squash-and-merge, stacked PR), writes the PR/merge message, pushes to the remote, and cleans up branches and worktrees. Covers rebase vs merge vs squash decisions, pre-push checklists, stacked-branch handling, and recovery from common missteps like force-pushing the wrong branch or deleting an unmerged branch. Triggers: "I'm done", "ready to merge", "ready to push", "ready for review", "wrap up this branch", "finish this up".
+description: End-to-end workflow for finishing a development branch. Use when implementation is complete and the branch is ready to ship -- runs verification checks, reviews the diff, picks the integration path (direct merge, pull request, squash-and-merge, stacked PR), writes the PR/merge message, pushes to the remote, and cleans up branches and worktrees. Covers rebase vs merge vs squash decisions, pre-push checklists, stacked-branch handling, and recovery from common missteps like force-pushing the wrong branch or deleting an unmerged branch. Triggers: 'I'm done', 'ready to merge', 'ready to push', 'ready for review', 'wrap up this branch', 'finish this up'.
 user-invocable: true
 argument-hint: "[optional: branch name or PR target]"
 ---

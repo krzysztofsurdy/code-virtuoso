@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Interactive pre-implementation design exploration. Use when the user has a vague idea, feature request, or problem statement but no written spec. Asks focused questions one at a time to surface goals, non-goals, constraints, success criteria, and risks, then produces a written spec and hard-gates implementation until approved. Use before writing any code, before planning, and before answering "how should I build X". Triggers: "I want to build", "I'm thinking about", "help me figure out", "let's brainstorm", "help me spec out".
+description: Interactive pre-implementation design exploration. Use when the user has a vague idea, feature request, or problem statement but no written spec. Asks focused questions one at a time to surface goals, non-goals, constraints, success criteria, and risks, then produces a written spec and hard-gates implementation until approved. Use before writing any code, before planning, and before answering 'how should I build X'. Triggers: 'I want to build', 'I'm thinking about', 'help me figure out', 'let's brainstorm', 'help me spec out'.
 user-invocable: true
 argument-hint: "[optional: one-line topic]"
 ---

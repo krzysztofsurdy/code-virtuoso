@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: Evidence-based completion discipline. Use before claiming any work is "done", complete, finished, or ready — whether it is code, config, documentation, a migration, or a bugfix. Requires running verification commands (tests, lints, type checks, builds, smoke tests), capturing output, and citing concrete evidence rather than assertions. Covers tiered definitions of done, evidence patterns, verification checklists by task type, and common fake-completion failure modes. Triggers: "done", "finished", "complete", "ready", "should work", "it's working now", before closing a task, before writing a PR.
+description: Evidence-based completion discipline. Use before claiming any work is 'done', complete, finished, or ready — whether it is code, config, documentation, a migration, or a bugfix. Requires running verification commands (tests, lints, type checks, builds, smoke tests), capturing output, and citing concrete evidence rather than assertions. Covers tiered definitions of done, evidence patterns, verification checklists by task type, and common fake-completion failure modes. Triggers: 'done', 'finished', 'complete', 'ready', 'should work', 'it's working now', before closing a task, before writing a PR.
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---

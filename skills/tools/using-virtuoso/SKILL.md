@@ -1,6 +1,6 @@
 ---
 name: using-virtuoso
-description: Guided tour and discovery advisor for the code-virtuoso ecosystem. Use when the user asks "what skill should I use", "what agent should I delegate to", "how does this ecosystem work", "what's in code-virtuoso", or when onboarding a new project or teammate to the available skills, agents, and plugins. Covers the six skill categories (knowledge, tools, frameworks, playbooks, roles), the two agent tiers (specialists and roles), chaining patterns for multi-step work, plugin distribution tiers, and situation-to-skill lookup. Triggers: "which skill", "which agent", "what do I use for", "show me virtuoso", "code-virtuoso overview", "orient me".
+description: Guided tour and discovery advisor for the code-virtuoso ecosystem. Use when the user asks 'what skill should I use', 'what agent should I delegate to', 'how does this ecosystem work', 'what's in code-virtuoso', or when onboarding a new project or teammate to the available skills, agents, and plugins. Covers the six skill categories (knowledge, tools, frameworks, playbooks, roles), the two agent tiers (specialists and roles), chaining patterns for multi-step work, plugin distribution tiers, and situation-to-skill lookup. Triggers: 'which skill', 'which agent', 'what do I use for', 'show me virtuoso', 'code-virtuoso overview', 'orient me'.
 user-invocable: true
 argument-hint: "[optional: situation or topic]"
 ---
