@@ -1,112 +1,15 @@
 {
   "name": "code-virtuoso",
+  "description": "Skills, agents, and playbooks for software engineering",
   "owner": {
     "name": "Krzysztof Surdy"
   },
-  "metadata": {
-    "description": "Agent AI skill sets — Knowledge (Design Patterns, Refactoring, SOLID, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices, Git Workflow, CI/CD, Accessibility, Database Design, Verification Before Completion, Dispatching Parallel Agents, Subagent-Driven Development), Tools (Agentic Rules Writer, Ticket Writer, Agent Creator, Plugin Creator, Brainstorming, Using Virtuoso), Frameworks (Symfony Components, Symfony Upgrade, Django Components, LangChain Components), Playbooks (PHP Upgrade, Composer Dependencies, Finishing Branch), Roles (Product Manager, Architect, Backend Dev, Frontend Dev, QA Engineer, Project Manager, Scrum Master), and Agents (15 specialist and role agents)",
-    "version": "8.5.0"
-  },
   "plugins": [
     {
-      "name": "knowledge-virtuoso",
-      "description": "All knowledge skills — design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, scrum, performance, microservices, git workflow, CI/CD, accessibility, database design, verification before completion, dispatching parallel agents, and subagent-driven development",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/knowledge/design-patterns",
-        "./skills/knowledge/refactoring",
-        "./skills/knowledge/solid",
-        "./skills/knowledge/debugging",
-        "./skills/knowledge/clean-architecture",
-        "./skills/knowledge/testing",
-        "./skills/knowledge/api-design",
-        "./skills/knowledge/security",
-        "./skills/knowledge/scrum",
-        "./skills/knowledge/performance",
-        "./skills/knowledge/microservices",
-        "./skills/knowledge/git-workflow",
-        "./skills/knowledge/cicd",
-        "./skills/knowledge/accessibility",
-        "./skills/knowledge/database-design",
-        "./skills/knowledge/verification-before-completion",
-        "./skills/knowledge/dispatching-parallel-agents",
-        "./skills/knowledge/subagent-driven-development"
-      ]
-    },
-    {
-      "name": "tools-virtuoso",
-      "description": "All tool skills — agentic rules writer, ticket writer, agent creator, plugin creator, brainstorming, ecosystem discovery advisor, PR message writer, report writer, and stakeholder update writer",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/tools/agentic-rules-writer",
-        "./skills/tools/ticket-writer",
-        "./skills/tools/agent-creator",
-        "./skills/tools/plugin-creator",
-        "./skills/tools/brainstorming",
-        "./skills/tools/using-virtuoso",
-        "./skills/tools/pr-message-writer",
-        "./skills/tools/report-writer",
-        "./skills/tools/stakeholder-update-writer"
-      ]
-    },
-    {
-      "name": "frameworks-virtuoso",
-      "description": "All framework skills — Symfony components and upgrade guide, Django components, and LangChain ecosystem references",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/frameworks/symfony/symfony-components",
-        "./skills/frameworks/symfony/symfony-upgrade",
-        "./skills/frameworks/django/django-components",
-        "./skills/frameworks/langchain/langchain-components"
-      ]
-    },
-    {
-      "name": "playbooks-virtuoso",
-      "description": "Operational playbooks — PHP version upgrade, Composer dependency management, branch finishing, end-to-end ticket delivery (analysis through TDD to PR), and git worktree operations for parallel development sessions",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/playbooks/php-upgrade",
-        "./skills/playbooks/composer-dependencies",
-        "./skills/playbooks/finishing-branch",
-        "./skills/playbooks/ticket-delivery",
-        "./skills/playbooks/worktree-ops"
-      ]
-    },
-    {
-      "name": "agents-virtuoso",
-      "description": "All 15 agents with role skills — 8 specialist agents (investigator, implementer, reviewer, refactor-scout, dependency-auditor, doc-writer, migration-planner, test-gap-analyzer) and 7 role agents with matching role skills (product-manager, architect, backend-dev, frontend-dev, qa-engineer, project-manager, scrum-master)",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/roles/product-manager",
-        "./skills/roles/architect",
-        "./skills/roles/backend-dev",
-        "./skills/roles/frontend-dev",
-        "./skills/roles/qa-engineer",
-        "./skills/roles/project-manager",
-        "./skills/roles/scrum-master"
-      ],
-      "agents": [
-        "./agents/investigator.md",
-        "./agents/implementer.md",
-        "./agents/reviewer.md",
-        "./agents/refactor-scout.md",
-        "./agents/dependency-auditor.md",
-        "./agents/doc-writer.md",
-        "./agents/migration-planner.md",
-        "./agents/test-gap-analyzer.md",
-        "./agents/product-manager.md",
-        "./agents/architect.md",
-        "./agents/backend-dev.md",
-        "./agents/frontend-dev.md",
-        "./agents/qa-engineer.md",
-        "./agents/project-manager.md",
-        "./agents/scrum-master.md"
-      ]
+      "name": "code-virtuoso",
+      "description": "43 skills and 15 agents for software engineering — knowledge (design patterns, SOLID, testing, security, clean architecture, and more), tools (ticket writer, PR message writer, report writer, rules writer, and more), frameworks (Symfony, Django, LangChain), playbooks (PHP upgrade, ticket delivery, worktree ops, and more), roles and agents (product manager, architect, backend dev, frontend dev, QA, project manager, scrum master, plus 8 specialist agents)",
+      "version": "8.6.0",
+      "source": "./"
     }
   ]
 }
