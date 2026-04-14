@@ -305,7 +305,7 @@ See [`agent-creator/references/tool-selection.md`](skills/tools/agent-creator/re
 Every new agent requires a `marketplace.json` update. This is non-negotiable.
 
 - Add the agent path to the `agents-virtuoso` plugin's `agents` array
-- Create an individual plugin entry: `agent-{name}` (specialists) or update the matching `role-{name}` plugin (roles)
+- If it is a role agent, also add the matching role skill to `agents-virtuoso`
 - Bump the marketplace version per the [Version Bumping Rules](#version-bumping-rules)
 
 Example for a specialist:
@@ -454,45 +454,33 @@ The file `.claude-plugin/marketplace.json` defines how skills and agents are pac
 **When to create a new plugin vs. add to an existing one:**
 
 - Add to an existing plugin when your skill fits its theme (e.g., a new knowledge skill goes into `knowledge-virtuoso`)
-- Create a new plugin when you are adding a new framework, a new tool category, or a standalone bundle that users would install independently
-- Individual role plugins (e.g., `role-backend-dev`) exist so users can install a single role with its agent -- follow this pattern for new roles
+- Create a new plugin only when adding an entirely new category that does not fit any existing bundle
 
 ### Plugin Naming Convention
 
-| Type | Pattern | Example |
+All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` subdirectory, plus one for agents.
+
+| Plugin | Maps to | Contains |
 |---|---|---|
-| Category bundle | `{category}-virtuoso` | `knowledge-virtuoso`, `agents-virtuoso` |
-| Individual role | `role-{name}` | `role-architect` |
-| Individual agent | `agent-{name}` | `agent-reviewer` |
-| Individual tool | `tool-{name}` | `tool-agentic-rules-writer` |
-| Framework bundle | `{framework}-virtuoso` | `symfony-virtuoso`, `django-virtuoso` |
+| `knowledge-virtuoso` | `skills/knowledge/` | All knowledge reference skills |
+| `tools-virtuoso` | `skills/tools/` | All interactive tool skills |
+| `frameworks-virtuoso` | `skills/frameworks/` | All framework-specific skills (Symfony, Django, LangChain) |
+| `playbooks-virtuoso` | `skills/playbooks/` | All operational playbook skills |
+| `agents-virtuoso` | `skills/roles/` + `agents/` | All 15 agents + all 7 role skills |
 
-### Plugin Distribution Tiers
-
-The marketplace uses a tiered model for maximum installation flexibility:
-
-| Tier | Pattern | Example | Contains | Use case |
-|---|---|---|---|---|
-| Individual | `role-{name}` or `agent-{name}` | `role-architect`, `agent-reviewer` | 1 skill + 1 agent (roles) or 1 agent (specialists) | Install a single role or agent |
-| Category bundle | `{category}-virtuoso` | `knowledge-virtuoso`, `playbooks-virtuoso` | All skills in a category | Install all skills in a category |
-| Agents bundle | `agents-virtuoso` | `agents-virtuoso` | All 15 agents + all 7 role skills | Full agent team with role context |
-
-**Key design decisions:**
-- `agents-virtuoso` is the complete package -- all agents plus all role skills
-- Individual `role-{name}` plugins contain both the skill and agent for that role
-- Individual `agent-{name}` plugins contain a single specialist agent
-- Knowledge, playbooks, and frameworks have their own category bundles (skills only, no agents)
+When adding a new skill:
+- Identify which `skills/` subdirectory it belongs to
+- Add the skill path to the matching `*-virtuoso` plugin in `marketplace.json`
+- Bump the version
 
 When adding a new role:
 - Create the role skill in `skills/roles/{name}/`
 - Create the agent in `agents/{name}.md`
-- Add to `agents-virtuoso` (skill + agent)
-- Create an individual `role-{name}` plugin (skill + agent)
+- Add both to `agents-virtuoso`
 
 When adding a new specialist agent:
 - Create the agent in `agents/{name}.md`
 - Add to `agents-virtuoso`
-- Create an individual `agent-{name}` plugin
 
 ## Version Bumping Rules
 

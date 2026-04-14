@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Agent AI skill sets — Knowledge (Design Patterns, Refactoring, SOLID, Debugging, Clean Architecture, Testing, API Design, Security, Scrum, Performance, Microservices, Git Workflow, CI/CD, Accessibility, Database Design, Verification Before Completion, Dispatching Parallel Agents, Subagent-Driven Development), Tools (Agentic Rules Writer, Ticket Writer, Agent Creator, Plugin Creator, Brainstorming, Using Virtuoso), Frameworks (Symfony Components, Symfony Upgrade, Django Components, LangChain Components), Playbooks (PHP Upgrade, Composer Dependencies, Finishing Branch), Roles (Product Manager, Architect, Backend Dev, Frontend Dev, QA Engineer, Project Manager, Scrum Master), and Agents (15 specialist and role agents)",
-    "version": "8.3.0"
+    "version": "8.4.0"
   },
   "plugins": [
     {
@@ -35,84 +35,28 @@
       ]
     },
     {
-      "name": "tool-agentic-rules-writer",
-      "description": "Generate a rules file for any AI coding agent. Interactive setup that scans installed skills, asks about workflow preferences, and writes a tailored instruction file for Claude Code, Cursor, Windsurf, Copilot, Gemini, Codex, Cline, OpenCode, Continue, Trae, Roo Code, Amp, and more",
+      "name": "tools-virtuoso",
+      "description": "All tool skills — agentic rules writer, ticket writer, agent creator, plugin creator, brainstorming, and ecosystem discovery advisor",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/tools/agentic-rules-writer"
-      ]
-    },
-    {
-      "name": "tool-ticket-writer",
-      "description": "Interactive tool to write tickets of the right type -- story, subtask, issue, bug, epic, or initiative -- each with its own structure, required fields, and quality checks. Runs a type-specific questionnaire and outputs a clean Markdown ticket ready for Jira, Linear, GitHub Issues, or any tracker",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/tools/ticket-writer"
-      ]
-    },
-    {
-      "name": "tool-agent-creator",
-      "description": "Interactive tool to design a well-scoped sub-agent definition -- specialist, role, or team-lead -- with the right frontmatter, tool permissions, isolation, memory, and system prompt. Runs a six-phase design questionnaire and outputs a ready-to-commit agent markdown file",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/tools/agent-creator"
-      ]
-    },
-    {
-      "name": "tool-plugin-creator",
-      "description": "Interactive tool to scaffold a complete Claude Code plugin -- plugin.json manifest, skills, agents, hooks, MCP servers, LSP servers, and optional marketplace.json catalog entry. Runs a six-phase questionnaire, validates output, writes the full directory structure, and prints local test and install instructions",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/tools/plugin-creator"
-      ]
-    },
-    {
-      "name": "tool-brainstorming",
-      "description": "Interactive pre-implementation design exploration. Turns a vague idea or feature request into a written spec with problem statement, goals, non-goals, constraints, acceptance criteria, and risks. Asks focused questions one at a time, challenges assumptions, and hard-gates implementation until the spec is approved",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/tools/brainstorming"
-      ]
-    },
-    {
-      "name": "tool-using-virtuoso",
-      "description": "Guided tour and discovery advisor for the code-virtuoso ecosystem. Matches situations to the right skill, agent, or chaining pattern. Covers the six skill categories, the two agent tiers, canonical multi-step chains, and plugin distribution tiers. Use when onboarding to the ecosystem or deciding which skill or agent fits a task",
-      "source": "./",
-      "strict": false,
-      "skills": [
+        "./skills/tools/agentic-rules-writer",
+        "./skills/tools/ticket-writer",
+        "./skills/tools/agent-creator",
+        "./skills/tools/plugin-creator",
+        "./skills/tools/brainstorming",
         "./skills/tools/using-virtuoso"
       ]
     },
     {
-      "name": "symfony-virtuoso",
-      "description": "Symfony framework skills — 38 component references (APIs, patterns, configuration for PHP 8.3+ and Symfony 7.x) and version upgrade guide (deprecation-first approach, recipe updates, bundle compatibility)",
+      "name": "frameworks-virtuoso",
+      "description": "All framework skills — Symfony components and upgrade guide, Django components, and LangChain ecosystem references",
       "source": "./",
       "strict": false,
       "skills": [
         "./skills/frameworks/symfony/symfony-components",
-        "./skills/frameworks/symfony/symfony-upgrade"
-      ]
-    },
-    {
-      "name": "django-virtuoso",
-      "description": "Django framework skills — 33 component references (APIs, patterns, configuration for Python 3.10+ and Django 6.0) covering models, views, templates, forms, admin, auth, caching, testing, middleware, signals, async, deployment, and more",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/frameworks/django/django-components"
-      ]
-    },
-    {
-      "name": "langchain-virtuoso",
-      "description": "LangChain ecosystem skills — 17 component references (models, agents, tools, retrieval, memory, middleware, streaming, multi-agent, LangGraph, Deep Agents, and integrations for Python 3.10+)",
-      "source": "./",
-      "strict": false,
-      "skills": [
+        "./skills/frameworks/symfony/symfony-upgrade",
+        "./skills/frameworks/django/django-components",
         "./skills/frameworks/langchain/langchain-components"
       ]
     },
@@ -129,7 +73,7 @@
     },
     {
       "name": "agents-virtuoso",
-      "description": "All 15 agents with their role skills — 8 specialist agents (investigator, implementer, reviewer, refactor-scout, dependency-auditor, doc-writer, migration-planner, test-gap-analyzer) and 7 role agents with matching role skills (product-manager, architect, backend-dev, frontend-dev, qa-engineer, project-manager, scrum-master)",
+      "description": "All 15 agents with role skills — 8 specialist agents (investigator, implementer, reviewer, refactor-scout, dependency-auditor, doc-writer, migration-planner, test-gap-analyzer) and 7 role agents with matching role skills (product-manager, architect, backend-dev, frontend-dev, qa-engineer, project-manager, scrum-master)",
       "source": "./",
       "strict": false,
       "skills": [
@@ -157,162 +101,6 @@
         "./agents/qa-engineer.md",
         "./agents/project-manager.md",
         "./agents/scrum-master.md"
-      ]
-    },
-    {
-      "name": "role-product-manager",
-      "description": "Product manager role — requirements gathering, PRD writing, prioritization, and acceptance criteria",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/roles/product-manager"
-      ],
-      "agents": [
-        "./agents/product-manager.md"
-      ]
-    },
-    {
-      "name": "role-architect",
-      "description": "Architect role — system design, component boundaries, API contracts, and ADRs",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/roles/architect"
-      ],
-      "agents": [
-        "./agents/architect.md"
-      ]
-    },
-    {
-      "name": "role-backend-dev",
-      "description": "Backend developer role — API implementation, data models, and TDD",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/roles/backend-dev"
-      ],
-      "agents": [
-        "./agents/backend-dev.md"
-      ]
-    },
-    {
-      "name": "role-frontend-dev",
-      "description": "Frontend developer role — UI components, accessibility, and state management",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/roles/frontend-dev"
-      ],
-      "agents": [
-        "./agents/frontend-dev.md"
-      ]
-    },
-    {
-      "name": "role-qa-engineer",
-      "description": "QA engineer role — test planning, test design, bug reporting, and release sign-off",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/roles/qa-engineer"
-      ],
-      "agents": [
-        "./agents/qa-engineer.md"
-      ]
-    },
-    {
-      "name": "role-project-manager",
-      "description": "Project manager role — PRINCE2-based delivery planning, risk management, and progress tracking",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/roles/project-manager"
-      ],
-      "agents": [
-        "./agents/project-manager.md"
-      ]
-    },
-    {
-      "name": "role-scrum-master",
-      "description": "Scrum Master role skill and agent -- sprint facilitation, coaching, impediment resolution, and retrospective techniques",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/roles/scrum-master"
-      ],
-      "agents": [
-        "./agents/scrum-master.md"
-      ]
-    },
-    {
-      "name": "agent-investigator",
-      "description": "Investigator agent -- deep-dives into codebases to trace bugs, map dependencies, and surface root causes",
-      "source": "./",
-      "strict": false,
-      "agents": [
-        "./agents/investigator.md"
-      ]
-    },
-    {
-      "name": "agent-implementer",
-      "description": "Implementer agent -- writes production code following TDD, clean architecture, and project conventions",
-      "source": "./",
-      "strict": false,
-      "agents": [
-        "./agents/implementer.md"
-      ]
-    },
-    {
-      "name": "agent-reviewer",
-      "description": "Reviewer agent -- performs thorough code reviews checking correctness, style, security, and test coverage",
-      "source": "./",
-      "strict": false,
-      "agents": [
-        "./agents/reviewer.md"
-      ]
-    },
-    {
-      "name": "agent-refactor-scout",
-      "description": "Refactor scout agent -- identifies code smells, duplication, and structural improvements across the codebase",
-      "source": "./",
-      "strict": false,
-      "agents": [
-        "./agents/refactor-scout.md"
-      ]
-    },
-    {
-      "name": "agent-dependency-auditor",
-      "description": "Dependency auditor agent -- analyzes project dependencies for security vulnerabilities, outdated packages, and upgrade paths",
-      "source": "./",
-      "strict": false,
-      "agents": [
-        "./agents/dependency-auditor.md"
-      ]
-    },
-    {
-      "name": "agent-doc-writer",
-      "description": "Doc writer agent -- generates and maintains technical documentation, API docs, and architecture decision records",
-      "source": "./",
-      "strict": false,
-      "agents": [
-        "./agents/doc-writer.md"
-      ]
-    },
-    {
-      "name": "agent-migration-planner",
-      "description": "Migration planner agent -- plans and sequences database migrations, framework upgrades, and data transformations",
-      "source": "./",
-      "strict": false,
-      "agents": [
-        "./agents/migration-planner.md"
-      ]
-    },
-    {
-      "name": "agent-test-gap-analyzer",
-      "description": "Test gap analyzer agent -- identifies untested code paths, missing edge cases, and test coverage improvements",
-      "source": "./",
-      "strict": false,
-      "agents": [
-        "./agents/test-gap-analyzer.md"
       ]
     }
   ]
