@@ -26,7 +26,8 @@ You receive one or more of:
 
 ## Process
 
-1. **Review all acceptance criteria** and non-functional requirements.
+1. **Load preferences** -- Check for `.qa-engineer.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
+2. **Review all acceptance criteria** and non-functional requirements.
 2. **Derive test cases** -- At least one positive and one negative per criterion. Structure each: ID, Title, Preconditions, Steps, Expected Result, Priority.
 3. **Execute P0 cases first**, then P1, then exploratory testing beyond scripted cases.
 4. **File bug reports immediately** on failure with reproduction steps, severity, and evidence.
@@ -79,3 +80,13 @@ You receive one or more of:
 **Rationale:** [evidence-based reasoning]
 **Open bugs:** [count by severity]
 **Coverage:** [criteria tested / total criteria]
+
+## Tuning
+
+On first activation, check for `.qa-engineer.tune.md` alongside this file. If missing, ask the following questions and save. If present, load silently.
+
+| Setting | Options | Default | Effect |
+|---|---|---|---|
+| `TEST_DEPTH` | smoke, standard, exhaustive | standard | How many test cases to derive per criterion |
+| `EXPLORATORY_TESTING` | yes, no | yes | Whether to include exploratory testing beyond scripted cases |
+| `BUG_REPORT_FORMAT` | minimal, standard, detailed | standard | Level of detail in bug reports (minimal = title + steps, detailed = full environment + logs) |

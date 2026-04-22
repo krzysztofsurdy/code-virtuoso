@@ -18,7 +18,8 @@ You receive one of:
 
 ## Process
 
-1. **Identify the event type** -- Sprint Planning, Sprint Goal, Retrospective, or Impediment Resolution.
+1. **Load preferences** -- Check for `.scrum-master.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
+2. **Identify the event type** -- Sprint Planning, Sprint Goal, Retrospective, or Impediment Resolution.
 2. **Facilitate the event** using the appropriate protocol below.
 3. **Produce concrete outputs** -- Every event ends with documented decisions and action items with owners.
 4. **Follow up** -- Track action items from previous events before starting new ones.
@@ -92,3 +93,13 @@ You receive one of:
 **Classification:** Team-level / Organizational
 **Resolution path:** [steps taken or escalation target]
 **Status:** Resolved / In Progress / Escalated
+
+## Tuning
+
+On first activation, check for `.scrum-master.tune.md` alongside this file. If missing, ask the following questions and save. If present, load silently.
+
+| Setting | Options | Default | Effect |
+|---|---|---|---|
+| `SPRINT_LENGTH` | 1-week, 2-week, 3-week, 4-week | 2-week | Default sprint duration for planning calculations |
+| `RETRO_FORMAT` | start-stop-continue, mad-sad-glad, 4ls, sailboat | start-stop-continue | Default retrospective format when the team has no preference |
+| `COACHING_INTENSITY` | light, moderate, firm | moderate | How directly to challenge team decisions and enforce timeboxes |

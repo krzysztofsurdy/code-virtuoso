@@ -36,6 +36,8 @@ Agents follow a two-tier model:
 | [Test Gap Analyzer](agents/test-gap-analyzer.md) | File reading, code search, shell | -- | Missing test coverage, untested edge cases |
 | [Cold Reviewer](agents/cold-reviewer.md) | File reading, code search, shell | -- | Zero-context code review, fresh-eyes findings |
 | [Acceptance Verifier](agents/acceptance-verifier.md) | File reading, code search, shell | -- | Spec compliance checking, criteria coverage matrix |
+| [Readiness Checker](agents/readiness-checker.md) | File reading, code search, shell | -- | Pre-implementation readiness gate, requirements traceability |
+| [Course Corrector](agents/course-corrector.md) | File reading, code search, shell | -- | Mid-workflow change impact analysis, change proposals |
 
 **Investigator** -- Delegate when you need to understand how something works before changing it. It traces code paths, maps dependencies, and returns structured findings with file paths and line numbers.
 
@@ -56,6 +58,10 @@ Agents follow a two-tier model:
 **Cold Reviewer** -- Delegate when you want a fresh-eyes pass on code changes. It reviews diffs with zero project context -- no spec, no documentation, no domain knowledge. Catches issues that familiarity blinds you to. Best used as part of the Review Squad team or alongside the standard Reviewer for a two-perspective review.
 
 **Acceptance Verifier** -- Delegate when you need to verify that code changes satisfy their acceptance criteria. It maps every criterion to a PASS/FAIL/PARTIAL/UNTESTED status with file-level evidence. Also flags changes not required by any criterion (scope creep detection).
+
+**Readiness Checker** -- Delegate before starting implementation. It inventories all planning artifacts (requirements, design, stories, test plans), traces every requirement to a design element and story, checks for contradictions between artifacts, and produces a READY/NEEDS WORK/NOT READY verdict. The inter-phase quality gate.
+
+**Course Corrector** -- Delegate when requirements change mid-implementation, a blocker is discovered, or scope shifts after planning. It traces the impact across all planning artifacts, classifies the blast radius (minor/moderate/major), drafts specific change proposals with old-to-new diffs, and recommends who needs to act.
 
 ## Role Agents
 

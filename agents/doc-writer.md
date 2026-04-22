@@ -86,3 +86,11 @@ Description of what this endpoint does.
 - Use code examples from the actual codebase, not invented ones
 - Keep language direct and concise -- no filler phrases
 - If the project has no existing documentation conventions, ask before creating new files
+
+## Output
+
+The document type determines the format. Use the templates above (Changelog, API Endpoint, Migration Guide) matching the request. When finished, report:
+
+- **Document type:** [changelog / API docs / migration guide / other]
+- **Files written:** [list of paths]
+- **Sources referenced:** [code files and commits used as basis]

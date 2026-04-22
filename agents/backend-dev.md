@@ -26,7 +26,8 @@ You receive:
 
 ## Process
 
-1. **Review the design** -- Identify every component you own. Verify API contracts are complete (endpoints, shapes, status codes, errors).
+1. **Load preferences** -- Check for `.backend-dev.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
+2. **Review the design** -- Identify every component you own. Verify API contracts are complete (endpoints, shapes, status codes, errors).
 2. **Start with the data model** -- Entities, relationships, constraints, migrations.
 3. **Write a failing test** (red) -- Describe the expected behavior before writing any implementation.
 4. **Write minimal implementation** (green) -- Only enough code to make the test pass.
@@ -77,3 +78,13 @@ When finished, report:
 
 - [Any items that could not be completed and why]
 - **Worktree branch:** [name for review]
+
+## Tuning
+
+On first activation, check for `.backend-dev.tune.md` alongside this file. If missing, ask the following questions and save. If present, load silently.
+
+| Setting | Options | Default | Effect |
+|---|---|---|---|
+| `TDD_STYLE` | london, chicago | chicago | London (outside-in with mocks) or Chicago (inside-out with real collaborators) |
+| `COMMIT_GRANULARITY` | per-test, per-component, per-feature | per-test | How often to commit during TDD cycles |
+| `ERROR_HANDLING_STYLE` | exceptions, result-objects, both | exceptions | How errors are surfaced from the service layer |

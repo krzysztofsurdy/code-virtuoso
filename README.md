@@ -22,7 +22,7 @@
   <a href="https://github.com/krzysztofsurdy/code-virtuoso/actions/workflows/validate-markdown.yml"><img src="https://github.com/krzysztofsurdy/code-virtuoso/actions/workflows/validate-markdown.yml/badge.svg" alt="Validate Markdown"></a>
 </p>
 
-> **What you get:** 30+ curated skills, 17 sub-agents, 7 team role personas, and operational playbooks -- all installable individually or as bundles, based on the open [Agent Skills](https://agentskills.io) standard. Turn your AI coding assistant from a generalist into a domain specialist.
+> **What you get:** 30+ curated skills, 19 sub-agents, 7 team role personas, and operational playbooks -- all installable individually or as bundles, based on the open [Agent Skills](https://agentskills.io) standard. Turn your AI coding assistant from a generalist into a domain specialist.
 
 See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
@@ -82,7 +82,7 @@ That is the whole tour. For fine-grained install modes (per-skill, global, offli
 | [Frameworks](#framework-skills) | 4 | Symfony, Django, LangChain component libraries and upgrade guides |
 | [Playbooks](#playbook-skills) | 5 | Step-by-step procedures for recurring operational tasks |
 | [Roles](#role-skills) | 6 | Team-role reference skills used by role agents |
-| [Agents](#agents) | 17 | 10 specialist + 7 role sub-agents with tool, isolation, and memory metadata |
+| [Agents](#agents) | 19 | 12 specialist + 7 role sub-agents with tool, isolation, and memory metadata |
 | [Teams](#teams) | 3 | Pre-composed agent teams with bundled skills and coordination protocols |
 
 ---
@@ -201,6 +201,8 @@ Sub-agents follow the [Claude Code sub-agents](https://code.claude.com/docs/en/s
 | Specialist | [Test Gap Analyzer](agents/test-gap-analyzer.md) | Read, Grep, Glob, Bash | -- | -- | Missing test coverage, untested edge cases |
 | Specialist | [Cold Reviewer](agents/cold-reviewer.md) | Read, Grep, Glob, Bash | -- | -- | Zero-context code review, fresh-eyes findings |
 | Specialist | [Acceptance Verifier](agents/acceptance-verifier.md) | Read, Grep, Glob, Bash | -- | -- | Spec compliance checking, criteria coverage matrix |
+| Specialist | [Readiness Checker](agents/readiness-checker.md) | Read, Grep, Glob, Bash | -- | -- | Pre-implementation readiness gate |
+| Specialist | [Course Corrector](agents/course-corrector.md) | Read, Grep, Glob, Bash | -- | -- | Mid-workflow change impact analysis |
 | Role | [Product Manager](agents/product-manager.md) | Read, Grep, Glob, Bash | -- | project | Requirements, PRDs, prioritization |
 | Role | [Architect](agents/architect.md) | Read, Grep, Glob, Bash | -- | project | System design, ADRs, trade-offs |
 | Role | [Backend Dev](agents/backend-dev.md) | Read, Edit, Write, Bash, Grep, Glob | worktree | -- | API implementation, data models, TDD |
@@ -365,6 +367,8 @@ code-virtuoso/
 │   ├── test-gap-analyzer.md       # Specialist: coverage gaps
 │   ├── cold-reviewer.md           # Specialist: zero-context review
 │   ├── acceptance-verifier.md     # Specialist: criteria compliance
+│   ├── readiness-checker.md       # Specialist: pre-implementation gate
+│   ├── course-corrector.md        # Specialist: change impact analysis
 │   ├── product-manager.md         # Role: requirements, PRDs
 │   ├── architect.md               # Role: system design, ADRs
 │   ├── backend-dev.md             # Role: API implementation
@@ -421,6 +425,7 @@ code-virtuoso/
 │       ├── plugin-creator/
 │       │   └── phases/            # Guided phase files
 │       ├── brainstorming/
+│       │   └── phases/            # Guided phase files
 │       ├── using-ecosystem/
 │       ├── pr-message-writer/
 │       ├── report-writer/

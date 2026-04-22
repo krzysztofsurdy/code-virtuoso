@@ -4,8 +4,8 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "43 skills and 17 agents for software engineering — knowledge, tools, frameworks, playbooks, roles, and agents",
-    "version": "9.2.0"
+    "description": "43 skills and 19 agents for software engineering — knowledge, tools, frameworks, playbooks, roles, and agents",
+    "version": "9.3.0"
   },
   "plugins": [
     {
@@ -76,7 +76,7 @@
     },
     {
       "name": "agents-virtuoso",
-      "description": "17 agents, 7 role skills, and 3 agent workflow skills — delegation patterns, subagent-driven development, verification discipline, plus all specialist and role agents",
+      "description": "19 agents, 7 role skills, and 3 agent workflow skills — delegation patterns, subagent-driven development, verification discipline, plus all specialist and role agents",
       "source": "./",
       "strict": false,
       "skills": [
@@ -108,7 +108,9 @@
         "./agents/project-manager.md",
         "./agents/scrum-master.md",
         "./agents/cold-reviewer.md",
-        "./agents/acceptance-verifier.md"
+        "./agents/acceptance-verifier.md",
+        "./agents/readiness-checker.md",
+        "./agents/course-corrector.md"
       ]
     }
   ]
