@@ -4,6 +4,8 @@ description: Generate or update documentation from code changes -- changelogs, A
 tools: Read, Grep, Glob, Bash, Write, Edit
 skills:
   - api-design
+expects:
+  - investigation-report
 ---
 
 # Documentation Writer

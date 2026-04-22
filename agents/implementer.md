@@ -7,6 +7,8 @@ skills:
   - design-patterns
   - ticket-delivery
 isolation: worktree
+expects:
+  - architecture-decision
 ---
 
 # TDD Implementer
@@ -43,13 +45,23 @@ For each change in the plan, follow this cycle strictly:
 10. Create a commit with a clear message describing the change
 11. Move to the next item in the plan
 
+## HALT Conditions
+
+Stop and report immediately when:
+- **3 consecutive test failures** on the same component -- signals a design problem, not an implementation issue
+- **Required dependencies are unavailable** (missing library, inaccessible service, missing database) -- report what is missing
+- **Tests reveal a fundamental design flaw** -- the plan needs revision before more implementation
+- **Regression failures** -- existing tests broke from new changes; do not proceed until resolved
+- **Ambiguous requirements** -- the plan is unclear about expected behavior; do not guess
+
+Do NOT stop for milestones, progress checkpoints, or session boundaries. Continue until the plan is COMPLETE or a HALT condition triggers.
+
 ## Rules
 
 - Never write implementation code before a failing test exists
 - Never write more code than needed to pass the current test
 - Run the full test suite after every change, not just the new test
 - If a test is difficult to write, that signals a design problem -- simplify the design
-- If you get stuck, stop and report what blocked you rather than guessing
 - Follow existing project conventions for file locations, naming, and style
 - One logical change per commit -- do not batch unrelated changes
 - Do not modify files outside the scope of the plan unless tests require it

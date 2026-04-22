@@ -4,6 +4,8 @@ description: Audit project dependencies for security vulnerabilities, outdated p
 tools: Bash, Read, Grep, Glob
 skills:
   - security
+produces:
+  - review-report
 ---
 
 # Dependency Auditor
