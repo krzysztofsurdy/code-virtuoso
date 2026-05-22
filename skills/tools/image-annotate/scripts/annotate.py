@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -331,6 +332,57 @@ def _load_spec(path: Path) -> list[dict[str, Any]]:
     return data
 
 
+def _slugify(text: str, max_length: int = 48) -> str:
+    """Reduce free text to a filesystem-safe kebab-case slug."""
+    slug = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return slug[:max_length].rstrip("-") or "annotated"
+
+
+def _derive_output_path(
+    input_path: Path,
+    ops: list[dict[str, Any]],
+    name_hint: str | None,
+) -> Path:
+    """Build a meaningful output path that describes the annotation request.
+
+    Priority:
+      1. If --name was given, use it as the descriptive slug.
+      2. Otherwise, summarise the distinct operations applied.
+
+    A "-N" counter is appended when the derived path already exists, so a
+    second run of the same request produces a new file rather than silently
+    overwriting the first.
+    """
+    stem = input_path.stem
+    ext = input_path.suffix or ".png"
+
+    if name_hint:
+        suffix = _slugify(name_hint)
+    else:
+        seen: list[str] = []
+        for entry in ops:
+            op_name = entry.get("op")
+            if op_name and op_name not in seen:
+                seen.append(op_name)
+        if not seen:
+            suffix = "annotated"
+        elif len(seen) > 4:
+            suffix = "-".join(seen[:3] + [f"plus{len(seen) - 3}more"])
+        else:
+            suffix = "-".join(seen)
+
+    base = input_path.parent / f"{stem}-{suffix}{ext}"
+    if not base.exists():
+        return base
+
+    counter = 2
+    while True:
+        candidate = input_path.parent / f"{stem}-{suffix}-{counter}{ext}"
+        if not candidate.exists():
+            return candidate
+        counter += 1
+
+
 def apply_operations(image: Image.Image, ops: list[dict[str, Any]]) -> Image.Image:
     for entry in ops:
         op_name = entry.get("op")
@@ -343,7 +395,25 @@ def apply_operations(image: Image.Image, ops: list[dict[str, Any]]) -> Image.Ima
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path, help="Source image path")
-    parser.add_argument("output", type=Path, help="Output image path (must differ from input)")
+    parser.add_argument(
+        "output",
+        type=Path,
+        nargs="?",
+        default=None,
+        help=(
+            "Output image path. Optional - when omitted, the script derives a "
+            "descriptive filename next to the input from --name or from the "
+            "operations applied. Must differ from input when explicit."
+        ),
+    )
+    parser.add_argument(
+        "--name",
+        help=(
+            "Short description of the annotation's purpose, used as the slug in "
+            "the auto-derived output filename (e.g. 'button-disabled-bug'). "
+            "Ignored when an explicit output path is given."
+        ),
+    )
     parser.add_argument("--spec", type=Path, help="JSON array of operations to apply after CLI ops")
 
     parser.add_argument("--crop", help="x1,y1,x2,y2")
@@ -389,12 +459,6 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
 
-    if args.input.resolve() == args.output.resolve():
-        sys.stderr.write(
-            "Refusing to overwrite the source image. Pick a different output path.\n"
-        )
-        return 3
-
     if not args.input.exists():
         sys.stderr.write(f"Input image not found: {args.input}\n")
         return 4
@@ -412,6 +476,17 @@ def main() -> int:
     if not ops:
         sys.stderr.write("No operations provided. Pass --rect/--arrow/--text/--spec etc.\n")
         return 5
+
+    if args.output is None:
+        args.output = _derive_output_path(args.input, ops, args.name)
+        sys.stderr.write(f"No output path given - using {args.output}\n")
+
+    if args.input.resolve() == args.output.resolve():
+        sys.stderr.write(
+            "Refusing to overwrite the source image. Pick a different output path "
+            "or let the script auto-derive one (omit the second positional arg).\n"
+        )
+        return 3
 
     image = apply_operations(image, ops)
 

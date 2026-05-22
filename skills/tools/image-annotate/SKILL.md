@@ -2,18 +2,19 @@
 name: image-annotate
 description: Mark up an existing image with shapes, arrows, text, numbered steps, highlights, blur, or solid redaction. Use this skill whenever the user wants to annotate a screenshot, add arrows or boxes to a picture, write labels on an image, draw numbered callouts for a tutorial, highlight a region, blur faces or backgrounds, redact passwords or API keys before sharing, or compose multiple marks into a single image. Outputs a new PNG/JPEG with the marks burned in. Pairs naturally with the web-screenshot skill - capture first, then annotate.
 user-invocable: true
-argument-hint: "<input-image> <output-image> [--rect ...] [--arrow ...] [--text ...] [--step ...] [--blur ...] [--redact ...] [--spec FILE.json]"
+argument-hint: "<input-image> [<output-image>] [--name PURPOSE] [--rect ...] [--arrow ...] [--text ...] [--step ...] [--blur ...] [--redact ...] [--spec FILE.json]"
 ---
 
 # Image Annotate
 
-Mark up an existing image with shapes, text, numbered steps, blur, or solid-color redaction. Single CLI, one-off flags for simple marks, JSON spec file for compositions. Output is a flat raster image with every mark burned in - the original is never modified in place.
+Mark up an existing image with shapes, text, numbered steps, blur, or solid-color redaction. Single CLI, one-off flags for simple marks, JSON spec file for compositions. Output is a flat raster image with every mark burned in - the original is never modified in place. **The output filename always reflects what was done** - pass `--name PURPOSE` to label the artifact by intent, or omit the output path entirely and let the script derive a descriptive name from the operations applied.
 
 ## Core Principles
 
 | Principle | Meaning |
 |---|---|
 | **Never modify in place** | Always write to a new output file. Annotation is destructive - the user must keep the original to redo or refine later. |
+| **Output names describe intent** | Either pass `--name some-purpose` to label the artifact, or omit the output argument and the script derives a name from the ops applied (e.g. `screenshot-rect-arrow-text.png`). Collisions get a `-2`, `-3` suffix so repeated runs never silently overwrite an earlier result. |
 | **Blur is not redaction** | Pixelation and blur can be reversed for text content. For passwords, API keys, SSNs, payment numbers, and other security-critical strings, use solid-color redaction. Blur is acceptable only for casual privacy (faces in marketing shots, peripheral background detail). See `references/redaction-safety.md`. |
 | **Marks should read on any background** | Use stroke + fill colors that contrast with the surrounding pixels, or add a contrasting outline to text. Yellow on a yellow page is invisible. The default style stacks a thick coloured stroke over the underlying pixels, never relies on transparency alone. |
 | **Coordinate origin is top-left** | All `(x, y)` coordinates start from the top-left corner of the image. Y increases downward. Match the convention to whatever the source tool reports - browser DevTools and most screenshot tools agree on this. |
@@ -172,15 +173,17 @@ Cut the image to a rectangular region. Applied first if present in the spec.
 ### Bug-report screenshot: box the broken part, label it
 
 ```bash
-python scripts/annotate.py bug.png bug-annotated.png \
+python scripts/annotate.py bug.png --name button-stays-disabled \
   --rect 320,180,640,260 --rect-color red --rect-width 6 \
   --text 320,140 "Button stays disabled after valid input" --text-bg red
 ```
 
+Output: `bug-button-stays-disabled.png`.
+
 ### Tutorial: three numbered steps with descriptions
 
 ```bash
-python scripts/annotate.py tutorial.png tutorial-annotated.png \
+python scripts/annotate.py tutorial.png --name export-pdf-walkthrough \
   --step 1 180,210 \
   --step 2 420,280 \
   --step 3 660,210 \
@@ -189,29 +192,35 @@ python scripts/annotate.py tutorial.png tutorial-annotated.png \
   --text 700,210 "Confirm the location"
 ```
 
+Output: `tutorial-export-pdf-walkthrough.png`.
+
 ### Pre-share redaction: hide an API key and a session cookie
 
 ```bash
-python scripts/annotate.py dashboard.png dashboard-shareable.png \
+python scripts/annotate.py dashboard.png --name shareable \
   --redact 80,420,580,452 \
   --redact 80,490,580,522
 ```
 
+Output: `dashboard-shareable.png`.
+
 ### Privacy-light: blur a face in a marketing-shot
 
 ```bash
-python scripts/annotate.py team.png team-anon.png \
+python scripts/annotate.py team.png --name anon-face \
   --blur 120,80,260,240 --blur-radius 24
 ```
 
-(Use redact instead if the face must be unrecognisable in any forensic recovery.)
+Output: `team-anon-face.png`. (Use redact instead if the face must be unrecognisable in any forensic recovery.)
 
 ### Highlight a paragraph in a documentation shot
 
 ```bash
-python scripts/annotate.py docs.png docs-highlight.png \
+python scripts/annotate.py docs.png --name section-callout \
   --highlight 60,300,720,420 --highlight-color yellow --highlight-alpha 90
 ```
+
+Output: `docs-section-callout.png`.
 
 ---
 
@@ -260,8 +269,9 @@ See `references/coordinate-cheatsheet.md` for common picks and offsets.
 
 ## Critical Rules
 
-1. **Never overwrite the source image.** The output path must differ from the input path. Re-runs need the original.
-2. **Use `redact` for secrets, not `blur`.** Blur is reversible for text content. Passwords, API keys, payment numbers, SSNs, JWT tokens, and anything an attacker could replay must be covered with a solid block.
-3. **Coordinates are top-left origin and pixel-based.** Match the resolution of the image, not CSS pixels - if the screenshot is retina (2x), the coordinates are 2x what DevTools shows.
-4. **Operations apply in order.** Later marks paint over earlier marks. Put redactions LAST in the spec so nothing in the source leaks through a partially-transparent overlay.
-5. **Output format follows the file extension.** `.png` for lossless, `.jpg` for size-constrained. Annotations on a JPEG re-saved as JPEG will accumulate compression artifacts - prefer PNG when iterating.
+1. **Never overwrite the source image.** The output path must differ from the input path. Re-runs need the original. The script refuses to write to the input path; auto-derived names always land at a separate file next to the source.
+2. **Always produce a file with a meaningful name.** Either pass `--name PURPOSE` to label the artifact by intent or omit the output positional so the script derives a suffix from the ops applied. Never accept an opaque `out.png` as a deliverable when the agent could name what it produced.
+3. **Use `redact` for secrets, not `blur`.** Blur is reversible for text content. Passwords, API keys, payment numbers, SSNs, JWT tokens, and anything an attacker could replay must be covered with a solid block.
+4. **Coordinates are top-left origin and pixel-based.** Match the resolution of the image, not CSS pixels - if the screenshot is retina (2x), the coordinates are 2x what DevTools shows.
+5. **Operations apply in order.** Later marks paint over earlier marks. Put redactions LAST in the spec so nothing in the source leaks through a partially-transparent overlay.
+6. **Output format follows the file extension.** `.png` for lossless, `.jpg` for size-constrained. Annotations on a JPEG re-saved as JPEG will accumulate compression artifacts - prefer PNG when iterating.
