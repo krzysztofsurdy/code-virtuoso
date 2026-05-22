@@ -6,9 +6,9 @@
 
 Identical code inside conditional branches tends to accumulate through organic growth: different developers add the same call to each branch, copy-paste shortcuts go uncleaned, or new branches inherit boilerplate from existing ones. The result is:
 
-- Maintenance overhead -- every change to the shared logic must be replicated across all branches
-- Obscured intent -- readers cannot immediately tell which parts of the branches actually differ
-- Increased bug risk -- forgetting to update one branch after changing the others introduces subtle inconsistencies
+- Maintenance overhead - every change to the shared logic must be replicated across all branches
+- Obscured intent - readers cannot immediately tell which parts of the branches actually differ
+- Increased bug risk - forgetting to update one branch after changing the others introduces subtle inconsistencies
 
 ## Mechanics
 

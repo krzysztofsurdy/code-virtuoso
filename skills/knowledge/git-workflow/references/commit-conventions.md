@@ -16,11 +16,11 @@ Conventional commits follow a structured format that makes commit history readab
 
 ### Rules
 
-- **type** -- Required. Describes the category of change (see types below)
-- **scope** -- Optional. A noun identifying the section of the codebase affected, wrapped in parentheses
-- **description** -- Required. A short summary in imperative mood ("add" not "added"), lowercase, no period at the end
-- **body** -- Optional. Provides additional context. Separated from the description by a blank line
-- **footer** -- Optional. Contains metadata like `BREAKING CHANGE:`, `Reviewed-by:`, or issue references
+- **type** - Required. Describes the category of change (see types below)
+- **scope** - Optional. A noun identifying the section of the codebase affected, wrapped in parentheses
+- **description** - Required. A short summary in imperative mood ("add" not "added"), lowercase, no period at the end
+- **body** - Optional. Provides additional context. Separated from the description by a blank line
+- **footer** - Optional. Contains metadata like `BREAKING CHANGE:`, `Reviewed-by:`, or issue references
 
 ---
 
@@ -150,11 +150,11 @@ When commits follow conventional format, changelogs can be generated automatical
 
 A typical automated release flow:
 
-1. **Analyze** -- Scan commits since the last tag, categorize by type
-2. **Determine version** -- Calculate the next version based on commit types present
-3. **Generate changelog** -- Build release notes from commit messages
-4. **Tag** -- Create an annotated git tag with the new version
-5. **Publish** -- Build artifacts, push to registries, create platform release
+1. **Analyze** - Scan commits since the last tag, categorize by type
+2. **Determine version** - Calculate the next version based on commit types present
+3. **Generate changelog** - Build release notes from commit messages
+4. **Tag** - Create an annotated git tag with the new version
+5. **Publish** - Build artifacts, push to registries, create platform release
 
 ```bash
 # Example: manual changelog generation from conventional commits
@@ -212,6 +212,6 @@ git config core.hooksPath .githooks
 - Use imperative mood: "add feature" not "added feature"
 - Keep the description under 72 characters (ideally under 50), no trailing period
 - Be specific: "fix null pointer in user serializer" not "fix bug"
-- In the body, explain **why** the change was made -- reviewers can see the "what" in the diff
+- In the body, explain **why** the change was made - reviewers can see the "what" in the diff
 - Avoid vague messages like `fix stuff` or `WIP` in the final history
 - Use `git rebase -i main` to squash fixup commits and reword messages before merging

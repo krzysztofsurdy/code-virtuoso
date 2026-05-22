@@ -32,7 +32,7 @@ A structured template for planning testing activities. Copy and adapt for each f
 
 | Area | Reason |
 |---|---|
-| [Excluded area 1] | [Why it is excluded -- tested separately, not changed, etc.] |
+| [Excluded area 1] | [Why it is excluded - tested separately, not changed, etc.] |
 | [Excluded area 2] | [Reason] |
 
 ### 3. Test Approach
@@ -52,11 +52,11 @@ A structured template for planning testing activities. Copy and adapt for each f
 | Environment | Details |
 |---|---|
 | **URL** | [Test environment URL] |
-| **Database** | [Database type, version, state -- fresh or seeded] |
+| **Database** | [Database type, version, state - fresh or seeded] |
 | **Runtime version** | [e.g., Python 3.12, Node 20, Java 21, PHP 8.3] |
 | **Framework version** | [e.g., Django 5.1, Spring Boot 3.2, Next.js 14, Symfony 7.2] |
-| **External services** | [Mocked / sandbox / production -- specify for each] |
-| **Test data** | [How test data is set up -- fixtures, factories, manual seeding] |
+| **External services** | [Mocked / sandbox / production - specify for each] |
+| **Test data** | [How test data is set up - fixtures, factories, manual seeding] |
 
 ### 5. Entry Criteria
 

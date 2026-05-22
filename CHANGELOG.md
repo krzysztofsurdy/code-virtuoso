@@ -7,17 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
-- `skills/tools/brainstorming` -- interactive pre-implementation design exploration with hard approval gate
-- `skills/tools/using-virtuoso` -- meta-skill ecosystem discovery advisor covering skill categories, agent tiers, chaining patterns, and plugin tiers
-- `skills/tools/pr-message-writer` -- structured pull request message generation with testing instructions (migrated from dev-virtuoso, made CLI/language/tracker-agnostic)
-- `skills/tools/report-writer` -- standalone HTML report generation with Tailwind styling, semantic color tokens, Bootstrap Icons, and print/PDF support (migrated from dev-virtuoso)
-- `skills/tools/stakeholder-update-writer` -- stakeholder Slack/email update drafting (migrated from dev-virtuoso)
-- `skills/playbooks/ticket-delivery` -- end-to-end ticket workflow from analysis through TDD to PR creation (migrated from dev-virtuoso, made CLI/language/tracker-agnostic)
-- `skills/playbooks/worktree-ops` -- git worktree management (create, list, switch, remove) merged from 4 separate skills (migrated from dev-virtuoso)
-- `skills/knowledge/verification-before-completion` -- evidence-based completion discipline with tiered definition of done
-- `skills/knowledge/dispatching-parallel-agents` -- fan-out/fan-in patterns, briefing, context isolation, result synthesis
-- `skills/knowledge/subagent-driven-development` -- one-fresh-agent-per-task with two-stage review gates and structured hand-offs
-- `skills/playbooks/finishing-branch` -- end-to-end branch finishing workflow
+- `skills/tools/brainstorming` - interactive pre-implementation design exploration with hard approval gate
+- `skills/tools/using-virtuoso` - meta-skill ecosystem discovery advisor covering skill categories, agent tiers, chaining patterns, and plugin tiers
+- `skills/tools/pr-message-writer` - structured pull request message generation with testing instructions (migrated from dev-virtuoso, made CLI/language/tracker-agnostic)
+- `skills/tools/report-writer` - standalone HTML report generation with Tailwind styling, semantic color tokens, Bootstrap Icons, and print/PDF support (migrated from dev-virtuoso)
+- `skills/tools/stakeholder-update-writer` - stakeholder Slack/email update drafting (migrated from dev-virtuoso)
+- `skills/playbooks/ticket-delivery` - end-to-end ticket workflow from analysis through TDD to PR creation (migrated from dev-virtuoso, made CLI/language/tracker-agnostic)
+- `skills/playbooks/worktree-ops` - git worktree management (create, list, switch, remove) merged from 4 separate skills (migrated from dev-virtuoso)
+- `skills/knowledge/verification-before-completion` - evidence-based completion discipline with tiered definition of done
+- `skills/knowledge/dispatching-parallel-agents` - fan-out/fan-in patterns, briefing, context isolation, result synthesis
+- `skills/knowledge/subagent-driven-development` - one-fresh-agent-per-task with two-stage review gates and structured hand-offs
+- `skills/playbooks/finishing-branch` - end-to-end branch finishing workflow
 - CHANGELOG.md covering full git history (25 versions, 167 commits)
 
 ### Changed
@@ -29,18 +29,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `playbooks-virtuoso` plugin expanded from 3 to 5 skills
 - README rewritten with centered hero, quickstart, grouped knowledge tables, merged agent table, FAQ, collapsible sections
 - CONTRIBUTING.md updated to reflect simplified plugin distribution model
+- Normalized prose punctuation across 253 markdown/JSON/YAML files: replaced ` -- ` (double hyphen as pause/em-dash) with ` - ` (single hyphen); 1851 occurrences updated
+- Added "Punctuation Style" convention to AGENTS.md prohibiting use of `--` as a pause in project documentation
 
 ## [8.2.0] - 2026-04-13
 
 ### Added
-- `skills/tools/agent-creator` -- tool skill for generating new agent definitions
-- `skills/tools/plugin-creator` -- tool skill for generating new marketplace plugin entries
+- `skills/tools/agent-creator` - tool skill for generating new agent definitions
+- `skills/tools/plugin-creator` - tool skill for generating new marketplace plugin entries
 - `tool-agent-creator` and `tool-plugin-creator` plugins in marketplace
 
 ## [8.1.0] - 2026-04-13
 
 ### Added
-- `skills/tools/ticket-writer` -- interactive tool to draft well-formed tickets for six types (story, subtask, issue, bug, epic, initiative), each with its own structure, required fields, questionnaire, output template, and quality checks
+- `skills/tools/ticket-writer` - interactive tool to draft well-formed tickets for six types (story, subtask, issue, bug, epic, initiative), each with its own structure, required fields, questionnaire, output template, and quality checks
 - `tool-ticket-writer` plugin in marketplace
 
 ## [8.0.0] - 2026-03-12
@@ -64,9 +66,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 - Role reference files for all 6 role skills (product-manager, architect, backend-dev, frontend-dev, qa-engineer, project-manager)
-- `AGENTS.md` -- sub-agent architecture documentation, chaining patterns, and conventions
-- `CONTRIBUTING.md` -- full contributor guide with skill creation, agent creation, and marketplace rules
-- `CLAUDE.md` -- Claude Code tool mapping and project-specific instructions
+- `AGENTS.md` - sub-agent architecture documentation, chaining patterns, and conventions
+- `CONTRIBUTING.md` - full contributor guide with skill creation, agent creation, and marketplace rules
+- `CLAUDE.md` - Claude Code tool mapping and project-specific instructions
 
 ### Changed
 - Enriched agent descriptions with keyword-rich trigger conditions
@@ -95,9 +97,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [7.10.0] - 2026-03-06 <!-- not tagged -->
 
 ### Added
-- `skills/playbooks/php-upgrade` -- PHP version upgrade guide (8.0 through 8.4+) with Rector, PHPCompatibility, and testing strategies
-- `skills/playbooks/symfony-upgrade` -- Symfony version upgrade guide with deprecation-first approach and recipe updates
-- `skills/playbooks/composer-dependencies` -- Composer dependency update playbook with security auditing and lock file management
+- `skills/playbooks/php-upgrade` - PHP version upgrade guide (8.0 through 8.4+) with Rector, PHPCompatibility, and testing strategies
+- `skills/playbooks/symfony-upgrade` - Symfony version upgrade guide with deprecation-first approach and recipe updates
+- `skills/playbooks/composer-dependencies` - Composer dependency update playbook with security auditing and lock file management
 - `playbooks-virtuoso` plugin in marketplace
 - Updated README with playbooks section and new directory structure
 
@@ -114,32 +116,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [7.7.0] - 2026-03-06 <!-- not tagged -->
 
 ### Added
-- `skills/knowledge/database-design` -- normalization, indexing strategies, schema evolution, migration patterns, temporal data, audit trails, and partitioning
+- `skills/knowledge/database-design` - normalization, indexing strategies, schema evolution, migration patterns, temporal data, audit trails, and partitioning
 
 ## [7.6.0] - 2026-03-05 <!-- not tagged -->
 
 ### Added
-- `skills/knowledge/accessibility` -- WCAG compliance, semantic HTML, ARIA, keyboard navigation, color contrast, screen reader support, and accessible forms
+- `skills/knowledge/accessibility` - WCAG compliance, semantic HTML, ARIA, keyboard navigation, color contrast, screen reader support, and accessible forms
 
 ## [7.5.0] - 2026-03-04 <!-- not tagged -->
 
 ### Added
-- `skills/knowledge/cicd` -- CI/CD pipeline patterns, deployment models (blue-green, canary, rolling), environment promotion, and artifact management
+- `skills/knowledge/cicd` - CI/CD pipeline patterns, deployment models (blue-green, canary, rolling), environment promotion, and artifact management
 
 ## [7.4.0] - 2026-03-03 <!-- not tagged -->
 
 ### Added
-- `skills/knowledge/git-workflow` -- branching strategies, commit conventions, PR workflows, release management, and monorepo patterns
+- `skills/knowledge/git-workflow` - branching strategies, commit conventions, PR workflows, release management, and monorepo patterns
 
 ## [7.2.0] - 2026-03-02 <!-- not tagged -->
 
 ### Added
-- `skills/knowledge/microservices` -- service decomposition, saga orchestration, CQRS, event sourcing, circuit breakers, and API gateways
+- `skills/knowledge/microservices` - service decomposition, saga orchestration, CQRS, event sourcing, circuit breakers, and API gateways
 
 ## [7.1.0] - 2026-03-01 <!-- not tagged -->
 
 ### Added
-- `skills/knowledge/performance` -- profiling strategies, caching layers, database query optimization, memory management, lazy loading, and N+1 prevention
+- `skills/knowledge/performance` - profiling strategies, caching layers, database query optimization, memory management, lazy loading, and N+1 prevention
 
 ## [7.0.1] - 2026-03-05 <!-- not tagged -->
 
@@ -152,7 +154,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [6.5.0] - 2026-03-04 <!-- not tagged -->
 
 ### Added
-- `skills/knowledge/scrum` -- sprint planning, sprint goals, daily scrums, sprint reviews, retrospectives, scrum roles, and artifacts
+- `skills/knowledge/scrum` - sprint planning, sprint goals, daily scrums, sprint reviews, retrospectives, scrum roles, and artifacts
 - Scrum Master agent definition
 - `scrum-virtuoso` plugin in marketplace
 
@@ -179,10 +181,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [6.0.0] - 2026-02-27 <!-- not tagged -->
 
 ### Added
-- `skills/knowledge/clean-architecture` -- Clean Architecture, Hexagonal Architecture, and DDD fundamentals
-- `skills/knowledge/testing` -- testing pyramid, test design, TDD, test doubles, and testing antipatterns
-- `skills/knowledge/api-design` -- REST and GraphQL API design, resource modeling, versioning, and pagination
-- `skills/knowledge/security` -- OWASP Top 10, injection prevention, authentication, authorization, and secrets management
+- `skills/knowledge/clean-architecture` - Clean Architecture, Hexagonal Architecture, and DDD fundamentals
+- `skills/knowledge/testing` - testing pyramid, test design, TDD, test doubles, and testing antipatterns
+- `skills/knowledge/api-design` - REST and GraphQL API design, resource modeling, versioning, and pagination
+- `skills/knowledge/security` - OWASP Top 10, injection prevention, authentication, authorization, and secrets management
 - Project logo
 
 ### Changed
@@ -191,7 +193,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [5.0.0] - 2026-02-27 <!-- not tagged -->
 
 ### Added
-- `skills/knowledge/debugging` -- systematic debugging workflow with root cause analysis, bug category strategies, and post-mortem documentation
+- `skills/knowledge/debugging` - systematic debugging workflow with root cause analysis, bug category strategies, and post-mortem documentation
 - `skills/tools/agentic-rules-writer` (moved from `setup/` category)
 
 ### Changed
@@ -205,7 +207,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [3.0.0] - 2026-02-27 <!-- not tagged -->
 
 ### Added
-- `skills/tools/agentic-rules-writer` -- interactive rules file generator for AI coding agents
+- `skills/tools/agentic-rules-writer` - interactive rules file generator for AI coding agents
 
 ### Changed
 - Restructured skills directory from flat layout into `knowledge/`, `workflows/`, and `frameworks/` categories

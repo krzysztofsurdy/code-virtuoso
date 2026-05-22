@@ -1,6 +1,6 @@
 # Issue
 
-An issue is the catch-all ticket type for work that is not a user story, a bug, or part of an epic or initiative. Use it for chores, spikes, tech debt, questions, documentation tasks, or maintenance work -- anything real that still needs tracking but does not fit another type.
+An issue is the catch-all ticket type for work that is not a user story, a bug, or part of an epic or initiative. Use it for chores, spikes, tech debt, questions, documentation tasks, or maintenance work - anything real that still needs tracking but does not fit another type.
 
 ## When to Use Issue
 
@@ -10,7 +10,7 @@ An issue is the catch-all ticket type for work that is not a user story, a bug, 
 | Spike | Time-boxed investigation whose output is knowledge, not shipped code. |
 | Tech debt | A known shortcut in the code that should be paid down. |
 | Question | A decision the team needs to make, tracked for visibility. |
-| Documentation | A standalone doc task -- new guide, updated README, ADR write-up. |
+| Documentation | A standalone doc task - new guide, updated README, ADR write-up. |
 | Maintenance | Run a periodic task, rebuild an index, scheduled audit. |
 
 If the work delivers user-visible value, it is a story. If it is a deviation from intended behaviour, it is a bug. If it is much larger than a sprint, it is an epic. Everything else is an issue.
@@ -74,22 +74,22 @@ If the work delivers user-visible value, it is a story. If it is a deviation fro
 
 ## Questionnaire
 
-1. **Sub-type** -- chore / spike / tech debt / question / documentation / maintenance
-2. **Title** -- imperative, free text
-3. **Description** -- what and why, free text
-4. **Expected outcome** -- what exists when it is done, free text
-5. **Time box** -- required if spike, optional otherwise
-6. **Acceptance checklist** -- optional bullet list
-7. **Parent link** -- optional
-8. **Priority** -- P0 / P1 / P2 / P3 / skip
-9. **Dependencies** -- optional
+1. **Sub-type** - chore / spike / tech debt / question / documentation / maintenance
+2. **Title** - imperative, free text
+3. **Description** - what and why, free text
+4. **Expected outcome** - what exists when it is done, free text
+5. **Time box** - required if spike, optional otherwise
+6. **Acceptance checklist** - optional bullet list
+7. **Parent link** - optional
+8. **Priority** - P0 / P1 / P2 / P3 / skip
+9. **Dependencies** - optional
 
 ## Output Template
 
 ```markdown
 # <Imperative title>
 
-**Type:** Issue -- <sub-type>
+**Type:** Issue - <sub-type>
 
 ## Description
 <What needs doing and why.>
@@ -113,7 +113,7 @@ If the work delivers user-visible value, it is a story. If it is a deviation fro
 ## Quality Checks
 
 - The sub-type is declared and matches the actual work.
-- The expected outcome is concrete -- a file, a decision, a clean build, a doc.
+- The expected outcome is concrete - a file, a decision, a clean build, a doc.
 - If the issue is a spike, the time box is present.
 - If the issue is a question, the options and deciders are listed.
 - The title is specific enough that a teammate can skim the backlog and understand what the work is.

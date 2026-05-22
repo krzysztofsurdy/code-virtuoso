@@ -174,7 +174,7 @@ $discount = $processor->determineDiscount(1500, true);
 
 ## Related Refactorings
 
-- **Extract Variable**: The opposite -- introducing a named variable when an expression is too complex
+- **Extract Variable**: The opposite - introducing a named variable when an expression is too complex
 - **Inline Method**: The same principle applied to methods rather than temporary variables
 - **Replace Temp with Query**: Converts a temp into a method call, useful when the expression should be reusable
 - **Remove Dead Code**: Identifies variables that are declared but never read

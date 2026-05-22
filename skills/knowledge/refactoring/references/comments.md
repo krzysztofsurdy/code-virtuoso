@@ -1,13 +1,13 @@
 ## Overview
 
-The Comments smell surfaces when code relies heavily on inline explanations to make itself understood. Comments are not inherently bad -- they become a smell when they substitute for clear code rather than supplementing it. If a block of code needs a comment to explain *what* it does, the real fix is usually restructuring the code so the comment becomes unnecessary. Truly self-documenting code communicates through well-chosen names, small focused methods, and explicit types.
+The Comments smell surfaces when code relies heavily on inline explanations to make itself understood. Comments are not inherently bad - they become a smell when they substitute for clear code rather than supplementing it. If a block of code needs a comment to explain *what* it does, the real fix is usually restructuring the code so the comment becomes unnecessary. Truly self-documenting code communicates through well-chosen names, small focused methods, and explicit types.
 
 ## Why It's a Problem
 
 Even well-intentioned comments introduce risks:
 
 - **They rot quickly**: When code evolves, comments are often left behind, becoming misleading rather than helpful
-- **They mask structural weaknesses**: Heavy commenting usually signals that the code itself is too convoluted -- fixing the code is a better investment than annotating it
+- **They mask structural weaknesses**: Heavy commenting usually signals that the code itself is too convoluted - fixing the code is a better investment than annotating it
 - **They compensate for poor naming**: Instead of renaming a method or variable to be self-explanatory, developers add a comment alongside the unclear name
 - **They restate the obvious**: Comments that merely echo what the code already says add noise without value
 - **They discourage refactoring**: Developers may feel the code is "documented enough" and skip the structural improvements it actually needs

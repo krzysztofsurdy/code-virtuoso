@@ -2,7 +2,7 @@
 
 ## The First Rule of ARIA
 
-Before reaching for ARIA, ask: can a native HTML element do this? Native elements carry built-in semantics, keyboard behavior, and screen reader support. ARIA only changes announcements -- it does not add behavior. You must still implement keyboard handling and state changes yourself.
+Before reaching for ARIA, ask: can a native HTML element do this? Native elements carry built-in semantics, keyboard behavior, and screen reader support. ARIA only changes announcements - it does not add behavior. You must still implement keyboard handling and state changes yourself.
 
 **Use ARIA when:** no native element fits (tabs, tree views, comboboxes), you need to describe relationships markup cannot convey, or dynamic content changes need announcing.
 
@@ -91,7 +91,7 @@ function Tabs({ items }: { items: { label: string; content: React.ReactNode }[] 
 
 ## Modal Dialog
 
-Modals must trap focus, dismiss with Escape, and return focus to the trigger on close. Prefer native `<dialog>` with `.showModal()` -- it provides focus trapping, Escape handling, and backdrop for free.
+Modals must trap focus, dismiss with Escape, and return focus to the trigger on close. Prefer native `<dialog>` with `.showModal()` - it provides focus trapping, Escape handling, and backdrop for free.
 
 **HTML (native dialog):**
 ```html
@@ -200,5 +200,5 @@ Live regions announce dynamic content changes to screen readers. The element mus
 | `role="button"` on `<div>` without key handlers | Announced as button but Enter/Space does nothing | Use `<button>` or add tabindex and keydown |
 | `aria-label` overriding visible text | Sighted and SR users get different info | Use `aria-labelledby` pointing to visible text |
 | `aria-hidden="true"` on focusable elements | SR skips it but keyboard can still reach it | Remove from tab order too |
-| Redundant ARIA on native elements | `<nav role="navigation">` double-announces | Omit the role -- native semantics suffice |
+| Redundant ARIA on native elements | `<nav role="navigation">` double-announces | Omit the role - native semantics suffice |
 | Live region on a large container | Every change triggers announcements | Apply to the smallest possible element |

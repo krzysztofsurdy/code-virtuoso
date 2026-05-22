@@ -11,7 +11,7 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 | 1 | Page has exactly one `<h1>` and headings follow a logical hierarchy (h1 > h2 > h3, no skipping) | 1.3.1 |
 | 2 | Navigation uses `<nav>` element | 1.3.1 |
 | 3 | Main content is wrapped in `<main>` | 1.3.1 |
-| 4 | Lists use `<ul>`, `<ol>`, or `<dl>` -- not divs with visual bullets | 1.3.1 |
+| 4 | Lists use `<ul>`, `<ol>`, or `<dl>` - not divs with visual bullets | 1.3.1 |
 | 5 | Tables use `<table>`, `<thead>`, `<th>` with `scope` attribute | 1.3.1 |
 | 6 | Buttons that perform actions use `<button>`, not `<div>` or `<a>` | 4.1.2 |
 | 7 | Links that navigate use `<a>` with `href`, not `<button>` or `<span>` | 4.1.2 |
@@ -32,7 +32,7 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 | 7 | Dropdown menus support arrow key navigation | 2.1.1 |
 | 8 | Escape key closes modals, dropdowns, and popovers | 2.1.1 |
 | 9 | Skip-to-content link is the first focusable element on the page | 2.4.1 |
-| 10 | No keyboard traps -- the user can always Tab away from any element | 2.1.2 |
+| 10 | No keyboard traps - the user can always Tab away from any element | 2.1.2 |
 | 11 | Custom components (tabs, accordions, sliders) follow WAI-ARIA authoring practices for keyboard interaction | 2.1.1 |
 
 ---

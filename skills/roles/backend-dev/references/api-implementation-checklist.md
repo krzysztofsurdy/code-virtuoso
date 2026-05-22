@@ -86,12 +86,12 @@ class CreateProductRequest:
 | 3 | External dependencies are injected, not instantiated |
 | 4 | Domain exceptions are thrown for business rule violations |
 | 5 | Side effects (sending emails, dispatching events) are separated from core logic |
-| 6 | Transaction boundaries are explicit -- use the ORM's transactional pattern or a unit-of-work |
+| 6 | Transaction boundaries are explicit - use the ORM's transactional pattern or a unit-of-work |
 
 ### Transaction Boundaries
 
 ```
-# Pseudocode -- wrap related operations in a transaction
+# Pseudocode - wrap related operations in a transaction
 database.transaction do:
     repository.save(product)
     inventory.decrement_stock(product.sku, 1)

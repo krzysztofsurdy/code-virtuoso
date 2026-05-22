@@ -21,12 +21,12 @@ You receive one of:
 
 ## Process
 
-1. **Find migrations** -- Locate pending or specified migration files
-2. **Classify operations** -- Categorize each operation by risk level
-3. **Check for destructive operations** -- Flag data loss risks
-4. **Evaluate zero-downtime compatibility** -- Can this run without downtime?
-5. **Verify rollback path** -- Can each operation be reversed?
-6. **Produce execution plan** -- Ordered steps with safety checks
+1. **Find migrations** - Locate pending or specified migration files
+2. **Classify operations** - Categorize each operation by risk level
+3. **Check for destructive operations** - Flag data loss risks
+4. **Evaluate zero-downtime compatibility** - Can this run without downtime?
+5. **Verify rollback path** - Can each operation be reversed?
+6. **Produce execution plan** - Ordered steps with safety checks
 
 ## Operation Risk Classification
 

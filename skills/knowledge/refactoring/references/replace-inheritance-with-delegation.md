@@ -2,7 +2,7 @@
 
 ## Overview
 
-Replace Inheritance with Delegation swaps an "extends" relationship for a composition-based approach where the former subclass holds a reference to the former superclass and forwards only the calls it genuinely needs. When a class inherits from another solely to reuse implementation -- not because it represents a genuine specialization -- delegation models the actual dependency more accurately.
+Replace Inheritance with Delegation swaps an "extends" relationship for a composition-based approach where the former subclass holds a reference to the former superclass and forwards only the calls it genuinely needs. When a class inherits from another solely to reuse implementation - not because it represents a genuine specialization - delegation models the actual dependency more accurately.
 
 ## Motivation
 
@@ -140,7 +140,7 @@ final class InstrumentedStack
 
 ## Related Refactorings
 
-- **Extract Superclass**: The reverse operation -- factor shared code upward into a new parent class
+- **Extract Superclass**: The reverse operation - factor shared code upward into a new parent class
 - **Strategy Pattern**: A pattern that frequently emerges naturally once delegation is in place
 - **Adapter Pattern**: A structurally similar composition technique for bridging mismatched interfaces
 - **Decorator Pattern**: Another composition-based approach for layering additional behavior

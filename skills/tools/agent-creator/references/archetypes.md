@@ -10,7 +10,7 @@ A specialist handles one repeatable task type. It is stateless, usually read-onl
 
 - The same kind of delegation keeps happening ("can you investigate X", "can you review this PR")
 - The task has a clear start, end, and output shape
-- Cross-session memory is not needed -- each invocation is independent
+- Cross-session memory is not needed - each invocation is independent
 - Giving the caller an inline reply would flood the main conversation with logs, file contents, or search results the caller will not reference again
 
 ### Example: Investigator
@@ -41,13 +41,13 @@ A question or area to investigate.
 - Always include file paths and line numbers
 - Read files before making claims about their contents
 - Stay focused on the investigation question
-- Prefer depth over breadth -- trace one path fully before branching
+- Prefer depth over breadth - trace one path fully before branching
 
 ## Output
 ### Investigation: [restated question]
 
 Entry points:
-- path/to/file:line -- description
+- path/to/file:line - description
 
 Code flow:
 1. Step-by-step description of how the code executes
@@ -77,9 +77,9 @@ Files examined:
 
 ### Anti-patterns for specialists
 
-- Adding "and also review the tests" to an investigator -- that is a second agent
-- Giving write tools to an auditor -- scope creep waiting to happen
-- Persistent memory "for efficiency" -- if you need memory, it is probably a role agent
+- Adding "and also review the tests" to an investigator - that is a second agent
+- Giving write tools to an auditor - scope creep waiting to happen
+- Persistent memory "for efficiency" - if you need memory, it is probably a role agent
 
 ---
 
@@ -108,7 +108,7 @@ skills:
   - microservices
 ---
 
-You are the team's architect. You own the "how" -- system design, component
+You are the team's architect. You own the "how" - system design, component
 boundaries, API contracts, and technology choices. You do not implement code.
 
 ## Input
@@ -124,7 +124,7 @@ A design question, a proposed change, or a trade-off to evaluate.
 ## Rules
 - Always present at least two alternatives before recommending one
 - Evaluate trade-offs against at least three quality attributes
-- Do not modify source code -- write ADRs only
+- Do not modify source code - write ADRs only
 - Update your memory with new architectural context at the end of each session
 
 ## Output
@@ -137,8 +137,8 @@ Decision:
 - The approach being taken
 
 Alternatives:
-- Alternative A -- trade-offs
-- Alternative B -- trade-offs
+- Alternative A - trade-offs
+- Alternative B - trade-offs
 
 Consequences:
 - What becomes easier
@@ -150,17 +150,17 @@ Consequences:
 
 | Role | Domain |
 |---|---|
-| Product Manager | The "what" and "why" -- requirements, PRDs, prioritisation, acceptance criteria |
-| Backend Dev | Backend production code -- APIs, services, data models, TDD execution |
-| Frontend Dev | UI implementation -- components, accessibility, state management |
+| Product Manager | The "what" and "why" - requirements, PRDs, prioritisation, acceptance criteria |
+| Backend Dev | Backend production code - APIs, services, data models, TDD execution |
+| Frontend Dev | UI implementation - components, accessibility, state management |
 | QA Engineer | Test plans, exploratory testing, bug severity, release sign-off |
-| Project Manager | Delivery management -- stages, risk register, highlight reports |
-| Scrum Master | Facilitation -- sprint goals, retrospectives, impediment removal |
+| Project Manager | Delivery management - stages, risk register, highlight reports |
+| Scrum Master | Facilitation - sprint goals, retrospectives, impediment removal |
 
 ### Anti-patterns for roles
 
 - A role agent that also implements code (unless it is explicitly a Dev role)
-- Preloading ten skills "just in case" -- load four at most
+- Preloading ten skills "just in case" - load four at most
 - No memory for a role whose value comes from remembering decisions
 
 ---
@@ -177,9 +177,9 @@ A team-lead coordinates multiple workers running in parallel. The lead assigns t
 
 ### When NOT to use
 
-- The work is sequential -- each step depends on the last
+- The work is sequential - each step depends on the last
 - Teammates would edit the same files (file conflicts)
-- Two teammates would suffice -- use direct delegation or a specialist instead
+- Two teammates would suffice - use direct delegation or a specialist instead
 
 ### Example: Parallel PR Reviewer
 
@@ -199,13 +199,13 @@ A pull request identifier and the diff context.
 ## Process
 1. Break the PR into review lenses: security, performance, test coverage
 2. Spawn a teammate for each lens with a focused prompt
-3. Wait for all teammates to finish -- do not start synthesising early
+3. Wait for all teammates to finish - do not start synthesising early
 4. Collect findings into a single prioritised report
-5. Flag any findings where two teammates disagree -- the human resolves
+5. Flag any findings where two teammates disagree - the human resolves
 
 ## Rules
-- Every teammate gets a distinct lens -- no overlap
-- Do not implement fixes yourself -- this is a review agent
+- Every teammate gets a distinct lens - no overlap
+- Do not implement fixes yourself - this is a review agent
 - Cap the team at 3-5 teammates; more adds coordination overhead without depth
 
 ## Output
@@ -216,15 +216,15 @@ A pull request identifier and the diff context.
 [P0 / P1 / P2 list with file:line references]
 
 ### Disagreements requiring human input
-- Teammate A said X, teammate B said Y -- need a call on Z
+- Teammate A said X, teammate B said Y - need a call on Z
 ```
 
 ### Anti-patterns for team-leads
 
-- Spawning the same archetype three times with slightly different prompts -- merge into one
-- Letting the lead do the work itself when teammates are slow -- defeats the purpose
-- Having teammates edit the same file -- the last write wins and earlier work is lost
-- Creating a team for a two-agent task -- just delegate twice
+- Spawning the same archetype three times with slightly different prompts - merge into one
+- Letting the lead do the work itself when teammates are slow - defeats the purpose
+- Having teammates edit the same file - the last write wins and earlier work is lost
+- Creating a team for a two-agent task - just delegate twice
 
 ---
 
@@ -236,4 +236,4 @@ Walk through these questions in order. The first "yes" wins.
 2. Is this a team role a human could hold? -> **Role**
 3. Is this coordinating parallel work by multiple other agents? -> **Team-Lead**
 
-If none match, the work probably does not need an agent at all -- consider whether a skill or an in-conversation tool call suffices.
+If none match, the work probably does not need an agent at all - consider whether a skill or an in-conversation tool call suffices.

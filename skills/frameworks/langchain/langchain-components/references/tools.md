@@ -73,8 +73,8 @@ def get_weather(location: str, units: str = "celsius",
 ### Reserved Parameter Names
 
 Two parameter names cannot be used as tool arguments:
-- `config` -- reserved for `RunnableConfig`
-- `runtime` -- reserved for `ToolRuntime`
+- `config` - reserved for `RunnableConfig`
+- `runtime` - reserved for `ToolRuntime`
 
 ## Accessing Runtime Context
 
@@ -263,7 +263,7 @@ MCP is an open protocol that standardizes how applications provide tools and con
 
 ### Core Components
 
-**MultiServerMCPClient** -- primary interface for connecting to MCP servers. Stateless by default; each tool invocation creates a fresh session. Supports multiple simultaneous server connections.
+**MultiServerMCPClient** - primary interface for connecting to MCP servers. Stateless by default; each tool invocation creates a fresh session. Supports multiple simultaneous server connections.
 
 ### Supported Transports
 
@@ -343,7 +343,7 @@ Supports both stdio and HTTP transports.
 ## Best Practices
 
 - Use `snake_case` for tool names across all providers
-- Write clear docstrings -- they serve as the tool description for the model
+- Write clear docstrings - they serve as the tool description for the model
 - Use Pydantic `Field(description=...)` for complex input schemas
 - Avoid reserved parameter names (`config`, `runtime`)
 - Use `ToolRuntime` for accessing conversation state rather than global variables

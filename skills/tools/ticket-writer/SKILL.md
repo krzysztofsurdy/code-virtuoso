@@ -1,23 +1,23 @@
 ---
 name: ticket-writer
-description: Interactive tool to write high-quality tickets of the right type -- story, subtask, issue, bug, epic, or initiative -- each with its own structure, required fields, and quality checks. Use when the user asks to write a ticket, draft a user story, file a bug report, scope an epic, define an initiative, break work into subtasks, or convert a rough idea into a well-formed backlog item. Runs an interactive type selection and field-by-field questionnaire, then outputs a clean Markdown ticket ready to paste into Jira, Linear, GitHub Issues, Azure DevOps, or any tracker.
+description: Interactive tool to write high-quality tickets of the right type - story, subtask, issue, bug, epic, or initiative - each with its own structure, required fields, and quality checks. Use when the user asks to write a ticket, draft a user story, file a bug report, scope an epic, define an initiative, break work into subtasks, or convert a rough idea into a well-formed backlog item. Runs an interactive type selection and field-by-field questionnaire, then outputs a clean Markdown ticket ready to paste into Jira, Linear, GitHub Issues, Azure DevOps, or any tracker.
 user-invocable: true
-argument-hint: "[optional: type -- story, subtask, issue, bug, epic, initiative]"
+argument-hint: "[optional: type - story, subtask, issue, bug, epic, initiative]"
 ---
 
 # Ticket Writer
 
-Pick the right ticket type, then fill in only the fields that type demands. A story is not a bug; an epic is not an initiative. Each type has a distinct audience, scope, and definition of done -- mixing them produces vague, unactionable tickets that bloat backlogs.
+Pick the right ticket type, then fill in only the fields that type demands. A story is not a bug; an epic is not an initiative. Each type has a distinct audience, scope, and definition of done - mixing them produces vague, unactionable tickets that bloat backlogs.
 
 ## Core Principles
 
 | Principle | Meaning |
 |---|---|
-| **Type drives structure** | The type decides the required fields -- never use a single template for everything |
+| **Type drives structure** | The type decides the required fields - never use a single template for everything |
 | **Outcomes over outputs** | Describe the change the work creates, not the activity performed |
 | **Small enough to finish** | Stories and subtasks fit a sprint; epics fit a quarter; initiatives span multiple quarters |
 | **Testable acceptance** | Every story, subtask, and bug has acceptance criteria that a reviewer can verify |
-| **Context, not prose** | Prefer tables, lists, and labelled sections over paragraphs -- readers skim |
+| **Context, not prose** | Prefer tables, lists, and labelled sections over paragraphs - readers skim |
 | **One ask per ticket** | If a ticket has two unrelated goals, split it |
 
 ---
@@ -32,7 +32,7 @@ Initiative  (multi-quarter strategic outcome)
     Story   (sprint-scale user-visible value)
       Subtask  (implementation slice of a story)
     Bug     (defect against current behaviour)
-    Issue   (anything else -- chore, spike, question)
+    Issue   (anything else - chore, spike, question)
 ```
 
 ### When to Use Each Type
@@ -61,7 +61,7 @@ Initiative  (multi-quarter strategic outcome)
 
 ### Phase 1: Type Selection
 
-If the user provided a type as an argument, use it. Otherwise present a selectable menu (use `AskUserQuestion` or the platform's equivalent interactive prompt) listing the six types with their one-line descriptions from the table above. Never dump the full table as plain text -- keep the menu compact.
+If the user provided a type as an argument, use it. Otherwise present a selectable menu (use `AskUserQuestion` or the platform's equivalent interactive prompt) listing the six types with their one-line descriptions from the table above. Never dump the full table as plain text - keep the menu compact.
 
 If the user's intent is clear from context (e.g., they said "write a bug report" or "create an epic for checkout redesign"), skip the menu and confirm the inferred type with a single yes/no prompt.
 
@@ -90,8 +90,8 @@ Each reference contains:
 Ask only the questions the reference lists for the selected type. Follow these rules:
 
 1. **Batch compatible questions** (3-4 per prompt) when using an interactive menu tool. Use free-text prompts only when the answer is genuinely free-form (title, description, reproduction steps).
-2. **Skip optional fields silently** if the user says "skip" or leaves them blank -- do not add empty placeholders.
-3. **Follow-up on ambiguous answers** -- if the user says "it's slow", ask "slow compared to what, and by how much?"
+2. **Skip optional fields silently** if the user says "skip" or leaves them blank - do not add empty placeholders.
+3. **Follow-up on ambiguous answers** - if the user says "it's slow", ask "slow compared to what, and by how much?"
 4. **Never invent facts.** If the user cannot provide environment info, reproduction steps, or metrics, leave those fields out and note the gap in a `## Open Questions` section rather than fabricating values.
 
 ### Phase 4: Assemble the Ticket

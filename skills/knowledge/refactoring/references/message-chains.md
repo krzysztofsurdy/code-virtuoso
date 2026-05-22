@@ -12,7 +12,7 @@ This is a coupling problem. The client knows far more about the object structure
 2. **Fragile Paths**: Restructuring any relationship along the chain forces updates in every client that traverses it
 3. **Context-Bound Code**: Chain-dependent code cannot be reused in contexts where the object graph is structured differently
 4. **Inflexible Design**: Swapping implementations or restructuring object relationships becomes difficult when clients encode the navigation path directly
-5. **Obscured Dependencies**: The real dependency set is hidden -- inspecting the direct class reveals only the first hop, not the full chain
+5. **Obscured Dependencies**: The real dependency set is hidden - inspecting the direct class reveals only the first hop, not the full chain
 
 ## Signs and Symptoms
 
@@ -167,7 +167,7 @@ The key difference: these are *designed* as chains, not *incidental* coupling.
 
 ## Related Smells
 
-- **Middle Man**: The flip side of Message Chains -- hiding too much delegation can obscure where functionality actually lives. Fixing chains aggressively can create Middle Man.
+- **Middle Man**: The flip side of Message Chains - hiding too much delegation can obscure where functionality actually lives. Fixing chains aggressively can create Middle Man.
 - **Feature Envy**: A method reaching deep into another object's structure is often both envious and chain-dependent
 - **Inappropriate Intimacy**: The broader coupling problem of which Message Chains are a specific manifestation
 - **Data Clumps**: Objects that travel together along chains may signal data that should be grouped into a single object

@@ -36,7 +36,7 @@ Initiatives are the right level to anchor OKRs. Keep them aligned but not identi
 - One sentence.
 - Qualitative and memorable.
 - Describes the end state, not the work.
-- Avoid numbers -- those live in the key results.
+- Avoid numbers - those live in the key results.
 
 **Key results**
 - Two to five per objective.
@@ -92,22 +92,22 @@ An initiative typically contains three to ten epics. A few guidelines:
 
 ## Questionnaire
 
-1. **Title** -- outcome-oriented, free text
-2. **Objective** -- one sentence, qualitative, free text
-3. **Key results** -- two to five, each with metric, baseline, target, window
-4. **Problem statement** -- strategic rationale, free text
-5. **Horizon** -- quarters covered (e.g., Q3 2026 - Q2 2027)
-6. **In scope** -- bullet list
-7. **Out of scope** -- bullet list
-8. **Executive sponsor** -- optional
-9. **Stakeholders** -- optional, roles and names
-10. **Guiding principles** -- optional
-11. **Initial child epics** -- three to five placeholders
-12. **Dependencies** -- optional
-13. **Assumptions** -- optional
-14. **Risks** -- optional, with mitigation
-15. **Budget and staffing** -- optional
-16. **Check-in cadence** -- optional
+1. **Title** - outcome-oriented, free text
+2. **Objective** - one sentence, qualitative, free text
+3. **Key results** - two to five, each with metric, baseline, target, window
+4. **Problem statement** - strategic rationale, free text
+5. **Horizon** - quarters covered (e.g., Q3 2026 - Q2 2027)
+6. **In scope** - bullet list
+7. **Out of scope** - bullet list
+8. **Executive sponsor** - optional
+9. **Stakeholders** - optional, roles and names
+10. **Guiding principles** - optional
+11. **Initial child epics** - three to five placeholders
+12. **Dependencies** - optional
+13. **Assumptions** - optional
+14. **Risks** - optional, with mitigation
+15. **Budget and staffing** - optional
+16. **Check-in cadence** - optional
 
 ## Output Template
 
@@ -118,9 +118,9 @@ An initiative typically contains three to ten epics. A few guidelines:
 <One sentence describing the end state.>
 
 ## Key Results
-1. <KR -- metric, baseline, target, window>
-2. <KR -- metric, baseline, target, window>
-3. <KR -- metric, baseline, target, window>
+1. <KR - metric, baseline, target, window>
+2. <KR - metric, baseline, target, window>
+3. <KR - metric, baseline, target, window>
 
 ## Problem
 <Strategic rationale: why now, what the evidence says, what happens if we do not act.>
@@ -142,7 +142,7 @@ An initiative typically contains three to ten epics. A few guidelines:
 - Other: <name + role>
 
 ## Guiding Principles
-<Constraints the plan must respect -- omit if none>
+<Constraints the plan must respect - omit if none>
 
 ## Child Epics
 - <epic title or link>
@@ -150,19 +150,19 @@ An initiative typically contains three to ten epics. A few guidelines:
 - <epic title or link>
 
 ## Dependencies
-<Other initiatives, platforms, partners -- omit if none>
+<Other initiatives, platforms, partners - omit if none>
 
 ## Assumptions
 <List or omit>
 
 ## Risks
-- <risk> -- mitigation: <>
+- <risk> - mitigation: <>
 
 ## Budget and Staffing
-<Headcount, spend, external partners -- omit if not applicable>
+<Headcount, spend, external partners - omit if not applicable>
 
 ## Check-ins
-<Cadence and forum -- omit if standard>
+<Cadence and forum - omit if standard>
 ```
 
 ## Quality Checks
@@ -172,7 +172,7 @@ An initiative typically contains three to ten epics. A few guidelines:
 - Each key result has a baseline, a target, and a window.
 - At least one key result is a guardrail.
 - The child epics, taken together, plausibly move the key results.
-- The scope is not larger than four quarters -- if it is, split it.
+- The scope is not larger than four quarters - if it is, split it.
 - An exec reading only the title and objective can guess what the team is going to build.
 
 ## Common Anti-Patterns

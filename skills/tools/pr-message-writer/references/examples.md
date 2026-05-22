@@ -4,7 +4,7 @@ Real-world examples demonstrating the PR template applied to different change ty
 
 ---
 
-## Example 1: Feature -- Add Product Review System
+## Example 1: Feature - Add Product Review System
 
 ### Title
 ```
@@ -21,9 +21,9 @@ SHOP-1042 Add product review system with ratings and moderation
 
 #### API Changes (REST/GraphQL)
 
-**New `submitReview` mutation** -- authenticated users submit a review for a purchased product. Validates purchase history, duplicate prevention, and rating range.
+**New `submitReview` mutation** - authenticated users submit a review for a purchased product. Validates purchase history, duplicate prevention, and rating range.
 
-**New `productReviews` query** -- paginated approved reviews with `averageRating` computed field. Updated `product` query includes `averageRating` and `reviewCount`.
+**New `productReviews` query** - paginated approved reviews with `averageRating` computed field. Updated `product` query includes `averageRating` and `reviewCount`.
 
 #### Caching and Performance
 
@@ -128,7 +128,7 @@ GROUP BY p.id HAVING COUNT(pr.id) > 0 LIMIT 10;
 
 ---
 
-## Example 2: Bug Fix -- Cart Quantity Not Preserved on Validation Error
+## Example 2: Bug Fix - Cart Quantity Not Preserved on Validation Error
 
 ### Title
 ```
@@ -149,10 +149,10 @@ Reordered to validate first, persist second:
 **After:** Validate -> If error, return (cart untouched) -> Clear items -> Insert updated
 
 **Files changed:**
-- Cart service -- reordered validation and deletion
-- Stock availability validator -- extracted standalone validation
-- Unit tests -- quantity preservation test
-- Integration tests -- full checkout flow test
+- Cart service - reordered validation and deletion
+- Stock availability validator - extracted standalone validation
+- Unit tests - quantity preservation test
+- Integration tests - full checkout flow test
 
 ### Testing instructions
 
@@ -200,7 +200,7 @@ Reordered to validate first, persist second:
   - The quantity is accepted without errors
   - The cart updates to show the new quantity and recalculated total
 
-- [ ] **Scenario 5: Multiple items -- one invalid does not affect others**
+- [ ] **Scenario 5: Multiple items - one invalid does not affect others**
   1. Add two different products to your cart (e.g., quantity 2 each)
   2. Change one product's quantity to 9999 (invalid) and leave the other at 2
   3. Click "Update"
@@ -226,7 +226,7 @@ Expected: `errors` contains a stock validation message, and `cart.items` shows t
 
 ---
 
-## Example 3: Feature -- Add Quiz Question Pool with Admin Management
+## Example 3: Feature - Add Quiz Question Pool with Admin Management
 
 ### Title
 ```
@@ -328,7 +328,7 @@ GROUP BY quiz_pool_id, quiz_question_id HAVING COUNT(*) > 1;
 
 ---
 
-## Example 4: Feature -- Add User Preference Tracking Field
+## Example 4: Feature - Add User Preference Tracking Field
 
 ### Title
 ```
@@ -348,9 +348,9 @@ ALTER TABLE "user" ADD COLUMN notification_preference VARCHAR(20) DEFAULT NULL;
 
 #### API Changes (REST/GraphQL)
 
-**New `setNotificationPreference` mutation** -- requires auth, accepts `ALL`/`IMPORTANT_ONLY`/`NONE`, returns updated profile. Users can only set their own preference.
+**New `setNotificationPreference` mutation** - requires auth, accepts `ALL`/`IMPORTANT_ONLY`/`NONE`, returns updated profile. Users can only set their own preference.
 
-**Updated `me` query** -- includes `notificationPreference` (null if unset).
+**Updated `me` query** - includes `notificationPreference` (null if unset).
 
 #### Security and Permissions
 
@@ -463,7 +463,7 @@ GROUP BY notification_preference ORDER BY COUNT(*) DESC;
 
 ---
 
-## Example 5: Bug Fix -- Prevent Double Submit on Checkout
+## Example 5: Bug Fix - Prevent Double Submit on Checkout
 
 ### Title
 ```
@@ -481,9 +481,9 @@ Users clicking the pay button multiple times during slow network conditions caus
 Added a 15-second cooldown on the checkout confirm button. On click, the button immediately disables and shows "Processing..." text. After 15 seconds (or on server response, whichever comes first), the button re-enables.
 
 **Files changed:**
-- Checkout payment form -- added cooldown logic to submit handler
-- Checkout confirm template -- added processing text data attribute to button
-- Payment form tests -- button state tests
+- Checkout payment form - added cooldown logic to submit handler
+- Checkout confirm template - added processing text data attribute to button
+- Payment form tests - button state tests
 
 ### Testing instructions
 

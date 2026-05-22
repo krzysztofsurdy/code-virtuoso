@@ -1,6 +1,6 @@
 ## Overview
 
-A Data Class is a class that exists solely as a passive container for data -- it exposes fields through getters and setters but contains no meaningful behavior. The class cannot act on its own data; instead, all the logic that operates on that data is pushed out into client code. This is a missed opportunity for encapsulation, and it often signals that the class has not yet been fully designed.
+A Data Class is a class that exists solely as a passive container for data - it exposes fields through getters and setters but contains no meaningful behavior. The class cannot act on its own data; instead, all the logic that operates on that data is pushed out into client code. This is a missed opportunity for encapsulation, and it often signals that the class has not yet been fully designed.
 
 ## Why It's a Problem
 
@@ -161,9 +161,9 @@ The key distinction: intentional DTOs with clear purpose differ from accidental 
 - **Anemic Domain Model**: The architectural-scale version of this problem, where all domain objects are data-only and behavior lives entirely in service layers
 - **Middle Man**: Excessive delegation through wrapper classes, which may themselves be data-class-like
 - **Feature Envy**: Methods that pull data from a data class to perform logic that belongs inside that class
-- **Primitive Obsession**: Using raw primitives instead of small domain objects -- data classes often consist entirely of primitives
+- **Primitive Obsession**: Using raw primitives instead of small domain objects - data classes often consist entirely of primitives
 - **Inappropriate Intimacy**: Client classes that rely heavily on a data class's internal structure
 
 ---
 
-**Key Takeaway**: A newly created class with only fields is normal -- it becomes a smell when it stays that way. The power of objects lies in combining data with the operations that act on it. When client code performs calculations, validations, or transformations using a class's fields, that logic belongs inside the class itself. Moving it there centralizes the behavior, eliminates duplication across clients, and makes the class a genuine participant in the system rather than an inert container.
+**Key Takeaway**: A newly created class with only fields is normal - it becomes a smell when it stays that way. The power of objects lies in combining data with the operations that act on it. When client code performs calculations, validations, or transformations using a class's fields, that logic belongs inside the class itself. Moving it there centralizes the behavior, eliminates duplication across clients, and makes the class a genuine participant in the system rather than an inert container.

@@ -1,6 +1,6 @@
 # Chaining Patterns
 
-When a single skill or agent is not enough, chain them. These patterns describe common multi-step flows. They are templates, not prescriptions -- skip steps that do not apply, add steps that do.
+When a single skill or agent is not enough, chain them. These patterns describe common multi-step flows. They are templates, not prescriptions - skip steps that do not apply, add steps that do.
 
 If a pre-composed team exists that matches the chain, use the team instead of assembling ad-hoc.
 
@@ -33,7 +33,7 @@ Product Manager -> Architect -> Backend Dev + Frontend Dev (parallel) -> QA Engi
 
 Start when a new feature needs to be built end-to-end. PM defines requirements and acceptance criteria. Architect designs the solution and API contract. Dev roles implement in parallel worktrees. QA writes test plan and signs off.
 
-**Use the `development-team`** if it is installed -- it wraps this chain with coordination rules and spawning protocol.
+**Use the `development-team`** if it is installed - it wraps this chain with coordination rules and spawning protocol.
 
 **Skip Frontend Dev** for backend-only features. **Skip Architect** if the feature fits an existing pattern with no new design decisions.
 
@@ -73,6 +73,6 @@ Start when the user has a vague idea. Brainstorming produces a spec. Writing-Pla
 
 ## When NOT to Chain
 
-- The task fits a single specialist agent -- do not add a chain for ceremony
-- The user asked for reference, not execution -- recommend a knowledge skill, not an agent chain
-- The chain would have only two steps with no real dependency -- just dispatch the two agents independently
+- The task fits a single specialist agent - do not add a chain for ceremony
+- The user asked for reference, not execution - recommend a knowledge skill, not an agent chain
+- The chain would have only two steps with no real dependency - just dispatch the two agents independently

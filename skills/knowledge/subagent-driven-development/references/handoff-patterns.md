@@ -1,10 +1,10 @@
 # Handoff Patterns
 
-When tasks in a plan are sequential, the orchestrator must pass structured state from task N to task N+1. The handoff is the bridge between isolated agent sessions -- it carries just enough context for the next subagent to work effectively without inheriting the previous agent's full history.
+When tasks in a plan are sequential, the orchestrator must pass structured state from task N to task N+1. The handoff is the bridge between isolated agent sessions - it carries just enough context for the next subagent to work effectively without inheriting the previous agent's full history.
 
 ## Core Principle
 
-**Compress, do not replay.** The next subagent needs decisions, artifacts, and relevant changes -- not a transcript of what happened. Every line in a handoff should answer the question: "Does the next agent need this to do its job?"
+**Compress, do not replay.** The next subagent needs decisions, artifacts, and relevant changes - not a transcript of what happened. Every line in a handoff should answer the question: "Does the next agent need this to do its job?"
 
 ## Three Handoff Formats
 
@@ -12,7 +12,7 @@ Choose the format based on how deeply the next task depends on the previous one.
 
 ### 1. Diff Summary
 
-**When to use:** The next task has a light dependency -- it needs to know what files changed and what interfaces were introduced, but does not need to understand why decisions were made.
+**When to use:** The next task has a light dependency - it needs to know what files changed and what interfaces were introduced, but does not need to understand why decisions were made.
 
 **Typical scenario:** Task N created a new service class. Task N+1 writes the controller that uses it.
 
@@ -59,7 +59,7 @@ Choose the format based on how deeply the next task depends on the previous one.
    - Rationale: New pricing models will be added quarterly; strategy pattern
      allows addition without modifying existing code
    - Impact on Task 04: The discount system (Task 04) should follow the same
-     pattern -- create a DiscountStrategy interface rather than adding
+     pattern - create a DiscountStrategy interface rather than adding
      conditionals to the pricing strategies
 
 2. **Money represented as integer cents**
@@ -138,7 +138,7 @@ Choose the format based on how deeply the next task depends on the previous one.
 | Next task uses output from this task but does not modify it | Diff summary |
 | Design decisions were made that constrain the next task | Decision log |
 | Next task directly extends or modifies this task's output | Full handoff |
-| Unsure | Default to decision log -- it covers the most common case without excessive bulk |
+| Unsure | Default to decision log - it covers the most common case without excessive bulk |
 
 ## What Never Goes in a Handoff
 
@@ -180,11 +180,11 @@ This keeps later handoffs from growing unboundedly while still providing traceab
 
 ### First Task in the Plan
 
-No handoff exists. The brief's "Context from Prior Tasks" section should say: "None -- this is the first task."
+No handoff exists. The brief's "Context from Prior Tasks" section should say: "None - this is the first task."
 
 ### Task That Produces No Code Changes
 
-Some tasks produce documentation, configuration, or analysis rather than code. The handoff still applies -- describe what was produced and where it lives.
+Some tasks produce documentation, configuration, or analysis rather than code. The handoff still applies - describe what was produced and where it lives.
 
 ### Task That Was Re-Scoped Mid-Execution
 

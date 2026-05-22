@@ -2,7 +2,7 @@
 
 ## Overview
 
-Middleware enables fine-grained control over agent execution by providing hooks at various stages of the agent loop. Middleware intercepts execution at specific points -- before/after model calls, before/after tool calls, and at agent start/end -- allowing you to add observability, transformation, resilience, and governance to your agents without modifying core logic.
+Middleware enables fine-grained control over agent execution by providing hooks at various stages of the agent loop. Middleware intercepts execution at specific points - before/after model calls, before/after tool calls, and at agent start/end - allowing you to add observability, transformation, resilience, and governance to your agents without modifying core logic.
 
 Middleware is integrated via the `create_agent` function and can be combined freely to build comprehensive agent systems.
 

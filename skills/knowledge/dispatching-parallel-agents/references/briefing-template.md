@@ -16,7 +16,7 @@ One sentence describing what must be true when the agent finishes. This is the s
 
 **Bad**: "Look at the order module and see what needs testing."
 
-The task should be falsifiable -- someone reviewing the output can verify whether the task was accomplished.
+The task should be falsifiable - someone reviewing the output can verify whether the task was accomplished.
 
 ### 2. Context (Required)
 
@@ -69,7 +69,7 @@ Explicit statements about what is in scope and what is out of scope. Boundaries 
 In scope: src/Order/ directory only
 Out of scope: src/Payment/, src/Shipping/, and all other directories
 Do NOT modify any files
-Do NOT suggest refactoring changes -- report findings only
+Do NOT suggest refactoring changes - report findings only
 ```
 
 **Bad**: No boundaries stated. (Agent may wander into adjacent modules or start "helpfully" fixing things.)
@@ -132,11 +132,11 @@ Check the auth code for security issues and let me know what you find.
 ```
 
 **Why it fails**:
-- No specific files -- agent must guess the scope
-- No output format -- agent produces freeform text
-- No boundaries -- agent may review the entire application
-- No failure mode -- agent silently skips problems
-- No context -- agent does not know what kind of review this serves
+- No specific files - agent must guess the scope
+- No output format - agent produces freeform text
+- No boundaries - agent may review the entire application
+- No failure mode - agent silently skips problems
+- No context - agent does not know what kind of review this serves
 
 ---
 
@@ -146,7 +146,7 @@ Different agent types benefit from emphasis on different brief sections:
 
 ### Investigator Briefs
 
-Emphasize scope boundaries and output structure. Investigators explore broadly by nature -- without boundaries they will trace every dependency chain they find.
+Emphasize scope boundaries and output structure. Investigators explore broadly by nature - without boundaries they will trace every dependency chain they find.
 
 ```
 TASK: Map the dependency chain of OrderService.
@@ -167,7 +167,7 @@ Dependency tree as indented list:
 
 ### Implementer Briefs
 
-Emphasize the test cases and acceptance criteria. Implementers follow TDD -- they need to know what "done" looks like in testable terms.
+Emphasize the test cases and acceptance criteria. Implementers follow TDD - they need to know what "done" looks like in testable terms.
 
 ```
 TASK: Implement the discount calculation for bulk orders.
@@ -225,8 +225,8 @@ FOCUS ON:
 - Change preventers (divergent change, shotgun surgery)
 
 DEPRIORITIZE:
-- Dispensables (comments, dead code) -- these are known and tracked
-- Object-orientation abusers -- not relevant for this procedural legacy code
+- Dispensables (comments, dead code) - these are known and tracked
+- Object-orientation abusers - not relevant for this procedural legacy code
 
 EXPECTED OUTPUT: Table with columns:
 | File | Smell | Refactoring Technique | Effort Estimate |

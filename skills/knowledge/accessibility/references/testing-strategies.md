@@ -94,7 +94,7 @@ Automated tools catch roughly 30-40% of accessibility issues. They excel at dete
 | **Chrome DevTools** | Inspect element > color picker shows ratio |
 | **Firefox Accessibility Inspector** | Accessibility tab > contrast check |
 | **Colour Contrast Analyser** | Desktop app with eyedropper |
-| **WebAIM Contrast Checker** | Web tool -- enter hex values |
+| **WebAIM Contrast Checker** | Web tool - enter hex values |
 
 ```js
 // axe-core contrast check in tests

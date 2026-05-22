@@ -8,11 +8,11 @@ Produce a written spec from everything gathered in Phases 1-3.
 
 ## Steps
 
-1. Write the spec using the [spec template](../references/spec-template.md). Every section is mandatory unless explicitly inapplicable (state "N/A -- [reason]").
+1. Write the spec using the [spec template](../references/spec-template.md). Every section is mandatory unless explicitly inapplicable (state "N/A - [reason]").
 
    | Section | Contents |
    |---|---|
-   | Problem | What is broken, missing, or needed -- stated as a problem, not a solution |
+   | Problem | What is broken, missing, or needed - stated as a problem, not a solution |
    | Goal | The desired outcome in one or two sentences |
    | Non-goals | What this spec explicitly does NOT cover |
    | Constraints | Technical, time, team, budget, or regulatory limits |
@@ -37,7 +37,7 @@ Produce a written spec from everything gathered in Phases 1-3.
 ## Rules
 
 - The spec must be understandable by someone who was not in the conversation
-- No implementation details -- the spec describes WHAT, not HOW
+- No implementation details - the spec describes WHAT, not HOW
 - No technology choices unless they are genuine constraints
 - Acceptance criteria must be testable
 - Scale depth to complexity

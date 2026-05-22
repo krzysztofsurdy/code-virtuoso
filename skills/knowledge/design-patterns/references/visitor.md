@@ -355,7 +355,7 @@ if __name__ == "__main__":
 
 ### C++
 
-Before -- operations embedded directly in element classes:
+Before - operations embedded directly in element classes:
 
 ```cpp
 class Color {
@@ -384,7 +384,7 @@ class Blu: public Color {
 };
 ```
 
-After -- visitor separates operations from element classes:
+After - visitor separates operations from element classes:
 
 ```cpp
 class Color {

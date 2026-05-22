@@ -11,7 +11,7 @@ The Interpreter pattern is a behavioral design pattern that maps grammar rules t
 ## Problem and Solution
 
 **Problem:**
-When an application must process structured expressions -- mathematical formulas, search queries, configuration directives -- embedding the parsing and evaluation logic directly in procedural code results in rigid, hard-to-extend implementations that break whenever the grammar evolves.
+When an application must process structured expressions - mathematical formulas, search queries, configuration directives - embedding the parsing and evaluation logic directly in procedural code results in rigid, hard-to-extend implementations that break whenever the grammar evolves.
 
 **Solution:**
 Represent each grammar rule as its own class, and build an abstract syntax tree (AST) from those classes. Each node in the tree knows how to interpret itself by recursively delegating to its children, producing a modular and extensible evaluation pipeline.
@@ -166,7 +166,7 @@ $result = $ast->interpret($context); // 50
 ## Real-World Analogies
 
 - **Legal Contract Clauses**: A contract is a structured document where each clause (expression) has defined terms (terminals) and compound conditions (nonterminals). A lawyer interprets the contract by recursively evaluating clauses in context.
-- **Assembly Instructions**: Furniture assembly guides use a symbolic language -- arrows, numbered parts, action icons -- that the builder interprets step by step to produce the final product.
+- **Assembly Instructions**: Furniture assembly guides use a symbolic language - arrows, numbered parts, action icons - that the builder interprets step by step to produce the final product.
 - **Cooking Recipes**: A recipe is a small language with ingredients (terminals) and operations like "mix," "fold," or "bake" (nonterminals) that a cook interprets to produce a dish.
 
 ## Pros and Cons

@@ -7,7 +7,7 @@ A structured checklist for reviewing system designs before implementation begins
 ## How to Use This Checklist
 
 1. The architect completes a self-review against this checklist before the design review meeting
-2. Reviewers use it as a guide during the review -- not every item applies to every design
+2. Reviewers use it as a guide during the review - not every item applies to every design
 3. Mark each item as: Pass / Fail / N/A
 4. Any Fail item must have a follow-up action assigned before the design is approved
 
@@ -28,7 +28,7 @@ A structured checklist for reviewing system designs before implementation begins
 | # | Check | Status |
 |---|---|---|
 | 2.1 | Each component has a single, clearly defined responsibility | |
-| 2.2 | Component boundaries are documented -- what each component owns and does not own | |
+| 2.2 | Component boundaries are documented - what each component owns and does not own | |
 | 2.3 | Dependencies between components are explicit and minimized | |
 | 2.4 | No circular dependencies exist between components | |
 | 2.5 | Shared logic is extracted into a common module or service, not duplicated | |
@@ -67,7 +67,7 @@ A structured checklist for reviewing system designs before implementation begins
 |---|---|---|
 | 5.1 | Expected load is quantified (requests/second, concurrent users, data volume) | |
 | 5.2 | Bottlenecks are identified and mitigation strategies defined | |
-| 5.3 | Caching strategy is defined -- what is cached, where, for how long, and how invalidated | |
+| 5.3 | Caching strategy is defined - what is cached, where, for how long, and how invalidated | |
 | 5.4 | Database query patterns are reviewed for N+1 problems and unbounded result sets | |
 | 5.5 | Background processing is used for operations that do not need synchronous response | |
 | 5.6 | Connection pooling is configured for database and external service connections | |
@@ -78,12 +78,12 @@ A structured checklist for reviewing system designs before implementation begins
 | # | Check | Status |
 |---|---|---|
 | 6.1 | Single points of failure are identified and addressed | |
-| 6.2 | Failure modes are documented -- what happens when each dependency is unavailable | |
+| 6.2 | Failure modes are documented - what happens when each dependency is unavailable | |
 | 6.3 | Retry strategy is defined for transient failures (with backoff and max attempts) | |
 | 6.4 | Circuit breaker pattern is used for external service calls where appropriate | |
 | 6.5 | Timeout values are specified for all external calls | |
 | 6.6 | Data consistency model is defined (strong vs eventual consistency, with rationale) | |
-| 6.7 | Transaction boundaries are explicit -- which operations must be atomic | |
+| 6.7 | Transaction boundaries are explicit - which operations must be atomic | |
 | 6.8 | Rollback strategy exists for deployments | |
 
 ## 7. Security

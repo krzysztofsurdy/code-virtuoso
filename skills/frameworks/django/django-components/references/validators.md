@@ -320,6 +320,6 @@ class Upload(models.Model):
 - Implement `deconstruct()` and `__eq__()` on class-based validators used in model fields
 - Combine `FileExtensionValidator` with content-type checking for file uploads
 - Use callable `limit_value` for dynamic validation boundaries (e.g., current date)
-- Remember that validators do not run on `model.save()` -- call `full_clean()` explicitly or use ModelForm
+- Remember that validators do not run on `model.save()` - call `full_clean()` explicitly or use ModelForm
 - Keep validators focused on a single concern; combine multiple validators on a field rather than building one complex validator
 - Use pre-configured instances (`validate_email`, `validate_slug`) for common validation patterns

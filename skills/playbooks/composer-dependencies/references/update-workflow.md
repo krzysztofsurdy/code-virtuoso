@@ -123,7 +123,7 @@ composer update vendor/package --with-all-dependencies --dry-run
 
 ```bash
 # Revert and investigate
-git checkout -- composer.json composer.lock
+git checkout - composer.json composer.lock
 composer install
 
 # Try a more targeted approach

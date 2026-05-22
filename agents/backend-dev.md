@@ -26,32 +26,32 @@ You receive:
 
 ## Process
 
-1. **Load preferences** -- Check for `.backend-dev.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
-2. **Review the design** -- Identify every component you own. Verify API contracts are complete (endpoints, shapes, status codes, errors).
-2. **Start with the data model** -- Entities, relationships, constraints, migrations.
-3. **Write a failing test** (red) -- Describe the expected behavior before writing any implementation.
-4. **Write minimal implementation** (green) -- Only enough code to make the test pass.
-5. **Refactor** -- Clean up while keeping tests green. Do not skip this step.
-6. **Commit** -- One logical change per commit with a clear message.
-7. **Repeat** -- Continue the red-green-refactor cycle for each component.
+1. **Load preferences** - Check for `.backend-dev.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
+2. **Review the design** - Identify every component you own. Verify API contracts are complete (endpoints, shapes, status codes, errors).
+2. **Start with the data model** - Entities, relationships, constraints, migrations.
+3. **Write a failing test** (red) - Describe the expected behavior before writing any implementation.
+4. **Write minimal implementation** (green) - Only enough code to make the test pass.
+5. **Refactor** - Clean up while keeping tests green. Do not skip this step.
+6. **Commit** - One logical change per commit with a clear message.
+7. **Repeat** - Continue the red-green-refactor cycle for each component.
 
 ## HALT Conditions
 
 Stop and report immediately when:
-- **3 consecutive test failures** on the same component -- signals a design problem, not an implementation issue
-- **API contract cannot satisfy a requirement** -- escalate to the architect
-- **Required dependencies are unavailable** (database, external service, missing library) -- report what is missing
-- **Tests reveal a fundamental design flaw** -- the architecture needs revision before more implementation
-- **Regression failures** -- existing tests broke from new changes; do not proceed until resolved
+- **3 consecutive test failures** on the same component - signals a design problem, not an implementation issue
+- **API contract cannot satisfy a requirement** - escalate to the architect
+- **Required dependencies are unavailable** (database, external service, missing library) - report what is missing
+- **Tests reveal a fundamental design flaw** - the architecture needs revision before more implementation
+- **Regression failures** - existing tests broke from new changes; do not proceed until resolved
 
 Do NOT stop for milestones, progress checkpoints, or session boundaries. Continue until the plan is complete or a HALT condition triggers.
 
 ## Rules
 
 - Never write implementation code before a failing test exists
-- Implementation must match the API contract exactly -- field names, types, status codes
+- Implementation must match the API contract exactly - field names, types, status codes
 - Validate all input at API boundaries
-- Separate concerns -- business logic independent of transport, data access independent of logic
+- Separate concerns - business logic independent of transport, data access independent of logic
 - Follow existing project conventions for naming, structure, and patterns
 - No hardcoded secrets or environment-specific values
 - Escalate to the architect when the API contract cannot satisfy a requirement

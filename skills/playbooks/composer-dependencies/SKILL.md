@@ -12,12 +12,12 @@ Dependency updates are maintenance, not features. Do them regularly in small bat
 
 | Principle | Meaning |
 |---|---|
-| **Changelog first** | Before any major dependency update, search the web for the package's changelog/UPGRADE file or ask the user to provide it -- never guess what changed |
-| **Security first** | Run `composer audit` before and after every update -- vulnerabilities take priority over everything |
-| **Small batches** | Update one package or one logical group at a time -- never update everything at once |
-| **Lock file is truth** | Always commit `composer.lock` -- production uses `composer install`, never `composer update` |
+| **Changelog first** | Before any major dependency update, search the web for the package's changelog/UPGRADE file or ask the user to provide it - never guess what changed |
+| **Security first** | Run `composer audit` before and after every update - vulnerabilities take priority over everything |
+| **Small batches** | Update one package or one logical group at a time - never update everything at once |
+| **Lock file is truth** | Always commit `composer.lock` - production uses `composer install`, never `composer update` |
 | **Verify before merging** | Every update must pass the full test suite and static analysis before merging |
-| **Caret by default** | Use `^` constraints for most dependencies -- it balances stability with receiving fixes |
+| **Caret by default** | Use `^` constraints for most dependencies - it balances stability with receiving fixes |
 
 ---
 
@@ -74,7 +74,7 @@ composer audit
 composer audit --format=json
 ```
 
-Returns non-zero exit code when vulnerabilities are found -- use as a CI gate.
+Returns non-zero exit code when vulnerabilities are found - use as a CI gate.
 
 Since Composer 2.9 (November 2025), `composer update` and `composer require` automatically block installation of packages with known security advisories by default.
 
@@ -99,7 +99,7 @@ See [Update Workflow Reference](references/update-workflow.md) for the complete 
 | Operator | Example | Range | Use Case |
 |---|---|---|---|
 | `^` (caret) | `^1.2.3` | `>=1.2.3 <2.0.0` | **Default for most dependencies** |
-| `~` (tilde) | `~1.2.3` | `>=1.2.3 <1.3.0` | Conservative -- patch updates only |
+| `~` (tilde) | `~1.2.3` | `>=1.2.3 <1.3.0` | Conservative - patch updates only |
 | `~` (minor) | `~1.2` | `>=1.2.0 <2.0.0` | Same as `^1.2` in practice |
 | Exact | `1.2.3` | Only `1.2.3` | Avoid except for known regressions |
 | `*` (wildcard) | `1.2.*` | `>=1.2.0 <1.3.0` | Avoid in production |
@@ -131,7 +131,7 @@ composer install --no-dev --optimize-autoloader --no-interaction
 
 Composer warns about abandoned packages during install/update. Handle them proactively:
 
-1. **Check the warning** -- some suggest a replacement package directly
+1. **Check the warning** - some suggest a replacement package directly
 2. **Search Packagist** for maintained alternatives
 3. **Use `composer why vendor/package`** to understand who depends on it
 4. **Wrap risky dependencies** behind interfaces (adapter pattern) to make future replacement easier

@@ -13,10 +13,10 @@ CREATE TABLE payments (
     id BIGINT PRIMARY KEY,
     type VARCHAR(20) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    card_last_four CHAR(4),      -- credit card only
-    card_brand VARCHAR(20),       -- credit card only
-    bank_name VARCHAR(100),       -- bank transfer only
-    paypal_email VARCHAR(255),    -- paypal only
+    card_last_four CHAR(4),      - credit card only
+    card_brand VARCHAR(20),       - credit card only
+    bank_name VARCHAR(100),       - bank transfer only
+    paypal_email VARCHAR(255),    - paypal only
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 ```
@@ -45,7 +45,7 @@ class CreditCardPayment(Payment):
 ```
 
 **Best for:** Few subtypes with mostly shared columns. Simple queries, no JOINs needed.
-**Avoid when:** Subtypes diverge significantly -- the table accumulates many nullable columns.
+**Avoid when:** Subtypes diverge significantly - the table accumulates many nullable columns.
 
 ### Class Table Inheritance (CTI)
 
@@ -67,7 +67,7 @@ public class CreditCardPayment extends Payment { private String cardLastFour; }
 ```
 
 **Best for:** Subtypes with many unique columns. Enforces NOT NULL on subtype-specific fields.
-**Avoid when:** Queries frequently need all payment types at once -- requires JOINs across subtype tables.
+**Avoid when:** Queries frequently need all payment types at once - requires JOINs across subtype tables.
 
 ### Table Per Type (Concrete Table Inheritance)
 
@@ -124,7 +124,7 @@ CREATE TABLE audit_log (
     id BIGINT PRIMARY KEY,
     table_name VARCHAR(100) NOT NULL,
     record_id BIGINT NOT NULL,
-    action VARCHAR(10) NOT NULL, -- 'INSERT', 'UPDATE', 'DELETE'
+    action VARCHAR(10) NOT NULL, - 'INSERT', 'UPDATE', 'DELETE'
     changed_by VARCHAR(100),
     changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     old_values JSONB,
@@ -154,7 +154,7 @@ CREATE TABLE product_prices (
     product_id BIGINT NOT NULL REFERENCES products(id),
     price DECIMAL(10, 2) NOT NULL,
     valid_from DATE NOT NULL,
-    valid_to DATE, -- NULL means currently valid
+    valid_to DATE, - NULL means currently valid
     PRIMARY KEY (product_id, valid_from),
     CONSTRAINT no_overlap CHECK (valid_to IS NULL OR valid_to > valid_from)
 );
@@ -177,7 +177,7 @@ CREATE TABLE employee_salaries (
     valid_from DATE NOT NULL,
     valid_to DATE,
     recorded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    superseded_at TIMESTAMP, -- NULL means current record
+    superseded_at TIMESTAMP, - NULL means current record
     PRIMARY KEY (employee_id, valid_from, recorded_at)
 );
 ```

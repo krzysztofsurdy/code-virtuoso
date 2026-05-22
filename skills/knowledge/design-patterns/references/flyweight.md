@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Flyweight pattern is a structural design pattern that reduces memory consumption by factoring shared, immutable data out of individual objects and consolidating it into a small set of reusable instances. Each flyweight holds only the intrinsic state that is common across many contexts, while the extrinsic state -- the part that varies per use -- stays outside and is supplied at call time.
+The Flyweight pattern is a structural design pattern that reduces memory consumption by factoring shared, immutable data out of individual objects and consolidating it into a small set of reusable instances. Each flyweight holds only the intrinsic state that is common across many contexts, while the extrinsic state - the part that varies per use - stays outside and is supplied at call time.
 
 ## Intent
 
@@ -425,7 +425,7 @@ echo "Memory: " . $pool->memoryUsed() . " bytes\n";  // 10 bytes total
 
 **Movable Type Printing**: A print shop keeps one physical block for each letter of the alphabet. To compose a page, the typesetter arranges these shared blocks in the right positions. The blocks (intrinsic state) are reused across every page, while the position on the page (extrinsic state) changes each time.
 
-**Emoji Keyboard**: Your phone stores each emoji graphic once. When you use the same emoji in dozens of messages, the rendering engine references that single asset and places it at different positions -- it does not duplicate the image data for every occurrence.
+**Emoji Keyboard**: Your phone stores each emoji graphic once. When you use the same emoji in dozens of messages, the rendering engine references that single asset and places it at different positions - it does not duplicate the image data for every occurrence.
 
 **Color Swatches in a Paint Store**: The store maintains one physical swatch card per color. Customers reference these shared cards when choosing paint for their individual rooms. The swatch is shared; the room and wall it applies to are extrinsic.
 

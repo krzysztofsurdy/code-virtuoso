@@ -1,6 +1,6 @@
 # Pre-Push Checks
 
-Verification before pushing ensures that CI will not fail on something you could have caught locally. Run checks in order from fastest to slowest -- fail fast, fix early.
+Verification before pushing ensures that CI will not fail on something you could have caught locally. Run checks in order from fastest to slowest - fail fast, fix early.
 
 ## Verification Order
 
@@ -165,7 +165,7 @@ pre-push:
 git push --no-verify
 ```
 
-This should be rare. If you find yourself bypassing hooks regularly, the hooks are too slow or too strict -- fix the hooks, do not work around them.
+This should be rare. If you find yourself bypassing hooks regularly, the hooks are too slow or too strict - fix the hooks, do not work around them.
 
 ---
 

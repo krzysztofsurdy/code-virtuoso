@@ -6,10 +6,10 @@ Introduce Foreign Method adds functionality to a class you cannot modify by plac
 
 Situations that call for a foreign method include:
 
-1. **Third-party class limitations** -- a library class lacks a method your domain needs
-2. **Restricted ownership** -- the class belongs to another team or a framework you should not patch
-3. **Separation of concerns** -- the desired behavior is specific to your domain and does not belong in the general-purpose class
-4. **Temporary bridging** -- you need a solution now without waiting for an upstream release
+1. **Third-party class limitations** - a library class lacks a method your domain needs
+2. **Restricted ownership** - the class belongs to another team or a framework you should not patch
+3. **Separation of concerns** - the desired behavior is specific to your domain and does not belong in the general-purpose class
+4. **Temporary bridging** - you need a solution now without waiting for an upstream release
 
 A foreign method is a cleaner alternative to duplicating workaround logic at every call site.
 
@@ -180,20 +180,20 @@ class DateTimeExtension
 
 ## Benefits
 
-1. **Consolidated logic** -- related operations on external classes live in one place
-2. **Easier maintenance** -- changes to the workaround logic happen in a single location
-3. **Reuse** -- multiple callers can invoke the same foreign method
-4. **Transparent intent** -- the code clearly marks itself as an extension of a class that cannot be modified
-5. **Testability** -- foreign methods are straightforward to unit test in isolation
-6. **Discoverable** -- a dedicated extension class is easier to find than inline workaround code
+1. **Consolidated logic** - related operations on external classes live in one place
+2. **Easier maintenance** - changes to the workaround logic happen in a single location
+3. **Reuse** - multiple callers can invoke the same foreign method
+4. **Transparent intent** - the code clearly marks itself as an extension of a class that cannot be modified
+5. **Testability** - foreign methods are straightforward to unit test in isolation
+6. **Discoverable** - a dedicated extension class is easier to find than inline workaround code
 
 ## When NOT to Use
 
-1. **You own the class** -- modify it directly instead
-2. **The method belongs upstream** -- if the functionality is truly general-purpose, contribute it to the library
-3. **Too many foreign methods accumulate** -- at that point, create a full wrapper or subclass
-4. **One-off usage** -- a single inline workaround may be simpler than a dedicated method
-5. **Complex interactions** -- operations that deeply interact with the foreign class internals are better handled by a proper adapter or decorator
+1. **You own the class** - modify it directly instead
+2. **The method belongs upstream** - if the functionality is truly general-purpose, contribute it to the library
+3. **Too many foreign methods accumulate** - at that point, create a full wrapper or subclass
+4. **One-off usage** - a single inline workaround may be simpler than a dedicated method
+5. **Complex interactions** - operations that deeply interact with the foreign class internals are better handled by a proper adapter or decorator
 
 ## When to Upgrade to a Wrapper Class
 
@@ -242,19 +242,19 @@ class ExtendedDateTime
 
 ## Related Refactorings
 
-- **Extract Method** -- isolates inline workaround code before promoting it to a foreign method
-- **Extract Class** -- groups accumulated foreign methods into a dedicated utility class
-- **Introduce Parameter Object** -- bundles related foreign method parameters
-- **Adapter Pattern** -- wraps a foreign class for interface compatibility
-- **Decorator Pattern** -- extends behavior dynamically without modifying the original class
+- **Extract Method** - isolates inline workaround code before promoting it to a foreign method
+- **Extract Class** - groups accumulated foreign methods into a dedicated utility class
+- **Introduce Parameter Object** - bundles related foreign method parameters
+- **Adapter Pattern** - wraps a foreign class for interface compatibility
+- **Decorator Pattern** - extends behavior dynamically without modifying the original class
 
 ## Common Pitfalls
 
-1. **Accumulation** -- too many foreign methods signals the need for a wrapper class
-2. **Modifying the wrong thing** -- if you can change the class, change it; do not create a workaround
-3. **Vague naming** -- name foreign methods clearly so readers understand they extend external functionality
-4. **Missing rationale** -- always document why the method exists as a foreign extension
-5. **Overuse of statics** -- consider instance methods or a wrapper class for better readability
+1. **Accumulation** - too many foreign methods signals the need for a wrapper class
+2. **Modifying the wrong thing** - if you can change the class, change it; do not create a workaround
+3. **Vague naming** - name foreign methods clearly so readers understand they extend external functionality
+4. **Missing rationale** - always document why the method exists as a foreign extension
+5. **Overuse of statics** - consider instance methods or a wrapper class for better readability
 
 ## Examples in Other Languages
 

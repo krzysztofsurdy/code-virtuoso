@@ -12,7 +12,7 @@ Principles and patterns for designing frontend component hierarchies. Covers dec
 | **Container** | Manage state and data fetching | Orchestrate presentational components, handle API calls |
 | **Layout** | Define page structure | Grid, sidebar, header, footer arrangements |
 | **Page** | Route-level entry points | Compose containers and layouts for a specific route |
-| **Shared/Library** | Reusable across features | Button, Modal, Table, Input -- generic, highly configurable |
+| **Shared/Library** | Reusable across features | Button, Modal, Table, Input - generic, highly configurable |
 
 ---
 
@@ -40,17 +40,17 @@ Principles and patterns for designing frontend component hierarchies. Covers dec
 
 ```
 ProductListPage (page)
-  ProductListContainer (container -- fetches data, manages filters)
-    SearchBar (shared -- text input with debounce)
-    FilterPanel (presentational -- displays filter options)
-      FilterGroup (presentational -- single filter category)
-    ProductGrid (presentational -- renders product cards in grid)
-      ProductCard (presentational -- single product display)
-        PriceDisplay (shared -- formats and displays price)
-        StockBadge (shared -- shows in-stock/out-of-stock)
-    Pagination (shared -- page navigation controls)
-    EmptyState (shared -- displayed when no results)
-    ErrorBanner (shared -- displayed on fetch failure)
+  ProductListContainer (container - fetches data, manages filters)
+    SearchBar (shared - text input with debounce)
+    FilterPanel (presentational - displays filter options)
+      FilterGroup (presentational - single filter category)
+    ProductGrid (presentational - renders product cards in grid)
+      ProductCard (presentational - single product display)
+        PriceDisplay (shared - formats and displays price)
+        StockBadge (shared - shows in-stock/out-of-stock)
+    Pagination (shared - page navigation controls)
+    EmptyState (shared - displayed when no results)
+    ErrorBanner (shared - displayed on fetch failure)
 ```
 
 ---
@@ -126,7 +126,7 @@ Use when:
 
 ### Higher-Order Component Pattern
 
-Wrap a component to add behavior. Use sparingly -- composition is usually clearer.
+Wrap a component to add behavior. Use sparingly - composition is usually clearer.
 
 ```
 const withAuth = (Component) => {
@@ -174,7 +174,7 @@ Is this state used by only one component?
 | Derive values instead of storing them | If a value can be computed from other state, do not duplicate it |
 | Single source of truth | Each piece of state has exactly one owner |
 | URL is state | Anything the user should be able to bookmark or share belongs in the URL |
-| Minimize global state | Global state is shared mutable state -- the less, the better |
+| Minimize global state | Global state is shared mutable state - the less, the better |
 
 ---
 
@@ -218,13 +218,13 @@ Is this state used by only one component?
 ```
 src/
   components/
-    shared/           -- Reusable across features
+    shared/           - Reusable across features
       Button/
       Modal/
       Table/
       FormInput/
     features/
-      products/       -- Feature-specific components
+      products/       - Feature-specific components
         ProductCard/
         ProductGrid/
         ProductFilters/

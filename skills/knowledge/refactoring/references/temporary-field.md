@@ -2,14 +2,14 @@
 
 ## Overview
 
-A Temporary Field is an instance variable that only holds a meaningful value during specific execution paths, sitting empty or null the rest of the time. This makes the object's state unpredictable -- readers expect every field on a class to be relevant to the object's identity, not to serve as scratch space for a single algorithm.
+A Temporary Field is an instance variable that only holds a meaningful value during specific execution paths, sitting empty or null the rest of the time. This makes the object's state unpredictable - readers expect every field on a class to be relevant to the object's identity, not to serve as scratch space for a single algorithm.
 
 ## Why It's a Problem
 
 Temporary fields usually appear when a developer avoids a long parameter list by stashing intermediate computation data into class-level fields. The result is a trade-off that sacrifices clarity for convenience:
 
 - **Unclear Purpose**: The class becomes harder to understand when some fields are only meaningful under certain conditions
-- **Misleading State**: Developers naturally assume all fields represent persistent, meaningful data -- temporary algorithm storage violates that expectation
+- **Misleading State**: Developers naturally assume all fields represent persistent, meaningful data - temporary algorithm storage violates that expectation
 - **Implicit Coupling**: The dependency between the temporary field and the specific code path that populates it remains undocumented and fragile
 - **Fragile Maintenance**: Future changes risk breaking the unwritten rules about when fields are valid, especially when algorithms requiring numerous inputs evolve independently
 
@@ -157,7 +157,7 @@ In these cases, clearly document the temporary nature and usage scope.
 
 ## Related Smells
 
-- **Long Parameter List**: Frequently the root cause -- temporary fields are introduced specifically to avoid passing many parameters
+- **Long Parameter List**: Frequently the root cause - temporary fields are introduced specifically to avoid passing many parameters
 - **Message Chain**: Hidden temporary state can obscure complex object collaborations happening behind the scenes
 - **Data Clumps**: Temporary fields that appear together are strong candidates for extraction into a dedicated class
 - **Primitive Obsession**: Temporary state stored as raw primitives rather than meaningful objects

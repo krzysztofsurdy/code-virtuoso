@@ -1,10 +1,10 @@
 # Compass Mode
 
-When the user has just finished work with an agent, skill, or team and asks "what next?" or "where do I go from here?" -- use compass mode to recommend the next step.
+When the user has just finished work with an agent, skill, or team and asks "what next?" or "where do I go from here?" - use compass mode to recommend the next step.
 
 ## How It Works
 
-Compass mode is conversational. Ask the user what they just completed, then match against known workflows to recommend the logical next step. Do not scan the filesystem for artifacts -- ask the user.
+Compass mode is conversational. Ask the user what they just completed, then match against known workflows to recommend the logical next step. Do not scan the filesystem for artifacts - ask the user.
 
 ## Recommendation Map
 

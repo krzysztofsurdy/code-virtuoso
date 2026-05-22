@@ -18,7 +18,7 @@ After updating, run `composer bump` to raise lower bounds to currently installed
 
 | Rule | Reason |
 |---|---|
-| Always use `^` (caret) | Maximizes interoperability -- don't cause dependency hell for consumers |
+| Always use `^` (caret) | Maximizes interoperability - don't cause dependency hell for consumers |
 | Support multiple major versions when practical | e.g., `^6.4\|^7.0` for Symfony packages |
 | Never use `composer bump` on library constraints | Narrows the range for consumers |
 | `composer bump --dev-only` is safe | Dev dependencies don't affect consumers |
@@ -57,7 +57,7 @@ updates:
 ```
 
 Key settings:
-- `versioning-strategy: lockfile-only` -- updates only the lock file, not constraints in `composer.json` (safest for applications)
+- `versioning-strategy: lockfile-only` - updates only the lock file, not constraints in `composer.json` (safest for applications)
 - Group related packages into single PRs to reduce noise
 - Set `ignore` rules for packages where major updates require manual planning
 
@@ -119,7 +119,7 @@ Use vendor/new-package instead.
 1. **Check suggested replacement** in the Composer warning
 2. **Search Packagist** for alternatives: https://packagist.org
 3. **Compare candidates** by: maintenance activity, download count, PHP version support, test coverage
-4. **Check API compatibility** -- is the replacement a drop-in or does it require refactoring?
+4. **Check API compatibility** - is the replacement a drop-in or does it require refactoring?
 5. **Wrap behind an interface** if replacement APIs differ significantly (adapter pattern)
 
 ### Proactive Monitoring

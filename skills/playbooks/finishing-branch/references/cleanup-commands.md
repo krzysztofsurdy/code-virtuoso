@@ -7,7 +7,7 @@ After a branch is merged, leftover references accumulate: local branches that no
 ### Delete a Single Merged Branch
 
 ```bash
-# Delete local branch (safe -- refuses if branch has unmerged commits)
+# Delete local branch (safe - refuses if branch has unmerged commits)
 git branch -d feat/my-branch
 
 # Delete remote branch
@@ -45,7 +45,7 @@ git branch -r
 # List branches NOT merged into main
 git branch --no-merged main
 
-# Review carefully before deleting -- these have unmerged work
+# Review carefully before deleting - these have unmerged work
 # Use -D (uppercase) to force delete, but only after confirming the work is not needed
 git branch -D feat/abandoned-experiment
 ```
@@ -202,7 +202,7 @@ git checkout -b feat/accidentally-deleted <sha>
 
 ### Accidentally Removed a Worktree with Uncommitted Changes
 
-If changes were committed, they are in the reflog and recoverable. If changes were uncommitted (only in the working directory), they are lost -- this is why you should always commit or stash before removing a worktree.
+If changes were committed, they are in the reflog and recoverable. If changes were uncommitted (only in the working directory), they are lost - this is why you should always commit or stash before removing a worktree.
 
 ```bash
 # Find commits that were in the worktree

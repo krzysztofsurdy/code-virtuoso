@@ -1,6 +1,6 @@
 # Agent Specification
 
-This document defines the conventions for agents in the Code Virtuoso marketplace. Agents are sub-agents -- standalone markdown files that define a specialized role, its allowed tools, and its system prompt.
+This document defines the conventions for agents in the Code Virtuoso marketplace. Agents are sub-agents - standalone markdown files that define a specialized role, its allowed tools, and its system prompt.
 
 For a guided, interactive design flow, use the `agent-creator` skill. This spec is the reference for reviewers and contributors.
 
@@ -44,7 +44,7 @@ skills:
 |-------|-------------|
 | `name` | Kebab-case identifier, lowercase letters and hyphens only. Matches the file name without `.md`. |
 | `description` | What the agent does and when to delegate to it. Include trigger phrases an orchestrator can match. |
-| `tools` | Comma-separated allowlist of tools the agent can use. Set explicitly -- never rely on inheritance. |
+| `tools` | Comma-separated allowlist of tools the agent can use. Set explicitly - never rely on inheritance. |
 
 #### Optional fields
 
@@ -63,7 +63,7 @@ skills:
 
 #### Fields intentionally omitted
 
-- **`model`** -- Do not hardcode provider-specific model identifiers. Model selection is a user or platform concern. Agents in this repository must be portable.
+- **`model`** - Do not hardcode provider-specific model identifiers. Model selection is a user or platform concern. Agents in this repository must be portable.
 
 #### Portability
 
@@ -122,7 +122,7 @@ produces:
   - architecture-decision
 ```
 
-Both fields are optional. When present, they reference artifact types defined in [artifacts.md](artifacts.md). Agents should handle missing artifacts gracefully -- the contract is a signal, not a hard gate. See the artifact spec for the full catalog and guidelines.
+Both fields are optional. When present, they reference artifact types defined in [artifacts.md](artifacts.md). Agents should handle missing artifacts gracefully - the contract is a signal, not a hard gate. See the artifact spec for the full catalog and guidelines.
 
 ## Conventions
 
@@ -132,7 +132,7 @@ Both fields are optional. When present, they reference artifact types defined in
 - Define clear workflows for each type of task the agent handles
 - Use an output template, not prose
 - Trim tool allowlists to the minimum that lets the workflow finish
-- Read-only by default -- add write tools only when the agent legitimately modifies files
+- Read-only by default - add write tools only when the agent legitimately modifies files
 
 ## Tuning (Optional)
 

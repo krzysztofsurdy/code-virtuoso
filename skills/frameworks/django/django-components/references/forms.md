@@ -213,11 +213,11 @@ class DateSelectorWidget(forms.MultiWidget):
 
 ### Validation Order
 
-1. `Field.to_python()` -- coerce to correct type
-2. `Field.validate()` -- field-specific validation
-3. `Field.run_validators()` -- run all validators
-4. `clean_<fieldname>()` -- per-field custom cleaning on the form
-5. `Form.clean()` -- cross-field validation
+1. `Field.to_python()` - coerce to correct type
+2. `Field.validate()` - field-specific validation
+3. `Field.run_validators()` - run all validators
+4. `clean_<fieldname>()` - per-field custom cleaning on the form
+5. `Form.clean()` - cross-field validation
 
 ### Per-Field Validation
 

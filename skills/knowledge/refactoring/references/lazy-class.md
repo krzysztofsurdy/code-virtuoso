@@ -2,7 +2,7 @@
 
 ## Overview
 
-A Lazy Class is one that does not carry enough weight to justify its presence in the codebase. Every class incurs a cost -- developers must learn what it does, maintain it, and navigate around it. When a class contributes too little to offset these costs, it should be folded into another class or removed entirely.
+A Lazy Class is one that does not carry enough weight to justify its presence in the codebase. Every class incurs a cost - developers must learn what it does, maintain it, and navigate around it. When a class contributes too little to offset these costs, it should be folded into another class or removed entirely.
 
 This commonly happens when:
 - A class was built for future functionality that never arrived
@@ -181,10 +181,10 @@ Keep a class (as a lazy class) when:
 
 ## Related Smells
 
-- **Dead Code**: Code that is never executed -- Lazy Classes are a class-level manifestation of the same problem
+- **Dead Code**: Code that is never executed - Lazy Classes are a class-level manifestation of the same problem
 - **Feature Envy**: A class that spends more time working with another class's data than its own often signals the logic belongs in that other class
-- **Speculative Generality**: Classes built for anticipated needs that never materialized -- a common origin of Lazy Classes
+- **Speculative Generality**: Classes built for anticipated needs that never materialized - a common origin of Lazy Classes
 - **Middleware Classes**: Classes that exist solely to wire other classes together without contributing logic
 - **Duplicate Code**: Multiple small classes with overlapping functionality that could be consolidated into one
 
-Note: A Lazy Class sometimes exists intentionally to mark where future functionality will be added. In that case, keep it only if the planned work is imminent and documented. Otherwise, remove it and recreate it when the need is real -- the balance should tip toward simplicity.
+Note: A Lazy Class sometimes exists intentionally to mark where future functionality will be added. In that case, keep it only if the planned work is imminent and documented. Otherwise, remove it and recreate it when the need is real - the balance should tip toward simplicity.

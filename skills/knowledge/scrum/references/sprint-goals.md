@@ -44,7 +44,7 @@ A three-part structure connecting what to build, how to achieve it, and how to m
 **Format:**
 ```
 Goal:    [what specifically to build or achieve]
-Method:  [how to achieve it -- must be viable in the actual product]
+Method:  [how to achieve it - must be viable in the actual product]
 Metrics: [what data demonstrates success]
 ```
 
@@ -70,9 +70,9 @@ Three components from the stakeholder's perspective: what, how it helps, why it 
 
 **Format:**
 ```
-Feature:   [the "what" -- what is being built]
-Advantage: [the "how" -- what makes it distinctive or useful]
-Benefit:   [the "why" -- business outcome achieved]
+Feature:   [the "what" - what is being built]
+Advantage: [the "how" - what makes it distinctive or useful]
+Benefit:   [the "why" - business outcome achieved]
 ```
 
 **Examples:**
@@ -182,15 +182,15 @@ Every Sprint Goal is inherently time-bound by the Sprint duration. Ensure the sc
 | **Multiple objectives** | "Build search AND implement notifications" | Splits focus, harder to negotiate scope | Pick the higher-priority one; defer the other |
 | **Solution-focused** | "Migrate to PostgreSQL 16" | Describes implementation, not business value | "Eliminate query timeout errors that block monthly reporting" |
 | **Copy of previous sprint** | Same goal every sprint | Indicates the goal is too large or not meaningful | Break into smaller outcomes; each Sprint should deliver distinct value |
-| **No goal at all** | Team skips goal during planning | Lost focus, no way to prioritize during the Sprint | Always define a Sprint Goal -- it is a required element of Sprint Planning |
+| **No goal at all** | Team skips goal during planning | Lost focus, no way to prioritize during the Sprint | Always define a Sprint Goal - it is a required element of Sprint Planning |
 
 ---
 
 ## Practical Tips
 
-1. **Treat the Sprint Goal as an elevator pitch** -- if you had 30 seconds with an executive, could you explain what the team is doing and why?
-2. **Show progression across sprints** -- Sprint 1: "Basic shopping cart with add/remove", Sprint 2: "Checkout with payment processing", Sprint 3: "Order confirmation and email receipts"
-3. **The Product Owner proposes, the team refines** -- the PO brings a draft goal; the team adjusts based on capacity and technical reality
-4. **Include the Sprint Goal in review invitations** -- stakeholders can decide whether to attend based on whether the goal is relevant to them
-5. **Sprint Goals are not always possible** -- teams handling unrelated client work or pure maintenance sprints may struggle to craft a single meaningful goal. That is OK. Do not force a bad goal for the sake of having one.
-6. **Reference the goal daily** -- if no one mentions the Sprint Goal during the Daily Scrum, it is not doing its job
+1. **Treat the Sprint Goal as an elevator pitch** - if you had 30 seconds with an executive, could you explain what the team is doing and why?
+2. **Show progression across sprints** - Sprint 1: "Basic shopping cart with add/remove", Sprint 2: "Checkout with payment processing", Sprint 3: "Order confirmation and email receipts"
+3. **The Product Owner proposes, the team refines** - the PO brings a draft goal; the team adjusts based on capacity and technical reality
+4. **Include the Sprint Goal in review invitations** - stakeholders can decide whether to attend based on whether the goal is relevant to them
+5. **Sprint Goals are not always possible** - teams handling unrelated client work or pure maintenance sprints may struggle to craft a single meaningful goal. That is OK. Do not force a bad goal for the sake of having one.
+6. **Reference the goal daily** - if no one mentions the Sprint Goal during the Daily Scrum, it is not doing its job

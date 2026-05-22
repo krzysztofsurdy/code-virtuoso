@@ -408,8 +408,8 @@ const nodeName = metadata?.streamMetadata?.langgraph_node;
 | `onUpdateEvent` | State update post-step | updates |
 | `onCustomEvent` | Custom agent events | custom |
 | `onMetadataEvent` | Run/thread metadata | metadata |
-| `onError` | Streaming error | -- |
-| `onFinish` | Stream completion | -- |
+| `onError` | Streaming error | - |
+| `onFinish` | Stream completion | - |
 
 ## Best Practices
 

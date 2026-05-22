@@ -1,6 +1,6 @@
 # Task Brief Template
 
-A task brief is the complete contract between the orchestrator and a subagent. It must be self-contained -- the subagent should be able to execute the task using only this brief and access to the codebase, with zero additional conversation required.
+A task brief is the complete contract between the orchestrator and a subagent. It must be self-contained - the subagent should be able to execute the task using only this brief and access to the codebase, with zero additional conversation required.
 
 ## Template
 
@@ -17,7 +17,7 @@ A task brief is the complete contract between the orchestrator and a subagent. I
 - Dependencies: [libraries, services, or modules already available]
 
 ### Context from Prior Tasks
-[Hand-off summary from the previous task, or "None -- this is the first task."
+[Hand-off summary from the previous task, or "None - this is the first task."
 Include only: what changed, what was decided, and what affects this task.
 Do NOT paste conversation history or full diffs.]
 
@@ -47,21 +47,21 @@ Bad: `Task 3: Do the validation thing`
 
 ### Goal
 
-One sentence. Make it observable -- describe the end state, not the activity.
+One sentence. Make it observable - describe the end state, not the activity.
 
 Good: "The order creation endpoint rejects requests with missing or invalid fields and returns structured error responses with field-level messages."
 
-Bad: "Add validation to orders." (Too vague -- what kind of validation? Where? What happens on failure?)
+Bad: "Add validation to orders." (Too vague - what kind of validation? Where? What happens on failure?)
 
 ### Inputs
 
-List everything the subagent needs to find in the codebase. Be explicit about file paths -- the subagent should not need to search for files. If a file does not exist yet and the subagent should create it, say so.
+List everything the subagent needs to find in the codebase. Be explicit about file paths - the subagent should not need to search for files. If a file does not exist yet and the subagent should create it, say so.
 
 ```
 - File paths:
-  - src/Order/CreateOrderHandler.php (modify -- add validation call)
-  - src/Order/CreateOrderRequest.php (create -- new validation DTO)
-  - tests/Order/CreateOrderHandlerTest.php (modify -- add validation test cases)
+  - src/Order/CreateOrderHandler.php (modify - add validation call)
+  - src/Order/CreateOrderRequest.php (create - new validation DTO)
+  - tests/Order/CreateOrderHandlerTest.php (modify - add validation test cases)
 - Interfaces:
   - ValidatorInterface::validate(object $request): ValidationResult
   - (already exists in src/Shared/Validation/ValidatorInterface.php)
@@ -71,11 +71,11 @@ List everything the subagent needs to find in the codebase. Be explicit about fi
 
 ### Context from Prior Tasks
 
-This field carries the hand-off summary from the previous task in the sequence. Its purpose is to inform the subagent about decisions and changes that affect its work -- not to replay what happened.
+This field carries the hand-off summary from the previous task in the sequence. Its purpose is to inform the subagent about decisions and changes that affect its work - not to replay what happened.
 
 When the task is first in the sequence:
 ```
-Context from Prior Tasks: None -- this is the first task in the plan.
+Context from Prior Tasks: None - this is the first task in the plan.
 ```
 
 When there is relevant prior context:
@@ -106,7 +106,7 @@ Good criteria:
    containing {"field": "quantity", "message": "..."}
 3. POST /orders with valid data passes validation and reaches the handler
 4. Unit tests cover all validation rules with both valid and invalid inputs
-5. No changes to existing tests -- all previously passing tests still pass
+5. No changes to existing tests - all previously passing tests still pass
 ```
 
 Bad criteria:
@@ -122,9 +122,9 @@ Explicit boundaries prevent scope creep. List things the subagent might reasonab
 
 ```
 - Do NOT modify the OrderRepository or its tests (those were completed in Task 02)
-- Do NOT add authorization checks -- that is Task 05
+- Do NOT add authorization checks - that is Task 05
 - Do NOT change the HTTP response format for successful requests
-- Do NOT add logging -- that is a cross-cutting concern handled separately
+- Do NOT add logging - that is a cross-cutting concern handled separately
 ```
 
 ### Failure Handling
@@ -159,7 +159,7 @@ Before dispatching a brief, verify:
 - [ ] Out-of-scope boundaries are listed (at least one)
 - [ ] Context from prior tasks is a summary, not a history dump
 - [ ] Failure handling instructions are present
-- [ ] The brief is self-contained -- a new agent can execute it without asking questions
+- [ ] The brief is self-contained - a new agent can execute it without asking questions
 
 ## Sizing Guidance
 
@@ -170,8 +170,8 @@ A well-scoped task brief should describe work that a subagent can complete in a 
 | More than 5 files to modify | Split by component or layer |
 | More than 8 acceptance criteria | Split into two tasks with clear boundaries |
 | Acceptance criteria reference multiple unrelated behaviors | Each behavior is its own task |
-| The context section exceeds 20 lines | The task depends on too much prior work -- consider a checkpoint |
-| You cannot describe the goal in one sentence | The task contains multiple goals -- split them |
+| The context section exceeds 20 lines | The task depends on too much prior work - consider a checkpoint |
+| You cannot describe the goal in one sentence | The task contains multiple goals - split them |
 
 ## Adaptation for Different Agent Types
 

@@ -76,7 +76,7 @@ Opens the database command-line client:
 ```bash
 ./manage.py dbshell                          # Default database
 ./manage.py dbshell --database other         # Specific database
-./manage.py dbshell -- -c 'SELECT 1'         # Pass args to client (PostgreSQL)
+./manage.py dbshell - -c 'SELECT 1'         # Pass args to client (PostgreSQL)
 ```
 
 #### inspectdb
@@ -386,7 +386,7 @@ from django.core.management.base import BaseCommand, no_translations
 class Command(BaseCommand):
     @no_translations
     def handle(self, *args, **options):
-        # No active locale -- prevents translated content in DB
+        # No active locale - prevents translated content in DB
         pass
 ```
 

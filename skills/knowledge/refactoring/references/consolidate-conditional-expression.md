@@ -4,7 +4,7 @@ Consolidate Conditional Expression merges multiple conditional checks that all p
 
 ## Motivation
 
-When several `if` statements guard the same return value or action, the code is telling you that these conditions are conceptually related -- they all represent the same decision. Leaving them separate:
+When several `if` statements guard the same return value or action, the code is telling you that these conditions are conceptually related - they all represent the same decision. Leaving them separate:
 
 - Obscures the fact that they share a single purpose
 - Increases the risk of inconsistent updates when the action changes

@@ -12,9 +12,9 @@ For each component type selected in Phase 2, run the matching sub-questionnaire.
 
 ### Skills (for each skill)
 1. Skill name (kebab-case)
-2. Description (free text) -- goes into frontmatter
+2. Description (free text) - goes into frontmatter
 3. Invocation model: Model-invoked (default) or User-only (`disable-model-invocation: true`)
-4. Needs arguments? (yes/no) -- adds `argument-hint` and `$ARGUMENTS`
+4. Needs arguments? (yes/no) - adds `argument-hint` and `$ARGUMENTS`
 5. Add references directory? (yes/no)
 After each: "Add another skill?" (yes/no)
 

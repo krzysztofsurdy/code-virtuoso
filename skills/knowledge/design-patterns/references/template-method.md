@@ -452,7 +452,7 @@ a  2  c  4  e
 
 #### Example 2: Before and After Refactoring
 
-Before -- duplicated sort logic:
+Before - duplicated sort logic:
 
 ```cpp
 class SortUp {
@@ -482,7 +482,7 @@ private:
 };
 ```
 
-After -- template method extracts the common algorithm:
+After - template method extracts the common algorithm:
 
 ```cpp
 class AbstractSort {

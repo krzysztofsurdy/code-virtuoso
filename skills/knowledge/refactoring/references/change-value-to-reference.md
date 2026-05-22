@@ -1,6 +1,6 @@
 ## Overview
 
-Change Value to Reference transforms a value object -- one that is freely created and discarded -- into a reference object managed through a central registry or factory. This is appropriate when multiple parts of the system should share a single canonical instance rather than working with independent copies.
+Change Value to Reference transforms a value object - one that is freely created and discarded - into a reference object managed through a central registry or factory. This is appropriate when multiple parts of the system should share a single canonical instance rather than working with independent copies.
 
 The refactoring is the inverse of Change Reference to Value. It applies most naturally to entities that model real-world concepts requiring a single, authoritative representation in memory.
 
@@ -196,7 +196,7 @@ echo $order2->getCustomer()->getName(); // "John Smith" - CONSISTENT!
 - **Lower Memory Footprint**: One instance per entity instead of many duplicates
 - **No Manual Synchronization**: State changes are inherently visible everywhere
 - **Easier Debugging**: A single canonical instance is straightforward to inspect and trace
-- **Database Compatibility**: Mirrors how relational databases treat rows -- one record per identity
+- **Database Compatibility**: Mirrors how relational databases treat rows - one record per identity
 - **Fewer State Bugs**: Eliminates a category of bugs caused by stale or divergent copies
 
 ## When NOT to Use

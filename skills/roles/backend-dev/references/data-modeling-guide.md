@@ -182,7 +182,7 @@ Use JSON columns for semi-structured data that does not need relational querying
 | 2 | Columns used in WHERE clauses of frequent queries have indexes |
 | 3 | Composite indexes match the query column order (leftmost prefix rule) |
 | 4 | Unique constraints are defined at the database level, not just application level |
-| 5 | Indexes are not created speculatively -- each index has a known query pattern |
+| 5 | Indexes are not created speculatively - each index has a known query pattern |
 
 ---
 
@@ -194,11 +194,11 @@ For changes to existing tables with production data:
 
 | Step | Action | Rollback Safe |
 |---|---|---|
-| 1 | Add new column as nullable (no default required) | Yes -- drop column |
-| 2 | Deploy code that writes to both old and new columns | Yes -- code reads old column |
-| 3 | Backfill new column with data from old column | Yes -- data still in old column |
-| 4 | Deploy code that reads from new column | Yes -- old column still populated |
-| 5 | Drop old column | No -- point of no return |
+| 1 | Add new column as nullable (no default required) | Yes - drop column |
+| 2 | Deploy code that writes to both old and new columns | Yes - code reads old column |
+| 3 | Backfill new column with data from old column | Yes - data still in old column |
+| 4 | Deploy code that reads from new column | Yes - old column still populated |
+| 5 | Drop old column | No - point of no return |
 
 ### Migration Checklist
 

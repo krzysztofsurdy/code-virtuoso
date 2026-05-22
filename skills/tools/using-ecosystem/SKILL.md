@@ -1,13 +1,13 @@
 ---
 name: using-ecosystem
-description: "Ecosystem discovery advisor. Use when the user asks 'what skill should I use', 'what agent should I delegate to', 'which team fits this task', or when onboarding to available skills, agents, and teams. Scans ALL installed skills at runtime -- not limited to any single plugin or vendor. Triggers: 'which skill', 'which agent', 'what do I use for', 'orient me', 'what tools do I have'."
+description: "Ecosystem discovery advisor. Use when the user asks 'what skill should I use', 'what agent should I delegate to', 'which team fits this task', or when onboarding to available skills, agents, and teams. Scans ALL installed skills at runtime - not limited to any single plugin or vendor. Triggers: 'which skill', 'which agent', 'what do I use for', 'orient me', 'what tools do I have'."
 user-invocable: true
 argument-hint: "[optional: situation or topic]"
 ---
 
 # Using Ecosystem
 
-Discover the right skill, agent, or team for the situation at hand. This skill teaches a discovery PROCESS -- it does not maintain a hardcoded inventory. Every recommendation comes from scanning what is actually installed.
+Discover the right skill, agent, or team for the situation at hand. This skill teaches a discovery PROCESS - it does not maintain a hardcoded inventory. Every recommendation comes from scanning what is actually installed.
 
 ## Core Principles
 
@@ -69,7 +69,7 @@ Does it need multiple agents coordinating?
 
 1. **Read the `description` field** of each candidate. Match on trigger phrases, not the name.
 2. **Prefer the narrower skill.** `database-design` beats `clean-architecture` for a schema question.
-3. **Check `user-invocable`** -- if the user wants to run something interactively, only recommend user-invocable skills.
+3. **Check `user-invocable`** - if the user wants to run something interactively, only recommend user-invocable skills.
 4. **Skills stack.** You can recommend multiple knowledge skills for one task (e.g., `security` + `solid` for a security review).
 5. **Never recommend what is not installed.** If a skill would fit but is not present, suggest installing it with `npx skills add`.
 
@@ -90,16 +90,16 @@ These are guidelines, not rituals. Skip steps that do not apply. Add steps that 
 
 ---
 
-## Step 5: Compass -- What Next?
+## Step 5: Compass - What Next?
 
 When the user has just finished work with an agent, skill, or team and asks "what next?" or "where do I go from here?":
 
 1. Ask what they just completed (which agent/skill/team, what output they have)
 2. Consult [compass](references/compass.md) for the recommended next step
-3. Verify the recommended agent/skill/team is installed (scan first -- do not recommend from memory)
+3. Verify the recommended agent/skill/team is installed (scan first - do not recommend from memory)
 4. Present the recommendation with one-line reasoning
 5. If multiple paths exist, present 2-3 options and let the user choose
-6. If nothing chains naturally, say so -- not every task needs a follow-up
+6. If nothing chains naturally, say so - not every task needs a follow-up
 
 Compass mode is conversational. Ask the user, do not scan the filesystem to infer what happened.
 
@@ -107,7 +107,7 @@ Compass mode is conversational. Ask the user, do not scan the filesystem to infe
 
 ## Ecosystem Structure
 
-The ecosystem has five layers. The structure is stable -- it does not change when skills are added.
+The ecosystem has five layers. The structure is stable - it does not change when skills are added.
 
 | Layer | Location | Format | Purpose |
 |---|---|---|---|

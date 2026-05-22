@@ -19,7 +19,7 @@ Failure modes that derail brainstorming sessions. Each anti-pattern includes wha
 **Recovery**:
 1. Pause and acknowledge: "That is an interesting approach. Before we go there, I want to make sure we have the problem well-defined."
 2. Return to goal-seeking questions: "What problem does [proposed solution] solve?"
-3. Park the solution idea for later: "I have noted [solution idea] -- we will evaluate it once the spec is written."
+3. Park the solution idea for later: "I have noted [solution idea] - we will evaluate it once the spec is written."
 
 **Prevention**: The iron law. No code, no architecture, no technology choices until the spec is approved. Enforce this as a hard gate, not a suggestion.
 
@@ -34,14 +34,14 @@ Failure modes that derail brainstorming sessions. Each anti-pattern includes wha
 - The user's answer only addresses part of what was asked
 - Topics get conflated because they were raised simultaneously
 
-**Why it happens**: Efficiency instinct. Asking three questions feels faster than asking one. It is not -- it produces shallower answers and more follow-ups.
+**Why it happens**: Efficiency instinct. Asking three questions feels faster than asking one. It is not - it produces shallower answers and more follow-ups.
 
 **Recovery**:
 1. Notice which parts went unanswered
 2. Isolate the unanswered part and ask it as a standalone question
-3. Do not reference the original compound question -- just ask the new focused one
+3. Do not reference the original compound question - just ask the new focused one
 
-**Prevention**: Strict discipline: one question per message, every time. If you catch yourself writing "and also..." -- stop, send the first question, wait for the answer.
+**Prevention**: Strict discipline: one question per message, every time. If you catch yourself writing "and also..." - stop, send the first question, wait for the answer.
 
 ---
 
@@ -74,7 +74,7 @@ Failure modes that derail brainstorming sessions. Each anti-pattern includes wha
 
 ## Premature Implementation
 
-**What happens**: Code, scaffolding, file creation, or detailed technical design appears before the spec is written and approved. This is distinct from solution jumping -- premature implementation is taking physical action, not just talking about solutions.
+**What happens**: Code, scaffolding, file creation, or detailed technical design appears before the spec is written and approved. This is distinct from solution jumping - premature implementation is taking physical action, not just talking about solutions.
 
 **Detection signals**:
 - Files are created in the project directory
@@ -147,9 +147,9 @@ Failure modes that derail brainstorming sessions. Each anti-pattern includes wha
 - "I already know what I want, just build it"
 - "It's a simple CRUD app"
 
-**Why it happens**: Small projects genuinely feel like they do not need formal process. And sometimes they do not -- but the cost of a short spec is low, and the cost of building the wrong thing is high, even for small projects.
+**Why it happens**: Small projects genuinely feel like they do not need formal process. And sometimes they do not - but the cost of a short spec is low, and the cost of building the wrong thing is high, even for small projects.
 
-**Recovery**: Do not argue about process. Instead, demonstrate value by asking one sharp question that reveals hidden complexity: "Before we start -- what happens when [edge case]?" or "What does 'done' look like for this?"
+**Recovery**: Do not argue about process. Instead, demonstrate value by asking one sharp question that reveals hidden complexity: "Before we start - what happens when [edge case]?" or "What does 'done' look like for this?"
 
 **Prevention**: Scale the process, do not skip it. A simple project gets a 5-minute brainstorming session and a half-page spec. The phases are the same; the depth is different.
 

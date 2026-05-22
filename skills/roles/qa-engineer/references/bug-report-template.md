@@ -44,7 +44,7 @@ Numbered steps that anyone on the team can follow to reproduce the issue. Be spe
 1. [Precondition or setup step]
 2. [First action]
 3. [Second action]
-4. [Third action -- where the bug manifests]
+4. [Third action - where the bug manifests]
 
 **Reproducibility**: Always / Intermittent (X out of Y attempts) / Once
 
@@ -76,7 +76,7 @@ Attach relevant artifacts:
 | OS | [e.g., macOS 14.2, Windows 11] |
 | User role | [e.g., admin, regular user, anonymous] |
 | Test account | [e.g., test-user@example.com] |
-| Runtime version | [If relevant -- e.g., Python 3.12, Node 20, Java 21] |
+| Runtime version | [If relevant - e.g., Python 3.12, Node 20, Java 21] |
 | Database state | [Any special data conditions] |
 
 #### Additional Context
@@ -94,10 +94,10 @@ Any other information that might help the developer understand or fix the bug:
 
 | Severity | Definition | Examples | Release Impact |
 |---|---|---|---|
-| **P0 -- Critical** | System crash, data loss, security vulnerability, complete feature failure | Application error 500 on core flow; user data exposed to wrong account; payment processed twice | Blocks release |
-| **P1 -- Major** | Core functionality broken but workaround exists, significant performance degradation | Search returns wrong results but filters work; page loads in 15 seconds instead of 2 | Blocks release unless workaround is approved |
-| **P2 -- Minor** | Non-critical issue, cosmetic problem with functional impact | Date displays in wrong format; sorting does not persist after page refresh | Does not block release |
-| **P3 -- Trivial** | Cosmetic only, no functional impact | Typo in tooltip; 1px alignment issue; inconsistent capitalization | Does not block release |
+| **P0 - Critical** | System crash, data loss, security vulnerability, complete feature failure | Application error 500 on core flow; user data exposed to wrong account; payment processed twice | Blocks release |
+| **P1 - Major** | Core functionality broken but workaround exists, significant performance degradation | Search returns wrong results but filters work; page loads in 15 seconds instead of 2 | Blocks release unless workaround is approved |
+| **P2 - Minor** | Non-critical issue, cosmetic problem with functional impact | Date displays in wrong format; sorting does not persist after page refresh | Does not block release |
+| **P3 - Trivial** | Cosmetic only, no functional impact | Typo in tooltip; 1px alignment issue; inconsistent capitalization | Does not block release |
 
 ### Severity vs Priority
 

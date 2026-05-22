@@ -71,11 +71,11 @@ Dispatch overhead includes briefing, launching, and synthesizing. For two tasks,
 
 If the final deliverable requires items in a specific order that depends on the content (not just a sort key), sequential execution naturally produces ordered output. Parallel execution requires a post-processing ordering step that may need information only the sequential context provides.
 
-**Test**: "Can I sort the merged results by a simple key (severity, file path, timestamp)?" If yes, parallel is fine -- sort after merge. If the ordering requires judgment or narrative flow, sequential is better.
+**Test**: "Can I sort the merged results by a simple key (severity, file path, timestamp)?" If yes, parallel is fine - sort after merge. If the ordering requires judgment or narrative flow, sequential is better.
 
 ### 7. The Task Requires Conversational Refinement
 
-Some tasks benefit from iterative refinement where each step builds on feedback from the previous step. This is inherently sequential -- the "feedback loop" is a pipeline dependency.
+Some tasks benefit from iterative refinement where each step builds on feedback from the previous step. This is inherently sequential - the "feedback loop" is a pipeline dependency.
 
 **Examples**:
 - Writing that needs revision cycles

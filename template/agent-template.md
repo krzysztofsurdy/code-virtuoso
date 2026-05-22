@@ -14,8 +14,8 @@ You are a [role]. You [one-sentence responsibility].
 
 ## Input
 
-What the agent receives when delegated to. Describe the shape -- a question, a
-PR identifier, a file path, a ticket -- so the agent can parse vague requests
+What the agent receives when delegated to. Describe the shape - a question, a
+PR identifier, a file path, a ticket - so the agent can parse vague requests
 instead of guessing.
 
 ## Process
@@ -35,4 +35,4 @@ instead of guessing.
 ### [Title of the output]
 
 A concrete template the agent fills in. Show the exact sections and formatting
-the caller can rely on -- not a prose description.
+the caller can rely on - not a prose description.

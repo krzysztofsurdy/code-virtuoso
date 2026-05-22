@@ -8,7 +8,7 @@ A structured template for regular progress reporting. Use this for highlight rep
 
 Produce this report at the agreed frequency (typically weekly). It gives the project board and stakeholders a clear picture of progress, issues, and forecast.
 
-### [Project Name] -- Status Report
+### [Project Name] - Status Report
 
 **Report Date**: [YYYY-MM-DD]
 
@@ -40,7 +40,7 @@ Produce this report at the agreed frequency (typically weekly). It gives the pro
 
 ### Executive Summary
 
-[2-3 sentences summarizing the most important things the reader needs to know. Lead with the headline -- do not bury bad news.]
+[2-3 sentences summarizing the most important things the reader needs to know. Lead with the headline - do not bury bad news.]
 
 ### Achievements This Period
 
@@ -94,7 +94,7 @@ Produce this report at the agreed frequency (typically weekly). It gives the pro
 
 Produce this report at each stage boundary. It summarizes the completed stage and recommends whether to proceed.
 
-### [Project Name] -- End Stage Report: [Stage Name]
+### [Project Name] - End Stage Report: [Stage Name]
 
 **Date**: [YYYY-MM-DD]
 

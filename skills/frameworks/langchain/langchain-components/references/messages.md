@@ -186,7 +186,7 @@ All multimodal blocks support `url`, `base64`, `id`, and `mime_type` fields.
 
 ### Provider-Specific Block
 
-`NonStandardContentBlock` -- `type: "non_standard"`, `value` (provider-specific data).
+`NonStandardContentBlock` - `type: "non_standard"`, `value` (provider-specific data).
 
 ## Multimodal Input Examples
 

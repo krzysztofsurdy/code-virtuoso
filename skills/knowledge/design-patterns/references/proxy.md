@@ -1,6 +1,6 @@
 ## Overview
 
-The Proxy Pattern is a structural design pattern that interposes a stand-in object between clients and the real target. This intermediary shares the same interface as the target and can layer on additional behavior -- such as lazy loading, permission checks, result caching, or request logging -- without the client ever knowing it is not talking to the real thing.
+The Proxy Pattern is a structural design pattern that interposes a stand-in object between clients and the real target. This intermediary shares the same interface as the target and can layer on additional behavior - such as lazy loading, permission checks, result caching, or request logging - without the client ever knowing it is not talking to the real thing.
 
 ## Intent
 
@@ -12,7 +12,7 @@ The Proxy Pattern aims to:
 
 ## Problem/Solution
 
-**Problem:** You want to defer expensive initialization, gate access to sensitive resources, record method invocations, or cache return values -- all without cluttering the target class. Embedding this logic directly in the subject breaks the Single Responsibility Principle and becomes hard to evolve.
+**Problem:** You want to defer expensive initialization, gate access to sensitive resources, record method invocations, or cache return values - all without cluttering the target class. Embedding this logic directly in the subject breaks the Single Responsibility Principle and becomes hard to evolve.
 
 **Solution:** Create a proxy class that implements the same interface as the real subject. The proxy intercepts client requests, applies its extra logic (lazy instantiation, permission verification, logging, caching), and forwards the call to the actual subject. From the client's perspective, nothing changes.
 
@@ -228,7 +228,7 @@ try {
 - **Adapter:** Both wrap another object, but Adapter changes the interface while Proxy preserves it
 - **Decorator:** Both use composition and delegation; Decorator enriches behavior, Proxy controls access
 - **Factory:** Factories can produce proxies, and proxies can lazily instantiate real subjects
-- **Strategy:** Can complement each other -- the proxy manages access while a strategy encapsulates the algorithm
+- **Strategy:** Can complement each other - the proxy manages access while a strategy encapsulates the algorithm
 - **Virtual Proxy vs Lazy Initialization:** A virtual proxy is one specific application of the Proxy pattern focused on deferred creation
 - **Protection Proxy vs Access Control:** A protection proxy restricts operations based on caller identity or permissions
 - **Remote Proxy:** A specialized variant for distributed systems, typically sitting in front of network services

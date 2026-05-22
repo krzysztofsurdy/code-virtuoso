@@ -27,7 +27,7 @@ A subtask without a parent story is a warning sign. Enforce these rules:
 
 - Every subtask points to exactly one parent story.
 - The parent must be open; closed parents mean the subtask is stale or belongs elsewhere.
-- Subtasks do not chain -- a subtask should not have its own subtasks. If the work is that deep, the parent is too big.
+- Subtasks do not chain - a subtask should not have its own subtasks. If the work is that deep, the parent is too big.
 - A subtask's scope fits inside its parent's scope. Anything outside belongs on a separate ticket.
 
 ## How to Split a Story into Subtasks
@@ -55,14 +55,14 @@ Still write them as observable outcomes, not as activity lists.
 
 ## Questionnaire
 
-1. **Parent story** -- link or ID (required)
-2. **What this subtask covers** -- free text, one sentence
-3. **Split axis** -- layer / capability / platform / acceptance criterion / other
-4. **Technical acceptance** -- what must be true when it's done? (free text, converted to checklist)
-5. **Approach notes** -- libraries, services, or patterns to reuse (optional)
-6. **Test plan** -- unit / integration / manual / none (optional)
-7. **Estimate** -- hours, points, or skip
-8. **Dependencies** -- other subtasks or blockers (optional)
+1. **Parent story** - link or ID (required)
+2. **What this subtask covers** - free text, one sentence
+3. **Split axis** - layer / capability / platform / acceptance criterion / other
+4. **Technical acceptance** - what must be true when it's done? (free text, converted to checklist)
+5. **Approach notes** - libraries, services, or patterns to reuse (optional)
+6. **Test plan** - unit / integration / manual / none (optional)
+7. **Estimate** - hours, points, or skip
+8. **Dependencies** - other subtasks or blockers (optional)
 
 ## Output Template
 
@@ -87,10 +87,10 @@ Story: <link to parent>
 - [ ] No open questions in this ticket
 
 ## Approach Notes
-<Libraries, patterns, or constraints -- omit if empty>
+<Libraries, patterns, or constraints - omit if empty>
 
 ## Test Plan
-<Unit / integration / manual steps -- omit if trivial>
+<Unit / integration / manual steps - omit if trivial>
 
 ## Links
 - Parent story: <link>
@@ -111,6 +111,6 @@ Story: <link to parent>
 |---|---|---|
 | No parent link | Orphan subtasks drift out of sprint scope | Attach a parent or convert to an issue |
 | Subtask larger than the parent | Hierarchy is upside-down | Merge sub into parent, or split parent into stories |
-| Multiple subtasks with identical titles | Poor slicing -- the split axis was wrong | Redo the split on a single axis |
+| Multiple subtasks with identical titles | Poor slicing - the split axis was wrong | Redo the split on a single axis |
 | Subtask body repeats the parent story verbatim | Wastes reviewer time | Summarise only the technical slice |
 | "Refactor the service" as a subtask | Too vague, no observable outcome | Name the specific change and why it is needed |

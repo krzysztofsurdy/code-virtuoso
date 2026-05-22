@@ -1,6 +1,6 @@
 # Epic
 
-An epic is a quarter-scale body of work that ties several stories together under one coherent goal. An epic is not "a big story" -- it is a container with its own narrative, its own success measure, and its own scope boundaries. If you cannot name how you will know it worked, it is not ready to be an epic.
+An epic is a quarter-scale body of work that ties several stories together under one coherent goal. An epic is not "a big story" - it is a container with its own narrative, its own success measure, and its own scope boundaries. If you cannot name how you will know it worked, it is not ready to be an epic.
 
 ## Required Fields
 
@@ -56,7 +56,7 @@ Guidelines:
 
 ## Scope and Out of Scope
 
-Both lists are required. The out-of-scope list is where most of the alignment value lives -- it prevents scope creep during execution.
+Both lists are required. The out-of-scope list is where most of the alignment value lives - it prevents scope creep during execution.
 
 Example:
 
@@ -80,7 +80,7 @@ An epic typically contains five to twenty stories. Use these slicing patterns:
 
 | Slice | Example |
 |---|---|
-| User journey step | Shipping, payment, confirmation -- each its own story |
+| User journey step | Shipping, payment, confirmation - each its own story |
 | User segment | New customer vs returning customer flows |
 | Platform | Web, iOS, Android |
 | Capability layer | Data model, API, UI, analytics |
@@ -100,21 +100,21 @@ Examples:
 
 ## Questionnaire
 
-1. **Title** -- outcome-oriented, free text
-2. **Problem statement** -- current state, cost, target state, free text
-3. **Goal** -- one sentence, free text
-4. **Primary success metric** -- name, baseline, target, window
-5. **Counter-metrics / guardrails** -- optional, up to two
-6. **In scope** -- bullet list
-7. **Out of scope** -- bullet list
-8. **Parent initiative** -- optional link
-9. **Stakeholders** -- product, engineering, design, exec sponsor
-10. **Milestones** -- optional, dated
-11. **Initial child stories** -- rough list; leave room to refine
-12. **Assumptions** -- optional
-13. **Risks** -- optional, with mitigation
-14. **Dependencies** -- optional
-15. **Rollout plan** -- optional
+1. **Title** - outcome-oriented, free text
+2. **Problem statement** - current state, cost, target state, free text
+3. **Goal** - one sentence, free text
+4. **Primary success metric** - name, baseline, target, window
+5. **Counter-metrics / guardrails** - optional, up to two
+6. **In scope** - bullet list
+7. **Out of scope** - bullet list
+8. **Parent initiative** - optional link
+9. **Stakeholders** - product, engineering, design, exec sponsor
+10. **Milestones** - optional, dated
+11. **Initial child stories** - rough list; leave room to refine
+12. **Assumptions** - optional
+13. **Risks** - optional, with mitigation
+14. **Dependencies** - optional
+15. **Rollout plan** - optional
 
 ## Output Template
 
@@ -128,7 +128,7 @@ Examples:
 <One sentence describing the end state.>
 
 ## Success Metrics
-- Primary: <metric> -- baseline <x>, target <y>, measured over <window>
+- Primary: <metric> - baseline <x>, target <y>, measured over <window>
 - Guardrail: <metric that must not degrade>
 
 ## In Scope
@@ -157,13 +157,13 @@ Examples:
 <List or omit>
 
 ## Risks
-- <risk> -- mitigation: <>
+- <risk> - mitigation: <>
 
 ## Dependencies
 <List or omit>
 
 ## Rollout Plan
-<Phased release, flagging, kill-switch -- omit if trivial>
+<Phased release, flagging, kill-switch - omit if trivial>
 
 ## Links
 - Parent initiative: <link or placeholder>

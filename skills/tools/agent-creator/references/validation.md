@@ -20,7 +20,7 @@ Run this checklist before writing the agent file. Most agent problems come from 
 
 ## Tools
 
-- [ ] `tools` is set explicitly -- never inherits by omission
+- [ ] `tools` is set explicitly - never inherits by omission
 - [ ] Allowlist is the minimum that lets the workflow finish
 - [ ] No `Edit` or `Write` unless the agent legitimately modifies files
 - [ ] `Agent(...)` is scoped to specific sub-agent types, not bare `Agent`
@@ -47,7 +47,7 @@ Run this checklist before writing the agent file. Most agent problems come from 
 - [ ] Output contains a concrete template, not vague prose
 - [ ] No persona bloat ("elite senior engineer with 20 years...")
 - [ ] No duplicated tool instructions (tools are in frontmatter)
-- [ ] Portable -- no "As Claude..." or platform-specific references
+- [ ] Portable - no "As Claude..." or platform-specific references
 - [ ] Under 100 lines for most agents; under 200 for complex role agents
 
 ## Scope and Registration
@@ -80,7 +80,7 @@ Run this checklist before writing the agent file. Most agent problems come from 
 | Isolation missing on a writer | Add `isolation: worktree` |
 | Output is "a summary" | Replace with a template |
 | Role statement is missing | Add one sentence naming the role |
-| Body contains provider name or tool names | Remove -- body stays portable |
+| Body contains provider name or tool names | Remove - body stays portable |
 | `skills` list has ten entries | Trim to the essentials |
 
 If any item is unchecked, stop and fix it before writing. A weak agent costs more in re-runs than the time saved by shipping early.

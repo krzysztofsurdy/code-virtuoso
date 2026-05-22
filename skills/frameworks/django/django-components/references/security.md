@@ -152,7 +152,7 @@ cursor.execute("SELECT * FROM users WHERE id = %s", [user_id])
 ### Methods Requiring Care
 
 ```python
-# These accept raw SQL -- always use parameterized queries
+# These accept raw SQL - always use parameterized queries
 queryset.extra(select={"field": "raw_sql"})
 queryset.annotate(field=RawSQL("raw_sql", [params]))
 queryset.raw("SELECT * FROM table WHERE id = %s", [param])

@@ -15,16 +15,16 @@ There is no build step, test suite, or runtime. "Development" means writing and 
 ## Project Structure
 
 ```
-agents/              -- Sub-agent definitions (specialist and role agents)
+agents/              - Sub-agent definitions (specialist and role agents)
 skills/
-  knowledge/         -- Conceptual reference material (SOLID, testing, debugging, etc.)
-  tools/             -- Interactive tools (agentic-rules-writer, ticket-writer, agent-creator, plugin-creator)
-  playbooks/         -- Step-by-step operational procedures (PHP upgrade, etc.)
-  roles/             -- Team role reference skills (product manager, architect, etc.)
-  frameworks/{name}/ -- Framework-specific skills (Symfony, Django, LangChain)
-spec/                -- Format specifications
-template/            -- Starter templates
-.claude-plugin/      -- Marketplace configuration (Claude Code format; adaptable to other platforms)
+  knowledge/         - Conceptual reference material (SOLID, testing, debugging, etc.)
+  tools/             - Interactive tools (agentic-rules-writer, ticket-writer, agent-creator, plugin-creator)
+  playbooks/         - Step-by-step operational procedures (PHP upgrade, etc.)
+  roles/             - Team role reference skills (product manager, architect, etc.)
+  frameworks/{name}/ - Framework-specific skills (Symfony, Django, LangChain)
+spec/                - Format specifications
+template/            - Starter templates
+.claude-plugin/      - Marketplace configuration (Claude Code format; adaptable to other platforms)
 ```
 
 See the [README](README.md) for the full directory tree and skill tables.
@@ -98,7 +98,7 @@ Good example (language-specific skill):
 
 Good example (procedural skill):
 
-> Version upgrade guide -- step-by-step process for upgrading runtime/framework versions, automated refactoring, compatibility checking, breaking changes per version, and testing strategies. Use when planning or executing a version upgrade.
+> Version upgrade guide - step-by-step process for upgrading runtime/framework versions, automated refactoring, compatibility checking, breaking changes per version, and testing strategies. Use when planning or executing a version upgrade.
 
 Bad example:
 
@@ -108,12 +108,12 @@ Bad example:
 
 Follow this order:
 
-1. **Title** -- one paragraph summary of core philosophy
-2. **Core Principles** -- table with `| Principle | Meaning |` columns
-3. **Main sections** -- tables, commands, pattern indexes (varies by skill type)
-4. **Quick Reference: Checklist** -- step-by-step checklist with `- [ ]` items
-5. **Reference Files** -- table linking to `references/` files with `| Reference | Contents |` columns
-6. **Integration with Other Skills** -- table with `| Situation | Recommended Skill |` columns
+1. **Title** - one paragraph summary of core philosophy
+2. **Core Principles** - table with `| Principle | Meaning |` columns
+3. **Main sections** - tables, commands, pattern indexes (varies by skill type)
+4. **Quick Reference: Checklist** - step-by-step checklist with `- [ ]` items
+5. **Reference Files** - table linking to `references/` files with `| Reference | Contents |` columns
+6. **Integration with Other Skills** - table with `| Situation | Recommended Skill |` columns
 
 Minimal example:
 
@@ -151,7 +151,7 @@ One paragraph summary.
 
 ### 4. Add Reference Files
 
-Reference files live in `references/` and contain the deep content: code examples, detailed workflows, comparison tables. SKILL.md provides the overview; references provide the depth. This is the **progressive disclosure** pattern -- agents load SKILL.md first and only read reference files when they need detail on a specific topic.
+Reference files live in `references/` and contain the deep content: code examples, detailed workflows, comparison tables. SKILL.md provides the overview; references provide the depth. This is the **progressive disclosure** pattern - agents load SKILL.md first and only read reference files when they need detail on a specific topic.
 
 ### 5. Update marketplace.json (MANDATORY)
 
@@ -245,7 +245,7 @@ skills:
 | `skills` | No | Yes | Reference by `name` field, not path. Keep to four or fewer |
 | `mcpServers` | No | No | Scope MCP servers to this agent, keeping descriptions out of the parent conversation |
 | `permissionMode` | No | No | Override permission prompts. Use sparingly |
-| `model` | No | -- | **Do not include.** Model selection is a user/platform concern |
+| `model` | No | - | **Do not include.** Model selection is a user/platform concern |
 
 The same [no provider-specific models](#no-provider-specific-models) rule applies to agents as to skills.
 
@@ -296,7 +296,7 @@ Rules:
 
 - Every `Edit`/`Write` capability must pair with `isolation: worktree`
 - `Agent(...)` allowlist pins which sub-agent types a team-lead can spawn
-- Never leave `tools` unset -- agents that inherit all tools are not least-privileged
+- Never leave `tools` unset - agents that inherit all tools are not least-privileged
 
 See [`agent-creator/references/tool-selection.md`](skills/tools/agent-creator/references/tool-selection.md) for the full decision tree.
 
@@ -350,7 +350,7 @@ The most common rejection reasons:
 - Agent modifies files but has no `isolation: worktree`
 - Output section is vague prose instead of a template
 - Body contains provider-specific or tool-specific phrasing
-- Agent does two things -- should be split into two agents
+- Agent does two things - should be split into two agents
 
 ## Updating Existing Agents
 
@@ -376,7 +376,7 @@ Use this path when you want to expose existing skills or agents in this repo as 
 
 1. Open `.claude-plugin/marketplace.json`
 2. Add a new object to the `plugins` array following the [Plugin Naming Convention](#plugin-naming-convention) and [Distribution Tiers](#plugin-distribution-tiers)
-3. Use `"source": "./"` and `"strict": false` -- the whole repo is the plugin source
+3. Use `"source": "./"` and `"strict": false` - the whole repo is the plugin source
 4. Reference existing skill directories in `skills` and existing agent files in `agents`
 5. Bump `metadata.version` per [Version Bumping Rules](#version-bumping-rules) (minor bump for a new plugin)
 6. Update README.md if the new plugin introduces a new category
@@ -397,7 +397,7 @@ See [Marketplace Configuration](#marketplace-configuration) below for the full r
 
 ### Adding a Standalone Claude Code Plugin
 
-Use this path when the plugin should be its own repo or its own directory outside this marketplace -- for example, when shipping hooks, MCP servers, or LSP servers that do not belong inside the code-virtuoso content library.
+Use this path when the plugin should be its own repo or its own directory outside this marketplace - for example, when shipping hooks, MCP servers, or LSP servers that do not belong inside the code-virtuoso content library.
 
 1. **Scaffold with `plugin-creator`**. The skill generates the full directory structure, writes a validated `plugin.json`, and wires up any components you select (skills, agents, hooks, MCP servers, LSP servers, bin, output styles, default settings).
 2. **Place the plugin directory** at the top of the plugin's own repository, or anywhere outside `skills/` and `agents/` in this repo.
@@ -405,13 +405,13 @@ Use this path when the plugin should be its own repo or its own directory outsid
    - Only `plugin.json` belongs inside `.claude-plugin/`. Every other directory (`skills/`, `agents/`, `hooks/`, etc.) lives at the plugin root.
    - All paths in `plugin.json` must be relative and start with `./`.
    - Use `${CLAUDE_PLUGIN_ROOT}` for bundled resources and `${CLAUDE_PLUGIN_DATA}` for state that must survive updates.
-   - Plugin-shipped agents cannot set `hooks`, `mcpServers`, or `permissionMode` -- these are blocked for security.
+   - Plugin-shipped agents cannot set `hooks`, `mcpServers`, or `permissionMode` - these are blocked for security.
 4. **Validate locally** before committing:
    ```
    claude --plugin-dir ./your-plugin
    claude plugin validate
    ```
-5. **Add a marketplace entry** if you want this marketplace to distribute it -- the entry's `source` can be a relative path (same repo), a `github` object, a `url` object, a `git-subdir` object, or an `npm` object. See `plugin-creator/references/marketplace-manifest.md` for all source types.
+5. **Add a marketplace entry** if you want this marketplace to distribute it - the entry's `source` can be a relative path (same repo), a `github` object, a `url` object, a `git-subdir` object, or an `npm` object. See `plugin-creator/references/marketplace-manifest.md` for all source types.
 6. **Seed a `CHANGELOG.md`** with the initial `1.0.0` release entry. Standalone plugins track their own version independently of the marketplace version.
 
 ### Common Mistakes
@@ -434,7 +434,7 @@ Use this path when the plugin should be its own repo or its own directory outsid
   - Standalone plugin: bump `version` in `plugin.json`
   - Never both for the same plugin
 - Record the change in the plugin's `CHANGELOG.md` if it has one
-- If the change removes a skill, renames a skill, or changes a hook event, bump the **major** version -- these are breaking for installed users
+- If the change removes a skill, renames a skill, or changes a hook event, bump the **major** version - these are breaking for installed users
 
 ## Marketplace Configuration
 
@@ -511,7 +511,7 @@ Skills should be production-grade reference material, not tutorials. They are co
 | Tables | Use for all structured data (comparisons, commands, options) |
 | Cross-references | Include an Integration section linking to related skills |
 | Code examples | Idiomatic for the target language/framework, using current stable versions |
-| Principles table | Required in every SKILL.md -- sets the mindset before details |
+| Principles table | Required in every SKILL.md - sets the mindset before details |
 | Frontmatter | Only in SKILL.md and agent files, never in reference files |
 
 ### Language and Provider Agnosticism
@@ -530,9 +530,9 @@ All content must be **language-agnostic** and **LLM provider-agnostic** by defau
 
 ### Content Guidelines
 
-- Show realistic, production-quality examples -- not toy code
+- Show realistic, production-quality examples - not toy code
 - Include both the "happy path" and error handling where relevant
-- Keep instructions actionable -- tell the agent what to do, not just what exists
+- Keep instructions actionable - tell the agent what to do, not just what exists
 
 ### Research Process for New Skills
 

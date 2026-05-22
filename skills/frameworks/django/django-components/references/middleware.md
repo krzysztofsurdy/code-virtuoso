@@ -308,8 +308,8 @@ LANGUAGES = [
 
 ### Cache Middleware
 
-- `UpdateCacheMiddleware` -- stores responses in cache (place near top)
-- `FetchFromCacheMiddleware` -- retrieves cached responses (place near bottom)
+- `UpdateCacheMiddleware` - stores responses in cache (place near top)
+- `FetchFromCacheMiddleware` - retrieves cached responses (place near bottom)
 
 ### ConditionalGetMiddleware
 
@@ -367,7 +367,7 @@ Django converts exceptions to appropriate HTTP responses automatically:
 
 ## Best Practices
 
-- Keep middleware lightweight -- it runs on every request
+- Keep middleware lightweight - it runs on every request
 - Use `process_view` only when you need access to the view function before execution
 - Check `response.streaming` before accessing `response.content`
 - Use `MiddlewareNotUsed` to conditionally disable middleware

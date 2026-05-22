@@ -1,6 +1,6 @@
 ## Overview
 
-Shotgun Surgery is the smell you encounter when a single logical change forces you to edit code in many different classes. A responsibility that should be concentrated in one place is instead scattered across the codebase, so even a small modification requires a coordinated update to multiple files. This often results from over-aggressive decomposition -- splitting classes too finely until a single concern spans many locations.
+Shotgun Surgery is the smell you encounter when a single logical change forces you to edit code in many different classes. A responsibility that should be concentrated in one place is instead scattered across the codebase, so even a small modification requires a coordinated update to multiple files. This often results from over-aggressive decomposition - splitting classes too finely until a single concern spans many locations.
 
 ## Why It's a Problem
 
@@ -125,7 +125,7 @@ Shotgun Surgery is acceptable in these scenarios:
 
 ## Related Smells
 
-- **Divergent Change**: The inverse problem -- one class accumulating too many reasons to change, while Shotgun Surgery spreads one reason across too many classes
+- **Divergent Change**: The inverse problem - one class accumulating too many reasons to change, while Shotgun Surgery spreads one reason across too many classes
 - **Feature Envy**: Classes that constantly reach into other classes for data are a hint that consolidation would help
 - **Duplicate Code**: Frequently accompanies Shotgun Surgery, since the same kind of change made in multiple places often produces near-identical code
 - **Long Parameter List**: May signal that a new class could encapsulate related data currently passed around separately

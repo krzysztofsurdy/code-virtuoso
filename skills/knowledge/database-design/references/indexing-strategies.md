@@ -46,11 +46,11 @@ WHERE ST_DWithin(geom, ST_MakePoint(-73.9857, 40.7484)::geography, 5000);
 CREATE INDEX idx_reservations_period ON reservations USING GIST (tsrange(start_at, end_at));
 ```
 
-GiST indexes are lossy for some data types -- the database may need to recheck the actual row to confirm a match.
+GiST indexes are lossy for some data types - the database may need to recheck the actual row to confirm a match.
 
 ### GIN (Generalized Inverted Index)
 
-Designed for values that contain multiple elements -- arrays, JSONB, full-text search vectors.
+Designed for values that contain multiple elements - arrays, JSONB, full-text search vectors.
 
 ```sql
 -- Full-text search index
@@ -74,7 +74,7 @@ GIN indexes are slower to build and update than B-tree but provide fast lookups 
 
 ### BRIN (Block Range Index)
 
-Stores summary information (min/max) for ranges of physical table blocks. Extremely compact -- orders of magnitude smaller than B-tree for large tables.
+Stores summary information (min/max) for ranges of physical table blocks. Extremely compact - orders of magnitude smaller than B-tree for large tables.
 
 ```sql
 -- Ideal for append-only tables with naturally ordered data
@@ -94,12 +94,12 @@ BRIN works well only when the physical order of rows correlates with the indexed
 CREATE INDEX idx_orders_status_created ON orders (status, created_at);
 
 -- These queries USE the index:
-SELECT * FROM orders WHERE status = 'pending';                           -- uses leftmost prefix
-SELECT * FROM orders WHERE status = 'pending' AND created_at > '2025-01-01'; -- uses both columns
-SELECT * FROM orders WHERE status = 'pending' ORDER BY created_at;       -- uses index for filter + sort
+SELECT * FROM orders WHERE status = 'pending';                           - uses leftmost prefix
+SELECT * FROM orders WHERE status = 'pending' AND created_at > '2025-01-01'; - uses both columns
+SELECT * FROM orders WHERE status = 'pending' ORDER BY created_at;       - uses index for filter + sort
 
 -- This query CANNOT use the index:
-SELECT * FROM orders WHERE created_at > '2025-01-01';  -- skips the leftmost column
+SELECT * FROM orders WHERE created_at > '2025-01-01';  - skips the leftmost column
 ```
 
 ### Equality Before Range
@@ -171,15 +171,15 @@ WHERE o.status = 'pending' AND o.created_at > '2025-01-01';
 
 | Field | What It Tells You |
 |---|---|
-| **Seq Scan** | Full table scan -- often means a missing or unused index |
+| **Seq Scan** | Full table scan - often means a missing or unused index |
 | **Index Scan** | Index used to find rows, then table accessed for remaining columns |
-| **Index Only Scan** | All data served from the index -- the best case for covered queries |
-| **Bitmap Index Scan** | Multiple index entries collected, then table pages read in bulk -- common with OR conditions or low-selectivity indexes |
-| **Nested Loop** | For each row from the outer table, scans the inner table -- fast for small inner sets, slow for large ones |
-| **Hash Join** | Builds a hash table from one side, probes with the other -- good for large unsorted joins |
-| **Sort** | Explicit sort step -- check if it spills to disk (`Sort Method: external merge`) |
-| **actual time** | Real execution time in milliseconds -- compare with the estimate |
-| **rows** | Estimated vs actual row count -- large discrepancies mean stale statistics |
+| **Index Only Scan** | All data served from the index - the best case for covered queries |
+| **Bitmap Index Scan** | Multiple index entries collected, then table pages read in bulk - common with OR conditions or low-selectivity indexes |
+| **Nested Loop** | For each row from the outer table, scans the inner table - fast for small inner sets, slow for large ones |
+| **Hash Join** | Builds a hash table from one side, probes with the other - good for large unsorted joins |
+| **Sort** | Explicit sort step - check if it spills to disk (`Sort Method: external merge`) |
+| **actual time** | Real execution time in milliseconds - compare with the estimate |
+| **rows** | Estimated vs actual row count - large discrepancies mean stale statistics |
 
 ### MySQL EXPLAIN
 
@@ -193,7 +193,7 @@ EXPLAIN SELECT * FROM orders WHERE status = 'pending' AND created_at > '2025-01-
 |---|---|
 | **type** | `ALL` = full scan (bad), `ref` = index lookup (good), `range` = index range scan (good) |
 | **key** | Which index is actually used (NULL means no index) |
-| **rows** | Estimated rows examined -- lower is better |
+| **rows** | Estimated rows examined - lower is better |
 | **Extra** | `Using index` = covering index, `Using filesort` = extra sort step, `Using temporary` = temp table created |
 
 ---

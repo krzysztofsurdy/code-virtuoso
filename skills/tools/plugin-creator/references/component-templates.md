@@ -374,7 +374,7 @@ if [[ -z "$file_path" ]]; then
 fi
 
 # Run the project's formatter on the file.
-cd "$(dirname "$file_path")" && npm run format:file -- "$file_path"
+cd "$(dirname "$file_path")" && npm run format:file - "$file_path"
 ```
 
 Make executable: `chmod +x scripts/format-code.sh`.
@@ -386,7 +386,7 @@ Make executable: `chmod +x scripts/format-code.sh`.
 
 All notable changes to this plugin are documented here.
 
-## 1.0.0 -- <YYYY-MM-DD>
+## 1.0.0 - <YYYY-MM-DD>
 
 ### Added
 

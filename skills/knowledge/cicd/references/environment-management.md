@@ -20,7 +20,7 @@ Artifacts move through increasingly production-like environments. Each gate adds
 | Performance within baseline | Yes |
 | Manual approval (continuous delivery) | No |
 
-**GitHub Actions -- environment promotion:**
+**GitHub Actions - environment promotion:**
 ```yaml
 jobs:
   deploy-staging:
@@ -76,7 +76,7 @@ Run periodic plan/diff commands to detect drift. Alert when actual state diverge
 
 The same artifact runs everywhere; only configuration changes.
 
-**Shell -- environment config loading:**
+**Shell - environment config loading:**
 ```bash
 #!/usr/bin/env bash
 ENV="${DEPLOY_ENV:-dev}"
@@ -166,7 +166,7 @@ Build once, deploy the same artifact everywhere. Never rebuild per environment.
 | Semantic version | `v2.3.1` | Released packages, APIs |
 | Date-based | `2026.03.06-1` | Frequent releases |
 
-**GitLab CI -- build and publish:**
+**GitLab CI - build and publish:**
 ```yaml
 build:
   stage: build

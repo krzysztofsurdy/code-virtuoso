@@ -67,7 +67,7 @@ plugin-name/
 ### Path Rules
 
 - All paths must be relative and start with `./`.
-- Paths outside the plugin root (`../shared-utils`) will not work after installation -- the cache does not copy external files.
+- Paths outside the plugin root (`../shared-utils`) will not work after installation - the cache does not copy external files.
 - Symlinks **are** preserved by the cache.
 - Setting a component path (e.g. `"skills": "./custom"`) **replaces** the default directory. To keep the default and add more, use an array: `["./skills/", "./custom/"]`.
 
@@ -118,7 +118,7 @@ Scripts must be executable (`chmod +x`) and reference `${CLAUDE_PLUGIN_ROOT}` fo
 
 ### LSP Servers
 
-`.lsp.json` format maps language names to server configs. Required fields: `command`, `extensionToLanguage`. Users must install the language server binary separately -- LSP plugins only configure the connection.
+`.lsp.json` format maps language names to server configs. Required fields: `command`, `extensionToLanguage`. Users must install the language server binary separately - LSP plugins only configure the connection.
 
 ### Bin
 
@@ -160,7 +160,7 @@ The data directory resolves to `~/.claude/plugins/data/{id}/` where `{id}` is th
 
 ## Distribution
 
-Plugins are distributed through a marketplace -- a `marketplace.json` catalog that lists one or more plugins. A marketplace entry requires at minimum:
+Plugins are distributed through a marketplace - a `marketplace.json` catalog that lists one or more plugins. A marketplace entry requires at minimum:
 
 ```json
 {

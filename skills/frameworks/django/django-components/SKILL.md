@@ -7,74 +7,74 @@ user-invocable: false
 
 # Django Components
 
-Complete reference for all 33 Django components -- patterns, APIs, configuration, and best practices for Python 3.10+ and Django 6.0.
+Complete reference for all 33 Django components - patterns, APIs, configuration, and best practices for Python 3.10+ and Django 6.0.
 
 ## Component Index
 
 ### Models & Database
-- **Models** -- Model definition, field types, Meta options, inheritance, managers -> [reference](references/models.md)
-- **QuerySets** -- QuerySet API, field lookups, Q objects, F expressions, aggregation -> [reference](references/querysets.md)
-- **Migrations** -- Migration workflow, operations, data migrations, squashing -> [reference](references/migrations.md)
-- **Database Functions** -- Database functions, conditional expressions, full-text search -> [reference](references/database-functions.md)
+- **Models** - Model definition, field types, Meta options, inheritance, managers -> [reference](references/models.md)
+- **QuerySets** - QuerySet API, field lookups, Q objects, F expressions, aggregation -> [reference](references/querysets.md)
+- **Migrations** - Migration workflow, operations, data migrations, squashing -> [reference](references/migrations.md)
+- **Database Functions** - Database functions, conditional expressions, full-text search -> [reference](references/database-functions.md)
 
 ### Views & HTTP
-- **Views** -- Function-based views, shortcuts (render, redirect, get_object_or_404) -> [reference](references/views.md)
-- **Class-Based Views** -- ListView, DetailView, CreateView, UpdateView, DeleteView, mixins -> [reference](references/class-based-views.md)
-- **URL Routing** -- URL configuration, path(), re_path(), namespaces, reverse() -> [reference](references/urls.md)
-- **Middleware** -- Middleware architecture, built-in middleware, custom middleware -> [reference](references/middleware.md)
-- **Request & Response** -- HttpRequest, HttpResponse, JsonResponse, StreamingHttpResponse -> [reference](references/request-response.md)
+- **Views** - Function-based views, shortcuts (render, redirect, get_object_or_404) -> [reference](references/views.md)
+- **Class-Based Views** - ListView, DetailView, CreateView, UpdateView, DeleteView, mixins -> [reference](references/class-based-views.md)
+- **URL Routing** - URL configuration, path(), re_path(), namespaces, reverse() -> [reference](references/urls.md)
+- **Middleware** - Middleware architecture, built-in middleware, custom middleware -> [reference](references/middleware.md)
+- **Request & Response** - HttpRequest, HttpResponse, JsonResponse, StreamingHttpResponse -> [reference](references/request-response.md)
 
 ### Templates
-- **Templates** -- Template language, tags, filters, inheritance, custom template tags -> [reference](references/templates.md)
+- **Templates** - Template language, tags, filters, inheritance, custom template tags -> [reference](references/templates.md)
 
 ### Forms
-- **Forms** -- Form class, fields, widgets, ModelForm, formsets, validation -> [reference](references/forms.md)
+- **Forms** - Form class, fields, widgets, ModelForm, formsets, validation -> [reference](references/forms.md)
 
 ### Admin
-- **Admin** -- ModelAdmin, list_display, fieldsets, inlines, actions, customization -> [reference](references/admin.md)
+- **Admin** - ModelAdmin, list_display, fieldsets, inlines, actions, customization -> [reference](references/admin.md)
 
 ### Authentication & Security
-- **Authentication** -- User model, login/logout, permissions, groups, custom user models -> [reference](references/auth.md)
-- **Security** -- CSRF, XSS, clickjacking, SSL, CSP, cryptographic signing -> [reference](references/security.md)
-- **Sessions** -- Session framework, backends, configuration -> [reference](references/sessions.md)
+- **Authentication** - User model, login/logout, permissions, groups, custom user models -> [reference](references/auth.md)
+- **Security** - CSRF, XSS, clickjacking, SSL, CSP, cryptographic signing -> [reference](references/security.md)
+- **Sessions** - Session framework, backends, configuration -> [reference](references/sessions.md)
 
 ### Caching
-- **Cache** -- Cache backends (Redis, Memcached, DB, filesystem), per-view/template caching -> [reference](references/cache.md)
+- **Cache** - Cache backends (Redis, Memcached, DB, filesystem), per-view/template caching -> [reference](references/cache.md)
 
 ### Signals
-- **Signals** -- Signal dispatcher, built-in signals (pre_save, post_save, etc.) -> [reference](references/signals.md)
+- **Signals** - Signal dispatcher, built-in signals (pre_save, post_save, etc.) -> [reference](references/signals.md)
 
 ### Communication
-- **Email** -- send_mail, EmailMessage, HTML emails, backends -> [reference](references/email.md)
-- **Messages** -- Messages framework, levels, storage backends -> [reference](references/messages.md)
+- **Email** - send_mail, EmailMessage, HTML emails, backends -> [reference](references/email.md)
+- **Messages** - Messages framework, levels, storage backends -> [reference](references/messages.md)
 
 ### Testing
-- **Testing** -- TestCase, Client, assertions, RequestFactory, fixtures -> [reference](references/testing.md)
+- **Testing** - TestCase, Client, assertions, RequestFactory, fixtures -> [reference](references/testing.md)
 
 ### Files & Static Assets
-- **Files** -- File objects, storage API, file uploads, custom storage -> [reference](references/files.md)
-- **Static Files** -- Static file configuration, collectstatic, ManifestStaticFilesStorage -> [reference](references/static-files.md)
+- **Files** - File objects, storage API, file uploads, custom storage -> [reference](references/files.md)
+- **Static Files** - Static file configuration, collectstatic, ManifestStaticFilesStorage -> [reference](references/static-files.md)
 
 ### Internationalization
-- **I18n** -- Translation, localization, timezones, message files -> [reference](references/i18n.md)
+- **I18n** - Translation, localization, timezones, message files -> [reference](references/i18n.md)
 
 ### Serialization & Data
-- **Serialization** -- Serializers, JSON/XML formats, natural keys, fixtures -> [reference](references/serialization.md)
-- **Content Types** -- ContentType model, generic relations -> [reference](references/content-types.md)
-- **Validators** -- Built-in validators, custom validators -> [reference](references/validators.md)
-- **Pagination** -- Paginator, Page objects, template integration -> [reference](references/pagination.md)
+- **Serialization** - Serializers, JSON/XML formats, natural keys, fixtures -> [reference](references/serialization.md)
+- **Content Types** - ContentType model, generic relations -> [reference](references/content-types.md)
+- **Validators** - Built-in validators, custom validators -> [reference](references/validators.md)
+- **Pagination** - Paginator, Page objects, template integration -> [reference](references/pagination.md)
 
 ### Async & Tasks
-- **Async** -- Async views, async ORM, sync_to_async, ASGI -> [reference](references/async.md)
-- **Tasks** -- Tasks framework, task backends, scheduling -> [reference](references/tasks.md)
+- **Async** - Async views, async ORM, sync_to_async, ASGI -> [reference](references/async.md)
+- **Tasks** - Tasks framework, task backends, scheduling -> [reference](references/tasks.md)
 
 ### Configuration & CLI
-- **Settings** -- Settings reference by category, splitting settings -> [reference](references/settings.md)
-- **Management Commands** -- Built-in commands, custom commands, call_command -> [reference](references/management-commands.md)
-- **Logging** -- Logging configuration, handlers, Django loggers -> [reference](references/logging.md)
+- **Settings** - Settings reference by category, splitting settings -> [reference](references/settings.md)
+- **Management Commands** - Built-in commands, custom commands, call_command -> [reference](references/management-commands.md)
+- **Logging** - Logging configuration, handlers, Django loggers -> [reference](references/logging.md)
 
 ### Deployment
-- **Deployment** -- WSGI, ASGI, Gunicorn, Uvicorn, static files, checklist -> [reference](references/deployment.md)
+- **Deployment** - WSGI, ASGI, Gunicorn, Uvicorn, static files, checklist -> [reference](references/deployment.md)
 
 ## Quick Patterns
 
@@ -230,11 +230,11 @@ class ArticleTests(TestCase):
 - Use **class-based views** for CRUD; function-based views for custom logic
 - Prefer **select_related/prefetch_related** to avoid N+1 queries
 - Use **F expressions** for database-level operations instead of Python
-- Apply **migrations** atomically -- one logical change per migration
+- Apply **migrations** atomically - one logical change per migration
 - Use **Django's cache framework** with Redis or Memcached in production
 - Write **TestCase** tests with assertions specific to Django (assertContains, assertRedirects)
 - Use **custom user models** from the start (AUTH_USER_MODEL)
-- Enable **CSRF protection** everywhere -- never use @csrf_exempt without good reason
-- Use **environment variables** for secrets -- never commit SECRET_KEY or database credentials
+- Enable **CSRF protection** everywhere - never use @csrf_exempt without good reason
+- Use **environment variables** for secrets - never commit SECRET_KEY or database credentials
 - Deploy with **Gunicorn/Uvicorn** behind a reverse proxy (nginx)
 - Run **manage.py check --deploy** before every production deployment

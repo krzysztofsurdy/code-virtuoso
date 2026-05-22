@@ -4,13 +4,13 @@
 
 ### Using Explain Plans
 
-Every database provides a way to inspect how it executes a query. Always check the explain plan before optimizing -- it shows whether indexes are used, how tables are joined, and where time is spent.
+Every database provides a way to inspect how it executes a query. Always check the explain plan before optimizing - it shows whether indexes are used, how tables are joined, and where time is spent.
 
 **Key things to look for in explain output:**
 - **Full table scans** on large tables (sequential scan where an index scan is expected)
 - **Sort operations** that spill to disk instead of using an index
 - **Nested loops** with high row counts on the inner table
-- **Estimated vs actual row counts** -- large discrepancies indicate stale statistics
+- **Estimated vs actual row counts** - large discrepancies indicate stale statistics
 
 ### Index Strategies
 
@@ -23,7 +23,7 @@ Every database provides a way to inspect how it executes a query. Always check t
 | **Full-text** | Support text search queries | Full-text index on `title, description` for search features |
 
 **Index maintenance rules:**
-- Drop indexes that no query uses -- they slow writes and waste storage
+- Drop indexes that no query uses - they slow writes and waste storage
 - Rebuild fragmented indexes periodically in high-churn tables
 - Avoid indexing columns with very low cardinality (e.g., boolean flags) unless combined with selective columns
 
@@ -49,7 +49,7 @@ SELECT * FROM order_items WHERE order_id = 103;
 
 Fetch related data upfront in a single query or a small number of queries.
 
-**PHP -- Doctrine eager loading:**
+**PHP - Doctrine eager loading:**
 ```php
 // N+1: lazy loading triggers a query per order
 $orders = $orderRepository->findBy(['user' => $user]);
@@ -65,7 +65,7 @@ $query->setParameter('user', $user);
 $orders = $query->getResult();
 ```
 
-**Python -- SQLAlchemy joinedload:**
+**Python - SQLAlchemy joinedload:**
 ```python
 # N+1: accessing items triggers lazy load per order
 orders = session.query(Order).filter_by(user_id=42).all()
@@ -83,7 +83,7 @@ orders = (
 )
 ```
 
-**TypeScript -- TypeORM relations:**
+**TypeScript - TypeORM relations:**
 ```typescript
 // N+1: accessing items triggers lazy load
 const orders = await orderRepo.find({ where: { userId: 42 } });
@@ -98,7 +98,7 @@ const orders = await orderRepo.find({
 });
 ```
 
-**Java -- JPA EntityGraph:**
+**Java - JPA EntityGraph:**
 ```java
 // N+1: default lazy fetch triggers query per order
 List<Order> orders = orderRepository.findByUserId(42L);
@@ -113,7 +113,7 @@ List<Order> findWithItemsByUserId(Long userId);
 
 Collect all IDs needed during a request, then fetch all related records in a single query. Especially useful in GraphQL resolvers.
 
-**TypeScript -- DataLoader:**
+**TypeScript - DataLoader:**
 ```typescript
 const itemLoader = new DataLoader<number, OrderItem[]>(async (orderIds) => {
   const items = await itemRepo.find({
@@ -127,7 +127,7 @@ const itemLoader = new DataLoader<number, OrderItem[]>(async (orderIds) => {
 const items = await itemLoader.load(order.id);
 ```
 
-**Python -- batch loading function:**
+**Python - batch loading function:**
 ```python
 def load_items_for_orders(order_ids: list[int]) -> dict[int, list[OrderItem]]:
     items = OrderItem.query.filter(OrderItem.order_id.in_(order_ids)).all()
@@ -149,7 +149,7 @@ Creating a database connection involves TCP handshake, TLS negotiation, and auth
 
 | Parameter | Guidance |
 |---|---|
-| **Minimum pool size** | Set to your baseline concurrency -- connections ready immediately |
+| **Minimum pool size** | Set to your baseline concurrency - connections ready immediately |
 | **Maximum pool size** | Cap at what the database can handle; a common starting point is `(2 * CPU cores) + disk spindles` |
 | **Idle timeout** | Reclaim connections idle for too long (e.g., 10 minutes) |
 | **Connection max lifetime** | Rotate connections periodically to handle DNS changes and server restarts |
@@ -157,7 +157,7 @@ Creating a database connection involves TCP handshake, TLS negotiation, and auth
 
 **PHP:** Use `PDO::ATTR_PERSISTENT => true` for persistent connections, or an external pooler like PgBouncer for long-running workers.
 
-**Python -- SQLAlchemy:**
+**Python - SQLAlchemy:**
 ```python
 engine = create_engine(
     "postgresql://user:pass@host/db",
@@ -166,9 +166,9 @@ engine = create_engine(
 )
 ```
 
-**Java:** HikariCP -- set `maximumPoolSize`, `minimumIdle`, `idleTimeout`, `maxLifetime`, and `connectionTimeout`.
+**Java:** HikariCP - set `maximumPoolSize`, `minimumIdle`, `idleTimeout`, `maxLifetime`, and `connectionTimeout`.
 
-**TypeScript -- pg pool:**
+**TypeScript - pg pool:**
 ```typescript
 const pool = new Pool({ max: 20, idleTimeoutMillis: 600000, connectionTimeoutMillis: 30000 });
 const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
@@ -186,7 +186,7 @@ For read-heavy workloads, route read queries to replicas and writes to the prima
 - Reads that must see the latest write (read-your-writes consistency) go to the primary
 - Replication lag monitoring determines whether a replica is safe to query
 
-**PHP -- Doctrine primary/replica configuration:**
+**PHP - Doctrine primary/replica configuration:**
 ```php
 'primary' => ['url' => 'postgresql://primary-host/db'],
 'replica' => [
@@ -204,7 +204,7 @@ For read-heavy workloads, route read queries to replicas and writes to the prima
 
 Instead of inserting rows one at a time, batch them.
 
-**PHP -- Doctrine batch insert (flush every N entities):**
+**PHP - Doctrine batch insert (flush every N entities):**
 ```php
 foreach ($records as $i => $data) {
     $em->persist(new Product($data['name'], $data['price']));

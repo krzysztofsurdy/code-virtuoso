@@ -16,7 +16,7 @@ The fastest cache is memory within your own process. No network round-trip, no s
 
 A shared cache accessible by all application instances. Redis and Memcached are the most common choices.
 
-**PHP -- Symfony Cache with Redis:**
+**PHP - Symfony Cache with Redis:**
 ```php
 $rate = $cache->get('exchange_rate_' . $currency, function (ItemInterface $item) use ($currency) {
     $item->expiresAfter(3600);
@@ -24,7 +24,7 @@ $rate = $cache->get('exchange_rate_' . $currency, function (ItemInterface $item)
 });
 ```
 
-**Python -- Redis caching:**
+**Python - Redis caching:**
 ```python
 def get_rate(currency: str) -> float:
     cached = redis_client.get(f"exchange_rate:{currency}")
@@ -48,7 +48,7 @@ HTTP caching prevents the request from reaching your server at all. Use `Cache-C
 | `Cache-Control: max-age=3600` | Browser caches for 1 hour | Static assets, public API data |
 | `Cache-Control: no-cache` | Browser must revalidate every time | Dynamic content that changes frequently |
 | `Cache-Control: private` | Only browser can cache, not shared proxies | User-specific data |
-| `ETag` + `If-None-Match` | Conditional request -- server returns 304 if unchanged | Any cacheable resource |
+| `ETag` + `If-None-Match` | Conditional request - server returns 304 if unchanged | Any cacheable resource |
 | `Vary: Accept-Encoding` | Cache separate versions per encoding | Compressed vs uncompressed responses |
 
 ---
@@ -99,7 +99,7 @@ Writes update the cache immediately. The backing store is updated asynchronously
 
 Only one request regenerates the expired value. Others either wait for the result or serve stale data.
 
-**PHP -- Symfony lock-based approach:**
+**PHP - Symfony lock-based approach:**
 ```php
 $value = $cache->get('expensive_data', function (ItemInterface $item) {
     $item->expiresAfter(300);
@@ -109,7 +109,7 @@ $value = $cache->get('expensive_data', function (ItemInterface $item) {
 });
 ```
 
-**Python -- Redis lock for cache regeneration:**
+**Python - Redis lock for cache regeneration:**
 ```python
 def get_with_lock(key: str, compute_fn, ttl: int = 300) -> Any:
     value = cache.get(key)
@@ -125,7 +125,7 @@ def get_with_lock(key: str, compute_fn, ttl: int = 300) -> Any:
         finally:
             cache.delete(lock_key)
 
-    # Another process holds the lock -- wait briefly and retry
+    # Another process holds the lock - wait briefly and retry
     time.sleep(0.1)
     return cache.get(key) or compute_fn()
 ```
@@ -154,7 +154,7 @@ The `beta` parameter controls how aggressively early recomputation triggers. Hig
 
 Multiple concurrent requests for the same key are collapsed into a single backend call. The first request does the work; all others wait for and share the result.
 
-**TypeScript -- Promise-based coalescing:**
+**TypeScript - Promise-based coalescing:**
 ```typescript
 class CoalescingCache {
   private inflight = new Map<string, Promise<unknown>>();
@@ -170,7 +170,7 @@ class CoalescingCache {
 }
 ```
 
-**Java -- CompletableFuture coalescing:**
+**Java - CompletableFuture coalescing:**
 ```java
 public class CoalescingCache {
     private final ConcurrentHashMap<String, CompletableFuture<?>> inflight =

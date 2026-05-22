@@ -111,7 +111,7 @@ Failure modes fall into five categories:
 jest --no-cache
 pytest --cache-clear
 go clean -testcache && go test ./...
-cargo test -- --nocapture
+cargo test - --nocapture
 ```
 
 ### 9. Last-Minute "Tiny Fix"

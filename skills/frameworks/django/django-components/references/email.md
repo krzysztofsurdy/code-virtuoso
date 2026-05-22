@@ -25,14 +25,14 @@ send_mail(
 ```
 
 Parameters:
-- `subject` -- email subject line
-- `message` -- plain text body
-- `from_email` -- sender address (uses `DEFAULT_FROM_EMAIL` if `None`)
-- `recipient_list` -- list of recipient addresses
-- `fail_silently` -- suppress `smtplib.SMTPException` on failure
-- `auth_user` / `auth_password` -- override `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD`
-- `connection` -- email backend instance to use
-- `html_message` -- HTML body (creates multipart/alternative email)
+- `subject` - email subject line
+- `message` - plain text body
+- `from_email` - sender address (uses `DEFAULT_FROM_EMAIL` if `None`)
+- `recipient_list` - list of recipient addresses
+- `fail_silently` - suppress `smtplib.SMTPException` on failure
+- `auth_user` / `auth_password` - override `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD`
+- `connection` - email backend instance to use
+- `html_message` - HTML body (creates multipart/alternative email)
 
 Returns: number of successfully delivered messages (0 or 1).
 
@@ -90,23 +90,23 @@ email.send()
 ```
 
 Parameters:
-- `subject` -- subject line
-- `body` -- plain text body
-- `from_email` -- sender (supports `"Name <email>"` format)
-- `to` -- list of recipients
-- `cc` -- list of CC recipients
-- `bcc` -- list of BCC recipients
-- `reply_to` -- list of Reply-To addresses
-- `attachments` -- list of attachments
-- `headers` -- dict of extra email headers
-- `connection` -- email backend instance
+- `subject` - subject line
+- `body` - plain text body
+- `from_email` - sender (supports `"Name <email>"` format)
+- `to` - list of recipients
+- `cc` - list of CC recipients
+- `bcc` - list of BCC recipients
+- `reply_to` - list of Reply-To addresses
+- `attachments` - list of attachments
+- `headers` - dict of extra email headers
+- `connection` - email backend instance
 
 Methods:
-- `send(fail_silently=False)` -- send the email; returns 1 on success, 0 on failure
-- `message()` -- build and return the Python `email.message.EmailMessage` object
-- `recipients()` -- list of all recipients (to + cc + bcc)
-- `attach(filename, content, mimetype)` -- add an attachment
-- `attach_file(path, mimetype=None)` -- attach a file from the filesystem
+- `send(fail_silently=False)` - send the email; returns 1 on success, 0 on failure
+- `message()` - build and return the Python `email.message.EmailMessage` object
+- `recipients()` - list of all recipients (to + cc + bcc)
+- `attach(filename, content, mimetype)` - add an attachment
+- `attach_file(path, mimetype=None)` - attach a file from the filesystem
 
 ### EmailMultiAlternatives
 
@@ -131,8 +131,8 @@ msg.send()
 ```
 
 Methods:
-- `attach_alternative(content, mimetype)` -- add an alternative content representation
-- `body_contains(text)` -- check if text exists in body and all text/* alternatives
+- `attach_alternative(content, mimetype)` - add an alternative content representation
+- `body_contains(text)` - check if text exists in body and all text/* alternatives
 
 ### Attachments
 
@@ -327,9 +327,9 @@ EMAIL_PORT = 8025
 
 - Use `send_mass_mail()` or connection reuse when sending multiple emails
 - Set `DEFAULT_FROM_EMAIL` in settings rather than hardcoding sender addresses
-- Use `EmailMultiAlternatives` for HTML emails -- always include a plain text fallback
+- Use `EmailMultiAlternatives` for HTML emails - always include a plain text fallback
 - Use the in-memory backend (`locmem`) in tests via `django.core.mail.outbox`
-- Never set `EMAIL_USE_TLS` and `EMAIL_USE_SSL` both to `True` -- they are mutually exclusive
+- Never set `EMAIL_USE_TLS` and `EMAIL_USE_SSL` both to `True` - they are mutually exclusive
 - Use templates (`render_to_string`) for email content rather than inline strings
 - Django automatically prevents header injection by rejecting newlines in subject, from, and recipients
 - Use `fail_silently=True` only when email delivery is non-critical

@@ -135,7 +135,7 @@ src/
 
 | Rule | Rationale |
 |---|---|
-| One transaction per use case | A single user action should be atomic -- it either fully succeeds or fully fails |
+| One transaction per use case | A single user action should be atomic - it either fully succeeds or fully fails |
 | Transactions wrap the service call, not individual repository calls | The service orchestrates the full operation |
 | Read-only operations do not need explicit transactions | Most ORMs handle this automatically |
 | Keep transactions short | Long transactions hold locks and increase deadlock risk |
@@ -145,7 +145,7 @@ src/
 **Implicit (single commit):**
 
 ```
-# Simplest approach -- single commit at the end of the service method
+# Simplest approach - single commit at the end of the service method
 this.unitOfWork.persist(entity)
 this.unitOfWork.commit()  # Commits in a single transaction
 ```

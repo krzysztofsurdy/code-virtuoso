@@ -7,8 +7,8 @@ A story captures one piece of user-visible value that a team can deliver inside 
 | Field | Purpose |
 |---|---|
 | Title | Short, imperative. Names the capability the user gains. |
-| User persona | The concrete role that benefits. "User" is too vague -- pick "returning customer", "admin", "first-time visitor". |
-| User story sentence | `As a <persona>, I want <capability>, so that <benefit>.` All three clauses matter -- the `so that` forces you to name the real outcome. |
+| User persona | The concrete role that benefits. "User" is too vague - pick "returning customer", "admin", "first-time visitor". |
+| User story sentence | `As a <persona>, I want <capability>, so that <benefit>.` All three clauses matter - the `so that` forces you to name the real outcome. |
 | Acceptance criteria | Observable pass/fail conditions in Given/When/Then form. At least one happy path and one edge or error path. |
 | Definition of Done | Team-level checklist the story must meet before it closes (tests, docs, review, deployed). |
 
@@ -16,9 +16,9 @@ A story captures one piece of user-visible value that a team can deliver inside 
 
 | Field | When to include |
 |---|---|
-| Parent epic link | Whenever the story rolls up to an epic -- almost always |
+| Parent epic link | Whenever the story rolls up to an epic - almost always |
 | Priority | When the backlog is large enough that order matters |
-| Estimate | After the team refines it -- do not pre-fill from the reporter's guess |
+| Estimate | After the team refines it - do not pre-fill from the reporter's guess |
 | Technical notes | When the implementation has a non-obvious constraint (e.g., must reuse a specific service) |
 | Dependencies | When other tickets must land first |
 | UX / design link | When a mock or prototype exists |
@@ -40,7 +40,7 @@ If a story fails any letter, reshape it before committing the ticket.
 
 ## Acceptance Criteria in Given/When/Then
 
-Keep each scenario focused on one path. Avoid nesting `And` clauses beyond two or three -- if the setup gets complex, the story is doing too much.
+Keep each scenario focused on one path. Avoid nesting `And` clauses beyond two or three - if the setup gets complex, the story is doing too much.
 
 Pattern:
 
@@ -57,21 +57,21 @@ Guidelines:
 
 - Start preconditions from the persona's point of view, not the database state.
 - Put the action in the persona's hands ("the customer submits the form"), not the system's.
-- Assert outcomes the persona can see or that an external observer can verify -- not private implementation state.
+- Assert outcomes the persona can see or that an external observer can verify - not private implementation state.
 - Cover at least one non-happy path (invalid input, empty state, permission denied).
 
 ## Questionnaire
 
 Ask these in this order. Batch items 1-3 in a single prompt when the tool supports it.
 
-1. **Persona** -- who benefits? (free text; offer common ones if the project has them)
-2. **Capability** -- what can they do after this ships? (free text, one sentence)
-3. **Benefit** -- why does it matter to them? (free text, one sentence)
-4. **Happy path acceptance** -- describe the main success flow (free text, converted to Given/When/Then)
-5. **Edge or error path** -- pick one scenario: invalid input / empty state / permission denied / concurrency / timeout / other (free text)
-6. **Parent epic** -- link or "none"
-7. **Priority** -- P0 / P1 / P2 / P3 / skip
-8. **Notes or constraints** -- free text, optional
+1. **Persona** - who benefits? (free text; offer common ones if the project has them)
+2. **Capability** - what can they do after this ships? (free text, one sentence)
+3. **Benefit** - why does it matter to them? (free text, one sentence)
+4. **Happy path acceptance** - describe the main success flow (free text, converted to Given/When/Then)
+5. **Edge or error path** - pick one scenario: invalid input / empty state / permission denied / concurrency / timeout / other (free text)
+6. **Parent epic** - link or "none"
+7. **Priority** - P0 / P1 / P2 / P3 / skip
+8. **Notes or constraints** - free text, optional
 
 ## Output Template
 
@@ -102,7 +102,7 @@ As a <persona>, I want <capability>, so that <benefit>.
 - [ ] Product owner has accepted the demo
 
 ## Notes
-<Technical constraints, links to mocks, dependencies -- omit if empty>
+<Technical constraints, links to mocks, dependencies - omit if empty>
 
 ## Links
 - Parent epic: <link or placeholder>
@@ -117,7 +117,7 @@ Before handing the ticket over, confirm:
 - The title is imperative and names a user capability, not an internal component.
 - Every acceptance criterion is observable from outside the system.
 - No acceptance criterion uses the words "properly", "correctly", "well", or "fast" without a measurable threshold.
-- The story fits in a sprint -- if unsure, split it.
+- The story fits in a sprint - if unsure, split it.
 - The `so that` clause names a real user or business benefit, not a restatement of the capability.
 
 ## Common Anti-Patterns

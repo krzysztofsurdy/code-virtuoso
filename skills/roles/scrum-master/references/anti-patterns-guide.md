@@ -27,10 +27,10 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 **Root cause**: The SM has a project management background and defaults to command-and-control. Or the organization expects the SM to be a project manager with a new title.
 
 **Correction**:
-1. Stop assigning tasks -- let the team self-assign during Sprint Planning
+1. Stop assigning tasks - let the team self-assign during Sprint Planning
 2. Replace status tracking with Sprint Goal progress tracking
 3. Coach the team to report their own progress in the Daily Scrum
-4. Push back on management requests for individual status reports -- offer team-level Sprint Goal progress instead
+4. Push back on management requests for individual status reports - offer team-level Sprint Goal progress instead
 5. Use a delegation board to make explicit which decisions belong to the team
 
 ### The Technical Lead
@@ -77,7 +77,7 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 1. "Protect the Sprint" means protecting focus on the Sprint Goal, not preventing all communication
 2. Allow stakeholders to attend Sprint Reviews and provide feedback directly
 3. Coach the team on how to handle ad-hoc requests: acknowledge, add to the backlog, discuss in refinement
-4. Be a filter for urgency, not for information -- the team needs context to make good decisions
+4. Be a filter for urgency, not for information - the team needs context to make good decisions
 
 ### The Hero
 
@@ -92,7 +92,7 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 2. Track which impediments the team resolved themselves vs which the SM resolved
 3. Set a target: each Sprint, the team should resolve a higher percentage of impediments independently
 4. Delegate impediment resolution to team members when possible
-5. Accept that some impediments will take longer when the team resolves them -- the learning is worth the delay
+5. Accept that some impediments will take longer when the team resolves them - the learning is worth the delay
 
 ---
 
@@ -107,11 +107,11 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 **Root cause**: The SM is uncomfortable with confrontation or lacks skills in conflict facilitation.
 
 **Correction**:
-1. Address conflicts early when they are small -- waiting makes them harder
+1. Address conflicts early when they are small - waiting makes them harder
 2. Use objective observations: "I noticed X happened. What was the impact?" rather than accusations
 3. Refer to working agreements: "We agreed to Y. What happened here?"
 4. Facilitate a structured conversation between conflicting parties using the COIN model: Context, Observation, Impact, Next steps
-5. Practice -- conflict facilitation is a skill that improves with use
+5. Practice - conflict facilitation is a skill that improves with use
 
 ### The Comfortable Enabler
 
@@ -122,10 +122,10 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 **Root cause**: The SM values team harmony over team growth. Or the SM does not have a clear picture of what "better" looks like.
 
 **Correction**:
-1. Track improvement trends -- show the team their trajectory
+1. Track improvement trends - show the team their trajectory
 2. Ask: "Are we getting better? How do we know?"
 3. Introduce stretch goals: "What would world-class look like for this team?"
-4. Bring external perspectives -- share how other teams approach similar challenges
+4. Bring external perspectives - share how other teams approach similar challenges
 5. Challenge gently but persistently: "We have talked about this in three retrospectives. What is different this time?"
 
 ---
@@ -143,7 +143,7 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 **Correction**:
 1. Understand the purpose behind each scrum rule before enforcing it
 2. Ask: "What problem does this rule solve? Is there a better way to solve that problem in our context?"
-3. Follow the scrum principle of inspect-and-adapt -- if a practice is not working, experiment with alternatives
+3. Follow the scrum principle of inspect-and-adapt - if a practice is not working, experiment with alternatives
 4. Focus on outcomes: are we delivering value incrementally and improving continuously?
 
 ### The Ceremony Robot
@@ -155,11 +155,11 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 **Root cause**: The SM has a routine that works and does not adapt it. Or the SM lacks a repertoire of facilitation techniques.
 
 **Correction**:
-1. Rotate retrospective formats -- see the facilitation techniques reference
+1. Rotate retrospective formats - see the facilitation techniques reference
 2. Start events with an unexpected question or activity to reset energy
 3. Ask the team: "Is this event valuable to you? What would make it more valuable?"
-4. Skip optional elements when the team does not need them -- adapt the event to the Sprint context
-5. Bring data to events -- concrete numbers create engagement that routines do not
+4. Skip optional elements when the team does not need them - adapt the event to the Sprint context
+5. Bring data to events - concrete numbers create engagement that routines do not
 
 ---
 
@@ -174,10 +174,10 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 **Root cause**: Management asks for velocity reports as a productivity measure. The SM does not push back on this misuse.
 
 **Correction**:
-1. Velocity is a planning tool, not a performance metric -- use it only for Sprint capacity forecasting
-2. Never compare velocity across teams -- different teams use different scales
+1. Velocity is a planning tool, not a performance metric - use it only for Sprint capacity forecasting
+2. Never compare velocity across teams - different teams use different scales
 3. Track outcome metrics instead: Sprint Goal completion rate, escaped defects, cycle time
-4. Push back on management requests for velocity as a KPI -- explain why it is counterproductive
+4. Push back on management requests for velocity as a KPI - explain why it is counterproductive
 5. If velocity increases, ask: "Is quality also improving?" Check escaped defects and rework rate
 
 ### The Dashboard Obsessive
@@ -191,7 +191,7 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 **Correction**:
 1. Limit to 3-5 metrics that the team finds useful for their own improvement
 2. Ask the team: "Which of these metrics help you make better decisions?"
-3. Automate metric collection where possible -- manual tracking is unsustainable
+3. Automate metric collection where possible - manual tracking is unsustainable
 4. Review metrics in retrospectives, not in separate reporting meetings
 5. Drop any metric that has not influenced a decision in the last month
 

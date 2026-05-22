@@ -43,7 +43,7 @@ Shipping teams alongside the skill that consumes them keeps the distribution sel
 | `sequential` | Each phase depends on the previous. One agent works at a time. |
 | `parallel` | Multiple agents work simultaneously on independent tasks. A lead dispatches and synthesizes. |
 | `hybrid` | Some phases are sequential (requirements before design), some are parallel (frontend and backend implement simultaneously). |
-| `war-room` | A decision forum. Agents take positions, challenge each other, and the user decides. Agents reason from knowledge only -- no file modification or code execution. |
+| `war-room` | A decision forum. Agents take positions, challenge each other, and the user decides. Agents reason from knowledge only - no file modification or code execution. |
 
 ### Field Rules
 
@@ -55,7 +55,7 @@ Shipping teams alongside the skill that consumes them keeps the distribution sel
 
 ## Body Sections
 
-The body is the team's operational protocol -- the instructions a lead agent follows to coordinate the team.
+The body is the team's operational protocol - the instructions a lead agent follows to coordinate the team.
 
 ### Required Sections
 
@@ -78,7 +78,7 @@ The body is the team's operational protocol -- the instructions a lead agent fol
 
 ### Spawning Section
 
-Every team file should include a Spawning section that describes how to instantiate the team. Platform capabilities vary -- the spawning section covers both modes:
+Every team file should include a Spawning section that describes how to instantiate the team. Platform capabilities vary - the spawning section covers both modes:
 
 **Peer mode** (platforms with agent-to-agent messaging, e.g. experimental agent teams):
 1. Create a team with the agents listed in the frontmatter

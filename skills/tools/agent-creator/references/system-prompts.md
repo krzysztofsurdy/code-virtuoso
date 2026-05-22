@@ -1,6 +1,6 @@
 # System Prompt Patterns
 
-The body of an agent file is its system prompt. The orchestrator receives only what the agent returns -- so the prompt must establish a contract the agent can deliver on.
+The body of an agent file is its system prompt. The orchestrator receives only what the agent returns - so the prompt must establish a contract the agent can deliver on.
 
 ## The Five-Section Contract
 
@@ -58,7 +58,7 @@ Numbered steps the agent runs through. Favour 3-7 steps. Fewer, and the process 
 5. Document findings in the output format
 ```
 
-Each step should be an action verb. Avoid process steps that are really rules ("always include line numbers" -- that belongs in Rules).
+Each step should be an action verb. Avoid process steps that are really rules ("always include line numbers" - that belongs in Rules).
 
 ### Rules
 
@@ -70,10 +70,10 @@ Constraints and guardrails. This is where you prevent the agent from drifting.
 - Read files before making claims about their contents
 - Stay focused on the investigation question
 - Do not suggest changes unless specifically asked
-- If a trail goes cold, note it and move on -- do not fabricate
+- If a trail goes cold, note it and move on - do not fabricate
 ```
 
-Rules should be short imperatives. If a rule needs a paragraph of justification, it is probably doing too much -- split it.
+Rules should be short imperatives. If a rule needs a paragraph of justification, it is probably doing too much - split it.
 
 ### Output
 
@@ -86,7 +86,7 @@ Good:
 ### Investigation: [restated question]
 
 Entry points:
-- path/to/file:line -- description
+- path/to/file:line - description
 
 Code flow:
 1. Step-by-step description
@@ -129,7 +129,7 @@ A directory, file path, or module to scan.
 
 ## Rules
 - Only flag smells you can cite with file:line evidence
-- Do not rewrite code -- produce findings, not diffs
+- Do not rewrite code - produce findings, not diffs
 - Skip generated files and vendor directories
 - Rank findings by impact, not by file order
 
@@ -152,7 +152,7 @@ Summary:
 ### Role: QA Engineer with Memory
 
 ```markdown
-You are the team's QA engineer. You own quality -- test plans, exploratory
+You are the team's QA engineer. You own quality - test plans, exploratory
 testing, bug reports, and release sign-off. You do not fix bugs; you report
 them and gate releases.
 
@@ -170,8 +170,8 @@ A feature description, PR, or release candidate to evaluate.
 ## Rules
 - Block release when any P0 is open
 - Cite acceptance criteria by number in bug reports
-- Do not propose fixes -- describe the defect and expected behaviour
-- Keep memory concise -- prune stale entries
+- Do not propose fixes - describe the defect and expected behaviour
+- Keep memory concise - prune stale entries
 
 ## Output
 ### Test Plan: [feature]
@@ -205,13 +205,13 @@ A problem statement and 3-5 candidate hypotheses.
 ## Process
 1. Spawn one investigator teammate per hypothesis with a focused brief
 2. Have teammates share findings with each other, not just with you
-3. Wait for all teammates to finish -- do not start synthesising early
+3. Wait for all teammates to finish - do not start synthesising early
 4. Identify which hypothesis best explains the evidence
 5. Flag disagreements that need human resolution
 
 ## Rules
-- One hypothesis per teammate -- no overlap
-- Do not investigate yourself -- delegate every thread
+- One hypothesis per teammate - no overlap
+- Do not investigate yourself - delegate every thread
 - Cap at 5 teammates; coordination overhead grows beyond that
 - If all teammates reach the same conclusion, note that consensus in the output
 
@@ -274,7 +274,7 @@ That is a process. Move it to Process.
 You have access to the Read, Grep, and Bash tools. Use Read to read files...
 ```
 
-The tool list is already in the frontmatter. Do not duplicate it in the body -- the body should be platform-portable.
+The tool list is already in the frontmatter. Do not duplicate it in the body - the body should be platform-portable.
 
 ### Open-ended workflows
 
@@ -291,8 +291,8 @@ This is not a workflow. It is four words that mean "go figure it out". Be specif
 
 - Use imperative voice throughout ("read the file", not "you should read the file")
 - Prefer tables for reference material embedded in the prompt (severity levels, category mappings)
-- Keep the whole body under 100 lines when possible -- context is not free
-- Write for another Claude instance, not for a human tutorial reader -- skip the "welcome" and "glossary"
+- Keep the whole body under 100 lines when possible - context is not free
+- Write for another Claude instance, not for a human tutorial reader - skip the "welcome" and "glossary"
 - Test the agent on a real task before committing; revise the prompt based on what it actually did
 
 ## Length Targets

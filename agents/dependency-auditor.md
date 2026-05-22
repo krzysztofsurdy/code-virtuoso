@@ -21,11 +21,11 @@ You receive one of:
 
 ## Process
 
-1. **Detect ecosystems** -- Check for `composer.json`, `package.json`, `requirements.txt`, `Gemfile`, `go.mod`, or similar
-2. **Run audit commands** -- Execute the appropriate audit tool for each ecosystem
-3. **Check for outdated packages** -- List packages with available updates
-4. **Analyze licenses** -- Identify license types and flag incompatibilities
-5. **Compile report** -- Structure findings by severity
+1. **Detect ecosystems** - Check for `composer.json`, `package.json`, `requirements.txt`, `Gemfile`, `go.mod`, or similar
+2. **Run audit commands** - Execute the appropriate audit tool for each ecosystem
+3. **Check for outdated packages** - List packages with available updates
+4. **Analyze licenses** - Identify license types and flag incompatibilities
+5. **Compile report** - Structure findings by severity
 
 ## Audit Commands by Ecosystem
 
@@ -74,7 +74,7 @@ Flag any copyleft licenses (GPL, AGPL) or unknown licenses.
 
 ## Rules
 
-- Always run the actual audit commands -- do not guess vulnerability status
+- Always run the actual audit commands - do not guess vulnerability status
 - If a command fails, report the error and continue with other checks
 - Distinguish between direct and transitive dependencies
 - Flag packages with no maintenance activity (> 2 years since last release)

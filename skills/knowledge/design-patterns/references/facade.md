@@ -38,7 +38,7 @@ Use the Facade pattern when:
 - A subsystem's internal complexity should not leak into calling code
 - Multiple consumers need to perform similar multi-step interactions with a subsystem
 - You are integrating modern code on top of a legacy system and want a clean boundary
-- You need clear layer boundaries -- for example, between presentation and business logic
+- You need clear layer boundaries - for example, between presentation and business logic
 - The subsystem's internal structure is likely to change while clients should remain stable
 - You want to reduce the number of types that appear in a client's import list
 
@@ -141,8 +141,8 @@ $repository->clearCache();
 ## Real-World Analogies
 
 - **Travel Agent**: Instead of separately booking flights, hotels, car rentals, and excursions through different agencies, a travel agent handles all the coordination and gives you a single itinerary.
-- **Hospital Reception Desk**: A patient checks in at the front desk, which routes them to the correct department, schedules tests, and coordinates with insurance -- the patient never contacts each department individually.
-- **Smartphone Home Screen**: Tapping an app icon launches a complex chain of OS services -- memory allocation, network access, GPU rendering -- but the user only sees a single tap-to-open gesture.
+- **Hospital Reception Desk**: A patient checks in at the front desk, which routes them to the correct department, schedules tests, and coordinates with insurance - the patient never contacts each department individually.
+- **Smartphone Home Screen**: Tapping an app icon launches a complex chain of OS services - memory allocation, network access, GPU rendering - but the user only sees a single tap-to-open gesture.
 - **API Gateway**: A single endpoint aggregates calls to multiple backend services, translating between external consumers and internal microservices.
 
 ## Pros and Cons
@@ -159,7 +159,7 @@ $repository->clearCache();
 - A facade that tries to cover every subsystem operation risks becoming an oversized god object
 - Simplification may hide useful subsystem features that power users need
 - Trivial subsystems gain no benefit from an extra abstraction layer
-- The facade itself becomes a maintenance bottleneck -- every subsystem change may require a facade update
+- The facade itself becomes a maintenance bottleneck - every subsystem change may require a facade update
 - If the facade goes down, all clients that depend on it are affected
 - Developers still need subsystem knowledge for edge cases that the facade does not cover
 

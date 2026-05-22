@@ -18,7 +18,7 @@ The Django Tasks framework (new in Django 6.0) provides a built-in way to define
 ### Task Lifecycle
 
 1. Task function is decorated with `@task`
-2. Task is enqueued via `.enqueue()` -- returns a `TaskResult`
+2. Task is enqueued via `.enqueue()` - returns a `TaskResult`
 3. Worker claims the task from the backend
 4. Worker executes the function
 5. Result (success or error) is saved back to the backend
@@ -81,8 +81,8 @@ def email_users(context, emails, subject, message):
 ```
 
 Context properties:
-- `context.attempt` -- current attempt number
-- `context.task_result` -- associated `TaskResult` instance
+- `context.attempt` - current attempt number
+- `context.task_result` - associated `TaskResult` instance
 
 ### Modifying Task Parameters
 
@@ -120,10 +120,10 @@ result = await email_users.aenqueue(
 All task arguments and return values must be JSON-serializable:
 
 ```python
-# FAILS -- datetime not JSON serializable
+# FAILS - datetime not JSON serializable
 process_data.enqueue(datetime.now())
 
-# FAILS -- tuples become lists after JSON round-trip
+# FAILS - tuples become lists after JSON round-trip
 @task()
 def double_dictionary(key):
     return {key: key * 2}
@@ -194,8 +194,8 @@ result.errors[0].traceback        # String traceback for debugging
 ```
 
 `TaskError` attributes:
-- `exception_class` -- the exception type (no values included)
-- `traceback` -- string representation of the full traceback
+- `exception_class` - the exception type (no values included)
+- `traceback` - string representation of the full traceback
 
 ## Configuration
 

@@ -182,7 +182,7 @@ Replace method calls with direct code if the method adds no meaningful abstracti
 
 ## Related Smells
 
-- **Dead Code**: Unreachable or unused code blocks -- closely related, but Dead Code refers to code that was once active
+- **Dead Code**: Unreachable or unused code blocks - closely related, but Dead Code refers to code that was once active
 - **Lazy Class**: A class that contributes too little to justify its existence in the codebase
 - **Middle Man**: A class that exists solely to forward calls to another, adding a layer without adding value
 - **Feature Envy**: Methods that rely more heavily on another class's features than their own

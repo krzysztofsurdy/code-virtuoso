@@ -6,16 +6,16 @@ user-invocable: true
 
 # PHP Version Upgrade
 
-Upgrade one minor version at a time. Never skip versions -- each step surfaces deprecations that become errors in the next release. Every upgrade follows the same cycle: audit, automate, test, deploy.
+Upgrade one minor version at a time. Never skip versions - each step surfaces deprecations that become errors in the next release. Every upgrade follows the same cycle: audit, automate, test, deploy.
 
 ## Core Principles
 
 | Principle | Meaning |
 |---|---|
-| **Changelog first** | Before any upgrade, search the web for the official PHP migration guide (php.net/migration) or ask the user for the changelog -- never rely on static knowledge alone |
-| **One version at a time** | Upgrade 8.1 -> 8.2 -> 8.3 -> 8.4 sequentially -- skipping versions makes it impossible to isolate breakage |
-| **Fix deprecations before upgrading** | Deprecations in version N become errors in version N+1 -- treat them as mandatory fixes |
-| **Automate first, manual second** | Run Rector and PHPCompatibility before touching code by hand -- they catch 80%+ of required changes |
+| **Changelog first** | Before any upgrade, search the web for the official PHP migration guide (php.net/migration) or ask the user for the changelog - never rely on static knowledge alone |
+| **One version at a time** | Upgrade 8.1 -> 8.2 -> 8.3 -> 8.4 sequentially - skipping versions makes it impossible to isolate breakage |
+| **Fix deprecations before upgrading** | Deprecations in version N become errors in version N+1 - treat them as mandatory fixes |
+| **Automate first, manual second** | Run Rector and PHPCompatibility before touching code by hand - they catch 80%+ of required changes |
 | **Prove it with tests** | Never consider an upgrade complete without a passing test suite on the target version |
 | **Pin your platform** | Set `config.platform.php` in `composer.json` to match your lowest deployment target |
 
@@ -92,11 +92,11 @@ See [Upgrade Process Reference](references/upgrade-process.md) for detailed tool
 
 | Tool | Purpose | When to Use |
 |---|---|---|
-| **Rector** | Automated AST-based code transformation | First step after auditing -- handles most mechanical changes |
-| **PHPCompatibility** | PHP_CodeSniffer ruleset for cross-version compatibility | Audit phase -- identifies all incompatible code before you start |
-| **php-parallel-lint** | Parallel syntax checking (~20x faster than serial) | Audit phase -- catches syntax errors under the new version |
-| **PHPStan/Psalm** | Static analysis | Verification phase -- catches type errors after transformation |
-| **symfony/phpunit-bridge** | Deprecation summary in test output | Ongoing -- monitors deprecation count during upgrades |
+| **Rector** | Automated AST-based code transformation | First step after auditing - handles most mechanical changes |
+| **PHPCompatibility** | PHP_CodeSniffer ruleset for cross-version compatibility | Audit phase - identifies all incompatible code before you start |
+| **php-parallel-lint** | Parallel syntax checking (~20x faster than serial) | Audit phase - catches syntax errors under the new version |
+| **PHPStan/Psalm** | Static analysis | Verification phase - catches type errors after transformation |
+| **symfony/phpunit-bridge** | Deprecation summary in test output | Ongoing - monitors deprecation count during upgrades |
 
 ---
 
@@ -120,7 +120,7 @@ See [Version Changes Reference](references/version-changes.md) for complete per-
 | Skipping versions | Cannot isolate which changes broke what | Always upgrade one version at a time |
 | Ignoring deprecation warnings | Deprecations become fatal errors in the next version | Fix all deprecations before upgrading |
 | Not checking dependencies | Third-party packages may not support the target version | Run `composer outdated` and check support before starting |
-| Using `--ignore-platform-reqs` | Bypasses safety checks, causes runtime errors | Never use it -- fix the actual constraints instead |
+| Using `--ignore-platform-reqs` | Bypasses safety checks, causes runtime errors | Never use it - fix the actual constraints instead |
 | Not pinning `config.platform.php` | Local PHP differs from production, causing install mismatches | Always set it to match production |
 | Large unreviewed Rector runs | Rector can make incorrect transformations in edge cases | Always dry-run first, review changes, run on small batches |
 | Forgetting PHP extensions | Extensions change behavior or get deprecated between versions | Audit all required extensions before upgrading |

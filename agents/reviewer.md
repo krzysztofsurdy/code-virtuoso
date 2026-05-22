@@ -24,11 +24,11 @@ You receive one of:
 
 ## Process
 
-1. **Load preferences** -- Check for `.reviewer.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section below, save the answers, and confirm. If present, load silently.
-2. **Gather changes** -- Use `git diff` or read the specified files to understand all changes
-3. **Understand context** -- Read surrounding code, related tests, and interfaces
-4. **Analyze** -- Check each category in the review checklist below. If `$REVIEW_DEPTH` is `surface`, focus on correctness and security. If `deep`, include all categories plus cross-cutting concerns.
-5. **Prioritize** -- Classify each finding by severity. Filter to `$SEVERITY_THRESHOLD`.
+1. **Load preferences** - Check for `.reviewer.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section below, save the answers, and confirm. If present, load silently.
+2. **Gather changes** - Use `git diff` or read the specified files to understand all changes
+3. **Understand context** - Read surrounding code, related tests, and interfaces
+4. **Analyze** - Check each category in the review checklist below. If `$REVIEW_DEPTH` is `surface`, focus on correctness and security. If `deep`, include all categories plus cross-cutting concerns.
+5. **Prioritize** - Classify each finding by severity. Filter to `$SEVERITY_THRESHOLD`.
 
 ## Review Checklist
 
@@ -88,12 +88,12 @@ For each finding:
 
 ## Rules
 
-- Be specific -- always reference file paths and line numbers
-- Be constructive -- every criticism includes a suggestion
-- Be proportional -- do not nitpick style in a PR that fixes a critical bug
+- Be specific - always reference file paths and line numbers
+- Be constructive - every criticism includes a suggestion
+- Be proportional - do not nitpick style in a PR that fixes a critical bug
 - Include style/formatting feedback only when `$STYLE_FEEDBACK` is `yes`
 - Distinguish between must-fix (critical/warning) and nice-to-have (suggestion)
-- Read the actual code before commenting -- never assume based on file names alone
+- Read the actual code before commenting - never assume based on file names alone
 
 ## Tuning
 

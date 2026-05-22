@@ -6,7 +6,7 @@ The marketplace catalog lives at `.claude-plugin/marketplace.json` in a dedicate
 
 | Field     | Type   | Description                                                                                                                                                              |
 |-----------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `name`    | string | Marketplace identifier (kebab-case, no spaces). Public-facing -- users see it when installing: `/plugin install my-tool@your-marketplace`.                               |
+| `name`    | string | Marketplace identifier (kebab-case, no spaces). Public-facing - users see it when installing: `/plugin install my-tool@your-marketplace`.                               |
 | `owner`   | object | `{ "name": "...", "email": "..." }`. `name` required, `email` optional.                                                                                                  |
 | `plugins` | array  | List of plugin entries.                                                                                                                                                  |
 
@@ -156,13 +156,13 @@ For monorepos, avoids cloning the full repo:
 
 `strict` (default `true`) controls whether `plugin.json` is the authoritative source for component definitions.
 
-- **`strict: true`** (default) -- `plugin.json` owns component paths. Marketplace entry cannot override `commands`, `agents`, `hooks`, `mcpServers`, `lspServers`. Safer for plugins you do not control.
-- **`strict: false`** -- Marketplace entry may override/augment component paths. Useful when:
+- **`strict: true`** (default) - `plugin.json` owns component paths. Marketplace entry cannot override `commands`, `agents`, `hooks`, `mcpServers`, `lspServers`. Safer for plugins you do not control.
+- **`strict: false`** - Marketplace entry may override/augment component paths. Useful when:
   - The plugin has no `plugin.json` (single-plugin repo with everything at the root)
   - You want to add extra hooks or MCP servers at the marketplace layer
   - You are building a single-plugin marketplace where plugin and marketplace share the same root
 
-If `strict: false` is set but the plugin also has a `plugin.json` defining components, you will see the error: `Plugin <name> has conflicting manifests: both plugin.json and marketplace entry specify components.` -- remove the duplicate definitions or flip `strict` back to `true`.
+If `strict: false` is set but the plugin also has a `plugin.json` defining components, you will see the error: `Plugin <name> has conflicting manifests: both plugin.json and marketplace entry specify components.` - remove the duplicate definitions or flip `strict` back to `true`.
 
 ## Minimal Valid Marketplace
 

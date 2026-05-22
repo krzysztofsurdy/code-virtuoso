@@ -7,7 +7,7 @@ user-invocable: false
 
 # Git Workflow
 
-Effective version control is not just about tracking changes -- it is about enabling teams to collaborate predictably, release confidently, and maintain a history that tells a coherent story. The right workflow depends on team size, release cadence, and how much process the project can absorb without slowing down.
+Effective version control is not just about tracking changes - it is about enabling teams to collaborate predictably, release confidently, and maintain a history that tells a coherent story. The right workflow depends on team size, release cadence, and how much process the project can absorb without slowing down.
 
 ## Choosing a Branching Strategy
 
@@ -24,10 +24,10 @@ No single branching model fits every team. The right choice depends on how often
 
 ### Decision Guide
 
-1. **Do you deploy continuously?** -- Use trunk-based development. Short-lived branches (hours, not days), feature flags for incomplete work, and strong CI are prerequisites.
-2. **Do you deploy on merge but want review gates?** -- Use GitHub Flow. One long-lived branch (main), feature branches, pull requests as the merge gate.
-3. **Do you ship versioned releases on a schedule?** -- Use Git Flow. Separate develop and main branches, release branches for stabilization, hotfix branches for emergency patches.
-4. **Do you promote through environments?** -- Use GitLab Flow. Environment branches (staging, production) sit downstream of main, and merges flow in one direction.
+1. **Do you deploy continuously?** - Use trunk-based development. Short-lived branches (hours, not days), feature flags for incomplete work, and strong CI are prerequisites.
+2. **Do you deploy on merge but want review gates?** - Use GitHub Flow. One long-lived branch (main), feature branches, pull requests as the merge gate.
+3. **Do you ship versioned releases on a schedule?** - Use Git Flow. Separate develop and main branches, release branches for stabilization, hotfix branches for emergency patches.
+4. **Do you promote through environments?** - Use GitLab Flow. Environment branches (staging, production) sit downstream of main, and merges flow in one direction.
 
 See [Branching Strategies Reference](references/branching-strategies.md) for detailed mechanics, feature flag integration, and migration paths between strategies.
 
@@ -91,17 +91,17 @@ Pull requests are the primary collaboration point in most git workflows. Their q
 
 | PR Size (lines changed) | Review Quality | Recommended |
 |---|---|---|
-| < 50 | Excellent -- reviewer catches most issues | Ideal for stacked PRs |
-| 50-200 | Good -- manageable cognitive load | Sweet spot for most changes |
-| 200-400 | Acceptable -- requires focused review time | Upper bound for single reviews |
-| 400+ | Poor -- reviewer fatigue, defects slip through | Split into smaller PRs |
+| < 50 | Excellent - reviewer catches most issues | Ideal for stacked PRs |
+| 50-200 | Good - manageable cognitive load | Sweet spot for most changes |
+| 200-400 | Acceptable - requires focused review time | Upper bound for single reviews |
+| 400+ | Poor - reviewer fatigue, defects slip through | Split into smaller PRs |
 
 ### Core PR Practices
 
-- **One concern per PR** -- A PR should do one thing: add a feature, fix a bug, refactor a module. Mixing concerns makes review harder and reverts riskier.
-- **Write a clear description** -- State what changed, why it changed, and how to verify it. Link to the relevant ticket or issue.
-- **Keep the diff reviewable** -- Move large mechanical changes (renames, formatting) into separate PRs from logic changes.
-- **Respond to feedback promptly** -- Stale PRs accumulate merge conflicts and block dependent work.
+- **One concern per PR** - A PR should do one thing: add a feature, fix a bug, refactor a module. Mixing concerns makes review harder and reverts riskier.
+- **Write a clear description** - State what changed, why it changed, and how to verify it. Link to the relevant ticket or issue.
+- **Keep the diff reviewable** - Move large mechanical changes (renames, formatting) into separate PRs from logic changes.
+- **Respond to feedback promptly** - Stale PRs accumulate merge conflicts and block dependent work.
 
 ### Merge Strategies
 
@@ -194,7 +194,7 @@ git merge hotfix/fix-auth-crash
 
 | Reference | Contents |
 |---|---|
-| [Branching Strategies](references/branching-strategies.md) | Trunk-based, GitHub Flow, Git Flow, GitLab Flow -- mechanics, feature flags, comparison matrix |
+| [Branching Strategies](references/branching-strategies.md) | Trunk-based, GitHub Flow, Git Flow, GitLab Flow - mechanics, feature flags, comparison matrix |
 | [Commit Conventions](references/commit-conventions.md) | Conventional commits format, scope patterns, semantic versioning, changelog automation, git hooks |
 | [PR Patterns](references/pr-patterns.md) | Size guidelines, description templates, CODEOWNERS, merge strategies, branch protection, stacked PRs |
 

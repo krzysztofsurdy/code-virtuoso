@@ -30,7 +30,7 @@ Describe the problem being solved. Be specific about who experiences it and what
 >
 > **Why** it matters: [Business impact, user pain, or missed opportunity]
 >
-> **How** we know: [Evidence -- support tickets, analytics, user research, stakeholder input]
+> **How** we know: [Evidence - support tickets, analytics, user research, stakeholder input]
 
 ### 3. Success Metrics
 

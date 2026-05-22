@@ -8,7 +8,7 @@ Catalog of question types organized by brainstorming phase and purpose. Each cat
 
 - **One question per message.** Never combine two questions into one. Compound questions produce partial answers.
 - **Open before closed.** Start each category with exploratory questions ("what," "why," "how"), then narrow with choice questions ("which of these," "would you prefer") only after the space is understood.
-- **Follow the energy.** When the user gives a long, enthusiastic answer, follow up on what excited them. When they give a short answer, the topic may be settled -- move on.
+- **Follow the energy.** When the user gives a long, enthusiastic answer, follow up on what excited them. When they give a short answer, the topic may be settled - move on.
 - **Name what is missing.** If an important topic has not surfaced naturally, bring it up explicitly rather than hoping the user will volunteer it.
 
 ---
@@ -76,7 +76,7 @@ Catalog of question types organized by brainstorming phase and purpose. Each cat
 | "What technology decisions have already been made that we cannot change?" | To identify locked-in choices |
 | "What is the team's current capacity and expertise?" | To match scope to reality |
 | "Are there regulatory, compliance, or security requirements?" | For domains like finance, health, government |
-| "What is the budget -- time, money, or both?" | To set realistic boundaries |
+| "What is the budget - time, money, or both?" | To set realistic boundaries |
 | "What has been tried before, and why did it fail or get abandoned?" | To avoid repeating known failures |
 
 ### Closed
@@ -171,7 +171,7 @@ Catalog of question types organized by brainstorming phase and purpose. Each cat
 |---|---|
 | **Inversion** | "What if the opposite were true? What if users do NOT want real-time updates?" |
 | **Scaling** | "Does this still work with 10x the users? With 100x?" |
-| **Removal** | "What if we removed [feature] entirely -- what breaks?" |
+| **Removal** | "What if we removed [feature] entirely - what breaks?" |
 | **Origin probe** | "Where did the requirement for [X] come from? Is it based on data or intuition?" |
 | **Constraint flip** | "You said it must be [X]. What would change if that constraint did not exist?" |
 | **Historical challenge** | "Has [assumption] been validated, or is it inherited from a previous project?" |
@@ -187,7 +187,7 @@ Catalog of question types organized by brainstorming phase and purpose. Each cat
 
 - When the user has clearly thought through the topic and has evidence
 - When a constraint comes from an authority the user cannot change (legal, regulatory)
-- When challenging would feel adversarial rather than collaborative -- reframe as curiosity instead
+- When challenging would feel adversarial rather than collaborative - reframe as curiosity instead
 
 ---
 
@@ -199,7 +199,7 @@ Stick to goal-seeking and user/stakeholder questions. You are understanding the 
 
 ### During Divergence (Phase 2)
 
-Work through all categories. This is where the full question catalog applies. Spend the most time here -- the quality of the spec depends on the quality of the divergence phase.
+Work through all categories. This is where the full question catalog applies. Spend the most time here - the quality of the spec depends on the quality of the divergence phase.
 
 ### During Convergence (Phase 3)
 

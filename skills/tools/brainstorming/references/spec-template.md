@@ -1,6 +1,6 @@
 # Spec Template
 
-This is the output template that every brainstorming session produces. Each section is mandatory unless explicitly inapplicable, in which case state "N/A -- [reason]."
+This is the output template that every brainstorming session produces. Each section is mandatory unless explicitly inapplicable, in which case state "N/A - [reason]."
 
 Scale the depth of each section to the complexity of the project. A small feature gets a sentence or two per section. A system redesign gets paragraphs.
 
@@ -25,7 +25,7 @@ proposed solution.
 
 Bad: "We need a caching layer."
 Good: "Product pages take 4 seconds to load under normal traffic, causing a 35% bounce
-rate. The database is the bottleneck -- the same queries run thousands of times per hour
+rate. The database is the bottleneck - the same queries run thousands of times per hour
 with identical results."]
 
 ---
@@ -126,8 +126,8 @@ Rules:
 - Each question should note who is responsible for answering it and by when
 - If an open question DOES block the spec, it must be resolved before approval]
 
-- [ ] [Question] -- Owner: [who], Due: [when]
-- [ ] [Question] -- Owner: [who], Due: [when]
+- [ ] [Question] - Owner: [who], Due: [when]
+- [ ] [Question] - Owner: [who], Due: [when]
 
 ---
 

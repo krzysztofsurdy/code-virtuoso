@@ -1,6 +1,6 @@
 # Recovery
 
-Things go wrong. Branches get force-pushed, unmerged work gets deleted, rebases go sideways. Git is designed to be recoverable -- almost nothing is truly lost if you know where to look. The reflog is your safety net.
+Things go wrong. Branches get force-pushed, unmerged work gets deleted, rebases go sideways. Git is designed to be recoverable - almost nothing is truly lost if you know where to look. The reflog is your safety net.
 
 ## Understanding the Reflog
 
@@ -28,7 +28,7 @@ git reflog --date=iso
 
 ### Force-Pushed the Wrong Branch
 
-You ran `git push --force` and overwrote commits on a branch -- either your own or someone else's.
+You ran `git push --force` and overwrote commits on a branch - either your own or someone else's.
 
 **If you overwrote your own branch:**
 
@@ -128,7 +128,7 @@ A rebase is producing conflicts on every commit and you want to start over.
 **During the rebase (before completing):**
 
 ```bash
-# Abort the rebase entirely -- returns to pre-rebase state
+# Abort the rebase entirely - returns to pre-rebase state
 git rebase --abort
 ```
 
@@ -237,11 +237,11 @@ When something goes wrong:
 
 1. **Do not panic.** If it was committed, it is almost certainly recoverable.
 2. **Stop executing commands.** Do not compound the mistake with more actions.
-3. **Check the reflog** -- `git reflog` is always the first step.
-4. **Identify the target commit** -- the SHA of the state you want to return to.
-5. **Restore the state** -- `git reset`, `git checkout -b`, or `git push --force-with-lease` as appropriate.
-6. **Verify the recovery** -- check `git log`, `git diff`, and run tests.
-7. **Communicate** -- if the mistake affected a shared branch, notify the team immediately.
+3. **Check the reflog** - `git reflog` is always the first step.
+4. **Identify the target commit** - the SHA of the state you want to return to.
+5. **Restore the state** - `git reset`, `git checkout -b`, or `git push --force-with-lease` as appropriate.
+6. **Verify the recovery** - check `git log`, `git diff`, and run tests.
+7. **Communicate** - if the mistake affected a shared branch, notify the team immediately.
 
 ## Reflog Expiry
 

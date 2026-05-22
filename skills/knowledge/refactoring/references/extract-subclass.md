@@ -141,7 +141,7 @@ $manager = new Manager('Bob', 75000, 'Engineering', 5000);
 
 - **Pull Up Method**: Move shared methods from the subclass back into the parent
 - **Push Down Method**: Move specialized methods from the parent into the subclass
-- **Extract Superclass**: The reverse direction -- creating a shared parent for classes that already exist
+- **Extract Superclass**: The reverse direction - creating a shared parent for classes that already exist
 - **Replace Type Code with Subclasses**: Use subclasses to replace a type field and its conditional logic
 - **Replace Conditional with Polymorphism**: Eliminate conditionals by distributing behavior across subclasses
 

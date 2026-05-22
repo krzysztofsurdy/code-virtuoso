@@ -4,7 +4,7 @@
 
 Agents combine language models with tools to create reasoning systems that iteratively work toward solutions. They follow a ReAct (Reasoning + Acting) loop: input, model decision, tool execution, observation, repeat until completion. The `create_agent` function provides a production-ready implementation using LangGraph's graph-based runtime.
 
-Context engineering -- supplying appropriate information and tools in suitable formats -- is the primary factor in agent reliability. Guardrails add safety checks at key execution points, while human-in-the-loop patterns enable human oversight of sensitive operations.
+Context engineering - supplying appropriate information and tools in suitable formats - is the primary factor in agent reliability. Guardrails add safety checks at key execution points, while human-in-the-loop patterns enable human oversight of sensitive operations.
 
 ## Installation
 
@@ -203,7 +203,7 @@ Context engineering is "the number one job of AI Engineers." Agents fail primari
 | State | Conversation-scoped | Messages, files, authentication status, tool results |
 | Store | Cross-conversation | Preferences, insights, historical data |
 
-### Tool Context -- Reading
+### Tool Context - Reading
 
 **State Access:**
 
@@ -236,7 +236,7 @@ def fetch_data(query: str, runtime: ToolRuntime[Context]) -> str:
     return f"Found {len(results)} results"
 ```
 
-### Tool Context -- Writing
+### Tool Context - Writing
 
 **State Updates:**
 
@@ -418,8 +418,8 @@ agent = create_agent(
 ```
 
 The `interrupt_on` parameter accepts:
-- `True` -- interrupt with default settings
-- `False` -- auto-approve
+- `True` - interrupt with default settings
+- `False` - auto-approve
 - `InterruptOnConfig` object with `allowed_decisions` and custom `description`
 
 ### Human Decision Types

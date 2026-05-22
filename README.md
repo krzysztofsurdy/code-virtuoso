@@ -22,7 +22,7 @@
   <a href="https://github.com/krzysztofsurdy/code-virtuoso/actions/workflows/validate-markdown.yml"><img src="https://github.com/krzysztofsurdy/code-virtuoso/actions/workflows/validate-markdown.yml/badge.svg" alt="Validate Markdown"></a>
 </p>
 
-> **What you get:** 30+ curated skills, 19 sub-agents, 7 team role personas, and operational playbooks -- all installable individually or as bundles, based on the open [Agent Skills](https://agentskills.io) standard. Turn your AI coding assistant from a generalist into a domain specialist.
+> **What you get:** 30+ curated skills, 19 sub-agents, 7 team role personas, and operational playbooks - all installable individually or as bundles, based on the open [Agent Skills](https://agentskills.io) standard. Turn your AI coding assistant from a generalist into a domain specialist.
 
 See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
@@ -52,12 +52,12 @@ See [CHANGELOG.md](CHANGELOG.md) for release notes.
 ## Quickstart
 
 ```bash
-# 1. Install (interactive -- pick what you want)
+# 1. Install (interactive - pick what you want)
 npx skills add krzysztofsurdy/code-virtuoso
 
 # 2. Try a skill immediately
 /ticket-writer
-# Follow the prompts -- paste the output into Jira, Linear, or GitHub Issues.
+# Follow the prompts - paste the output into Jira, Linear, or GitHub Issues.
 ```
 
 That is the whole tour. For fine-grained install modes (per-skill, global, offline, auto-update) see [Installation (detailed)](#installation-detailed).
@@ -68,7 +68,7 @@ That is the whole tour. For fine-grained install modes (per-skill, global, offli
 
 - **Battle-tested, not LLM-generated.** Every skill was researched against official docs and community best practices, then hand-curated. No hallucinated API references.
 - **Progressive disclosure keeps your context clean.** Skills load a short `SKILL.md` first and only pull in deeper references when the task calls for them. Less context rot, sharper answers.
-- **One installation, many tools.** Built on the open Agent Skills standard -- works with Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini CLI, and more. No lock-in.
+- **One installation, many tools.** Built on the open Agent Skills standard - works with Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini CLI, and more. No lock-in.
 - **Team-shaped, not pattern-shaped.** The library ships 7 role personas (Product Manager, Architect, Backend Dev, Frontend Dev, QA, PM, Scrum Master) and 15 sub-agents that delegate like a real team rather than a single over-prompted assistant.
 
 ---
@@ -78,7 +78,7 @@ That is the whole tour. For fine-grained install modes (per-skill, global, offli
 | Category | Count | Summary |
 |---|---|---|
 | [Knowledge](#knowledge-skills) | 18 | Principles, craft, process, and agent workflow references |
-| [Tools](#tool-skills) | 9 | Interactive generators -- rules files, tickets, agents, plugins, PR messages, reports, updates |
+| [Tools](#tool-skills) | 9 | Interactive generators - rules files, tickets, agents, plugins, PR messages, reports, updates |
 | [Frameworks](#framework-skills) | 4 | Symfony, Django, LangChain component libraries and upgrade guides |
 | [Playbooks](#playbook-skills) | 5 | Step-by-step procedures for recurring operational tasks |
 | [Roles](#role-skills) | 6 | Team-role reference skills used by role agents |
@@ -138,10 +138,10 @@ Interactive generators. Each is user-invocable via `/skill-name`.
 | Skill | Summary |
 |-------|---------|
 | [Agentic Rules Writer](skills/tools/agentic-rules-writer/SKILL.md) | Generate rules files for Claude Code, Cursor, Windsurf, Copilot, Gemini, Roo Code, or Amp |
-| [Ticket Writer](skills/tools/ticket-writer/SKILL.md) | Write tickets of the right type -- story, subtask, issue, bug, epic, or initiative |
+| [Ticket Writer](skills/tools/ticket-writer/SKILL.md) | Write tickets of the right type - story, subtask, issue, bug, epic, or initiative |
 | [Agent Creator](skills/tools/agent-creator/SKILL.md) | Design a sub-agent with proper frontmatter, tool permissions, isolation, and system prompt |
-| [Plugin Creator](skills/tools/plugin-creator/SKILL.md) | Scaffold a complete Claude Code plugin -- manifest, skills, agents, hooks, MCP/LSP servers |
-| [Brainstorming](skills/tools/brainstorming/SKILL.md) | Pre-implementation design exploration -- turn a vague idea into an approved spec |
+| [Plugin Creator](skills/tools/plugin-creator/SKILL.md) | Scaffold a complete Claude Code plugin - manifest, skills, agents, hooks, MCP/LSP servers |
+| [Brainstorming](skills/tools/brainstorming/SKILL.md) | Pre-implementation design exploration - turn a vague idea into an approved spec |
 | [Using Ecosystem](skills/tools/using-ecosystem/SKILL.md) | Guided tour and discovery advisor for the ecosystem |
 | [PR Message Writer](skills/tools/pr-message-writer/SKILL.md) | Write structured pull request messages with technical documentation and testing instructions |
 | [Report Writer](skills/tools/report-writer/SKILL.md) | Generate standalone HTML reports summarizing changes, investigations, or architectural decisions |
@@ -156,7 +156,7 @@ Interactive generators. Each is user-invocable via `/skill-name`.
 | [Symfony Components](skills/frameworks/symfony/symfony-components/SKILL.md) | 38 Symfony components for PHP 8.3+ and Symfony 7.x |
 | [Symfony Upgrade](skills/frameworks/symfony/symfony-upgrade/SKILL.md) | Deprecation-first upgrade guide for minor and major versions |
 | [Django Components](skills/frameworks/django/django-components/SKILL.md) | 33 Django components for Python 3.10+ and Django 6.0 |
-| [LangChain Components](skills/frameworks/langchain/langchain-components/SKILL.md) | 17 LangChain references -- models, agents, tools, retrieval, LangGraph |
+| [LangChain Components](skills/frameworks/langchain/langchain-components/SKILL.md) | 17 LangChain references - models, agents, tools, retrieval, LangGraph |
 
 ---
 
@@ -166,8 +166,8 @@ Interactive generators. Each is user-invocable via `/skill-name`.
 |-------|---------|
 | [PHP Upgrade](skills/playbooks/php-upgrade/SKILL.md) | PHP version upgrade process with Rector, PHPCompatibility, breaking changes |
 | [Composer Dependencies](skills/playbooks/composer-dependencies/SKILL.md) | Safe dependency updates, security auditing, automated update tools |
-| [Finishing Branch](skills/playbooks/finishing-branch/SKILL.md) | End-to-end branch finishing -- pre-push checks, PR messages, cleanup, recovery |
-| [Ticket Delivery](skills/playbooks/ticket-delivery/SKILL.md) | End-to-end ticket delivery -- analysis, investigation, planning, TDD implementation, commit, and PR |
+| [Finishing Branch](skills/playbooks/finishing-branch/SKILL.md) | End-to-end branch finishing - pre-push checks, PR messages, cleanup, recovery |
+| [Ticket Delivery](skills/playbooks/ticket-delivery/SKILL.md) | End-to-end ticket delivery - analysis, investigation, planning, TDD implementation, commit, and PR |
 | [Worktree Ops](skills/playbooks/worktree-ops/SKILL.md) | Create, list, switch, and remove git worktrees for parallel development sessions |
 
 ---
@@ -191,25 +191,25 @@ Sub-agents follow the [Claude Code sub-agents](https://code.claude.com/docs/en/s
 
 | Kind | Agent | Tools | Isolation | Memory | Purpose |
 |------|-------|-------|-----------|--------|---------|
-| Specialist | [Investigator](agents/investigator.md) | Read, Grep, Glob, Bash | -- | -- | Deep codebase exploration, dependency mapping |
-| Specialist | [Implementer](agents/implementer.md) | All | worktree | -- | TDD red-green-refactor execution |
-| Specialist | [Reviewer](agents/reviewer.md) | Read, Grep, Glob, Bash | -- | -- | Structured code review (SOLID, OWASP, smells) |
-| Specialist | [Refactor Scout](agents/refactor-scout.md) | Read, Grep, Glob, Bash | -- | -- | Code smell scanning, complexity hotspots |
-| Specialist | [Dependency Auditor](agents/dependency-auditor.md) | Bash, Read, Grep, Glob | -- | -- | CVE checks, outdated packages, license audit |
-| Specialist | [Doc Writer](agents/doc-writer.md) | Read, Grep, Glob, Bash, Write, Edit | -- | -- | Changelogs, API docs, migration guides |
-| Specialist | [Migration Planner](agents/migration-planner.md) | Read, Grep, Glob, Bash | -- | -- | Migration safety analysis, rollback paths |
-| Specialist | [Test Gap Analyzer](agents/test-gap-analyzer.md) | Read, Grep, Glob, Bash | -- | -- | Missing test coverage, untested edge cases |
-| Specialist | [Cold Reviewer](agents/cold-reviewer.md) | Read, Grep, Glob, Bash | -- | -- | Zero-context code review, fresh-eyes findings |
-| Specialist | [Acceptance Verifier](agents/acceptance-verifier.md) | Read, Grep, Glob, Bash | -- | -- | Spec compliance checking, criteria coverage matrix |
-| Specialist | [Readiness Checker](agents/readiness-checker.md) | Read, Grep, Glob, Bash | -- | -- | Pre-implementation readiness gate |
-| Specialist | [Course Corrector](agents/course-corrector.md) | Read, Grep, Glob, Bash | -- | -- | Mid-workflow change impact analysis |
-| Role | [Product Manager](agents/product-manager.md) | Read, Grep, Glob, Bash | -- | project | Requirements, PRDs, prioritization |
-| Role | [Architect](agents/architect.md) | Read, Grep, Glob, Bash | -- | project | System design, ADRs, trade-offs |
-| Role | [Backend Dev](agents/backend-dev.md) | Read, Edit, Write, Bash, Grep, Glob | worktree | -- | API implementation, data models, TDD |
-| Role | [Frontend Dev](agents/frontend-dev.md) | Read, Edit, Write, Bash, Grep, Glob | worktree | -- | UI components, accessibility, state |
-| Role | [QA Engineer](agents/qa-engineer.md) | Read, Grep, Glob, Bash | -- | project | Test plans, bug reports, release sign-off |
-| Role | [Project Manager](agents/project-manager.md) | Read, Grep, Glob, Bash | -- | project | PRINCE2 stages, risk, progress tracking |
-| Role | [Scrum Master](agents/scrum-master.md) | Read, Grep, Glob, Bash | -- | -- | Sprint planning, goals, retrospectives |
+| Specialist | [Investigator](agents/investigator.md) | Read, Grep, Glob, Bash | - | - | Deep codebase exploration, dependency mapping |
+| Specialist | [Implementer](agents/implementer.md) | All | worktree | - | TDD red-green-refactor execution |
+| Specialist | [Reviewer](agents/reviewer.md) | Read, Grep, Glob, Bash | - | - | Structured code review (SOLID, OWASP, smells) |
+| Specialist | [Refactor Scout](agents/refactor-scout.md) | Read, Grep, Glob, Bash | - | - | Code smell scanning, complexity hotspots |
+| Specialist | [Dependency Auditor](agents/dependency-auditor.md) | Bash, Read, Grep, Glob | - | - | CVE checks, outdated packages, license audit |
+| Specialist | [Doc Writer](agents/doc-writer.md) | Read, Grep, Glob, Bash, Write, Edit | - | - | Changelogs, API docs, migration guides |
+| Specialist | [Migration Planner](agents/migration-planner.md) | Read, Grep, Glob, Bash | - | - | Migration safety analysis, rollback paths |
+| Specialist | [Test Gap Analyzer](agents/test-gap-analyzer.md) | Read, Grep, Glob, Bash | - | - | Missing test coverage, untested edge cases |
+| Specialist | [Cold Reviewer](agents/cold-reviewer.md) | Read, Grep, Glob, Bash | - | - | Zero-context code review, fresh-eyes findings |
+| Specialist | [Acceptance Verifier](agents/acceptance-verifier.md) | Read, Grep, Glob, Bash | - | - | Spec compliance checking, criteria coverage matrix |
+| Specialist | [Readiness Checker](agents/readiness-checker.md) | Read, Grep, Glob, Bash | - | - | Pre-implementation readiness gate |
+| Specialist | [Course Corrector](agents/course-corrector.md) | Read, Grep, Glob, Bash | - | - | Mid-workflow change impact analysis |
+| Role | [Product Manager](agents/product-manager.md) | Read, Grep, Glob, Bash | - | project | Requirements, PRDs, prioritization |
+| Role | [Architect](agents/architect.md) | Read, Grep, Glob, Bash | - | project | System design, ADRs, trade-offs |
+| Role | [Backend Dev](agents/backend-dev.md) | Read, Edit, Write, Bash, Grep, Glob | worktree | - | API implementation, data models, TDD |
+| Role | [Frontend Dev](agents/frontend-dev.md) | Read, Edit, Write, Bash, Grep, Glob | worktree | - | UI components, accessibility, state |
+| Role | [QA Engineer](agents/qa-engineer.md) | Read, Grep, Glob, Bash | - | project | Test plans, bug reports, release sign-off |
+| Role | [Project Manager](agents/project-manager.md) | Read, Grep, Glob, Bash | - | project | PRINCE2 stages, risk, progress tracking |
+| Role | [Scrum Master](agents/scrum-master.md) | Read, Grep, Glob, Bash | - | - | Sprint planning, goals, retrospectives |
 
 ---
 
@@ -287,19 +287,19 @@ chmod +x .git/hooks/post-merge
 
 Companion tools that pair naturally with this library.
 
-### Beads -- Task Memory for AI Agents
+### Beads - Task Memory for AI Agents
 
 [github.com/steveyegge/beads](https://github.com/steveyegge/beads)
 
 Distributed, git-backed graph issue tracker that gives AI agents persistent, structured memory for long-horizon tasks. Replaces ad-hoc markdown planning files with a dependency-aware task graph.
 
-### GSD -- Spec-Driven Development
+### GSD - Spec-Driven Development
 
 [github.com/gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done)
 
 Meta-prompting and context engineering system for Claude Code, OpenCode, Gemini CLI, and Codex. Targets context rot with spec-driven development, subagent orchestration, and state management.
 
-### Grepika -- Token-Efficient Code Search
+### Grepika - Token-Efficient Code Search
 
 [github.com/agentika-labs/grepika](https://github.com/agentika-labs/grepika)
 
@@ -319,13 +319,13 @@ No. Install only the skills you need with `--skill <name>`, or install a single 
 Run `npx skills update`. For hands-free upkeep, use one of the auto-update snippets above.
 
 **Can I use skills across multiple projects?**
-Yes -- install with `-g` for global availability. Local installs live in the current project only.
+Yes - install with `-g` for global availability. Local installs live in the current project only.
 
 **Can I contribute my own skills or agents?**
 Yes. See [CONTRIBUTING.md](CONTRIBUTING.md) for conventions, the research workflow, `marketplace.json` update rules, and version-bumping policy.
 
 **Why not just prompt-engineer one long CLAUDE.md file?**
-One long rule file consumes context on every request. Skills use progressive disclosure -- metadata sits in context, bodies load only when triggered, deep references load only when explicitly needed. You get specialist knowledge without paying for it until it's relevant.
+One long rule file consumes context on every request. Skills use progressive disclosure - metadata sits in context, bodies load only when triggered, deep references load only when explicitly needed. You get specialist knowledge without paying for it until it's relevant.
 
 ---
 
@@ -345,7 +345,7 @@ Commit conventions are in [CLAUDE.md](CLAUDE.md). No AI co-author lines.
 
 ## License
 
-MIT -- see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
 
 ---
 

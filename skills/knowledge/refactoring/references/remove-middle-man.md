@@ -1,6 +1,6 @@
 ## Overview
 
-Remove Middle Man eliminates a class that does nothing but forward requests to another object. When a class consists primarily of delegation methods -- each one simply calling the same method on an internal collaborator -- the intermediary adds indirection without adding value. Exposing the delegate directly lets clients talk to the real object and trims away the pass-through layer.
+Remove Middle Man eliminates a class that does nothing but forward requests to another object. When a class consists primarily of delegation methods - each one simply calling the same method on an internal collaborator - the intermediary adds indirection without adding value. Exposing the delegate directly lets clients talk to the real object and trims away the pass-through layer.
 
 This technique is the inverse of Hide Delegate and is applied when the middle man has become unnecessary complexity rather than a useful abstraction.
 

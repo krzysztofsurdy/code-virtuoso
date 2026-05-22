@@ -7,7 +7,7 @@ allowed-tools: Read Grep Glob Bash
 
 # Dispatching Parallel Agents
 
-Effective orchestration means knowing when to do work yourself and when to delegate it to focused subagents working in parallel. The core insight is simple: independent work should happen concurrently, not sequentially. But "independent" is the load-bearing word -- getting decomposition wrong turns parallel execution into a coordination nightmare.
+Effective orchestration means knowing when to do work yourself and when to delegate it to focused subagents working in parallel. The core insight is simple: independent work should happen concurrently, not sequentially. But "independent" is the load-bearing word - getting decomposition wrong turns parallel execution into a coordination nightmare.
 
 ## Core Principles
 
@@ -15,7 +15,7 @@ Effective orchestration means knowing when to do work yourself and when to deleg
 |---|---|
 | **Independence over coordination** | If two tasks share state, they are one task. Only dispatch work that can complete without cross-agent communication. |
 | **Precision over hope** | A subagent brief must be specific enough that the agent cannot misinterpret its scope. Vague briefs produce vague results. |
-| **Isolation over sharing** | Each subagent starts with a clean context. It receives exactly what it needs -- nothing inherited, nothing ambient. |
+| **Isolation over sharing** | Each subagent starts with a clean context. It receives exactly what it needs - nothing inherited, nothing ambient. |
 | **Synthesis over concatenation** | The orchestrator's job is not to paste outputs together. It is to resolve conflicts, deduplicate, and produce a coherent whole. |
 | **Fail fast over fail silent** | Every dispatch includes a failure mode. Subagents report blockers immediately rather than guessing past them. |
 
@@ -25,17 +25,17 @@ Effective orchestration means knowing when to do work yourself and when to deleg
 
 | Signal | Example |
 |---|---|
-| Multiple independent areas of investigation | "How does auth work?" + "How does billing work?" -- no shared code path |
+| Multiple independent areas of investigation | "How does auth work?" + "How does billing work?" - no shared code path |
 | Research spanning distinct topics | Investigating a framework upgrade requires checking breaking changes, dependency compatibility, and test coverage separately |
 | Implementation across non-overlapping files | Backend API + frontend component + database migration touching different file sets |
 | Review of independent subsystems | Running a reviewer on module A while running a refactor scout on module B |
-| Repetitive tasks with different inputs | Auditing 5 services for security vulnerabilities -- same process, different targets |
+| Repetitive tasks with different inputs | Auditing 5 services for security vulnerabilities - same process, different targets |
 
 ## When NOT to Parallelize
 
 | Signal | Why Sequential Is Better |
 |---|---|
-| Output of task A is input to task B | Pipeline dependency -- parallelize within stages, not across them |
+| Output of task A is input to task B | Pipeline dependency - parallelize within stages, not across them |
 | Tasks modify overlapping files | Merge conflicts are inevitable and expensive to resolve |
 | Understanding requires full context | Splitting a single complex investigation loses the thread |
 | The problem is not yet understood | Parallelize execution, not exploration of unknowns |
@@ -104,7 +104,7 @@ Some agents will fail, hit blockers, or return incomplete results. Plan for this
 | Pattern | Shape | Best For |
 |---|---|---|
 | **Fan-out / Fan-in** | One orchestrator dispatches N workers, collects all results | Independent tasks with a single synthesis step |
-| **Pipeline** | A feeds B feeds C -- sequential stages, parallel within each stage | Work with clear phase dependencies |
+| **Pipeline** | A feeds B feeds C - sequential stages, parallel within each stage | Work with clear phase dependencies |
 | **Scatter-gather** | Same question to multiple specialists, best/merged answer wins | Getting diverse perspectives on the same problem |
 | **Specialist-per-concern** | Each agent owns one domain (security, performance, correctness) | Multi-dimensional review or analysis |
 | **Map-reduce** | Split input into chunks, process in parallel, merge results | Large-scale repetitive operations |
@@ -119,11 +119,11 @@ A brief is not a wish list. It is a contract that constrains the agent's behavio
 
 **What a good brief contains**:
 - **Task**: One-sentence objective. What must be true when the agent finishes?
-- **Context**: Relevant background -- just enough to understand the task, no more
+- **Context**: Relevant background - just enough to understand the task, no more
 - **Inputs**: File paths, data, references the agent needs to start working
 - **Expected output**: The exact structure and format of the result
 - **Boundaries**: What is explicitly out of scope. What the agent must NOT do.
-- **Failure mode**: What to do when stuck -- report back, skip, or attempt a fallback
+- **Failure mode**: What to do when stuck - report back, skip, or attempt a fallback
 
 **What a good brief does NOT contain**:
 - The orchestrator's full conversation history
@@ -208,7 +208,7 @@ Orchestrator -> [Test Gap Analyzer(module-a), Test Gap Analyzer(module-b), Test 
             -> [Implementer(module-a-tests), Implementer(module-b-tests)]
 ```
 
-Fan-out analysis, then fan-out implementation -- two rounds of parallel dispatch.
+Fan-out analysis, then fan-out implementation - two rounds of parallel dispatch.
 
 ---
 
@@ -257,7 +257,7 @@ Before dispatching subagents:
 
 | Reference | Contents |
 |---|---|
-| [Decomposition Patterns](references/decomposition-patterns.md) | Fan-out/fan-in, pipeline, scatter-gather, specialist-per-concern, map-reduce -- decision criteria, examples with project agents |
+| [Decomposition Patterns](references/decomposition-patterns.md) | Fan-out/fan-in, pipeline, scatter-gather, specialist-per-concern, map-reduce - decision criteria, examples with project agents |
 | [Briefing Template](references/briefing-template.md) | Complete subagent brief template, good vs bad brief examples, output format specification |
 | [Isolation and Merging](references/isolation-and-merging.md) | Context isolation, worktree isolation, result synthesis, conflict resolution, merge strategies |
 | [Anti-Patterns](references/anti-patterns.md) | Detailed anti-pattern descriptions, detection signals, recovery strategies, prevention techniques |

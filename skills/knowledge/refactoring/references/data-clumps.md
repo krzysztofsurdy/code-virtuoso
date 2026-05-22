@@ -2,7 +2,7 @@
 
 ## Overview
 
-Data clumps are groups of variables that repeatedly appear together throughout the codebase -- as method parameters, class fields, or local variable sets. They represent a domain concept that has not yet been given its own name or type. A reliable test: remove one variable from the group and ask whether the remaining ones still make sense together. If they do not, the group is a clump and should be consolidated into a dedicated object.
+Data clumps are groups of variables that repeatedly appear together throughout the codebase - as method parameters, class fields, or local variable sets. They represent a domain concept that has not yet been given its own name or type. A reliable test: remove one variable from the group and ask whether the remaining ones still make sense together. If they do not, the group is a clump and should be consolidated into a dedicated object.
 
 ## Why It's a Problem
 
@@ -177,9 +177,9 @@ Avoid over-engineering by creating classes for every small group of parameters.
 
 ## Related Smells
 
-- **Long Parameter List**: Shares the same core remedies -- Introduce Parameter Object and Preserve Whole Object address both smells
+- **Long Parameter List**: Shares the same core remedies - Introduce Parameter Object and Preserve Whole Object address both smells
 - **Primitive Obsession**: Data clumps are often composed entirely of primitives that should be wrapped in value objects
 - **Feature Envy**: When a class works heavily with another class's clumped data, the data (and its behavior) may belong in a different location
 - **Divergent Change**: Clumps from mixed concerns embedded in one class signal that responsibilities should be separated
 
-Once a data clump is extracted into its own class, look for operations in client code that act on those fields -- they likely belong inside the new class too. Consolidating both the data and its associated logic in one place improves organization and shrinks the overall codebase.
+Once a data clump is extracted into its own class, look for operations in client code that act on those fields - they likely belong inside the new class too. Consolidating both the data and its associated logic in one place improves organization and shrinks the overall codebase.

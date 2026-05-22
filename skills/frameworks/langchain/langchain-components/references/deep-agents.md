@@ -97,7 +97,7 @@ agent = create_deep_agent(model=model)
 
 ## Subagents
 
-Subagents enable deep agents to delegate work while maintaining clean context. They solve context bloat by isolating detailed tool work -- the main agent receives only final results, not intermediate outputs.
+Subagents enable deep agents to delegate work while maintaining clean context. They solve context bloat by isolating detailed tool work - the main agent receives only final results, not intermediate outputs.
 
 ### When to Use Subagents
 
@@ -130,16 +130,16 @@ agent = create_deep_agent(
 ```
 
 Required fields:
-- `name` -- unique identifier used by main agent when calling `task()` tool
-- `description` -- specific, action-oriented explanation
-- `system_prompt` -- custom instructions (does not inherit from main agent)
-- `tools` -- required tool list (does not inherit from main agent)
+- `name` - unique identifier used by main agent when calling `task()` tool
+- `description` - specific, action-oriented explanation
+- `system_prompt` - custom instructions (does not inherit from main agent)
+- `tools` - required tool list (does not inherit from main agent)
 
 Optional fields:
-- `model` -- override main agent's model (uses parent model by default)
-- `middleware` -- custom logging or rate limiting (no inheritance)
-- `interrupt_on` -- human-in-the-loop configuration (inherits from main agent)
-- `skills` -- skill source paths loaded independently; full isolation from parent
+- `model` - override main agent's model (uses parent model by default)
+- `middleware` - custom logging or rate limiting (no inheritance)
+- `interrupt_on` - human-in-the-loop configuration (inherits from main agent)
+- `skills` - skill source paths loaded independently; full isolation from parent
 
 ### CompiledSubAgent
 
@@ -204,7 +204,7 @@ Parent context propagates to all subagents. Use namespaced keys for per-subagent
 
 ## Skills
 
-Skills extend agent capabilities through reusable, specialized workflows following the Agent Skills specification. They use progressive disclosure -- agents only review skill details when relevant to the task.
+Skills extend agent capabilities through reusable, specialized workflows following the Agent Skills specification. They use progressive disclosure - agents only review skill details when relevant to the task.
 
 ### SKILL.md Format
 

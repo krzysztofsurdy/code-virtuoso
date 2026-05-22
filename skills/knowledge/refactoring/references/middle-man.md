@@ -12,7 +12,7 @@ This commonly happens in two ways: as an overcorrection when eliminating Message
 - **Cognitive Overhead**: Developers must navigate through intermediary classes to understand real behavior
 - **Maintenance Cost**: Any changes to the delegated interface require updating the pass-through class as well
 - **Subtle Performance Drag**: Additional method hops add minor overhead
-- **No Added Value**: The class exists without contributing unique behavior -- it only repeats what another class already provides
+- **No Added Value**: The class exists without contributing unique behavior - it only repeats what another class already provides
 
 ## Signs and Symptoms
 
@@ -142,6 +142,6 @@ Do **not** remove the middle man class in these scenarios:
 
 ## Related Smells
 
-- **Message Chains**: The inverse problem -- too many intermediaries in a call chain. Aggressively fixing Message Chains is a common way to accidentally create Middle Man
+- **Message Chains**: The inverse problem - too many intermediaries in a call chain. Aggressively fixing Message Chains is a common way to accidentally create Middle Man
 - **Feature Envy**: A class that leans heavily on another class's methods, suggesting the logic belongs elsewhere
 - **Inappropriate Intimacy**: When classes are too tightly coupled to each other's internals

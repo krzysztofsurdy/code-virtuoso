@@ -1,6 +1,6 @@
 ## Overview
 
-Replace Data Value with Object promotes a bare primitive -- a string, integer, or similar simple type -- into a dedicated class. What starts as a single field often accumulates validation rules, formatting logic, and related operations that do not belong on the host class. Wrapping the value in its own object gives that behavior a proper home and turns a passive piece of data into an active participant in the domain model.
+Replace Data Value with Object promotes a bare primitive - a string, integer, or similar simple type - into a dedicated class. What starts as a single field often accumulates validation rules, formatting logic, and related operations that do not belong on the host class. Wrapping the value in its own object gives that behavior a proper home and turns a passive piece of data into an active participant in the domain model.
 
 ## Motivation
 

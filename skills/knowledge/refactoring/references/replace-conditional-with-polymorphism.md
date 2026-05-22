@@ -1,6 +1,6 @@
 ## Overview
 
-Replace Conditional with Polymorphism transforms branching logic -- switch statements, if-else ladders -- into a class hierarchy where each variant implements its own version of the method. Instead of inspecting a type code or flag to decide which path to follow, you let the object itself carry the right behavior, dispatched automatically through method overriding.
+Replace Conditional with Polymorphism transforms branching logic - switch statements, if-else ladders - into a class hierarchy where each variant implements its own version of the method. Instead of inspecting a type code or flag to decide which path to follow, you let the object itself carry the right behavior, dispatched automatically through method overriding.
 
 ## Motivation
 

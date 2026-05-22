@@ -8,7 +8,7 @@ Extract Interface creates a formal contract from a set of methods that multiple 
 Interfaces declare the roles a class plays in different contexts. Extracting an interface makes that role visible in the type system and defines a clear boundary between what callers can expect and how the class delivers it.
 
 ### Pluggable Implementations
-When a system needs interchangeable variants -- payment gateways, notification channels, storage backends -- an interface ensures every variant conforms to the same contract without forcing them into an artificial inheritance tree.
+When a system needs interchangeable variants - payment gateways, notification channels, storage backends - an interface ensures every variant conforms to the same contract without forcing them into an artificial inheritance tree.
 
 ### Dependency Inversion
 Clients that depend on an interface rather than a concrete class become insulated from implementation changes. This makes the code easier to test with mocks and more flexible when requirements shift.
@@ -138,7 +138,7 @@ readonly class RefundService
 
 - **Only one implementation exists**: An interface with a single implementor may be premature abstraction
 - **Shared implementation needed**: If classes share code as well as a contract, Extract Superclass is a better fit
-- **Interface is too broad**: A large interface with unrelated methods likely violates the Interface Segregation Principle -- split it first
+- **Interface is too broad**: A large interface with unrelated methods likely violates the Interface Segregation Principle - split it first
 - **No evidence of variation**: Do not create interfaces speculatively; wait until a second implementation is needed
 - **Artificial abstractions**: An interface should represent a genuine concept, not exist for the sake of having one
 

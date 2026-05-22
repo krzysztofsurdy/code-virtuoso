@@ -2,7 +2,7 @@
 
 ## Overview
 
-A view is a Python function (or class) that takes a web request and returns a web response. Views contain the logic necessary to return a response -- HTML content, a redirect, a 404 error, JSON data, an image, or anything else. Views are conventionally placed in a `views.py` file within each Django app.
+A view is a Python function (or class) that takes a web request and returns a web response. Views contain the logic necessary to return a response - HTML content, a redirect, a 404 error, JSON data, an image, or anything else. Views are conventionally placed in a `views.py` file within each Django app.
 
 ## Function-Based Views
 
@@ -60,8 +60,8 @@ def my_view(request):
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `request` | The request object (required) | -- |
-| `template_name` | Template name or sequence of names (required) | -- |
+| `request` | The request object (required) | - |
+| `template_name` | Template name or sequence of names (required) | - |
 | `context` | Dictionary of template context values | `None` |
 | `content_type` | MIME type for the response | `text/html` |
 | `status` | HTTP status code | `200` |
@@ -309,7 +309,7 @@ if settings.DEBUG:
 
 ## Best Practices
 
-- Keep view functions focused -- delegate complex logic to services or model methods
+- Keep view functions focused - delegate complex logic to services or model methods
 - Use shortcut functions (`render`, `redirect`, `get_object_or_404`) to reduce boilerplate
 - Use `require_safe` instead of `require_GET` to properly handle HEAD requests
 - Return appropriate HTTP status codes for different outcomes

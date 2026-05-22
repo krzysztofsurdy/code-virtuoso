@@ -1,6 +1,6 @@
 # Data Patterns for Microservices
 
-## CQRS -- Command Query Responsibility Segregation
+## CQRS - Command Query Responsibility Segregation
 
 CQRS splits your application's data model into two distinct sides: a write model optimized for processing commands and enforcing business rules, and a read model optimized for serving queries. The write side validates, applies domain logic, and persists changes. The read side maintains denormalized projections tailored to specific query needs.
 
@@ -50,7 +50,7 @@ final class OrderSummaryProjector
 }
 ```
 
-**Python:** Same structure -- `PlaceOrderHandler` with `OrderRepository` and `EventBus` dependencies, calling `Order.place()` and publishing `OrderPlaced`. **TypeScript:** Async handler with `await` on repository save and event publish. **Java:** Handler class with repository and event bus fields, publishing `OrderPlaced` after `orders.save()`.
+**Python:** Same structure - `PlaceOrderHandler` with `OrderRepository` and `EventBus` dependencies, calling `Order.place()` and publishing `OrderPlaced`. **TypeScript:** Async handler with `await` on repository save and event publish. **Java:** Handler class with repository and event bus fields, publishing `OrderPlaced` after `orders.save()`.
 
 ---
 
@@ -78,7 +78,7 @@ Events are appended, never modified or deleted. Each event carries:
 
 **Rebuilding state:** Load all events for an aggregate, apply them in sequence, and the result is the current state. For performance, take periodic snapshots and replay only events after the last snapshot.
 
-**Projections** transform the event stream into read-optimized views. A single event stream can feed multiple projections -- one for a dashboard, another for search, another for analytics. Projections can be rebuilt from scratch at any time by replaying events.
+**Projections** transform the event stream into read-optimized views. A single event stream can feed multiple projections - one for a dashboard, another for search, another for analytics. Projections can be rebuilt from scratch at any time by replaying events.
 
 ---
 
@@ -129,7 +129,7 @@ final class OrderSagaOrchestrator
 }
 ```
 
-**Python:** Same orchestrator structure -- try charge/reserve/schedule in sequence, catch each failure type and call compensating actions (refund, release) in reverse order. **TypeScript:** Async orchestrator with `await` on each step; catch block checks which steps completed and compensates accordingly. **Java:** Orchestrator with `PaymentService`, `InventoryService`, `ShippingService` fields; catch blocks call `payments.refund()` and `inventory.release()` as needed.
+**Python:** Same orchestrator structure - try charge/reserve/schedule in sequence, catch each failure type and call compensating actions (refund, release) in reverse order. **TypeScript:** Async orchestrator with `await` on each step; catch block checks which steps completed and compensates accordingly. **Java:** Orchestrator with `PaymentService`, `InventoryService`, `ShippingService` fields; catch blocks call `payments.refund()` and `inventory.release()` as needed.
 
 ---
 
@@ -139,10 +139,10 @@ When services own their own data, cross-service consistency cannot be immediate.
 
 ### Practical Approaches
 
-- **Idempotent consumers** -- design message handlers so processing the same event twice produces the same result; use event IDs or deduplication keys
-- **Causal ordering** -- when order matters, use sequence numbers per aggregate or vector clocks to detect and enforce ordering
-- **Read-your-writes consistency** -- after a user performs a write, route subsequent reads to a source that reflects the write, even if other replicas lag behind
-- **Conflict resolution** -- for concurrent updates, decide a strategy: last-write-wins, merge, or prompt the user to resolve
+- **Idempotent consumers** - design message handlers so processing the same event twice produces the same result; use event IDs or deduplication keys
+- **Causal ordering** - when order matters, use sequence numbers per aggregate or vector clocks to detect and enforce ordering
+- **Read-your-writes consistency** - after a user performs a write, route subsequent reads to a source that reflects the write, even if other replicas lag behind
+- **Conflict resolution** - for concurrent updates, decide a strategy: last-write-wins, merge, or prompt the user to resolve
 
 ---
 
@@ -160,7 +160,7 @@ Because the business write and the outbox insert share a single transaction, the
 
 ### Implementation Considerations
 
-- **Polling vs CDC** -- the relay can poll the outbox table on a timer, or use change data capture (reading the database's transaction log) for lower latency
-- **Idempotent consumers** -- the relay may publish the same event more than once (at-least-once delivery), so consumers must handle duplicates
-- **Ordering** -- preserve ordering by processing outbox rows sequentially per aggregate ID
-- **Cleanup** -- periodically purge old processed outbox rows to prevent table bloat
+- **Polling vs CDC** - the relay can poll the outbox table on a timer, or use change data capture (reading the database's transaction log) for lower latency
+- **Idempotent consumers** - the relay may publish the same event more than once (at-least-once delivery), so consumers must handle duplicates
+- **Ordering** - preserve ordering by processing outbox rows sequentially per aggregate ID
+- **Cleanup** - periodically purge old processed outbox rows to prevent table bloat

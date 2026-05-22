@@ -85,11 +85,11 @@ cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
 ```
 
 Key parameters:
-- `underlying_embedder` -- the embedding model
-- `document_embedding_cache` -- ByteStore for caching
-- `batch_size` -- documents between store updates
-- `namespace` -- prevents collisions across models (always set this)
-- `query_embedding_cache` -- optional query caching
+- `underlying_embedder` - the embedding model
+- `document_embedding_cache` - ByteStore for caching
+- `batch_size` - documents between store updates
+- `namespace` - prevents collisions across models (always set this)
+- `query_embedding_cache` - optional query caching
 
 ## Document Loaders
 
@@ -290,6 +290,6 @@ Key-value stores primarily used for caching embeddings. All implementations supp
 - Start with `RecursiveCharacterTextSplitter` for text splitting unless you have structured documents
 - Always set `namespace` when using `CacheBackedEmbeddings` to prevent collisions
 - Use `lazy_load()` for large document collections to manage memory
-- All vector stores can be cast to retrievers -- use retrievers when you need broader search capabilities
+- All vector stores can be cast to retrievers - use retrievers when you need broader search capabilities
 - Choose embedding similarity metrics based on your use case (cosine for normalized vectors, Euclidean for absolute distances)
 - Use batch operations (`mget`, `mset`) with stores to minimize network round-trips

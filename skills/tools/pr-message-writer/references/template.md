@@ -65,7 +65,7 @@ Describe changes grouped by logical area. Use sub-headings or bullet points for 
 - If API/GraphQL only: provide the exact request to copy-paste, specify where to run it (GraphQL playground URL, Postman, curl in terminal)
 - State the expected result after each action ("You should see...", "The page should show...", "The response should contain...")
 - If data setup is needed, provide either UI steps to create it OR SQL INSERT statements
-- All test data must be concrete and copy-pasteable -- never say "use valid credentials" without providing them
+- All test data must be concrete and copy-pasteable - never say "use valid credentials" without providing them
 
 **Format:**
 
@@ -79,11 +79,11 @@ Describe changes grouped by logical area. Use sub-headings or bullet points for 
 - 3D Secure card: `4000 0000 0000 3220`, expiry `12/34`, CVC `123` (Stripe 3DS required)
 - Test email: `qa-tester+scenario1@example.com` (use a different +tag per scenario)
 - Test phone: `+1 555 0100`
-- Specific dates, amounts, and quantities -- never "any value"
+- Specific dates, amounts, and quantities - never "any value"
 
 **Verification steps:**
-1. [Exact action -- URL to open, button to click, field to fill]
-2. [Expected result -- what you should see on screen or in response]
+1. [Exact action - URL to open, button to click, field to fill]
+2. [Expected result - what you should see on screen or in response]
 3. [Next action...]
 
 #### API/Query examples (when no UI is available)
@@ -129,7 +129,7 @@ Expected response: HTTP 201 with a JSON body containing "id" and "status": "pend
 
 Each scenario is a self-contained, step-by-step walkthrough. No code references. Written for someone who has never seen the codebase. Each scenario has a checkbox and ends with a clear list of expected results.
 
-- [ ] **Scenario 1: [Name -- e.g., "Normal user submits a review"]**
+- [ ] **Scenario 1: [Name - e.g., "Normal user submits a review"]**
   1. [Exact step]
   2. [Next step]
   3. ...
@@ -138,7 +138,7 @@ Each scenario is a self-contained, step-by-step walkthrough. No code references.
   - [What should be visible on screen / in the response]
   - [Any data change that should have occurred]
 
-- [ ] **Scenario 2: [Name -- e.g., "User tries to submit a duplicate review"]**
+- [ ] **Scenario 2: [Name - e.g., "User tries to submit a duplicate review"]**
   1. [Exact step]
   2. [Next step]
   3. ...
@@ -147,7 +147,7 @@ Each scenario is a self-contained, step-by-step walkthrough. No code references.
   - [What error or behavior should appear]
   - [What should NOT have changed]
 
-- [ ] **Scenario 3: [Name -- e.g., "Unauthenticated user is rejected"]**
+- [ ] **Scenario 3: [Name - e.g., "Unauthenticated user is rejected"]**
   1. [Exact step]
   2. [Next step]
   3. ...

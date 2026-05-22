@@ -216,11 +216,11 @@ Large classes are acceptable when:
 
 ## Related Smells
 
-- **God Class**: The extreme form of Large Class -- a class that not only does too much but also intimately knows other objects' internals
+- **God Class**: The extreme form of Large Class - a class that not only does too much but also intimately knows other objects' internals
 - **Feature Envy**: Methods inside a large class that primarily use another class's data suggest those methods belong elsewhere
 - **Data Clumps**: Groups of related fields that should be extracted together into their own class
-- **Middle Man**: After extracting classes, beware of leaving behind shells that only delegate -- those become Middle Man
-- **Lazy Class**: The inverse problem -- classes with too little responsibility that should be merged back
+- **Middle Man**: After extracting classes, beware of leaving behind shells that only delegate - those become Middle Man
+- **Lazy Class**: The inverse problem - classes with too little responsibility that should be merged back
 
 ---
 

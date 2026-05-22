@@ -1,6 +1,6 @@
 ## Overview
 
-Replace Subclass with Fields collapses a class hierarchy by eliminating subclasses whose only purpose is to return different values for a set of fields. Instead of maintaining separate subclass definitions, a single class with configurable fields -- typically populated through factory methods -- handles all the variation.
+Replace Subclass with Fields collapses a class hierarchy by eliminating subclasses whose only purpose is to return different values for a set of fields. Instead of maintaining separate subclass definitions, a single class with configurable fields - typically populated through factory methods - handles all the variation.
 
 This refactoring is appropriate when subclasses carry no behavioral differences beyond assigning distinct field values.
 

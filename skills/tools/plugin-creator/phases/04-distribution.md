@@ -9,14 +9,14 @@ Determine how the plugin will be distributed: standalone, new marketplace, or ad
 ## Steps
 
 1. Ask: **"How will this plugin be distributed?"** (single-select)
-   - **Standalone** -- just the plugin directory, tested locally
-   - **New marketplace** -- create a sibling marketplace.json listing this plugin
-   - **Add to existing marketplace** -- append to an existing marketplace.json
+   - **Standalone** - just the plugin directory, tested locally
+   - **New marketplace** - create a sibling marketplace.json listing this plugin
+   - **Add to existing marketplace** - append to an existing marketplace.json
 
 2. **If Standalone:** No further questions. Proceed to gate.
 
 3. **If New marketplace:**
-   - Marketplace name (kebab-case; reject reserved names -- see [references/marketplace-manifest.md](../references/marketplace-manifest.md))
+   - Marketplace name (kebab-case; reject reserved names - see [references/marketplace-manifest.md](../references/marketplace-manifest.md))
    - Marketplace owner name (free text)
    - Marketplace owner email (optional)
    - Layout: Flat (single-plugin repo) or Nested (multi-plugin repo, recommended)

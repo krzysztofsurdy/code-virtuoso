@@ -4,7 +4,7 @@
 
 ### Version-Based Migrations
 
-Each migration is a numbered script that runs in order. The database tracks which migrations have been applied. New changes are always additive -- you write a new migration file rather than editing an existing one.
+Each migration is a numbered script that runs in order. The database tracks which migrations have been applied. New changes are always additive - you write a new migration file rather than editing an existing one.
 
 **Advantages:** Explicit ordering, deterministic replay, easy to reason about history.
 **Tools:** Doctrine Migrations, Alembic, Prisma Migrate, Flyway, Liquibase.
@@ -37,12 +37,12 @@ Split dangerous schema changes into safe, incremental steps. At every point duri
 
 **Example: Renaming a column from `name` to `full_name`**
 
-**Step 1 -- Expand (add new column):**
+**Step 1 - Expand (add new column):**
 ```sql
 ALTER TABLE users ADD COLUMN full_name VARCHAR(255);
 ```
 
-**Step 2 -- Backfill (copy existing data):**
+**Step 2 - Backfill (copy existing data):**
 ```sql
 UPDATE users SET full_name = name WHERE full_name IS NULL;
 ```
@@ -55,7 +55,7 @@ UPDATE users SET full_name = name
 WHERE full_name IS NULL AND id BETWEEN 1 AND 10000;
 ```
 
-**Step 3 -- Dual-write (application writes to both columns):**
+**Step 3 - Dual-write (application writes to both columns):**
 
 ```php
 // PHP/Doctrine: write to both columns during transition
@@ -71,10 +71,10 @@ class User(Base):
         self.full_name = value
 ```
 
-**Step 4 -- Switch (application reads from new column):**
+**Step 4 - Switch (application reads from new column):**
 Deploy application code that reads `full_name` instead of `name`.
 
-**Step 5 -- Contract (remove old column):**
+**Step 5 - Contract (remove old column):**
 ```sql
 ALTER TABLE users DROP COLUMN name;
 ```
@@ -108,11 +108,11 @@ Transform existing data to fit a new schema or business rule. These are often th
 
 **Guidelines for data migrations:**
 
-1. **Run separately from schema changes** -- deploy the schema first, then run the data migration
-2. **Make them idempotent** -- safe to run multiple times without side effects
-3. **Batch large updates** -- avoid locking entire tables with single massive UPDATE statements
-4. **Log progress** -- for long-running migrations, record how far you have gotten so you can resume
-5. **Test on production-sized data** -- a migration that runs in 2 seconds on dev data may take 4 hours in production
+1. **Run separately from schema changes** - deploy the schema first, then run the data migration
+2. **Make them idempotent** - safe to run multiple times without side effects
+3. **Batch large updates** - avoid locking entire tables with single massive UPDATE statements
+4. **Log progress** - for long-running migrations, record how far you have gotten so you can resume
+5. **Test on production-sized data** - a migration that runs in 2 seconds on dev data may take 4 hours in production
 
 **PHP/Doctrine (batched data migration):**
 ```php
@@ -163,9 +163,9 @@ At any point during a deployment, both the current version and the previous vers
 
 **What this means in practice:**
 
-- Never rename a column in a single migration -- use expand-contract
-- Never add a NOT NULL column without a default -- old code does not know to populate it
-- Never remove a column that old code still reads -- deploy the code change first, then remove the column
+- Never rename a column in a single migration - use expand-contract
+- Never add a NOT NULL column without a default - old code does not know to populate it
+- Never remove a column that old code still reads - deploy the code change first, then remove the column
 - Never change a column type in a way that breaks existing queries
 
 ### Migration Ordering

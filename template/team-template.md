@@ -17,9 +17,9 @@ TODO: One paragraph describing what this team delivers and when to use it.
 
 ## Workflow
 
-1. **TODO Agent** -- TODO: What this agent does, what input it receives, what it produces.
-2. **TODO Agent** -- TODO: Next phase.
-3. **TODO Agent** -- TODO: Next phase.
+1. **TODO Agent** - TODO: What this agent does, what input it receives, what it produces.
+2. **TODO Agent** - TODO: Next phase.
+3. **TODO Agent** - TODO: Next phase.
 
 ## Entry Criteria
 

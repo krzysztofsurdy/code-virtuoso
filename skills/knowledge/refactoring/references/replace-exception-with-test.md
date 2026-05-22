@@ -1,6 +1,6 @@
 ## Overview
 
-Replace Exception with Test moves validation out of try/catch blocks and into upfront conditional checks. When a situation is entirely foreseeable -- an index might be out of bounds, a divisor might be zero -- testing for it before the operation is both cheaper and more honest than catching an exception after the fact. Exceptions should be reserved for genuinely unexpected failures, not for conditions that can be anticipated and handled as part of normal flow.
+Replace Exception with Test moves validation out of try/catch blocks and into upfront conditional checks. When a situation is entirely foreseeable - an index might be out of bounds, a divisor might be zero - testing for it before the operation is both cheaper and more honest than catching an exception after the fact. Exceptions should be reserved for genuinely unexpected failures, not for conditions that can be anticipated and handled as part of normal flow.
 
 ## Motivation
 

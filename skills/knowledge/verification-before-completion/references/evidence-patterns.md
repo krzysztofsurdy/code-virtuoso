@@ -93,7 +93,7 @@ $ golangci-lint run
 Exit code: 0
 
 # Rust
-$ cargo clippy -- -D warnings
+$ cargo clippy - -D warnings
 # (no output = clean)
 Exit code: 0
 ```

@@ -69,7 +69,7 @@ Skills load in three levels:
 
 ## Guided Phases
 
-Interactive skills with 3+ phases where LLMs tend to rush through steps can use a **guided phase** structure. This is an internal pattern -- users experience better-paced interactions without knowing about the underlying file organization.
+Interactive skills with 3+ phases where LLMs tend to rush through steps can use a **guided phase** structure. This is an internal pattern - users experience better-paced interactions without knowing about the underlying file organization.
 
 ### When to use
 
@@ -100,9 +100,9 @@ In a guided-phase skill, SKILL.md holds shared rules, principles, and context ON
 Each phase file is lean (40-80 lines). It contains:
 
 1. **Header** with phase number, name, and progress indicator
-2. **Purpose** -- one sentence describing what this phase accomplishes
-3. **Steps** -- numbered execution instructions
-4. **Gate** -- conditions for advancing, and the question to ask the user
+2. **Purpose** - one sentence describing what this phase accomplishes
+3. **Steps** - numbered execution instructions
+4. **Gate** - conditions for advancing, and the question to ask the user
 
 The gate is the key mechanism. Every phase file ends with a gate that forces the agent to stop and wait for user confirmation before loading the next phase.
 
@@ -110,7 +110,7 @@ See `template/phase-template.md` for the starter template.
 
 ## Platform-Specific Notes
 
-The skill body must remain portable -- it describes capabilities ("team creation tools", "interactive prompts", "file search") without naming any specific platform's tool, API, or runtime feature. Platform-specific guidance lives in a clearly marked optional section so it can be skipped on platforms it does not apply to.
+The skill body must remain portable - it describes capabilities ("team creation tools", "interactive prompts", "file search") without naming any specific platform's tool, API, or runtime feature. Platform-specific guidance lives in a clearly marked optional section so it can be skipped on platforms it does not apply to.
 
 ### When to use
 

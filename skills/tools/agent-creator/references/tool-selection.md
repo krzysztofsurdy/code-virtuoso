@@ -93,7 +93,7 @@ Use this when:
 
 Avoid this when:
 
-- You can express the intent with a short allowlist instead -- allowlists are clearer to audit
+- You can express the intent with a short allowlist instead - allowlists are clearer to audit
 
 ## MCP Tool Scoping
 
@@ -113,11 +113,11 @@ The parent conversation does not pay for `playwright`'s tool descriptions, and t
 
 | Mistake | Consequence |
 |---|---|
-| Inheriting all tools by omitting `tools` | Agent can do anything the caller can -- no principle of least privilege |
+| Inheriting all tools by omitting `tools` | Agent can do anything the caller can - no principle of least privilege |
 | Giving an investigator `Write` "just in case" | Scope creep; reviewers start editing |
 | Allowing `Bash` without considering what commands get run | A Bash-enabled agent can do anything a shell can, including `rm -rf` |
 | Missing `isolation: worktree` on an Edit-capable agent | Changes land in the main tree before review |
-| Letting a team-lead spawn anything via bare `Agent` | Unexpected sub-agent types may be spawned -- pin with `Agent(a, b)` |
+| Letting a team-lead spawn anything via bare `Agent` | Unexpected sub-agent types may be spawned - pin with `Agent(a, b)` |
 | Hardcoding MCP tools in the parent when only one agent needs them | Parent pays for tool descriptions it never uses |
 
 ## Tool Name Portability

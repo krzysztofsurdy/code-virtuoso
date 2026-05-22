@@ -2,9 +2,9 @@
 
 ## Overview
 
-Multi-agent systems coordinate specialized components to handle complex workflows. Not every complex task requires this approach -- a single well-designed agent with the right tools and prompt can often achieve similar results. Multi-agent patterns become valuable when a single agent has too many tools, tasks require specialized knowledge with extensive context, or sequential constraints unlock capabilities only after certain conditions are met.
+Multi-agent systems coordinate specialized components to handle complex workflows. Not every complex task requires this approach - a single well-designed agent with the right tools and prompt can often achieve similar results. Multi-agent patterns become valuable when a single agent has too many tools, tasks require specialized knowledge with extensive context, or sequential constraints unlock capabilities only after certain conditions are met.
 
-At the center of multi-agent design is context engineering -- deciding what information each agent sees.
+At the center of multi-agent design is context engineering - deciding what information each agent sees.
 
 ## Installation
 
@@ -38,7 +38,7 @@ pip install langchain langgraph
 | Pattern | Total Calls | Notes |
 |---------|-------------|-------|
 | Subagents | 8 (4+4) | Stateless by design |
-| Handoffs | 5 (3+2) | Stateful -- agent remains active |
+| Handoffs | 5 (3+2) | Stateful - agent remains active |
 | Skills | 5 (3+2) | Reuses loaded skill context |
 | Router | 6 (3+3) | Stateless routing each time |
 
@@ -48,18 +48,18 @@ Stateful patterns (Handoffs, Skills) save 40-50% of calls on repeat requests.
 
 | Pattern | Model Calls | Total Tokens | Notes |
 |---------|-------------|--------------|-------|
-| Subagents | 5 | ~9K | Optimal -- context isolation |
-| Handoffs | 7+ | ~14K+ | Inefficient -- sequential execution |
-| Skills | 3 | ~15K | High token usage -- loads all docs |
-| Router | 5 | ~9K | Optimal -- parallel execution |
+| Subagents | 5 | ~9K | Optimal - context isolation |
+| Handoffs | 7+ | ~14K+ | Inefficient - sequential execution |
+| Skills | 3 | ~15K | High token usage - loads all docs |
+| Router | 5 | ~9K | Optimal - parallel execution |
 
 ## Pattern Selection Framework
 
 | Requirement | Subagents | Handoffs | Skills | Router |
 |-------------|-----------|----------|--------|--------|
-| Distributed Development | 5/5 | -- | 5/5 | 3/5 |
-| Parallelization | 5/5 | -- | 3/5 | 5/5 |
-| Multi-Hop Support | 5/5 | 5/5 | 5/5 | -- |
+| Distributed Development | 5/5 | - | 5/5 | 3/5 |
+| Parallelization | 5/5 | - | 3/5 | 5/5 |
+| Multi-Hop Support | 5/5 | 5/5 | 5/5 | - |
 | Direct User Interaction | 1/5 | 5/5 | 5/5 | 3/5 |
 
 ---
@@ -138,7 +138,7 @@ main_agent = create_agent(
 
 ### Context Engineering for Subagents
 
-**Controlling inputs** -- pull from agent state:
+**Controlling inputs** - pull from agent state:
 
 ```python
 from langchain.agents import AgentState
@@ -157,7 +157,7 @@ def call_subagent1(query: str, runtime: ToolRuntime[None, CustomState]):
     return result["messages"][-1].content
 ```
 
-**Controlling outputs** -- update state via Command:
+**Controlling outputs** - update state via Command:
 
 ```python
 from typing import Annotated
@@ -241,9 +241,9 @@ agent = create_agent(
 
 ### Extension Approaches
 
-- **Dynamic tool registration** -- register tools as skills load
-- **Hierarchical skills** -- nested specializations in tree structures
-- **Reference awareness** -- skills reference external assets loaded on-demand
+- **Dynamic tool registration** - register tools as skills load
+- **Hierarchical skills** - nested specializations in tree structures
+- **Reference awareness** - skills reference external assets loaded on-demand
 
 ---
 

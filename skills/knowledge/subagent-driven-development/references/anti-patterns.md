@@ -18,7 +18,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 1. Dispatch a fresh agent for the current task
 2. Prepare a proper task brief with only the relevant context
 3. Use structured handoff summaries instead of history dumps
-4. If the fresh agent needs context from a much earlier task, provide it as an explicit handoff reference -- not as conversation replay
+4. If the fresh agent needs context from a much earlier task, provide it as an explicit handoff reference - not as conversation replay
 
 ---
 
@@ -32,13 +32,13 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 - No accept/reject decisions recorded in the implementation log
 - Orchestrator says "looks good" without referencing specific acceptance criteria
 
-**Why it fails:** Small errors compound. A missed edge case in task 2 becomes a data corruption bug discovered in task 7, when the cost of fixing it is 10x higher. Review gates exist precisely for the "obviously correct" changes -- those are where assumptions go unchecked.
+**Why it fails:** Small errors compound. A missed edge case in task 2 becomes a data corruption bug discovered in task 7, when the cost of fixing it is 10x higher. Review gates exist precisely for the "obviously correct" changes - those are where assumptions go unchecked.
 
 **Recovery:**
 1. Stop forward progress
 2. Go back to the unreviewed task output
 3. Run both review stages retroactively
-4. If issues are found, fix them before continuing -- do not add them to a "tech debt" list
+4. If issues are found, fix them before continuing - do not add them to a "tech debt" list
 5. Re-run dependent tasks if the fix changes interfaces or behavior they rely on
 
 ---
@@ -59,7 +59,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 **Recovery:**
 1. Re-run the review using the full rubric from the review reference
 2. For Stage 1: map every acceptance criterion to specific evidence (file path, test name, or observable behavior)
-3. For Stage 2: check every item in the quality checklist -- correctness, design, security, performance, test quality
+3. For Stage 2: check every item in the quality checklist - correctness, design, security, performance, test quality
 4. Document findings in the standard output format
 5. If the original "looks fine" review allowed issues through, treat them as findings in the current re-review
 
@@ -106,7 +106,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 1. Prepare an isolated task brief containing only the current task
 2. Include handoff context from the previous task, not the plan
 3. Re-dispatch the subagent with the focused brief
-4. If the subagent has already started, discard its work and start fresh -- partial work from a confused agent is more dangerous than starting over
+4. If the subagent has already started, discard its work and start fresh - partial work from a confused agent is more dangerous than starting over
 
 ---
 
@@ -144,7 +144,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 - Next subagent duplicates work the prior task already completed
 - The brief's "Context from Prior Tasks" is empty for a non-first task
 
-**Why it fails:** The fresh subagent has zero knowledge of what happened before. Without a handoff, it must rediscover context from the codebase -- which is slow, error-prone, and may miss decisions that are not reflected in code (e.g., "we chose approach A over approach B because..."). Inconsistencies between tasks go undetected until integration.
+**Why it fails:** The fresh subagent has zero knowledge of what happened before. Without a handoff, it must rediscover context from the codebase - which is slow, error-prone, and may miss decisions that are not reflected in code (e.g., "we chose approach A over approach B because..."). Inconsistencies between tasks go undetected until integration.
 
 **Recovery:**
 1. Pause before dispatching the next task

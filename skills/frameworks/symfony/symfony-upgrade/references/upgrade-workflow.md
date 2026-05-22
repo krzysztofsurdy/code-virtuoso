@@ -193,7 +193,7 @@ Key areas:
 - Return type declarations required on all controller methods
 - Security component: new authenticator-based system mandatory
 - Removed `enable_authenticator_manager` setting (always enabled)
-- `AbstractController::getDoctrine()` removed -- inject `ManagerRegistry` instead
+- `AbstractController::getDoctrine()` removed - inject `ManagerRegistry` instead
 
 ### Symfony 6.4 -> 7.0
 
@@ -239,7 +239,7 @@ Always clear cache manually after a major upgrade:
 rm -rf var/cache/*
 ```
 
-Do not rely on `bin/console cache:clear` -- it may fail if the container cannot compile with the new version.
+Do not rely on `bin/console cache:clear` - it may fail if the container cannot compile with the new version.
 
 ### Recipe Conflicts
 
@@ -247,7 +247,7 @@ If `composer recipes:update` produces conflicts you cannot resolve:
 
 ```bash
 # Reset the recipe update
-git checkout -- .
+git checkout - .
 
 # Apply manually by reading the recipe diff
 composer recipes symfony/framework-bundle  # shows diff details

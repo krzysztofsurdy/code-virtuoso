@@ -7,7 +7,7 @@ user-invocable: false
 
 # Web Accessibility
 
-Accessibility is not a feature you bolt on at the end -- it is a quality attribute that must be considered from the first line of markup. Building accessible interfaces means that people with visual, motor, auditory, or cognitive disabilities can perceive, navigate, and interact with your application. It also means better usability for everyone: keyboard power users, people on slow connections, users with temporary injuries, and those in constrained environments.
+Accessibility is not a feature you bolt on at the end - it is a quality attribute that must be considered from the first line of markup. Building accessible interfaces means that people with visual, motor, auditory, or cognitive disabilities can perceive, navigate, and interact with your application. It also means better usability for everyone: keyboard power users, people on slow connections, users with temporary injuries, and those in constrained environments.
 
 ## Why Accessibility Matters
 
@@ -16,7 +16,7 @@ Accessibility is not a feature you bolt on at the end -- it is a quality attribu
 | **Legal** | Legislation in most jurisdictions (ADA, EAA, Section 508, EN 301 549) requires digital products to be accessible. Non-compliance carries litigation risk and financial penalties. |
 | **Ethical** | Roughly 16% of the global population lives with some form of disability. Excluding them from digital services is a choice, not an inevitability. |
 | **Business** | Accessible products reach a wider audience, improve SEO (structured content helps crawlers), reduce support costs, and correlate with higher overall usability scores. |
-| **Technical quality** | Accessibility constraints force clean markup, proper semantics, and separation of concerns -- all of which improve maintainability. |
+| **Technical quality** | Accessibility constraints force clean markup, proper semantics, and separation of concerns - all of which improve maintainability. |
 
 ---
 
@@ -39,9 +39,9 @@ WCAG defines three levels. Each higher level includes all criteria from the leve
 
 | Level | Target Audience | Typical Requirement |
 |---|---|---|
-| **A** | Bare minimum -- removes the most severe barriers | Most legal and procurement requirements start here |
-| **AA** | Industry standard -- addresses the majority of barriers for most users | Required by ADA, EAA, Section 508, and most organizational policies |
-| **AAA** | Highest standard -- not always achievable for all content types | Aspirational goal; apply selectively where feasible |
+| **A** | Bare minimum - removes the most severe barriers | Most legal and procurement requirements start here |
+| **AA** | Industry standard - addresses the majority of barriers for most users | Required by ADA, EAA, Section 508, and most organizational policies |
+| **AAA** | Highest standard - not always achievable for all content types | Aspirational goal; apply selectively where feasible |
 
 For most projects, **target Level AA**. It covers the vast majority of real-world accessibility needs without imposing requirements that conflict with certain content types.
 
@@ -66,7 +66,7 @@ Headings create an outline that screen reader users navigate like a table of con
 
 - One `<h1>` per page that describes the page purpose
 - Never skip levels (do not jump from `<h2>` to `<h4>`)
-- Use headings for structure, not for visual styling -- CSS handles appearance
+- Use headings for structure, not for visual styling - CSS handles appearance
 
 ---
 
@@ -91,7 +91,7 @@ Headings create an outline that screen reader users navigate like a table of con
 
 ## Accessible Forms
 
-Forms are where accessibility failures cause the most real-world harm -- users cannot complete purchases, registrations, or critical workflows.
+Forms are where accessibility failures cause the most real-world harm - users cannot complete purchases, registrations, or critical workflows.
 
 ### Label Association
 
@@ -119,7 +119,7 @@ Every form control needs a programmatically associated label:
 ### Required Fields
 
 - Mark required fields with `required` attribute (for native validation) or `aria-required="true"` (for custom validation)
-- Do not rely solely on color or an asterisk to indicate required status -- add text like "(required)"
+- Do not rely solely on color or an asterisk to indicate required status - add text like "(required)"
 
 ---
 

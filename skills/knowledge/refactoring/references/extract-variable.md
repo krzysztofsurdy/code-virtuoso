@@ -166,7 +166,7 @@ class PricingCalculator
 
 - **Already clear expressions**: `$age = $currentYear - $birthYear` needs no further naming
 - **Single-use with obvious meaning**: Extracting a one-time expression that is already readable adds verbosity
-- **Tight performance loops**: In rare micro-optimization scenarios, an extra variable could matter -- measure first
+- **Tight performance loops**: In rare micro-optimization scenarios, an extra variable could matter - measure first
 - **Arrow functions and pipelines**: Modern PHP or functional patterns may be more expressive than intermediate variables
 - **Well-named helper methods already exist**: If a method already encapsulates the expression, a variable on top of it is redundant
 

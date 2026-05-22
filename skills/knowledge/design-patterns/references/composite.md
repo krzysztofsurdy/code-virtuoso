@@ -1,6 +1,6 @@
 ## Overview
 
-The Composite pattern is a structural design pattern that organizes objects into tree hierarchies where leaves and branches conform to a shared interface. Because individual elements and groups of elements expose the same operations, client code treats both uniformly -- there is no need to ask whether a node is a single item or an entire subtree before operating on it.
+The Composite pattern is a structural design pattern that organizes objects into tree hierarchies where leaves and branches conform to a shared interface. Because individual elements and groups of elements expose the same operations, client code treats both uniformly - there is no need to ask whether a node is a single item or an entire subtree before operating on it.
 
 ## Intent
 
@@ -10,7 +10,7 @@ The Composite pattern is a structural design pattern that organizes objects into
 
 ## Problem and Solution
 
-**Problem:** Tree-shaped data -- file systems, organizational hierarchies, nested UI menus -- compels client code to distinguish between individual items and containers at every operation. This type-checking logic multiplies as the hierarchy deepens and becomes a maintenance burden whenever the structure evolves.
+**Problem:** Tree-shaped data - file systems, organizational hierarchies, nested UI menus - compels client code to distinguish between individual items and containers at every operation. This type-checking logic multiplies as the hierarchy deepens and becomes a maintenance burden whenever the structure evolves.
 
 **Solution:** Define a common component interface that both leaf and container classes implement. Containers forward operations to their children recursively, so clients traverse and manipulate the entire tree through one consistent API without ever inspecting the type of a node.
 

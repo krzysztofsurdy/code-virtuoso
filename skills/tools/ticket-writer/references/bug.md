@@ -11,7 +11,7 @@ A bug reports a deviation from intended behaviour. A good bug ticket is a stand-
 | Steps to reproduce | Numbered, deterministic, minimal. Anyone with the listed environment can follow them. |
 | Expected behaviour | What the system was supposed to do. Link to the spec or story if one exists. |
 | Actual behaviour | What the system actually does. Include the exact error message, status code, or visual symptom. |
-| Environment | OS, browser, app version, build, data condition, feature flags -- whatever is relevant. |
+| Environment | OS, browser, app version, build, data condition, feature flags - whatever is relevant. |
 | Severity | How badly the defect damages the product experience. |
 | Priority | How urgently the team should fix it. |
 
@@ -29,21 +29,21 @@ A bug reports a deviation from intended behaviour. A good bug ticket is a stand-
 
 ## Severity vs Priority
 
-These are two independent axes. Keep them separate -- a minor typo on the brand page can be low severity and high priority.
+These are two independent axes. Keep them separate - a minor typo on the brand page can be low severity and high priority.
 
 | Severity | Meaning |
 |---|---|
-| S1 -- Critical | Data loss, security breach, or the product is unusable for most users. |
-| S2 -- High | A core flow is broken with no reasonable workaround. |
-| S3 -- Medium | A feature is degraded, or a workaround exists. |
-| S4 -- Low | Cosmetic, typo, minor inconsistency. |
+| S1 - Critical | Data loss, security breach, or the product is unusable for most users. |
+| S2 - High | A core flow is broken with no reasonable workaround. |
+| S3 - Medium | A feature is degraded, or a workaround exists. |
+| S4 - Low | Cosmetic, typo, minor inconsistency. |
 
 | Priority | Meaning |
 |---|---|
-| P0 -- Now | Stop other work. Fix and ship today. |
-| P1 -- This sprint | Planned into the current cycle. |
-| P2 -- Next sprint | Prioritised but not immediate. |
-| P3 -- Backlog | Acknowledged, scheduled opportunistically. |
+| P0 - Now | Stop other work. Fix and ship today. |
+| P1 - This sprint | Planned into the current cycle. |
+| P2 - Next sprint | Prioritised but not immediate. |
+| P3 - Backlog | Acknowledged, scheduled opportunistically. |
 
 Severity is primarily a QA judgement; priority is a product judgement. The ticket should record both.
 
@@ -53,7 +53,7 @@ Reproduction steps are the single most valuable part of a bug ticket. A bug with
 
 - Number the steps. Each step is one atomic user action.
 - Start from a known state ("signed out", "empty cart", "on the home page").
-- Include the exact inputs used -- product IDs, test accounts, payload bodies.
+- Include the exact inputs used - product IDs, test accounts, payload bodies.
 - Stop at the point where the observable defect occurs.
 - If the bug is intermittent, say so and include the observed rate (e.g., "fails roughly 1 in 5 attempts").
 
@@ -77,18 +77,18 @@ Examples of relevant fields by bug class:
 
 Ask in this order. Batch 1-3 together; 4-6 together; 7-9 together.
 
-1. **Title** -- descriptive symptom, free text
-2. **Summary** -- two or three sentences, free text
-3. **Expected behaviour** -- free text
-4. **Actual behaviour** -- free text, include any error messages verbatim
-5. **Steps to reproduce** -- numbered free text
-6. **Environment** -- free text, prompt for the fields relevant to the bug class
-7. **Severity** -- S1 / S2 / S3 / S4
-8. **Priority** -- P0 / P1 / P2 / P3
-9. **Evidence** -- screenshot, recording, logs, request IDs (optional)
-10. **Regression** -- is this a regression from a recent change? If yes, last known good version
-11. **Workaround** -- any known mitigation (optional)
-12. **Blast radius** -- estimated affected users or % of traffic (optional)
+1. **Title** - descriptive symptom, free text
+2. **Summary** - two or three sentences, free text
+3. **Expected behaviour** - free text
+4. **Actual behaviour** - free text, include any error messages verbatim
+5. **Steps to reproduce** - numbered free text
+6. **Environment** - free text, prompt for the fields relevant to the bug class
+7. **Severity** - S1 / S2 / S3 / S4
+8. **Priority** - P0 / P1 / P2 / P3
+9. **Evidence** - screenshot, recording, logs, request IDs (optional)
+10. **Regression** - is this a regression from a recent change? If yes, last known good version
+11. **Workaround** - any known mitigation (optional)
+12. **Blast radius** - estimated affected users or % of traffic (optional)
 
 If the user cannot answer steps to reproduce or environment, do not fabricate values. Put the gap in `## Open Questions` and leave the ticket in draft.
 
@@ -122,7 +122,7 @@ If the user cannot answer steps to reproduce or environment, do not fabricate va
 - Priority: <P0-P3 with one-line reason>
 
 ## Evidence
-<Screenshots, recordings, log excerpts, request IDs -- omit if none>
+<Screenshots, recordings, log excerpts, request IDs - omit if none>
 
 ## Regression
 <Yes/No. If yes, last known good version.>
@@ -145,7 +145,7 @@ If the user cannot answer steps to reproduce or environment, do not fabricate va
 
 - The title names a concrete symptom, not a hypothesis ("payment button disabled after refresh" vs "payment flow is broken").
 - Steps to reproduce are numbered, deterministic, and minimal.
-- Expected and actual behaviour are concrete and separated -- no "it doesn't work".
+- Expected and actual behaviour are concrete and separated - no "it doesn't work".
 - Error messages are quoted verbatim, not paraphrased.
 - Severity and priority are both set and justified.
 - The reporter has not confused "severity" with "priority".

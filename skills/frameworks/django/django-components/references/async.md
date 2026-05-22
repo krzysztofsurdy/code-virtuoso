@@ -63,10 +63,10 @@ Parameters:
 - `thread_sensitive=False`: runs in a new thread.
 
 ```python
-# WRONG -- passes database connection across threads
+# WRONG - passes database connection across threads
 await sync_to_async(connection.cursor)()
 
-# CORRECT -- encapsulate database access in a single function
+# CORRECT - encapsulate database access in a single function
 @sync_to_async
 def get_user(user_id):
     return User.objects.get(id=user_id)
@@ -117,7 +117,7 @@ async def make_book_with_tags(tags, *args, **kwargs):
 
 ### Limitations
 
-- Transactions do not yet work in async mode -- wrap transaction code with `sync_to_async()`
+- Transactions do not yet work in async mode - wrap transaction code with `sync_to_async()`
 - Disable `CONN_MAX_AGE` setting when using async; use database backend connection pooling instead
 
 ## Async Safety
@@ -145,7 +145,7 @@ For IPython/Jupyter notebooks:
 %autoawait off
 ```
 
-Never enable this in production with concurrent access -- it risks data corruption.
+Never enable this in production with concurrent access - it risks data corruption.
 
 ## Supported Decorators
 
@@ -200,7 +200,7 @@ async def long_running_view(request):
         result = await expensive_async_operation()
         return JsonResponse(result)
     except asyncio.CancelledError:
-        # Client disconnected -- clean up resources
+        # Client disconnected - clean up resources
         await cleanup()
         raise
 ```

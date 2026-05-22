@@ -23,10 +23,10 @@ The standard format for behavior-driven acceptance criteria. Each criterion desc
 ### Structure
 
 ```
-Given [precondition -- the state of the system before the action]
+Given [precondition - the state of the system before the action]
 And [additional precondition, if needed]
-When [action -- what the user or system does]
-Then [outcome -- what should be observable]
+When [action - what the user or system does]
+Then [outcome - what should be observable]
 And [additional outcome, if needed]
 ```
 
@@ -162,12 +162,12 @@ Every set of acceptance criteria should address these categories. Not every cate
 
 ### Step-by-Step
 
-1. **Start with the happy path** -- the main success scenario the user story describes
-2. **Add validation errors** -- what happens when input is wrong?
-3. **Add authorization cases** -- what happens when the user lacks permission?
-4. **Add edge cases** -- use the tables above as a checklist
-5. **Add non-functional criteria** -- performance, accessibility, security where relevant
-6. **Review for ambiguity** -- read each criterion as a QA engineer would. Can you verify it without asking questions?
+1. **Start with the happy path** - the main success scenario the user story describes
+2. **Add validation errors** - what happens when input is wrong?
+3. **Add authorization cases** - what happens when the user lacks permission?
+4. **Add edge cases** - use the tables above as a checklist
+5. **Add non-functional criteria** - performance, accessibility, security where relevant
+6. **Review for ambiguity** - read each criterion as a QA engineer would. Can you verify it without asking questions?
 
 ### Ambiguity Detection
 
@@ -238,4 +238,4 @@ Before handing acceptance criteria to the team:
 - [ ] Edge cases have been considered (use the tables above)
 - [ ] No ambiguous words remain (appropriate, quickly, user-friendly, etc.)
 - [ ] Non-functional requirements have specific measurable targets
-- [ ] Criteria are independent -- no criterion depends on another passing first
+- [ ] Criteria are independent - no criterion depends on another passing first

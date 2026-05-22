@@ -15,7 +15,7 @@ Replace Magic Number with Symbolic Constant removes opaque numeric literals from
 
 ### Why It Matters
 
-Magic numbers accumulate technical debt by concealing purpose and making code brittle. When a value needs to change, every occurrence must be located and updated individually -- an error-prone process that invites inconsistencies. Named constants make the intent self-evident, centralize changes to a single definition, and reduce the chance of introducing bugs during maintenance.
+Magic numbers accumulate technical debt by concealing purpose and making code brittle. When a value needs to change, every occurrence must be located and updated individually - an error-prone process that invites inconsistencies. Named constants make the intent self-evident, centralize changes to a single definition, and reduce the chance of introducing bugs during maintenance.
 
 ## Mechanics: Step-by-Step
 

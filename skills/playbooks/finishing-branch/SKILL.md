@@ -1,6 +1,6 @@
 ---
 name: finishing-branch
-description: "End-to-end workflow for finishing a development branch. Use when implementation is complete and the branch is ready to ship -- runs verification checks, reviews the diff, picks the integration path (direct merge, pull request, squash-and-merge, stacked PR), writes the PR/merge message, pushes to the remote, and cleans up branches and worktrees. Covers rebase vs merge vs squash decisions, pre-push checklists, stacked-branch handling, and recovery from common missteps like force-pushing the wrong branch or deleting an unmerged branch. Triggers: 'I'm done', 'ready to merge', 'ready to push', 'ready for review', 'wrap up this branch', 'finish this up'."
+description: "End-to-end workflow for finishing a development branch. Use when implementation is complete and the branch is ready to ship - runs verification checks, reviews the diff, picks the integration path (direct merge, pull request, squash-and-merge, stacked PR), writes the PR/merge message, pushes to the remote, and cleans up branches and worktrees. Covers rebase vs merge vs squash decisions, pre-push checklists, stacked-branch handling, and recovery from common missteps like force-pushing the wrong branch or deleting an unmerged branch. Triggers: 'I'm done', 'ready to merge', 'ready to push', 'ready for review', 'wrap up this branch', 'finish this up'."
 user-invocable: true
 argument-hint: "[optional: branch name or PR target]"
 ---
@@ -65,7 +65,7 @@ git rev-parse --abbrev-ref --symbolic-full-name @{u}
 
 ## Phase 2: Pre-Push Verification
 
-Run the full verification suite before pushing. Order matters -- fail fast on the cheapest checks first.
+Run the full verification suite before pushing. Order matters - fail fast on the cheapest checks first.
 
 ```bash
 # 1. Lint (fastest, catches formatting/style issues)
@@ -264,7 +264,7 @@ Common mistakes and how to fix them.
 | Pushed secrets to remote | Rotate the secret immediately, then `git filter-repo` to purge from history |
 | Merged to wrong target branch | `git revert -m 1 <merge-commit>` on the wrong target, then merge to the correct one |
 | Rebase went wrong mid-way | `git rebase --abort` to return to pre-rebase state |
-| Lost work after worktree removal | `git reflog` -- commits survive worktree deletion if they were committed |
+| Lost work after worktree removal | `git reflog` - commits survive worktree deletion if they were committed |
 | PR targets wrong base branch | Update the PR's base branch in the hosting platform UI or CLI |
 
 See [Recovery Reference](references/recovery.md) for detailed walkthroughs of each recovery scenario.
@@ -278,7 +278,7 @@ Run through this before considering the branch done.
 - [ ] All tests pass (unit, integration, e2e as applicable)
 - [ ] Linter and type checker report no errors
 - [ ] Build completes without warnings
-- [ ] Self-reviewed the full diff -- no debug code, secrets, or unrelated changes
+- [ ] Self-reviewed the full diff - no debug code, secrets, or unrelated changes
 - [ ] Commit messages follow project conventions
 - [ ] PR description explains what, why, and how to verify
 - [ ] Target branch is correct
@@ -297,7 +297,7 @@ Run through this before considering the branch done.
 4. **Never push secrets.** Check the diff before every push. Rotate immediately if it happens.
 5. **Always use `--force-with-lease` instead of `--force`.** It prevents overwriting someone else's work on a shared branch.
 6. **Always clean up after merge.** Stale branches and orphaned worktrees accumulate and cause confusion.
-7. **Always write a meaningful PR/merge message.** "Fix stuff" helps nobody -- explain what changed and why.
+7. **Always write a meaningful PR/merge message.** "Fix stuff" helps nobody - explain what changed and why.
 8. **Rebase only your own branches.** Rebasing shared branches rewrites history others depend on.
 
 ---

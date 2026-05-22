@@ -39,7 +39,7 @@ Developers select items from the Product Backlog for the Sprint. The team discus
 
 **Facilitation tips:**
 - Base selection on past performance (velocity), upcoming capacity (holidays, on-call), and the Definition of Done
-- Developers make the final call on how much they can take on -- the PO does not dictate quantity
+- Developers make the final call on how much they can take on - the PO does not dictate quantity
 - If an item is too large, break it down or negotiate a smaller slice with the PO
 - Refine items enough that the team is confident they understand the work
 
@@ -48,10 +48,10 @@ Developers select items from the Product Backlog for the Sprint. The team discus
 Developers plan how to create an Increment that meets the Definition of Done. Items are decomposed into tasks, typically one day or smaller.
 
 **Facilitation tips:**
-- Only Developers determine how work gets done -- the PO and SM do not dictate implementation
+- Only Developers determine how work gets done - the PO and SM do not dictate implementation
 - Create a delivery plan visible to the whole team (board, task breakdown)
 - Identify dependencies and risks early
-- Do not plan every task in detail -- just enough to start confidently
+- Do not plan every task in detail - just enough to start confidently
 
 ### Sprint Planning Anti-Patterns
 
@@ -110,20 +110,20 @@ The Scrum Team presents Sprint results to key stakeholders and collaborates on w
 
 ### Structure
 
-1. **Sprint Goal recap** -- Did we meet it? What was the outcome?
-2. **Demonstrate the Increment** -- Show working software, not slides
-3. **Discuss what happened** -- What changed during the Sprint? What was learned?
-4. **Inspect the Product Backlog** -- Based on progress and new information, what should come next?
-5. **Collaborate on next steps** -- Stakeholders and team discuss emerging opportunities, market changes, budget
+1. **Sprint Goal recap** - Did we meet it? What was the outcome?
+2. **Demonstrate the Increment** - Show working software, not slides
+3. **Discuss what happened** - What changed during the Sprint? What was learned?
+4. **Inspect the Product Backlog** - Based on progress and new information, what should come next?
+5. **Collaborate on next steps** - Stakeholders and team discuss emerging opportunities, market changes, budget
 
 ### Facilitation Tips
 
 - Invite stakeholders who have a genuine interest in the Sprint Goal
 - Include the Sprint Goal in the invitation so stakeholders can assess relevance
 - Let Developers demonstrate their own work
-- Encourage stakeholder questions and feedback -- this is the primary value
+- Encourage stakeholder questions and feedback - this is the primary value
 - Capture feedback as Product Backlog items or adjustments to existing items
-- Avoid turning it into a sign-off ceremony -- it is a collaboration session
+- Avoid turning it into a sign-off ceremony - it is a collaboration session
 
 ### Sprint Review Anti-Patterns
 
@@ -133,7 +133,7 @@ The Scrum Team presents Sprint results to key stakeholders and collaborates on w
 | Only the PO presents | Developers present their own work |
 | No stakeholder attendance | Send targeted invitations with Sprint Goal; make it valuable to attend |
 | Rubber-stamp approval | Actively solicit feedback and tough questions |
-| Skipped "because nothing changed" | Always hold the review -- even a failed Sprint has learnings |
+| Skipped "because nothing changed" | Always hold the review - even a failed Sprint has learnings |
 
 ---
 
@@ -184,10 +184,10 @@ Good for teams that respond to visual facilitation.
 ### Facilitation Tips
 
 - Vary the format every few sprints to avoid staleness
-- Create psychological safety -- no blame, focus on systems not individuals
+- Create psychological safety - no blame, focus on systems not individuals
 - Timebox each phase (gather data, discuss, decide on actions)
-- Limit actions to 1-3 per retrospective -- fewer, concrete actions beat a long wish list
-- Track previous action items -- start each retro by reviewing what was committed last time
+- Limit actions to 1-3 per retrospective - fewer, concrete actions beat a long wish list
+- Track previous action items - start each retro by reviewing what was committed last time
 - The Scrum Master participates as a team member, not just a facilitator
 
 ### Retrospective Anti-Patterns
@@ -196,7 +196,7 @@ Good for teams that respond to visual facilitation.
 |---|---|
 | Same complaints every retro, nothing changes | Track actions and follow through; if nothing changes, escalate |
 | Blame individuals | Focus on processes and systems; establish ground rules |
-| Skipped "because we're too busy" | The retro is how you get less busy -- it improves the process |
+| Skipped "because we're too busy" | The retro is how you get less busy - it improves the process |
 | Only negative feedback | Explicitly include a "what went well" phase |
 | Actions are vague ("communicate better") | Make actions specific: who, what, by when |
 | Management attends and team self-censors | Management should not attend unless explicitly invited by the team |

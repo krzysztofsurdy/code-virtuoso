@@ -11,7 +11,7 @@ Narrow from the expanded problem space to a concrete, bounded scope.
 1. Summarize what you have learned in 3-5 bullet points.
 2. Present the summary and ask: "Does this capture the core of what you want to build?"
 3. Resolve any open contradictions by asking the user to choose.
-4. Confirm explicit non-goals: "To make sure we agree on boundaries -- these are things we are NOT building: [list]. Correct?"
+4. Confirm explicit non-goals: "To make sure we agree on boundaries - these are things we are NOT building: [list]. Correct?"
 5. Lock the scope: must-haves vs. nice-to-haves vs. out-of-scope.
 
 ## Rules
@@ -26,6 +26,6 @@ Narrow from the expanded problem space to a concrete, bounded scope.
 **Returns to Phase 2 when:** New scope is introduced that needs exploration.
 **Returns to this phase when:** The user wants to adjust boundaries.
 
-Ask the user: "Scope locked -- must-haves: [list], non-goals: [list]. Ready to write the spec?"
+Ask the user: "Scope locked - must-haves: [list], non-goals: [list]. Ready to write the spec?"
 
 Do NOT proceed to Phase 4 until the user confirms.

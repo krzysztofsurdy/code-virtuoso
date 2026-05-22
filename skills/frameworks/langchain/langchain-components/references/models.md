@@ -262,10 +262,10 @@ class MovieDetails(BaseModel):
 
 The `response_format` parameter in `create_agent` accepts:
 
-- `ProviderStrategy[T]` -- uses native provider structured output (OpenAI, Anthropic, xAI, Gemini)
-- `ToolStrategy[T]` -- uses tool calling for structured output
-- Schema type directly -- auto-selects appropriate strategy
-- `None` -- no structured output
+- `ProviderStrategy[T]` - uses native provider structured output (OpenAI, Anthropic, xAI, Gemini)
+- `ToolStrategy[T]` - uses tool calling for structured output
+- Schema type directly - auto-selects appropriate strategy
+- `None` - no structured output
 
 ### Provider Strategy
 
@@ -314,8 +314,8 @@ response_format = ToolStrategy(Union[ProductReview, CustomerComplaint])
 | `False` | Disables retries, propagates exceptions |
 
 Available exception classes:
-- `StructuredOutputValidationError` -- schema validation failures
-- `MultipleStructuredOutputsError` -- multiple tools incorrectly called
+- `StructuredOutputValidationError` - schema validation failures
+- `MultipleStructuredOutputsError` - multiple tools incorrectly called
 
 ## Advanced Features
 

@@ -1,6 +1,6 @@
 # plugin.json Reference
 
-The plugin manifest lives at `.claude-plugin/plugin.json` inside the plugin directory. It is **optional** -- if omitted, Claude Code auto-discovers components in default locations and derives the plugin name from the directory name. Provide a manifest when you need metadata, custom component paths, `userConfig`, or `channels`.
+The plugin manifest lives at `.claude-plugin/plugin.json` inside the plugin directory. It is **optional** - if omitted, Claude Code auto-discovers components in default locations and derives the plugin name from the directory name. Provide a manifest when you need metadata, custom component paths, `userConfig`, or `channels`.
 
 ## Complete Schema
 
@@ -128,7 +128,7 @@ The `userConfig` field declares values that Claude Code prompts the user for whe
 - Values are substitutable as `${user_config.KEY}` in MCP/LSP configs, hook commands, and (for non-sensitive values only) skill and agent content.
 - Values are exposed to plugin subprocesses as `CLAUDE_PLUGIN_OPTION_<KEY>` environment variables.
 - Non-sensitive values land in `settings.json` under `pluginConfigs[<plugin-id>].options`.
-- Sensitive values go to the system keychain (or `~/.claude/.credentials.json` fallback). Keychain storage has ~2 KB total limit shared with OAuth tokens -- keep sensitive values small.
+- Sensitive values go to the system keychain (or `~/.claude/.credentials.json` fallback). Keychain storage has ~2 KB total limit shared with OAuth tokens - keep sensitive values small.
 
 ## Channels
 
@@ -188,12 +188,12 @@ The `diff` exits nonzero when the stored copy is missing or differs, covering fi
 ## Version Management Rules
 
 - Follow semantic versioning: `MAJOR.MINOR.PATCH`.
-  - MAJOR -- breaking changes
-  - MINOR -- backward-compatible additions
-  - PATCH -- backward-compatible fixes
+  - MAJOR - breaking changes
+  - MINOR - backward-compatible additions
+  - PATCH - backward-compatible fixes
 - Start new plugins at `1.0.0`. Use `0.x.y` only if breaking changes are actively expected.
 - **Claude Code uses the version to decide whether to update plugins.** If the plugin content changes but the version does not, users will not see updates due to caching.
-- If the plugin lives inside a marketplace directory, versioning can be managed in `marketplace.json` instead -- in that case, omit `version` from `plugin.json`.
+- If the plugin lives inside a marketplace directory, versioning can be managed in `marketplace.json` instead - in that case, omit `version` from `plugin.json`.
 
 ## Common Mistakes
 
@@ -204,4 +204,4 @@ The `diff` exits nonzero when the stored copy is missing or differs, covering fi
 | Hard-coded paths like `/Users/me/plugin/scripts/x.sh`     | Use `${CLAUDE_PLUGIN_ROOT}/scripts/x.sh`.                                    |
 | `version` set in both `plugin.json` and marketplace entry | Pick one authoritative location. `plugin.json` wins when both exist.         |
 | Setting `hooks`, `mcpServers`, or `permissionMode` on a plugin agent | Not supported for plugin-shipped agents. Use plugin-level config instead. |
-| Reference files outside plugin root (`../shared-utils`)   | Use symlinks instead -- they are preserved by the cache.                     |
+| Reference files outside plugin root (`../shared-utils`)   | Use symlinks instead - they are preserved by the cache.                     |

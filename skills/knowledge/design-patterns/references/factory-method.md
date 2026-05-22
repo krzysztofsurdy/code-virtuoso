@@ -304,7 +304,7 @@ echo $response->message;
 
 - **Vending Machine**: You press a button for "hot beverage." The machine's internal mechanism (factory method) decides whether to brew coffee, tea, or hot chocolate based on the selection, dispensing the result through the same slot.
 
-- **Print Shop**: A customer submits a document and selects the output format. The shop's production line (factory) routes the job to the right printer -- laser, inkjet, or large-format -- without the customer knowing which machine handles it.
+- **Print Shop**: A customer submits a document and selects the output format. The shop's production line (factory) routes the job to the right printer - laser, inkjet, or large-format - without the customer knowing which machine handles it.
 
 ## Pros and Cons
 

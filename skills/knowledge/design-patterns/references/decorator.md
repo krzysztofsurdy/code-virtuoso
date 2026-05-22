@@ -10,13 +10,13 @@ The Decorator pattern meets the need to enhance individual objects dynamically. 
 - Avoid the combinatorial explosion of subclasses that results from freely mixable features
 - Keep core logic and optional extensions in separate classes so each evolves on its own timeline
 - Compose multiple decorators in any sequence to assemble precisely the behavior a caller requires
-- Uphold the Open/Closed Principle -- existing classes stay closed for modification while remaining open for extension via wrapping
+- Uphold the Open/Closed Principle - existing classes stay closed for modification while remaining open for extension via wrapping
 
 ## Problem and Solution
 
-**Problem:** A core object performs its primary job correctly, but different callers need different mixes of supplementary features on top of it. Subclassing every permutation -- `PlainCoffee`, `CoffeeWithMilk`, `CoffeeWithMilkAndSugar`, `CoffeeWithCinnamonAndMilk` -- spawns an unmanageable number of classes that multiplies with every new option.
+**Problem:** A core object performs its primary job correctly, but different callers need different mixes of supplementary features on top of it. Subclassing every permutation - `PlainCoffee`, `CoffeeWithMilk`, `CoffeeWithMilkAndSugar`, `CoffeeWithCinnamonAndMilk` - spawns an unmanageable number of classes that multiplies with every new option.
 
-**Solution:** Create decorator classes that implement the same interface as the object they enclose. Each decorator adds one focused enhancement and delegates all other calls to the wrapped object. At runtime, decorators stack around the core like concentric shells, and any combination of features emerges naturally from the nesting order -- no new subclasses required.
+**Solution:** Create decorator classes that implement the same interface as the object they enclose. Each decorator adds one focused enhancement and delegates all other calls to the wrapped object. At runtime, decorators stack around the core like concentric shells, and any combination of features emerges naturally from the nesting order - no new subclasses required.
 
 ## Structure
 
@@ -127,7 +127,7 @@ echo $processor->process('<script>alert("xss")</script>') . PHP_EOL;
 ## Real-World Analogies
 
 - **Layered Clothing**: A base shirt gains warmth from a vest, wind resistance from a jacket, and waterproofing from a raincoat. Each layer adds a distinct property without replacing the ones underneath.
-- **Photo Editing Filters**: An image editor stacks filters -- contrast, saturation, vignette -- one atop another. Each filter transforms the output of the previous one, and the user can reorder or strip any filter independently.
+- **Photo Editing Filters**: An image editor stacks filters - contrast, saturation, vignette - one atop another. Each filter transforms the output of the previous one, and the user can reorder or strip any filter independently.
 - **I/O Stream Wrappers**: A raw byte stream can be enclosed in a buffering layer, then a compression layer, then an encryption layer. Each wrapper manages one concern and forwards data to the next.
 
 ## Pros and Cons

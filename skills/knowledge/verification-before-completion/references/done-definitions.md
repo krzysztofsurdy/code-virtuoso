@@ -33,11 +33,11 @@ Explicitly naming the tier prevents the most common miscommunication: one person
 
 ```
 Local done.
-- Tests: `pytest -v` -- 56 passed, 0 failed, 0 skipped. Exit code 0.
-- Lint: `ruff check .` -- 0 errors. Exit code 0.
-- Types: `mypy .` -- Success: no issues found in 31 source files. Exit code 0.
-- Build: `python -m build` -- exit code 0, dist/mypackage-1.2.0.tar.gz created.
-- Git: `git status` -- working tree clean. `git diff --stat HEAD~1` -- 4 files changed.
+- Tests: `pytest -v` - 56 passed, 0 failed, 0 skipped. Exit code 0.
+- Lint: `ruff check .` - 0 errors. Exit code 0.
+- Types: `mypy .` - Success: no issues found in 31 source files. Exit code 0.
+- Build: `python -m build` - exit code 0, dist/mypackage-1.2.0.tar.gz created.
+- Git: `git status` - working tree clean. `git diff --stat HEAD~1` - 4 files changed.
 ```
 
 ### Common Mistakes at Tier 1
@@ -188,7 +188,7 @@ Verified-in-production done.
 - All Tier 4 checks pass (production environment).
 - Smoke tests: `curl prod.example.com/api/export/users` returns 200 with CSV data.
 - Error rate: 0.02% (baseline: 0.02%) over 30 minutes post-deploy.
-- P95 latency: 180ms (baseline: 175ms) -- within tolerance.
+- P95 latency: 180ms (baseline: 175ms) - within tolerance.
 - Feature verified: user export button visible, CSV download completes.
 - No new alerts in monitoring dashboard over the observation period.
 ```

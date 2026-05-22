@@ -1,6 +1,6 @@
 ## Overview
 
-Duplicate code appears when two or more code fragments perform the same work using identical or near-identical logic. It is among the most frequently encountered code smells and serves as a clear signal that shared logic should be extracted into a single, reusable location. Every copy of the same logic is a liability -- it multiplies the effort required for any change and undermines the DRY (Don't Repeat Yourself) principle.
+Duplicate code appears when two or more code fragments perform the same work using identical or near-identical logic. It is among the most frequently encountered code smells and serves as a clear signal that shared logic should be extracted into a single, reusable location. Every copy of the same logic is a liability - it multiplies the effort required for any change and undermines the DRY (Don't Repeat Yourself) principle.
 
 ## Why It's a Problem
 

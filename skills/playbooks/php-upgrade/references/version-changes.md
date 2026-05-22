@@ -175,7 +175,7 @@ trait HasVersion
 
 **Dynamic properties deprecated (major impact):**
 ```php
-// DEPRECATED -- triggers E_DEPRECATED
+// DEPRECATED - triggers E_DEPRECATED
 class User
 {
     public string $name;
@@ -183,7 +183,7 @@ class User
 
 $user = new User();
 $user->name = 'John';     // OK
-$user->age = 30;           // DEPRECATED -- property not declared
+$user->age = 30;           // DEPRECATED - property not declared
 
 // Temporary workaround
 #[AllowDynamicProperties]
@@ -208,8 +208,8 @@ $GLOBALS['key'] = 'value';
 $val = $GLOBALS['key'];
 ```
 
-- `utf8_encode()` and `utf8_decode()` deprecated -- use `mb_convert_encoding()` instead
-- `${var}` string interpolation deprecated -- use `{$var}` instead
+- `utf8_encode()` and `utf8_decode()` deprecated - use `mb_convert_encoding()` instead
+- `${var}` string interpolation deprecated - use `{$var}` instead
 
 ---
 
@@ -310,8 +310,8 @@ class BankAccount
 }
 
 $account = new BankAccount(100.0);
-echo $account->balance;      // OK -- public read
-$account->balance = 200.0;   // ERROR -- private set
+echo $account->balance;      // OK - public read
+$account->balance = 200.0;   // ERROR - private set
 ```
 
 **`new` without parentheses in expressions:**
@@ -340,11 +340,11 @@ function save(string $name = null): void { }
 function save(?string $name = null): void { }
 ```
 
-This is one of the most widespread changes -- Rector handles it automatically.
+This is one of the most widespread changes - Rector handles it automatically.
 
 **Other deprecations:**
 - GET/POST session tracking deprecated (non-cookie session handling)
-- `session_set_save_handler()` with individual callbacks deprecated -- use `SessionHandlerInterface`
+- `session_set_save_handler()` with individual callbacks deprecated - use `SessionHandlerInterface`
 - DOM extension: `DOMDocument`, `DOMElement` etc. old methods deprecated in favor of `\Dom\` namespace classes
 - `E_STRICT` constant deprecated
 - `strtolower()`/`strtoupper()` no longer locale-sensitive
@@ -361,5 +361,5 @@ return RectorConfig::configure()
 ```
 
 Key Rector rules for 8.4:
-- `ExplicitNullableParamTypeRector` -- fixes implicit nullable parameters
-- `NullToStrictStringFuncCallArgRector` -- fixes null arguments to string functions
+- `ExplicitNullableParamTypeRector` - fixes implicit nullable parameters
+- `NullToStrictStringFuncCallArgRector` - fixes null arguments to string functions

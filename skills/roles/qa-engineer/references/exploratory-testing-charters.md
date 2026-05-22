@@ -225,7 +225,7 @@ Use these to identify bugs by noticing inconsistencies:
 
 | Letter | Heuristic | What to Look For |
 |---|---|---|
-| **F** | Familiar problems | Common bug patterns -- off-by-one, null handling, encoding, timezone |
+| **F** | Familiar problems | Common bug patterns - off-by-one, null handling, encoding, timezone |
 | **E** | Explainability | Can you explain the behavior to someone? If not, it might be a bug. |
 | **W** | World | Does the behavior make sense in the real world? (A user with -3 orders, a date of Feb 30) |
 

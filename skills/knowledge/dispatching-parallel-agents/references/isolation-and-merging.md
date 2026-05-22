@@ -6,7 +6,7 @@ How to keep subagents independent during execution and integrate their results a
 
 ## Context Isolation
 
-Every subagent starts with a clean slate. It does not inherit the orchestrator's conversation history, memory, or accumulated context. This is not a limitation -- it is a feature.
+Every subagent starts with a clean slate. It does not inherit the orchestrator's conversation history, memory, or accumulated context. This is not a limitation - it is a feature.
 
 ### Why Context Isolation Matters
 
@@ -19,7 +19,7 @@ Every subagent starts with a clean slate. It does not inherit the orchestrator's
 
 1. **Write self-contained briefs**: Every fact the agent needs is in the brief. If it is not in the brief, the agent does not know about it.
 2. **Do not pass conversation history**: Extract relevant facts and include them as context in the brief. Discard the conversational wrapper.
-3. **Do not share results between parallel agents**: If Agent B needs Agent A's output, they are not parallel -- sequence them.
+3. **Do not share results between parallel agents**: If Agent B needs Agent A's output, they are not parallel - sequence them.
 4. **Do not reference other agents**: Agent A should not know Agent B exists. Each agent believes it is the only one working on the problem.
 
 ### What to Include in Context
@@ -92,7 +92,7 @@ Agents that only read files (investigators, reviewers, auditors, test gap analyz
 
 ## Result Synthesis
 
-When parallel agents complete, the orchestrator receives multiple outputs that must be integrated into a single coherent result. Synthesis is the orchestrator's core responsibility -- it cannot be delegated.
+When parallel agents complete, the orchestrator receives multiple outputs that must be integrated into a single coherent result. Synthesis is the orchestrator's core responsibility - it cannot be delegated.
 
 ### Synthesis Steps
 

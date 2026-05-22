@@ -9,7 +9,7 @@ Most platforms support multiple scopes for agent definitions. When names collide
 | Scope | Use for | Commit to repo? |
 |---|---|---|
 | Managed / organisation | Org-wide agents deployed by admins | Yes (in managed settings repo) |
-| Session / CLI-flag | One-off testing, automation scripts | No -- ephemeral |
+| Session / CLI-flag | One-off testing, automation scripts | No - ephemeral |
 | Project | Agents specific to this codebase | Yes |
 | User / personal | Personal agents reused across projects | No (user home directory) |
 | Plugin / marketplace | Agents shipped as distributable bundles | Yes (in plugin repo) |
@@ -32,7 +32,7 @@ Project agents are discovered by walking up from the working directory. Restart 
 
 ### Frontmatter
 
-All fields listed in [frontmatter-fields.md](frontmatter-fields.md) are supported. Plugin agents do not support `hooks`, `mcpServers`, or `permissionMode` for security reasons -- copy the agent to `.claude/agents/` if you need those.
+All fields listed in [frontmatter-fields.md](frontmatter-fields.md) are supported. Plugin agents do not support `hooks`, `mcpServers`, or `permissionMode` for security reasons - copy the agent to `.claude/agents/` if you need those.
 
 ### Interaction
 
@@ -46,14 +46,14 @@ All fields listed in [frontmatter-fields.md](frontmatter-fields.md) are supporte
 Claude Code also supports agent teams, where multiple teammates run in parallel and communicate with each other. Teammates can reference sub-agent definitions by name, inheriting their `tools` and `model`. When a sub-agent definition runs as a teammate:
 
 - The definition's body is appended to the teammate system prompt as additional instructions, not as a replacement
-- `skills` and `mcpServers` are not applied -- the teammate loads them from project and user settings
+- `skills` and `mcpServers` are not applied - the teammate loads them from project and user settings
 - Team coordination tools remain available even when `tools` restricts others
 
 If you want the same agent to work both as a sub-agent and as a teammate, keep the body self-contained and do not assume tools outside the allowlist are present.
 
 ## Cursor
 
-Cursor uses a different model -- it is primarily an AI coding editor rather than a sub-agent orchestrator. There is no direct sub-agent equivalent, but Cursor supports:
+Cursor uses a different model - it is primarily an AI coding editor rather than a sub-agent orchestrator. There is no direct sub-agent equivalent, but Cursor supports:
 
 - Rules files (`.cursor/rules/*.mdc`) for project-wide instructions
 - Custom modes for different behaviours per session
@@ -68,7 +68,7 @@ See the `agentic-rules-writer` skill for producing these conversions.
 
 ## Codex / AGENTS.md Convention
 
-The `AGENTS.md` convention (used by OpenAI Codex and several other agents) is a single Markdown file at the project root that contains all agent-related guidance. It is not a sub-agent registry in the Claude Code sense -- it is a flat document.
+The `AGENTS.md` convention (used by OpenAI Codex and several other agents) is a single Markdown file at the project root that contains all agent-related guidance. It is not a sub-agent registry in the Claude Code sense - it is a flat document.
 
 To port a sub-agent definition to an `AGENTS.md`-driven platform:
 
@@ -80,7 +80,7 @@ To port a sub-agent definition to an `AGENTS.md`-driven platform:
 
 Many platforms (Windsurf, Copilot, Gemini CLI, Cline, Continue, Trae, Roo Code, Amp, Goose, Augment, Kilo Code) read a single plain-Markdown instructions file. To use a sub-agent definition there:
 
-1. Flatten the frontmatter -- keep only the portable `name`, `description`, and body
+1. Flatten the frontmatter - keep only the portable `name`, `description`, and body
 2. Write the body as a section in the instructions file
 3. Describe how the user should invoke the agent ("When you want an investigation, say 'investigate X'")
 
@@ -104,7 +104,7 @@ Sub-agents do not talk to each other.
 - Shared task lists coordinate work
 - Each teammate is a full, independent session
 
-Design for sub-agent mode by default. Escalate to team mode only when parallel exploration or adversarial debate adds real value -- the token cost is significantly higher.
+Design for sub-agent mode by default. Escalate to team mode only when parallel exploration or adversarial debate adds real value - the token cost is significantly higher.
 
 ## Porting Checklist
 

@@ -13,10 +13,10 @@ Performance work follows one rule above all others: measure before you change an
 
 | Principle | Meaning |
 |---|---|
-| **Measure first** | Never optimize without profiling data -- gut feelings about bottlenecks are unreliable |
+| **Measure first** | Never optimize without profiling data - gut feelings about bottlenecks are unreliable |
 | **Optimize the critical path** | Focus on the code that runs most frequently or blocks user-visible latency |
 | **Set budgets** | Define acceptable latency, throughput, and resource usage before you start |
-| **Avoid premature optimization** | Readable, correct code first -- optimize only when measurements show a real problem |
+| **Avoid premature optimization** | Readable, correct code first - optimize only when measurements show a real problem |
 | **Know your tradeoffs** | Every optimization trades something (memory for speed, complexity for throughput, freshness for latency) |
 
 ---
@@ -36,11 +36,11 @@ Profiling identifies where time and resources are spent. Without it, you are gue
 
 ### The Profiling Workflow
 
-1. **Baseline** -- Capture metrics under normal conditions before any changes
-2. **Identify** -- Find the hotspot consuming the most time or resources
-3. **Hypothesize** -- Form a specific theory about why it is slow
-4. **Fix** -- Apply a single, targeted change
-5. **Verify** -- Measure again to confirm improvement and check for regressions
+1. **Baseline** - Capture metrics under normal conditions before any changes
+2. **Identify** - Find the hotspot consuming the most time or resources
+3. **Hypothesize** - Form a specific theory about why it is slow
+4. **Fix** - Apply a single, targeted change
+5. **Verify** - Measure again to confirm improvement and check for regressions
 
 ### Performance Budgets
 
@@ -63,8 +63,8 @@ Caching eliminates redundant computation and data fetching by storing results cl
 
 | Layer | Location | Latency | Use Case |
 |---|---|---|---|
-| **L1 -- In-process** | Application memory (object cache, memoization) | Nanoseconds | Hot data accessed many times per request |
-| **L2 -- Distributed** | Redis, Memcached, shared cache | Sub-millisecond to low milliseconds | Data shared across application instances |
+| **L1 - In-process** | Application memory (object cache, memoization) | Nanoseconds | Hot data accessed many times per request |
+| **L2 - Distributed** | Redis, Memcached, shared cache | Sub-millisecond to low milliseconds | Data shared across application instances |
 | **HTTP cache** | Browser, reverse proxy (Varnish, Nginx) | Zero network round-trip for client cache | Static assets, cacheable API responses |
 | **CDN** | Edge servers worldwide | Low latency from geographic proximity | Static files, pre-rendered pages, media |
 | **Database cache** | Query result cache, buffer pool | Varies | Repeated identical queries |
@@ -82,9 +82,9 @@ Caching eliminates redundant computation and data fetching by storing results cl
 
 When a popular cache key expires, many concurrent requests may all try to regenerate it at once, overwhelming the backend. Three approaches prevent this:
 
-- **Locking** -- Only one request regenerates; others wait or serve stale data
-- **Probabilistic early recomputation** -- Requests randomly refresh the cache before expiration, spreading regeneration over time
-- **Request coalescing** -- Duplicate in-flight requests are collapsed into a single backend call
+- **Locking** - Only one request regenerates; others wait or serve stale data
+- **Probabilistic early recomputation** - Requests randomly refresh the cache before expiration, spreading regeneration over time
+- **Request coalescing** - Duplicate in-flight requests are collapsed into a single backend call
 
 See [Caching Strategies Reference](references/caching-strategies.md) for implementation patterns with multi-language examples.
 
@@ -99,7 +99,7 @@ Database queries are the most common performance bottleneck in web applications.
 - Create indexes on columns used in WHERE, JOIN, and ORDER BY clauses
 - Use composite indexes that match your most frequent query patterns (leftmost prefix rule)
 - Covering indexes include all columns a query needs, avoiding table lookups entirely
-- Monitor unused indexes -- they slow down writes without helping reads
+- Monitor unused indexes - they slow down writes without helping reads
 
 ### N+1 Query Prevention
 
@@ -119,8 +119,8 @@ The N+1 problem occurs when code fetches a list of N records, then issues one ad
 
 Opening a database connection is expensive (TCP handshake, authentication, TLS negotiation). Connection pools maintain a set of reusable connections:
 
-- Size the pool based on expected concurrency -- too small causes queueing, too large overwhelms the database
-- Always return connections to the pool promptly -- leaked connections exhaust the pool
+- Size the pool based on expected concurrency - too small causes queueing, too large overwhelms the database
+- Always return connections to the pool promptly - leaked connections exhaust the pool
 - Set idle timeouts to reclaim unused connections
 - Use external poolers (like PgBouncer for PostgreSQL) when application-level pooling is insufficient
 

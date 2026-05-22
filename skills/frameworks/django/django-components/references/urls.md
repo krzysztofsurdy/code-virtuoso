@@ -59,10 +59,10 @@ urlpatterns = [
 ]
 ```
 
-Use named groups `(?P<name>pattern)` -- unnamed groups pass as positional arguments. Use non-capturing groups `(?:...)` to avoid unwanted captures:
+Use named groups `(?P<name>pattern)` - unnamed groups pass as positional arguments. Use non-capturing groups `(?:...)` to avoid unwanted captures:
 
 ```python
-# Good -- only captures page_number
+# Good - only captures page_number
 re_path(r"^comments/(?:page-(?P<page_number>[0-9]+)/)?$", comments)
 ```
 
@@ -186,7 +186,7 @@ urlpatterns = [
     path("<username>/blog/", include("foo.urls.blog")),
 ]
 
-# foo/urls/blog.py -- all views receive 'username'
+# foo/urls/blog.py - all views receive 'username'
 urlpatterns = [
     path("", views.blog.index),
     path("archive/", views.blog.archive),
@@ -312,7 +312,7 @@ handler500 = "myapp.views.server_error"
 ## Important Notes
 
 - URL patterns do not match GET/POST parameters or domain names
-- Request method does not affect routing -- all methods route to the same view
+- Request method does not affect routing - all methods route to the same view
 - No leading slash needed in patterns (every URL already has one)
 - Regular expressions are compiled on first access and cached
 - Extra option kwargs override captured URL parameters with the same name

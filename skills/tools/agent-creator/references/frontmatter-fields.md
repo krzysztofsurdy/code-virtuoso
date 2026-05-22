@@ -64,7 +64,7 @@ Avoid:
 
 ### `tools` (platform-specific, strongly recommended)
 
-An allowlist of tools the agent can use. Omitting it inherits everything from the caller -- rarely what you want.
+An allowlist of tools the agent can use. Omitting it inherits everything from the caller - rarely what you want.
 
 ```yaml
 tools: Read, Grep, Glob, Bash
@@ -84,7 +84,7 @@ If both `tools` and `disallowedTools` are set, the denylist wins for overlapping
 
 ### `skills` (portable, optional)
 
-Skills whose content is injected into the agent's context at startup. Sub-agents do not inherit skills from the caller -- you must list them explicitly.
+Skills whose content is injected into the agent's context at startup. Sub-agents do not inherit skills from the caller - you must list them explicitly.
 
 ```yaml
 skills:
@@ -154,14 +154,14 @@ mcpServers:
 
 ### `permissionMode` (platform-specific, optional)
 
-Overrides how the agent handles permission prompts. Use sparingly -- a permissive mode inside a sub-agent undermines the caller's safety posture.
+Overrides how the agent handles permission prompts. Use sparingly - a permissive mode inside a sub-agent undermines the caller's safety posture.
 
 | Mode | Behaviour |
 |---|---|
 | `default` | Standard permission prompts |
 | `acceptEdits` | Auto-accept file edits in the working directory |
 | `plan` | Read-only plan mode |
-| `bypassPermissions` | Skip prompts -- use with great care |
+| `bypassPermissions` | Skip prompts - use with great care |
 
 ### `hooks` (platform-specific, optional)
 
@@ -169,7 +169,7 @@ Lifecycle hooks scoped to this agent. Common uses: enforce tests pass before the
 
 ### `maxTurns` (platform-specific, optional)
 
-Cap on the number of agentic turns before the agent stops. Useful for agents that can loop -- a reviewer that keeps finding "one more thing".
+Cap on the number of agentic turns before the agent stops. Useful for agents that can loop - a reviewer that keeps finding "one more thing".
 
 ### `color`, `effort`, `background`, `initialPrompt` (platform-specific, optional)
 
@@ -179,12 +179,12 @@ UX and runtime conveniences. Omit unless you have a specific need.
 
 | Combination | Why it matters |
 |---|---|
-| `isolation: worktree` without any write tools | Agent cannot actually modify anything -- remove the isolation |
-| `Write`/`Edit` in `tools` without `isolation: worktree` | Agent edits the main tree -- risky for team-shared agents |
-| `memory: project` on a stateless specialist | Wasted complexity -- remove the memory field |
-| `skills` list longer than four entries | Context bloat -- trim to the essentials |
-| `model` hardcoded in a distributable agent | Non-portable -- remove it |
-| `permissionMode: bypassPermissions` on anything shared | Safety risk -- justify or remove |
+| `isolation: worktree` without any write tools | Agent cannot actually modify anything - remove the isolation |
+| `Write`/`Edit` in `tools` without `isolation: worktree` | Agent edits the main tree - risky for team-shared agents |
+| `memory: project` on a stateless specialist | Wasted complexity - remove the memory field |
+| `skills` list longer than four entries | Context bloat - trim to the essentials |
+| `model` hardcoded in a distributable agent | Non-portable - remove it |
+| `permissionMode: bypassPermissions` on anything shared | Safety risk - justify or remove |
 
 ## Example Templates
 

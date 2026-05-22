@@ -1,6 +1,6 @@
 ---
 name: review-squad
-description: "Multi-perspective code review team. Three reviewers examine changes from independent angles -- zero context, spec compliance, and full quality review -- then the lead triages into one actionable report. Use when merging significant changes that warrant thorough review."
+description: "Multi-perspective code review team. Three reviewers examine changes from independent angles - zero context, spec compliance, and full quality review - then the lead triages into one actionable report. Use when merging significant changes that warrant thorough review."
 lead: reviewer
 agents:
   - reviewer
@@ -19,9 +19,9 @@ Examine code changes from three independent angles simultaneously, then merge fi
 
 ## Workflow
 
-1. **Cold Reviewer** -- Receives only the diff. No spec, no docs, no history. Returns findings based purely on what the code shows. Runs in parallel with phase 2.
-2. **Acceptance Verifier** -- Receives the diff plus acceptance criteria. Returns a per-criterion PASS/FAIL/PARTIAL/UNTESTED matrix. Runs in parallel with phase 1.
-3. **Reviewer (lead)** -- Reads both reports, performs a full structured review (correctness, SOLID, security, performance, smells, testing), then produces the unified report. Deduplicates across all three sources.
+1. **Cold Reviewer** - Receives only the diff. No spec, no docs, no history. Returns findings based purely on what the code shows. Runs in parallel with phase 2.
+2. **Acceptance Verifier** - Receives the diff plus acceptance criteria. Returns a per-criterion PASS/FAIL/PARTIAL/UNTESTED matrix. Runs in parallel with phase 1.
+3. **Reviewer (lead)** - Reads both reports, performs a full structured review (correctness, SOLID, security, performance, smells, testing), then produces the unified report. Deduplicates across all three sources.
 
 ## Entry Criteria
 
@@ -52,11 +52,11 @@ Examine code changes from three independent angles simultaneously, then merge fi
 4. Reviewer reads both, runs its own review, posts the unified result
 
 **Sequential mode** (all other platforms):
-1. Spawn Cold Reviewer with the diff -- collect report
-2. Spawn Acceptance Verifier with the diff and criteria -- collect report
+1. Spawn Cold Reviewer with the diff - collect report
+2. Spawn Acceptance Verifier with the diff and criteria - collect report
 3. Reviewer reads both reports, runs its own review, produces the unified result
 
 ## Variants
 
-- **Two-reviewer** -- Drop Acceptance Verifier when no criteria exist. Cold Reviewer + Reviewer still provides zero-context vs full-context contrast.
-- **Deep mode** -- Add Refactor Scout before the review to scan for structural smells. Its smell report feeds into the Reviewer's analysis alongside the other two reports.
+- **Two-reviewer** - Drop Acceptance Verifier when no criteria exist. Cold Reviewer + Reviewer still provides zero-context vs full-context contrast.
+- **Deep mode** - Add Refactor Scout before the review to scan for structural smells. Its smell report feeds into the Reviewer's analysis alongside the other two reports.

@@ -8,12 +8,12 @@ Establish what the user is bringing to the table and what state it is in.
 
 ## Steps
 
-1. Read any provided context -- files, tickets, prior conversations, existing docs.
+1. Read any provided context - files, tickets, prior conversations, existing docs.
 2. Identify what already exists: greenfield, extension, replacement, or fix?
 3. Classify input maturity:
-   - **Raw idea** -- a sentence or feeling, no structure yet
-   - **Rough concept** -- some goals stated, many unknowns remain
-   - **Partial spec** -- some sections already defined, gaps need filling
+   - **Raw idea** - a sentence or feeling, no structure yet
+   - **Rough concept** - some goals stated, many unknowns remain
+   - **Partial spec** - some sections already defined, gaps need filling
 4. Acknowledge what you understood and state what is still unknown.
 5. Ask the first question to begin divergence.
 

@@ -30,7 +30,7 @@ Django uses `HttpRequest` and `HttpResponse` objects to pass state through the s
 
 ### Headers and Metadata
 
-**`META`** -- dictionary of all HTTP headers and server variables:
+**`META`** - dictionary of all HTTP headers and server variables:
 
 ```python
 request.META["CONTENT_LENGTH"]
@@ -47,7 +47,7 @@ request.META["SERVER_PORT"]
 
 HTTP headers in META are uppercased, hyphens replaced with underscores, prefixed with `HTTP_`.
 
-**`headers`** -- case-insensitive dict-like access to HTTP headers:
+**`headers`** - case-insensitive dict-like access to HTTP headers:
 
 ```python
 request.headers["User-Agent"]
@@ -116,7 +116,7 @@ request.read(size=None)
 request.readline()
 request.readlines()
 
-# Iterable -- useful for streaming parsers
+# Iterable - useful for streaming parsers
 for element in ET.iterparse(request):
     process(element)
 ```
@@ -166,7 +166,7 @@ q.setlist("a", ["1", "2"])
 q.appendlist("a", "3")
 q.update({"c": "4"})
 q.pop("a")
-q.dict()                  # {"a": "3"} -- last values only
+q.dict()                  # {"a": "3"} - last values only
 ```
 
 ## HttpResponse
@@ -304,7 +304,7 @@ response.headers["Content-Type"] = "text/plain"
 ### Key Differences from HttpResponse
 
 - Takes an iterator yielding bytestrings
-- No `content` or `text` attributes -- use `streaming_content`
+- No `content` or `text` attributes - use `streaming_content`
 - No `tell()` or `write()` methods
 - `streaming` is always `True`
 - Supports async iterators under ASGI

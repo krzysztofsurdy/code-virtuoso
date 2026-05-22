@@ -37,15 +37,15 @@ Assess the team across five dimensions. Rate each dimension from 1 (beginning) t
 | **Self-management** | SM or manager assigns work to individuals | Team discusses who does what but defers to SM for decisions | Team self-assigns, re-balances during Sprint, asks for help proactively | Team reorganizes autonomously, mentors new members, manages conflicts internally |
 | **Continuous improvement** | No retrospective or retrospective with no actions | Retrospective happens but actions are rarely completed | Actions are completed; team tracks improvement trends | Team experiments proactively; improvements are measurable and sustained |
 | **Collaboration** | Work in silos; handoffs between individuals | Pair work happens occasionally; team helps when asked | Team swarms on blockers; knowledge sharing is routine | Cross-functional by default; no single points of failure; collective ownership |
-| **Transparency** | Backlog is invisible or outdated; impediments are hidden | Backlog is visible but not always current; some impediments are surfaced | Backlog is current; impediments are tracked visibly; metrics are shared | Full transparency -- the team shares failures and learnings openly with stakeholders |
+| **Transparency** | Backlog is invisible or outdated; impediments are hidden | Backlog is visible but not always current; some impediments are surfaced | Backlog is current; impediments are tracked visibly; metrics are shared | Full transparency - the team shares failures and learnings openly with stakeholders |
 
 ### Using the Assessment
 
 1. Rate the team on each dimension through observation over 2-3 Sprints
-2. Identify the lowest-scoring dimension -- this is the coaching priority
+2. Identify the lowest-scoring dimension - this is the coaching priority
 3. Set one improvement goal per Sprint targeting the weakest area
 4. Reassess every 3-4 Sprints to track progress
-5. Share the assessment with the team -- transparency about growth builds trust
+5. Share the assessment with the team - transparency about growth builds trust
 
 ---
 
@@ -62,13 +62,13 @@ Assess the team across five dimensions. Rate each dimension from 1 (beginning) t
 
 ### Resolution Workflow
 
-1. **Make it visible** -- Add every impediment to a shared board the moment it is raised
-2. **Classify** -- Determine the type and who can resolve it
-3. **Assign** -- Every impediment gets an owner (not always the SM)
-4. **Track** -- Review open impediments in the Daily Scrum; update status regularly
-5. **Resolve** -- Apply the appropriate strategy based on type
-6. **Verify** -- Confirm with the team that the impediment is truly resolved
-7. **Learn** -- If the same type of impediment recurs, address the root cause systemically
+1. **Make it visible** - Add every impediment to a shared board the moment it is raised
+2. **Classify** - Determine the type and who can resolve it
+3. **Assign** - Every impediment gets an owner (not always the SM)
+4. **Track** - Review open impediments in the Daily Scrum; update status regularly
+5. **Resolve** - Apply the appropriate strategy based on type
+6. **Verify** - Confirm with the team that the impediment is truly resolved
+7. **Learn** - If the same type of impediment recurs, address the root cause systemically
 
 ### Escalation Template
 
@@ -76,10 +76,10 @@ When escalating an organizational impediment:
 
 ```
 IMPEDIMENT: [Brief description]
-IMPACT: [How it affects the team -- quantify if possible]
+IMPACT: [How it affects the team - quantify if possible]
 DURATION: [How long it has been unresolved]
 ATTEMPTED: [What the team has already tried]
-REQUEST: [Specific ask -- what do you need from the person you are escalating to]
+REQUEST: [Specific ask - what do you need from the person you are escalating to]
 URGENCY: [What happens if this is not resolved by X date]
 ```
 
@@ -120,7 +120,7 @@ URGENCY: [What happens if this is not resolved by X date]
 **Sprint 16+ (Performing)**:
 - Team is fully self-managing for daily operations
 - SM focuses on organizational impediments and cross-team coordination
-- SM challenges the team to raise the bar -- "What would world-class look like?"
+- SM challenges the team to raise the bar - "What would world-class look like?"
 - SM may support multiple teams
 
 ---

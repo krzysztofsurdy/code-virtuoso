@@ -18,17 +18,17 @@ Work through these question categories in order. Ask one question at a time. Ski
 | Scope-narrowing | Distinguish must-haves from nice-to-haves | "If you could only ship one thing, what would it be?" |
 | Risk-surfacing | Identify what could go wrong or block progress | "What is the worst thing that could happen if this goes wrong?" |
 | Success-criteria | Define measurable conditions for done | "How will you know this is working correctly?" |
-| Assumption-challenging | Test unstated beliefs | "You mentioned X -- is that a hard requirement or an assumption?" |
+| Assumption-challenging | Test unstated beliefs | "You mentioned X - is that a hard requirement or an assumption?" |
 
 See [question-playbook](../references/question-playbook.md) for the full catalog.
 
 ## Rules
 
 - One question per message, always
-- Open questions before closed questions -- explore before narrowing
+- Open questions before closed questions - explore before narrowing
 - When the user states something as fact, probe whether it is a requirement or an assumption
 - Do NOT offer solutions, architectures, or technology choices during divergence
-- Track emerging themes and contradictions silently -- surface contradictions as questions, not corrections
+- Track emerging themes and contradictions silently - surface contradictions as questions, not corrections
 
 ## Gate
 

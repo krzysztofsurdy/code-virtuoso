@@ -2,7 +2,7 @@
 
 ## Overview
 
-Refused Bequest occurs when a subclass inherits from a parent but ignores or actively rejects much of what it receives. The subclass might leave inherited methods unused, or override them solely to throw exceptions. This is a strong signal that the inheritance relationship is wrong -- the subclass is borrowing code rather than genuinely being a specialized version of the parent. The Liskov Substitution Principle is the clearest casualty: you cannot safely substitute the child where the parent is expected.
+Refused Bequest occurs when a subclass inherits from a parent but ignores or actively rejects much of what it receives. The subclass might leave inherited methods unused, or override them solely to throw exceptions. This is a strong signal that the inheritance relationship is wrong - the subclass is borrowing code rather than genuinely being a specialized version of the parent. The Liskov Substitution Principle is the clearest casualty: you cannot safely substitute the child where the parent is expected.
 
 ## Why It's a Problem
 
@@ -215,5 +215,5 @@ Refused Bequest is acceptable in these scenarios:
 
 - **Parallel Inheritance Hierarchies**: Multiple inheritance chains that mirror each other's structure
 - **Inappropriate Intimacy**: Classes that know too much about each other's implementation details
-- **Large Class**: An overly broad parent class is a common root cause -- the child only needs a fraction of what the parent offers
+- **Large Class**: An overly broad parent class is a common root cause - the child only needs a fraction of what the parent offers
 - **Lazy Class**: A subclass that contributes almost nothing beyond its parent

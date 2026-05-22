@@ -2,7 +2,7 @@
 
 Introduce Assertion replaces implicit assumptions and undocumented preconditions with explicit assertion statements. Rather than relying on comments or hoping developers will remember constraints, assertions turn assumptions into executable checks that fail fast when violated.
 
-Assertions bridge the gap between documentation and code -- they verify that conditions necessary for correct execution actually hold before the code proceeds.
+Assertions bridge the gap between documentation and code - they verify that conditions necessary for correct execution actually hold before the code proceeds.
 
 ## Motivation
 

@@ -1,6 +1,6 @@
 ## Overview
 
-Divergent Change occurs when a single class must be modified for multiple, unrelated reasons. It is the mirror image of Shotgun Surgery: where Shotgun Surgery means one change touches many classes, Divergent Change means many different changes all land in the same class. This is a direct violation of the Single Responsibility Principle -- the class has accumulated too many distinct responsibilities.
+Divergent Change occurs when a single class must be modified for multiple, unrelated reasons. It is the mirror image of Shotgun Surgery: where Shotgun Surgery means one change touches many classes, Divergent Change means many different changes all land in the same class. This is a direct violation of the Single Responsibility Principle - the class has accumulated too many distinct responsibilities.
 
 ## Why It's a Problem
 
@@ -192,7 +192,7 @@ Reduce coupling and improve testability by injecting dependencies rather than ma
 
 ## Related Smells
 
-- **Shotgun Surgery**: The inverse problem -- a single change scattered across many classes, while Divergent Change is many changes funneling into one class
+- **Shotgun Surgery**: The inverse problem - a single change scattered across many classes, while Divergent Change is many changes funneling into one class
 - **God Object**: An extreme form of Divergent Change where one class has become the center of gravity for most of the system
 - **Feature Envy**: Methods that work primarily with another class's data, suggesting they belong elsewhere
 - **Inappropriate Intimacy**: Classes entangled in each other's internals, often a companion to classes with too many responsibilities

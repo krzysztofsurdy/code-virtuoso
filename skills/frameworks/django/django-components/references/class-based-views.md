@@ -387,8 +387,8 @@ Mixing sync and async handlers raises `ImproperlyConfigured`.
 
 ### Request Processing Order
 
-1. `dispatch()` -- routes to `get()`, `post()`, etc.
-2. `http_method_not_allowed()` -- called if method not supported
+1. `dispatch()` - routes to `get()`, `post()`, etc.
+2. `http_method_not_allowed()` - called if method not supported
 
 ### Display Views (GET)
 
@@ -416,10 +416,10 @@ Mixing sync and async handlers raises `ImproperlyConfigured`.
 
 ## Best Practices
 
-- Use `as_view()` for all URL configuration -- never instantiate views directly
+- Use `as_view()` for all URL configuration - never instantiate views directly
 - Prefer subclassing over passing many arguments to `as_view()`
 - Only use mixins from the same group (detail, list, editing, date) in a single view
 - Use `LoginRequiredMixin` as the leftmost parent for protected views
 - Override `get_queryset()` for dynamic filtering rather than setting `queryset` as a class attribute
 - Use `reverse_lazy()` for `success_url` in editing views
-- Each request gets an independent view instance -- `self` attributes are thread-safe
+- Each request gets an independent view instance - `self` attributes are thread-safe

@@ -8,19 +8,19 @@ Large pull requests are the single biggest cause of slow reviews, missed defects
 
 | Lines Changed | Review Effectiveness | Typical Review Time |
 |---|---|---|
-| < 50 | Very high -- reviewer catches most issues | 5-15 minutes |
-| 50-200 | High -- manageable cognitive load | 15-30 minutes |
-| 200-400 | Moderate -- requires dedicated focus | 30-60 minutes |
-| 400-800 | Low -- reviewer fatigue sets in | 1-2 hours, often delayed |
-| 800+ | Very low -- superficial review likely | Often abandoned or rubber-stamped |
+| < 50 | Very high - reviewer catches most issues | 5-15 minutes |
+| 50-200 | High - manageable cognitive load | 15-30 minutes |
+| 200-400 | Moderate - requires dedicated focus | 30-60 minutes |
+| 400-800 | Low - reviewer fatigue sets in | 1-2 hours, often delayed |
+| 800+ | Very low - superficial review likely | Often abandoned or rubber-stamped |
 
 ### Strategies to Keep PRs Small
 
-- **One concern per PR** -- A single feature, a single bug fix, or a single refactor. Never mix.
-- **Separate mechanical changes** -- Renames, formatting fixes, and import reorganization go in their own PR.
-- **Extract preparatory refactors** -- If a feature requires restructuring existing code, do the refactor first in a separate PR.
-- **Use feature flags** -- Merge partial implementations behind a flag rather than waiting for the full feature.
-- **Stacked PRs** -- Break large features into a chain of dependent, reviewable PRs (see Stacked PRs section below).
+- **One concern per PR** - A single feature, a single bug fix, or a single refactor. Never mix.
+- **Separate mechanical changes** - Renames, formatting fixes, and import reorganization go in their own PR.
+- **Extract preparatory refactors** - If a feature requires restructuring existing code, do the refactor first in a separate PR.
+- **Use feature flags** - Merge partial implementations behind a flag rather than waiting for the full feature.
+- **Stacked PRs** - Break large features into a chain of dependent, reviewable PRs (see Stacked PRs section below).
 
 ---
 
@@ -63,7 +63,7 @@ Closes #123
 ### What Makes a Good Description
 
 - Links to the relevant ticket or issue
-- Explains the "why" -- reviewers can see the "what" in the diff
+- Explains the "why" - reviewers can see the "what" in the diff
 - Includes screenshots or recordings for UI changes
 - Calls out areas where feedback is specifically wanted
 - Lists any follow-up work that was intentionally deferred
@@ -111,10 +111,10 @@ migrations/                 @dba-team @backend-team
 
 ### Review Assignment Strategies
 
-- **Round-robin** -- Distributes reviews evenly across team members
-- **Load-balanced** -- Assigns to the person with the fewest open reviews
-- **Domain-based** -- CODEOWNERS routes to the relevant expert
-- **Random from pool** -- Selects randomly from eligible reviewers
+- **Round-robin** - Distributes reviews evenly across team members
+- **Load-balanced** - Assigns to the person with the fewest open reviews
+- **Domain-based** - CODEOWNERS routes to the relevant expert
+- **Random from pool** - Selects randomly from eligible reviewers
 
 Most teams combine CODEOWNERS for critical paths with round-robin for general code.
 
@@ -207,7 +207,7 @@ When a reviewer requests changes to an earlier PR, update it and rebase downstre
 
 - Large features that would otherwise produce a 1000+ line PR
 - Changes that touch multiple layers (database, service, API, UI)
-- Work that benefits from incremental review -- earlier PRs inform later design
+- Work that benefits from incremental review - earlier PRs inform later design
 - Teams where review bottlenecks are caused by PR size
 
 ### When to Avoid Stacked PRs
@@ -225,4 +225,4 @@ When a reviewer requests changes to an earlier PR, update it and rebase downstre
 | **Merge main in** | `git merge main` | Shared branches, preserving integration history |
 | **Rebase onto main** | `git rebase main` | Local or single-author branches, clean linear history |
 
-**Key rule:** Never rebase commits that others have based work on -- it rewrites shared history and causes divergence. Use `--force-with-lease` (not `--force`) when pushing rebased branches to catch unexpected upstream changes.
+**Key rule:** Never rebase commits that others have based work on - it rewrites shared history and causes divergence. Use `--force-with-lease` (not `--force`) when pushing rebased branches to catch unexpected upstream changes.

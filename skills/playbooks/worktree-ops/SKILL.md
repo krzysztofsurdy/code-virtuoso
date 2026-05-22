@@ -13,9 +13,9 @@ Git worktrees let you check out multiple branches of the same repository into se
 
 | Principle | Meaning |
 |---|---|
-| **Isolation without duplication** | Worktrees share git history but keep working directories separate -- no need to clone the repo again |
+| **Isolation without duplication** | Worktrees share git history but keep working directories separate - no need to clone the repo again |
 | **Safety first** | Always check for uncommitted changes and unpushed commits before removing a worktree |
-| **Clean up after yourself** | Stale worktree entries and orphaned branches accumulate -- prune regularly |
+| **Clean up after yourself** | Stale worktree entries and orphaned branches accumulate - prune regularly |
 | **Convention over configuration** | Use a consistent directory layout (`.worktrees/<name>/`) and branch naming (`worktree-<name>`) |
 
 ## Quick Reference
@@ -127,10 +127,10 @@ Remove one or all worktrees from the current repository.
    ```
    If no worktrees exist beyond the main working tree, say: "No worktrees to clean up." and stop.
 3. Determine what to remove:
-   - If argument is `all` -- remove all worktrees (except the main working tree).
-   - If a specific name was provided -- remove only that worktree.
-   - If no argument -- show the list and present an interactive prompt (or the platform's equivalent): "Which worktree should I remove? Enter the name, or type `all` to remove everything."
-4. **Safety check** -- for each worktree being removed:
+   - If argument is `all` - remove all worktrees (except the main working tree).
+   - If a specific name was provided - remove only that worktree.
+   - If no argument - show the list and present an interactive prompt (or the platform's equivalent): "Which worktree should I remove? Enter the name, or type `all` to remove everything."
+4. **Safety check** - for each worktree being removed:
    ```bash
    git -C <worktree-path> status --short
    git -C <worktree-path> log --oneline @{upstream}..HEAD 2>/dev/null

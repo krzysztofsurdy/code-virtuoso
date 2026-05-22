@@ -73,15 +73,15 @@ If the user wants testing scenarios included:
 **Target audience: QA testers with ZERO codebase knowledge.** They do not know about internal code structure, classes, services, or any implementation details. Write every instruction as if explaining to someone who has never seen the code and never will.
 
 Rules for testing instructions:
-- **NEVER reference code** -- no file paths, class names, method names, variable names, or internal architecture
-- **NEVER use technical implementation terms** -- no internal framework concepts, no code-level abstractions
+- **NEVER reference code** - no file paths, class names, method names, variable names, or internal architecture
+- **NEVER use technical implementation terms** - no internal framework concepts, no code-level abstractions
 - **If UI exists**, provide exact click-by-click navigation: which URL to open, which button to click, which field to fill, what value to enter, what to expect on screen
-- **If no UI exists** (API-only or GraphQL-only), provide the exact request to execute -- full query/mutation with example variables, which tool to use (GraphQL playground, Postman, curl), and the exact URL/endpoint
-- **Database queries are OK** -- QA knows how to run SQL. Include queries when there is no other way to verify something through UI or API
-- **Every scenario is checkboxed** -- use `- [ ] **Scenario N: Name**` so QA can tick them off
-- **Every scenario ends with "Expected results"** -- a bullet list of what should be visible/changed after the steps
-- **Every scenario is step-by-step** -- numbered steps, one action per step
-- **Use plain language** -- "Go to the admin panel", "Click the 'Users' menu item", "You should see a green success message"
+- **If no UI exists** (API-only or GraphQL-only), provide the exact request to execute - full query/mutation with example variables, which tool to use (GraphQL playground, Postman, curl), and the exact URL/endpoint
+- **Database queries are OK** - QA knows how to run SQL. Include queries when there is no other way to verify something through UI or API
+- **Every scenario is checkboxed** - use `- [ ] **Scenario N: Name**` so QA can tick them off
+- **Every scenario ends with "Expected results"** - a bullet list of what should be visible/changed after the steps
+- **Every scenario is step-by-step** - numbered steps, one action per step
+- **Use plain language** - "Go to the admin panel", "Click the 'Users' menu item", "You should see a green success message"
 
 #### Finding real URLs and UI paths
 
@@ -90,9 +90,9 @@ When a scenario involves navigating to a page, **search the codebase for the act
 - Controller or handler definitions with route mappings
 - Frontend router definitions (e.g., client-side router configs, page-based routing)
 
-Always provide the **real relative URL path** (e.g., `/en/account/internal-store`) rather than generic placeholders like `https://your-staging.example.com/store`. If the route has dynamic segments, show the pattern and explain what to substitute (e.g., `/en/account/store/checkout/{packageId}` -- replace `{packageId}` with the ID from the previous step).
+Always provide the **real relative URL path** (e.g., `/en/account/internal-store`) rather than generic placeholders like `https://your-staging.example.com/store`. If the route has dynamic segments, show the pattern and explain what to substitute (e.g., `/en/account/store/checkout/{packageId}` - replace `{packageId}` with the ID from the previous step).
 
-When a feature is reachable through the UI, **lead with the UI navigation** -- describe how to get there by clicking through menus and buttons. Only fall back to direct URL navigation when there is no UI path or the UI path is too many clicks deep.
+When a feature is reachable through the UI, **lead with the UI navigation** - describe how to get there by clicking through menus and buttons. Only fall back to direct URL navigation when there is no UI path or the UI path is too many clicks deep.
 
 #### Providing test data
 
@@ -112,10 +112,10 @@ If the project uses a specific payment provider, search for its test mode config
 When test data requires database setup (e.g., a specific user account, a product with certain stock), provide the exact SQL INSERT or describe the UI steps to create it.
 
 For every PR, include:
-- **Step-by-step verification** -- exact UI navigation or exact API requests to run
-- **Copy-pasteable requests** -- full GraphQL queries/mutations or curl commands with example values, specifying where to run them
-- **Database verification** -- SQL queries to confirm data integrity (QA can run these)
-- **Edge cases** -- described as user actions and expected outcomes, not as code behavior
+- **Step-by-step verification** - exact UI navigation or exact API requests to run
+- **Copy-pasteable requests** - full GraphQL queries/mutations or curl commands with example values, specifying where to run them
+- **Database verification** - SQL queries to confirm data integrity (QA can run these)
+- **Edge cases** - described as user actions and expected outcomes, not as code behavior
 
 ### Step 6: Maintain Consistency
 
@@ -136,7 +136,7 @@ Before finalizing the PR message, verify:
 - [ ] Every scenario specifies exact UI navigation OR exact API requests to run
 - [ ] Every scenario has a checkbox (`- [ ]`) and an "Expected results" bullet list
 - [ ] URLs in scenarios are real routes from the codebase (not placeholder URLs)
-- [ ] Test data is concrete and copy-pasteable (card numbers, emails, dates -- not "use a valid card")
+- [ ] Test data is concrete and copy-pasteable (card numbers, emails, dates - not "use a valid card")
 - [ ] Testing instructions are understandable by someone with zero codebase knowledge
 - [ ] Database verification queries are included for any schema changes
 - [ ] Product-facing changes are called out explicitly

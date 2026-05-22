@@ -15,8 +15,8 @@ Good database design determines the long-term maintainability, performance, and 
 
 Design tables around how the application reads and writes data, not around how entities look in a domain model. Two questions drive every schema decision:
 
-1. **What queries will run most frequently?** -- these determine table structure, indexes, and denormalization choices
-2. **What consistency guarantees does the data need?** -- these determine normalization level, constraints, and transaction boundaries
+1. **What queries will run most frequently?** - these determine table structure, indexes, and denormalization choices
+2. **What consistency guarantees does the data need?** - these determine normalization level, constraints, and transaction boundaries
 
 ### Entity Relationships
 
@@ -62,7 +62,7 @@ Normalization prevents anomalies but adds JOINs. Denormalize selectively when:
 
 **Rules for safe denormalization:**
 
-1. Always keep the normalized source of truth -- denormalized data is a derived cache
+1. Always keep the normalized source of truth - denormalized data is a derived cache
 2. Define how and when the denormalized copy is updated (trigger, application event, batch job)
 3. Monitor for drift between the source and the copy
 4. Document why the denormalization exists and what access pattern it serves
@@ -80,7 +80,7 @@ Normalization prevents anomalies but adds JOINs. Denormalize selectively when:
 | **Graph (Neo4j, Neptune)** | Traversal queries, relationship-centric data | Social networks, recommendation engines, fraud detection |
 | **Time-series (TimescaleDB, InfluxDB)** | Optimized for time-stamped data, automatic partitioning | Metrics, monitoring, financial tick data |
 
-Polyglot persistence -- using different databases for different parts of the same system -- is valid when access patterns genuinely differ. It is not valid as a way to avoid learning one database well.
+Polyglot persistence - using different databases for different parts of the same system - is valid when access patterns genuinely differ. It is not valid as a way to avoid learning one database well.
 
 ---
 
@@ -104,8 +104,8 @@ The order of columns in a composite index matters. The **leftmost prefix rule** 
 
 **Column ordering guidelines:**
 
-1. Equality conditions first -- columns compared with `=`
-2. Range conditions last -- columns compared with `>`, `<`, `BETWEEN`
+1. Equality conditions first - columns compared with `=`
+2. Range conditions last - columns compared with `>`, `<`, `BETWEEN`
 3. Most selective column first among equals
 
 ### Covering and Partial Indexes
@@ -139,10 +139,10 @@ Schema changes are inevitable. The question is whether they break running applic
 
 For breaking changes in production with zero downtime:
 
-1. **Expand** -- add the new structure alongside the old one
-2. **Migrate** -- backfill data from old to new, dual-write during transition
-3. **Switch** -- update application code to use the new structure
-4. **Contract** -- remove the old structure once nothing references it
+1. **Expand** - add the new structure alongside the old one
+2. **Migrate** - backfill data from old to new, dual-write during transition
+3. **Switch** - update application code to use the new structure
+4. **Contract** - remove the old structure once nothing references it
 
 See [Migration Patterns Reference](references/migration-patterns.md) for zero-downtime strategies, rollback techniques, and multi-tool examples.
 
@@ -164,10 +164,10 @@ Sharding distributes data across separate database instances. Use it only after 
 
 **Shard key selection criteria:**
 
-- High cardinality -- many distinct values to distribute evenly
-- Present in most queries -- avoids scatter-gather across all shards
-- Stable -- values that do not change after creation
-- Avoid hotspots -- do not shard by a value that concentrates writes (e.g., current date)
+- High cardinality - many distinct values to distribute evenly
+- Present in most queries - avoids scatter-gather across all shards
+- Stable - values that do not change after creation
+- Avoid hotspots - do not shard by a value that concentrates writes (e.g., current date)
 
 ---
 

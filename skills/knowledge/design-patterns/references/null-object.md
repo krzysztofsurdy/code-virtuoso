@@ -155,7 +155,7 @@ if ($user->isActive()) {
 ## Real-World Analogies
 
 - **Autopilot Disengaged**: When an aircraft's autopilot is off, the flight control system still expects inputs from the autopilot module. A "null autopilot" provides neutral, zero-correction inputs so the system continues operating normally without special-case logic.
-- **Default Ringtone**: A phone without a custom ringtone assigned does not crash when a call arrives. It falls back to a default silent or system tone -- a null object for the ringtone slot.
+- **Default Ringtone**: A phone without a custom ringtone assigned does not crash when a call arrives. It falls back to a default silent or system tone - a null object for the ringtone slot.
 - **Placeholder Thumbnail**: A media gallery displays a generic grey box for images that have not loaded yet. The placeholder conforms to the same layout contract as a real thumbnail without requiring any special rendering path.
 
 ## Pros and Cons

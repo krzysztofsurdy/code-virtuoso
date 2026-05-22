@@ -1,6 +1,6 @@
 ## Overview
 
-The Adapter is a structural pattern that reconciles two interfaces that were never designed to work together. It places a thin wrapper around an existing class, exposing a new interface that matches what the client expects. The wrapper acts as a translator -- converting calls, parameters, and return values so that both sides communicate without either needing to change.
+The Adapter is a structural pattern that reconciles two interfaces that were never designed to work together. It places a thin wrapper around an existing class, exposing a new interface that matches what the client expects. The wrapper acts as a translator - converting calls, parameters, and return values so that both sides communicate without either needing to change.
 
 ## Intent
 
@@ -15,7 +15,7 @@ The Adapter pattern targets scenarios where a class has the right behavior but t
 
 **Problem:** A class or library provides exactly the functionality you need, but its interface does not match the contract your application relies on. Modifying the library is either impractical or out of your control.
 
-**Solution:** Create an adapter class that satisfies the interface your application depends on and internally delegates every call to the incompatible class. The adapter absorbs all the translation work -- mapping method names, reshaping parameters, and converting return values -- so both the client and the adaptee remain unaware of each other.
+**Solution:** Create an adapter class that satisfies the interface your application depends on and internally delegates every call to the incompatible class. The adapter absorbs all the translation work - mapping method names, reshaping parameters, and converting return values - so both the client and the adaptee remain unaware of each other.
 
 ## Structure
 
@@ -98,7 +98,7 @@ if ($adapter->process(99.99)) {
 
 ## Real-World Analogies
 
-- **Travel Power Adapter:** An international plug adapter reshapes your device's prongs to fit a foreign socket. The electricity is identical -- only the physical interface differs.
+- **Travel Power Adapter:** An international plug adapter reshapes your device's prongs to fit a foreign socket. The electricity is identical - only the physical interface differs.
 - **Conference Interpreter:** A human interpreter translates between two speakers with different native languages, enabling a conversation that neither could hold directly.
 - **Database Abstraction Libraries:** ORMs and DBAL layers normalize vendor-specific SQL dialects behind a single query interface that the application uses uniformly across database engines.
 - **Video Codecs:** A media player relies on codecs to bridge different encoding formats with its internal rendering pipeline, playing any file through the same playback API.

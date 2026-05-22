@@ -9,7 +9,7 @@ A single review pass conflates two distinct questions:
 1. **Did the subagent do what was asked?** (specification conformance)
 2. **Did the subagent do it well?** (implementation quality)
 
-These require different review postures. Spec compliance is mechanical -- checkable against the brief's acceptance criteria. Quality review is judgmental -- it requires expertise, context awareness, and trade-off evaluation.
+These require different review postures. Spec compliance is mechanical - checkable against the brief's acceptance criteria. Quality review is judgmental - it requires expertise, context awareness, and trade-off evaluation.
 
 Combining them leads to a common failure mode: the reviewer gets distracted by code style issues while an acceptance criterion is quietly unmet. Separating the stages forces discipline.
 
@@ -156,7 +156,7 @@ Combining them leads to a common failure mode: the reviewer gets distracted by c
 - Suggestion: [improvement]
 
 ### Strengths
-- [what was done well -- acknowledge good work]
+- [what was done well - acknowledge good work]
 
 ### Summary
 - Critical: [count]
@@ -171,19 +171,19 @@ After both stages complete, the orchestrator decides:
 
 | Stage 1 | Stage 2 | Decision |
 |---|---|---|
-| Pass | Accept (0 critical, 0 warning) | **Accept** -- advance to next task |
-| Pass | Accept (0 critical, warnings exist) | **Accept with notes** -- record warnings in hand-off, optionally fix |
-| Pass | Request Changes (criticals exist) | **Return** -- subagent fixes critical issues, then re-review Stage 2 only |
-| Pass with Concerns | Request Changes | **Return** -- subagent addresses concerns and criticals together |
-| Fail | Not started | **Return** -- subagent fixes spec issues, then full re-review (both stages) |
-| Fail (after 2 attempts) | Not started | **Abort** -- re-scope the task or escalate |
+| Pass | Accept (0 critical, 0 warning) | **Accept** - advance to next task |
+| Pass | Accept (0 critical, warnings exist) | **Accept with notes** - record warnings in hand-off, optionally fix |
+| Pass | Request Changes (criticals exist) | **Return** - subagent fixes critical issues, then re-review Stage 2 only |
+| Pass with Concerns | Request Changes | **Return** - subagent addresses concerns and criticals together |
+| Fail | Not started | **Return** - subagent fixes spec issues, then full re-review (both stages) |
+| Fail (after 2 attempts) | Not started | **Abort** - re-scope the task or escalate |
 
 ## Review Efficiency
 
 To keep reviews fast without sacrificing thoroughness:
 
-- Stage 1 should take under 2 minutes for a well-scoped task -- it is a checklist comparison
-- Stage 2 depth scales with risk -- mechanical changes get a lighter review than security-critical ones
+- Stage 1 should take under 2 minutes for a well-scoped task - it is a checklist comparison
+- Stage 2 depth scales with risk - mechanical changes get a lighter review than security-critical ones
 - Use existing project tooling (linters, static analysis, test coverage reports) as Stage 2 inputs rather than manually checking what tools can catch
 - When dispatching a reviewer subagent, include the brief's acceptance criteria so the reviewer does not need to search for them
 

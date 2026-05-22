@@ -214,7 +214,7 @@ class Order
 ## Related Refactorings
 
 - **Extract Class**: Often follows Move Field when multiple related fields migrate to a new class
-- **Move Method**: The companion refactoring -- move methods alongside the fields they operate on
+- **Move Method**: The companion refactoring - move methods alongside the fields they operate on
 - **Replace Data Value with Object**: Promotes a moved primitive field into a richer object
 - **Remove Middle Man**: Undo excessive indirection if Move Field creates too many delegation layers
 - **Replace Type Code with Subclasses**: For type-discriminator fields that should move with their associated behavior

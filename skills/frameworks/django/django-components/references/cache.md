@@ -2,7 +2,7 @@
 
 ## Overview
 
-Django's cache framework provides a flexible caching system that supports multiple backends and various levels of granularity -- from caching an entire site to caching individual values. It eliminates redundant computation by storing expensive calculations and serving them on subsequent requests.
+Django's cache framework provides a flexible caching system that supports multiple backends and various levels of granularity - from caching an entire site to caching individual values. It eliminates redundant computation by storing expensive calculations and serving them on subsequent requests.
 
 ## Core Concepts
 

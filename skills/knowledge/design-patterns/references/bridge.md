@@ -1,6 +1,6 @@
 ## Overview
 
-The Bridge is a structural pattern that decomposes a monolithic class hierarchy into two orthogonal dimensions -- abstraction and implementation -- joined by composition instead of inheritance. By separating what an object does from how it does it, the pattern avoids the combinatorial class explosion that occurs when both dimensions evolve independently, and allows each side to vary without disturbing the other.
+The Bridge is a structural pattern that decomposes a monolithic class hierarchy into two orthogonal dimensions - abstraction and implementation - joined by composition instead of inheritance. By separating what an object does from how it does it, the pattern avoids the combinatorial class explosion that occurs when both dimensions evolve independently, and allows each side to vary without disturbing the other.
 
 ## Intent
 
@@ -29,7 +29,7 @@ Each additional shape or rendering platform multiplies the total number of class
 
 The Bridge pattern resolves this by:
 1. Factoring the hierarchy into two separate trees: one for the abstraction, one for the implementation
-2. Connecting them via composition -- the abstraction holds a reference to an implementor object
+2. Connecting them via composition - the abstraction holds a reference to an implementor object
 3. Letting each tree grow at its own pace without creating cross-product classes
 
 The abstraction forwards platform-dependent work to the implementor, keeping both hierarchies focused and independent.
@@ -173,7 +173,7 @@ $rect->draw(); // Output: Drawing rectangle on Windows...
 
 ## Real-World Analogies
 
-1. **Remote Controls and Devices**: The remote defines the user-facing buttons (abstraction), while the communication protocol -- Bluetooth, IR, or RF -- handles signal transmission (implementation). Swapping protocols requires no redesign of the remote's button layout.
+1. **Remote Controls and Devices**: The remote defines the user-facing buttons (abstraction), while the communication protocol - Bluetooth, IR, or RF - handles signal transmission (implementation). Swapping protocols requires no redesign of the remote's button layout.
 
 2. **Application Code and Database Drivers**: Business logic (the abstraction) formulates queries, while MySQL, PostgreSQL, or SQLite drivers (the implementations) translate them into vendor-specific calls. Switching database engines leaves the application layer unchanged.
 
@@ -199,9 +199,9 @@ $rect->draw(); // Output: Drawing rectangle on Windows...
 ## Relations with Other Patterns
 
 - **Adapter**: Adapter is applied retroactively to make incompatible interfaces work together; Bridge is an intentional upfront separation of abstraction from implementation
-- **Abstract Factory**: Often paired with Bridge -- Abstract Factory can supply the correct implementor objects for a given abstraction
+- **Abstract Factory**: Often paired with Bridge - Abstract Factory can supply the correct implementor objects for a given abstraction
 - **Strategy**: Structurally alike (both vary behavior via composition), but Strategy swaps interchangeable algorithms while Bridge decouples an abstraction from its implementation
-- **Decorator**: Both leverage composition, but toward different ends -- Decorator stacks additional behavior, Bridge partitions two independent dimensions of variation
+- **Decorator**: Both leverage composition, but toward different ends - Decorator stacks additional behavior, Bridge partitions two independent dimensions of variation
 - **Facade**: Facade conceals subsystem complexity behind a simplified interface; Bridge provides a principled separation between abstraction and implementation layers
 
 ## Examples in Other Languages

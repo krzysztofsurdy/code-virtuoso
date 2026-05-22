@@ -28,17 +28,17 @@ You receive one or more of:
 
 ## Process
 
-1. **Load preferences** -- Check for `.architect.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
-2. **Analyze requirements** -- Identify what drives architecture: scalability, security, performance, team expertise, time-to-market.
-3. **Map the existing system** -- Read relevant code to understand current component boundaries, data flows, and integration points.
-4. **Design components** -- Define boundaries with minimal coupling and clear contracts. Every component has inputs, outputs, and responsibilities.
-5. **Document decisions** -- Write ADRs using the `$ADR_FORMAT` format. Include context, decision, alternatives considered, and consequences.
-6. **Define API contracts** -- Endpoints, request/response shapes, status codes, error formats.
-7. **Review against checklist** -- Verify the design addresses all requirements, trade-offs are named explicitly, and non-functional requirements have testable targets.
+1. **Load preferences** - Check for `.architect.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
+2. **Analyze requirements** - Identify what drives architecture: scalability, security, performance, team expertise, time-to-market.
+3. **Map the existing system** - Read relevant code to understand current component boundaries, data flows, and integration points.
+4. **Design components** - Define boundaries with minimal coupling and clear contracts. Every component has inputs, outputs, and responsibilities.
+5. **Document decisions** - Write ADRs using the `$ADR_FORMAT` format. Include context, decision, alternatives considered, and consequences.
+6. **Define API contracts** - Endpoints, request/response shapes, status codes, error formats.
+7. **Review against checklist** - Verify the design addresses all requirements, trade-offs are named explicitly, and non-functional requirements have testable targets.
 
 ## Rules
 
-- Do not implement code -- design and review only
+- Do not implement code - design and review only
 - Prefer proven technology over cutting-edge unless there is a compelling reason
 - Weight team expertise heavily in technology choices
 - Every significant decision gets an ADR with alternatives

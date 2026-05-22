@@ -2,7 +2,7 @@
 
 ## Overview
 
-Rename Method gives a method a name that accurately describes what it does. When a method's name no longer matches its behavior -- due to evolving requirements, hasty initial naming, or broadened scope -- renaming it restores clarity and lets readers understand intent without diving into the implementation.
+Rename Method gives a method a name that accurately describes what it does. When a method's name no longer matches its behavior - due to evolving requirements, hasty initial naming, or broadened scope - renaming it restores clarity and lets readers understand intent without diving into the implementation.
 
 ## Motivation
 
@@ -154,25 +154,25 @@ class ProductPresenter
 
 ## Benefits
 
-- **Instant comprehension** -- Well-chosen names let readers grasp purpose without opening the method body
-- **Lower cognitive overhead** -- Developers spend time building features, not deciphering cryptic labels
-- **Fewer misuses** -- A precise name makes it hard to call the wrong method by mistake
-- **Reduced comment dependency** -- The name itself serves as documentation
-- **Stronger IDE assistance** -- Autocomplete and search become more useful with descriptive names
-- **Consistent vocabulary** -- Renaming brings a method in line with the project's naming conventions
+- **Instant comprehension** - Well-chosen names let readers grasp purpose without opening the method body
+- **Lower cognitive overhead** - Developers spend time building features, not deciphering cryptic labels
+- **Fewer misuses** - A precise name makes it hard to call the wrong method by mistake
+- **Reduced comment dependency** - The name itself serves as documentation
+- **Stronger IDE assistance** - Autocomplete and search become more useful with descriptive names
+- **Consistent vocabulary** - Renaming brings a method in line with the project's naming conventions
 
 ## When NOT to Use
 
-- **Public API contracts** -- Renaming public methods breaks backward compatibility; use deprecation instead
-- **Framework hooks** -- Methods that override parent/interface contracts shouldn't be renamed
-- **Legacy systems** -- When widely dependent code can't be updated simultaneously
-- **Name conflicts** -- If a new name conflicts with existing methods in the class hierarchy
-- **During active development** -- Wait until functionality stabilizes before finalizing names
+- **Public API contracts** - Renaming public methods breaks backward compatibility; use deprecation instead
+- **Framework hooks** - Methods that override parent/interface contracts shouldn't be renamed
+- **Legacy systems** - When widely dependent code can't be updated simultaneously
+- **Name conflicts** - If a new name conflicts with existing methods in the class hierarchy
+- **During active development** - Wait until functionality stabilizes before finalizing names
 
 ## Related Refactorings
 
-- **Extract Method** -- Often applied before Rename Method to isolate and clarify functionality
-- **Move Method** -- Combines renaming with relocating methods to more appropriate classes
-- **Change Function Declaration** -- Related technique for updating function signatures alongside names
-- **Rename Variable** -- Similar principle applied to variable naming clarity
-- **Deprecation** -- Use PHP 8.1+ `#[Deprecated]` attribute for safe public API transitions
+- **Extract Method** - Often applied before Rename Method to isolate and clarify functionality
+- **Move Method** - Combines renaming with relocating methods to more appropriate classes
+- **Change Function Declaration** - Related technique for updating function signatures alongside names
+- **Rename Variable** - Similar principle applied to variable naming clarity
+- **Deprecation** - Use PHP 8.1+ `#[Deprecated]` attribute for safe public API transitions

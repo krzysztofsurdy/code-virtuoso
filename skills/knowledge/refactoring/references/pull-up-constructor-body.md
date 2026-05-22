@@ -1,6 +1,6 @@
 ## Overview
 
-Pull Up Constructor Body extracts repeated initialization logic from subclass constructors into a shared superclass constructor. When several subclasses perform the same setup steps -- assigning the same fields, running the same validation -- that common work belongs in the parent, leaving each subclass responsible only for its own unique initialization.
+Pull Up Constructor Body extracts repeated initialization logic from subclass constructors into a shared superclass constructor. When several subclasses perform the same setup steps - assigning the same fields, running the same validation - that common work belongs in the parent, leaving each subclass responsible only for its own unique initialization.
 
 ## Motivation
 

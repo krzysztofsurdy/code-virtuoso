@@ -382,10 +382,10 @@ Consider dedicated error tracking services (Sentry) for production.
 
 Create in the root template directory:
 
-- `404.html` -- Page not found
-- `500.html` -- Server error
-- `403.html` -- Permission denied
-- `400.html` -- Bad request
+- `404.html` - Page not found
+- `500.html` - Server error
+- `403.html` - Permission denied
+- `400.html` - Bad request
 
 ## Nginx Reject Unknown Hosts
 

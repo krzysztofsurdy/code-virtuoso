@@ -2,7 +2,7 @@
 
 Artifacts are the structured outputs that agents produce and the structured inputs they consume. This spec defines standard artifact types so agents can declare explicit handoff contracts via `expects` and `produces` frontmatter fields.
 
-Artifact types are **conventions, not file formats**. The agent producing an artifact writes it in its Output section. The consuming agent reads it as part of its Input. There is no runtime enforcement -- these contracts exist so orchestrators and teams can validate that the output of one agent matches the expected input of the next.
+Artifact types are **conventions, not file formats**. The agent producing an artifact writes it in its Output section. The consuming agent reads it as part of its Input. There is no runtime enforcement - these contracts exist so orchestrators and teams can validate that the output of one agent matches the expected input of the next.
 
 ## Artifact Catalog
 
@@ -55,4 +55,4 @@ If an agent produces output that does not fit any existing type:
 
 ## Portability
 
-The `expects` and `produces` fields are portable across agent platforms. They carry no platform-specific semantics -- they are documentation that any orchestrator can read and act on.
+The `expects` and `produces` fields are portable across agent platforms. They carry no platform-specific semantics - they are documentation that any orchestrator can read and act on.

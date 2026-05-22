@@ -2,7 +2,7 @@
 
 ## Overview
 
-This smell arises when two or more classes do essentially the same thing but expose their functionality through different method names and signatures. It usually happens because a developer creates a new class without realizing that an equivalent one already exists -- different naming conventions, different file locations, or simply lack of communication between team members. The result is redundant implementations behind inconsistent APIs.
+This smell arises when two or more classes do essentially the same thing but expose their functionality through different method names and signatures. It usually happens because a developer creates a new class without realizing that an equivalent one already exists - different naming conventions, different file locations, or simply lack of communication between team members. The result is redundant implementations behind inconsistent APIs.
 
 ## Why It's a Problem
 
@@ -149,4 +149,4 @@ If only partial functionality overlaps, extract a readonly base class with share
 - **Inappropriate Intimacy**: Classes that are too similar to justify existing separately
 - **Lazy Class**: After unifying interfaces, one of the alternatives may turn out to be entirely redundant
 
-The first step is standardizing the method names across all alternatives. Then use Move Method, Add Parameter, or Parameterize Method to align signatures and implementations. When only partial overlap exists, Extract Superclass lets both classes inherit shared behavior. Once the interfaces are unified, delete the redundant class -- the codebase becomes smaller, more consistent, and easier to navigate.
+The first step is standardizing the method names across all alternatives. Then use Move Method, Add Parameter, or Parameterize Method to align signatures and implementations. When only partial overlap exists, Extract Superclass lets both classes inherit shared behavior. Once the interfaces are unified, delete the redundant class - the codebase becomes smaller, more consistent, and easier to navigate.

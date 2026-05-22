@@ -156,7 +156,7 @@ Two or more agents investigate the same files, trace the same code paths, or res
 
 ### Fix
 
-Define scopes by non-overlapping file sets, directories, or modules -- not by concern. If you want two perspectives on the same code (security + performance), use scatter-gather explicitly and plan for deduplication. If you want breadth, assign non-overlapping territories. When in doubt, check: "Will these two agents read any of the same files?" If yes, either separate by file set or merge into one agent.
+Define scopes by non-overlapping file sets, directories, or modules - not by concern. If you want two perspectives on the same code (security + performance), use scatter-gather explicitly and plan for deduplication. If you want breadth, assign non-overlapping territories. When in doubt, check: "Will these two agents read any of the same files?" If yes, either separate by file set or merge into one agent.
 
 ---
 
@@ -181,7 +181,7 @@ The dispatch plan assumes all agents will succeed. There is no plan for what hap
 
 ### Fix
 
-Include a failure mode in every brief. Define "acceptable degradation" before dispatching: what does a good-enough result look like with one agent missing? Budget for one failure in every dispatch round. If the task absolutely requires all agents to succeed, the task may not be suitable for parallel dispatch -- consider sequential execution with checkpoints instead.
+Include a failure mode in every brief. Define "acceptable degradation" before dispatching: what does a good-enough result look like with one agent missing? Budget for one failure in every dispatch round. If the task absolutely requires all agents to succeed, the task may not be suitable for parallel dispatch - consider sequential execution with checkpoints instead.
 
 ---
 

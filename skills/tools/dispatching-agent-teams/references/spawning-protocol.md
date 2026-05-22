@@ -4,7 +4,7 @@ Detailed steps for each spawning mode. The dispatching skill detects the mode au
 
 ## Peer Mode
 
-Peer mode is the preferred mode when the platform supports agent-to-agent messaging and shared task lists. Teammates work as peers -- they claim tasks, message each other, and coordinate through the shared task list without the lead as intermediary.
+Peer mode is the preferred mode when the platform supports agent-to-agent messaging and shared task lists. Teammates work as peers - they claim tasks, message each other, and coordinate through the shared task list without the lead as intermediary.
 
 ### Setup
 
@@ -101,13 +101,13 @@ This applies to teams like `review-squad` where agents deliberately operate at d
 
 War-room teams run a multi-round debate rather than a production pipeline. The key differences from standard workflows:
 
-**Perspective-only agents.** All non-lead agents in a war room produce text responses -- they do not use tools, read files, or execute commands during the debate. The brief for each agent should include: the decision question, constraints, and any prior positions (in challenge rounds). It should explicitly instruct the agent to respond with its perspective only.
+**Perspective-only agents.** All non-lead agents in a war room produce text responses - they do not use tools, read files, or execute commands during the debate. The brief for each agent should include: the decision question, constraints, and any prior positions (in challenge rounds). It should explicitly instruct the agent to respond with its perspective only.
 
 **Multi-pass rounds.** War-room workflows have multiple passes over the same agents:
 
 1. **Position round**: Spawn each agent once with the framed question. Collect their positions.
 2. **Challenge round**: Spawn each agent again, this time including ALL positions from round 1. Ask each to challenge one other position.
-3. **Synthesis**: Lead reads all positions and challenges, produces the synthesis. No spawning needed -- the lead does this inline.
+3. **Synthesis**: Lead reads all positions and challenges, produces the synthesis. No spawning needed - the lead does this inline.
 
 In peer mode, these rounds map to two task waves: position tasks (no dependencies) followed by challenge tasks (blocked by all position tasks).
 

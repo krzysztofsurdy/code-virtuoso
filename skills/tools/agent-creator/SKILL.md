@@ -1,13 +1,13 @@
 ---
 name: agent-creator
-description: Interactive tool to design a well-scoped sub-agent definition -- specialist, role, or team-lead -- with the right frontmatter, tool permissions, isolation, memory, and system prompt. Use when the user asks to create a sub-agent, write an agent file, design a specialized worker, scaffold a role agent, bootstrap an agent team, or turn a repeated delegation pattern into a reusable agent. Runs a six-phase questionnaire and outputs a ready-to-commit agent markdown file plus marketplace registration.
+description: Interactive tool to design a well-scoped sub-agent definition - specialist, role, or team-lead - with the right frontmatter, tool permissions, isolation, memory, and system prompt. Use when the user asks to create a sub-agent, write an agent file, design a specialized worker, scaffold a role agent, bootstrap an agent team, or turn a repeated delegation pattern into a reusable agent. Runs a six-phase questionnaire and outputs a ready-to-commit agent markdown file plus marketplace registration.
 user-invocable: true
-argument-hint: "[optional: archetype -- specialist, role, team-lead]"
+argument-hint: "[optional: archetype - specialist, role, team-lead]"
 ---
 
 # Agent Creator
 
-Create a sub-agent that earns its context window. Most agents fail not because the model is weak but because the definition is vague -- unclear trigger, sprawling tool list, a body that mixes persona and procedure, and no output contract. This skill walks you through a six-phase design so the resulting agent is focused, least-privileged, and predictable.
+Create a sub-agent that earns its context window. Most agents fail not because the model is weak but because the definition is vague - unclear trigger, sprawling tool list, a body that mixes persona and procedure, and no output contract. This skill walks you through a six-phase design so the resulting agent is focused, least-privileged, and predictable.
 
 ## Core Principles
 
@@ -22,7 +22,7 @@ Create a sub-agent that earns its context window. Most agents fail not because t
 
 ---
 
-## Agent vs Skill -- Quick Disambiguation
+## Agent vs Skill - Quick Disambiguation
 
 Before creating an agent, confirm it is the right primitive.
 
@@ -61,7 +61,7 @@ See [references/archetypes.md](references/archetypes.md) for worked examples of 
 
 ## Workflow
 
-This skill uses **guided phases** -- each phase is a separate file loaded one at a time. Every phase ends with a gate where you must wait for user confirmation before proceeding. Do not skip phases or merge them.
+This skill uses **guided phases** - each phase is a separate file loaded one at a time. Every phase ends with a gate where you must wait for user confirmation before proceeding. Do not skip phases or merge them.
 
 | Phase | File | What it covers |
 |---|---|---|

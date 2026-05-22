@@ -1,6 +1,6 @@
 # Prioritization Frameworks
 
-Practical frameworks for deciding what to build first. Each framework suits different contexts -- choose based on the decision being made.
+Practical frameworks for deciding what to build first. Each framework suits different contexts - choose based on the decision being made.
 
 ---
 
@@ -30,7 +30,7 @@ Classify each requirement into four categories. Use this for initial scope defin
 ### How to Apply
 
 1. List all requirements or user stories
-2. Start by identifying Musts -- the absolute minimum for the release to deliver value
+2. Start by identifying Musts - the absolute minimum for the release to deliver value
 3. Challenge every Must: "Would we delay the release for this?" If no, demote to Should
 4. Classify remaining items as Should, Could, or Won't
 5. Validate: Musts should be roughly 60% of estimated effort, leaving room for Shoulds
@@ -75,13 +75,13 @@ RICE Score = (Reach x Impact x Confidence) / Effort
 | API rate limiting | 500 | 3 | 100% | 1 | 1500 |
 | Email notifications | 3000 | 0.5 | 80% | 2 | 600 |
 
-**Decision**: API rate limiting scores highest -- high confidence, low effort, strong impact on reliability.
+**Decision**: API rate limiting scores highest - high confidence, low effort, strong impact on reliability.
 
 ### Tips
 
 - Be honest about confidence. Low confidence should lower the score, not be ignored.
 - Compare scores relatively, not absolutely. The exact number matters less than the ranking.
-- Revisit scores when new data arrives -- RICE is not a one-time exercise.
+- Revisit scores when new data arrives - RICE is not a one-time exercise.
 
 ---
 
@@ -105,7 +105,7 @@ A 2x2 matrix for quick visual sorting. Best used in workshops or when speed matt
 
 1. Draw the matrix on a whiteboard or shared document
 2. Have the team place each feature/requirement on the matrix
-3. Discuss items where placement is disputed -- the discussion is the value
+3. Discuss items where placement is disputed - the discussion is the value
 4. Prioritize: Quick Wins first, Big Bets next (with planning), Fill-ins if capacity allows, Avoid items get cut
 
 ### Effort Estimation Guide
@@ -126,9 +126,9 @@ Classifies features by how they affect user satisfaction. Useful for understandi
 
 | Category | If Present | If Absent | Strategy |
 |---|---|---|---|
-| **Basic (Must-be)** | No satisfaction increase | Strong dissatisfaction | Always include -- these are table stakes |
+| **Basic (Must-be)** | No satisfaction increase | Strong dissatisfaction | Always include - these are table stakes |
 | **Performance (One-dimensional)** | Satisfaction increases proportionally | Dissatisfaction increases proportionally | Invest based on competitive positioning |
-| **Excitement (Attractive)** | Disproportionate satisfaction | No dissatisfaction | Include selectively -- these differentiate |
+| **Excitement (Attractive)** | Disproportionate satisfaction | No dissatisfaction | Include selectively - these differentiate |
 | **Indifferent** | No effect | No effect | Do not build |
 | **Reverse** | Causes dissatisfaction | No effect | Actively avoid |
 
@@ -155,10 +155,10 @@ Response options for both: Like it / Expect it / Neutral / Can live with it / Di
 
 | Feature | Category | Action |
 |---|---|---|
-| User login works reliably | Basic | Must have -- users expect it |
-| Search returns results in < 1s | Performance | Invest -- directly impacts satisfaction |
-| Smart autocomplete suggestions | Excitement | Include -- competitive differentiator |
-| Background color customization | Indifferent | Skip -- no one cares |
+| User login works reliably | Basic | Must have - users expect it |
+| Search returns results in < 1s | Performance | Invest - directly impacts satisfaction |
+| Smart autocomplete suggestions | Excitement | Include - competitive differentiator |
+| Background color customization | Indifferent | Skip - no one cares |
 
 ---
 
@@ -193,7 +193,7 @@ Feature comparison:
 | Real-time sync | 5 (25) | 5 (20) | 2 (6) | 5 (15) | 1 (2) | **68** |
 | Admin dashboard | 3 (15) | 2 (8) | 4 (12) | 3 (9) | 5 (10) | **54** |
 
-**Decision**: Real-time sync and Bulk export score similarly. Real-time sync has higher value but lower feasibility -- plan it carefully. Bulk export is the safer bet for immediate delivery.
+**Decision**: Real-time sync and Bulk export score similarly. Real-time sync has higher value but lower feasibility - plan it carefully. Bulk export is the safer bet for immediate delivery.
 
 ---
 

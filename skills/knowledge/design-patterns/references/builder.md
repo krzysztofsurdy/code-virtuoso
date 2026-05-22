@@ -12,7 +12,7 @@ The Builder pattern is a creational design pattern that separates the constructi
 ## Problem & Solution
 
 **Problem:**
-Objects that require many parameters -- particularly optional ones -- create persistent difficulties:
+Objects that require many parameters - particularly optional ones - create persistent difficulties:
 - Long positional argument lists are fragile and opaque to callers
 - Constructor overloads proliferate rapidly and blur the distinction between variants
 - Post-construction mutation to set optional fields breaks immutability guarantees
@@ -328,7 +328,7 @@ $sql = (new QueryBuilder())
 **Advantages:**
 - Yields readable, self-documenting call sites through fluent method chaining
 - Accommodates many object configurations without spawning constructor overloads
-- Complements readonly or immutable classes naturally -- the product is finalized in one shot
+- Complements readonly or immutable classes naturally - the product is finalized in one shot
 - Concentrates all construction logic in the builder, away from the product class itself
 - Runs validation at build time, before the object exists, catching invalid state early
 - New optional fields can be added to the builder without breaking existing callers

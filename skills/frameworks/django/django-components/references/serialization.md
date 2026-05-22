@@ -263,7 +263,7 @@ Requires `null=True` on the ForeignKey field.
 
 ### Abstract Base Classes
 
-No special handling required -- serialization includes all inherited fields automatically.
+No special handling required - serialization includes all inherited fields automatically.
 
 ### Multi-table Inheritance
 
@@ -276,10 +276,10 @@ class Place(models.Model):
 class Restaurant(Place):
     serves_hot_dogs = models.BooleanField(default=False)
 
-# Incorrect -- loses Place fields
+# Incorrect - loses Place fields
 data = serializers.serialize("json", Restaurant.objects.all())
 
-# Correct -- include both
+# Correct - include both
 all_objects = [*Restaurant.objects.all(), *Place.objects.all()]
 data = serializers.serialize("json", all_objects)
 ```

@@ -8,10 +8,10 @@ Practical methods for facilitating scrum events effectively. A good facilitator 
 
 | Principle | Application |
 |---|---|
-| **Neutrality** | Facilitate the process, not the content -- do not push your own opinions on what to build |
+| **Neutrality** | Facilitate the process, not the content - do not push your own opinions on what to build |
 | **Equal voice** | Create space for quieter members; prevent dominant voices from monopolizing |
-| **Purpose-driven** | Every event has a goal -- redirect when the discussion drifts |
-| **Timebox respect** | Time constraints create focus -- enforce them consistently |
+| **Purpose-driven** | Every event has a goal - redirect when the discussion drifts |
+| **Timebox respect** | Time constraints create focus - enforce them consistently |
 | **Safe space** | People contribute honestly only when they feel psychologically safe |
 | **Outcomes over activity** | A meeting without clear outcomes is a meeting that should not have happened |
 
@@ -23,7 +23,7 @@ Practical methods for facilitating scrum events effectively. A good facilitator 
 
 | Technique | Description |
 |---|---|
-| **Visible timer** | Use a shared timer visible to all participants -- removes the SM as the "bad guy" |
+| **Visible timer** | Use a shared timer visible to all participants - removes the SM as the "bad guy" |
 | **Halfway check** | At 50% of the timebox, check progress and adjust scope if needed |
 | **Five-minute warning** | Alert the group five minutes before the timebox ends to wrap up |
 | **Parking lot** | Capture off-topic items on a visible list for discussion after the event |
@@ -67,7 +67,7 @@ When a discussion is running long:
 2. Use silent writing so they can contribute without speaking first
 3. Create smaller breakout groups where quieter people feel more comfortable
 4. Follow up individually after the meeting to understand barriers to participation
-5. Never force someone to speak -- create opportunities, not obligations
+5. Never force someone to speak - create opportunities, not obligations
 
 ---
 
@@ -121,23 +121,23 @@ When a discussion is running long:
 
 Regardless of format, follow this five-phase structure:
 
-1. **Set the stage** (5 min) -- Welcome, check in, state the purpose, review working agreements
-2. **Gather data** (15-20 min) -- Collect observations using the chosen format; silent writing first, then sharing
-3. **Generate insights** (15-20 min) -- Group related items, identify root causes, look for patterns across Sprints
-4. **Decide what to do** (10-15 min) -- Select 1-3 actionable improvements; each must have an owner and deadline
-5. **Close** (5 min) -- Summarize actions, thank the team, quick check-out
+1. **Set the stage** (5 min) - Welcome, check in, state the purpose, review working agreements
+2. **Gather data** (15-20 min) - Collect observations using the chosen format; silent writing first, then sharing
+3. **Generate insights** (15-20 min) - Group related items, identify root causes, look for patterns across Sprints
+4. **Decide what to do** (10-15 min) - Select 1-3 actionable improvements; each must have an owner and deadline
+5. **Close** (5 min) - Summarize actions, thank the team, quick check-out
 
 ### Common Retrospective Mistakes
 
 | Mistake | Fix |
 |---|---|
-| Skipping the retrospective when the Sprint went well | Good Sprints have lessons too -- what made it good and how to sustain it |
+| Skipping the retrospective when the Sprint went well | Good Sprints have lessons too - what made it good and how to sustain it |
 | Too many actions | Limit to 1-3 actions per Sprint; more leads to none being completed |
 | Actions without owners | Every action needs a named person and a deadline |
 | Never reviewing previous actions | Start every retrospective by reviewing the status of previous actions |
 | Manager attendance killing honesty | Retrospectives are for the team; managers attend only by team invitation |
 | Same format every time | Rotate formats to prevent staleness and surface different types of insights |
-| Focusing only on negatives | Explicitly ask what went well -- reinforcing good practices is as important as fixing problems |
+| Focusing only on negatives | Explicitly ask what went well - reinforcing good practices is as important as fixing problems |
 
 ---
 
@@ -145,22 +145,22 @@ Regardless of format, follow this five-phase structure:
 
 ### Daily Scrum
 
-- It belongs to the Developers, not the Scrum Master -- the SM ensures it happens but does not run it
+- It belongs to the Developers, not the Scrum Master - the SM ensures it happens but does not run it
 - Focus on progress toward the Sprint Goal, not individual status reports
 - Three useful prompts: "What did I do yesterday toward the Sprint Goal? What will I do today? What is blocking me?"
-- If it consistently runs over 15 minutes, the team is discussing solutions instead of identifying topics -- move detailed discussions to after the event
+- If it consistently runs over 15 minutes, the team is discussing solutions instead of identifying topics - move detailed discussions to after the event
 - Walk the board (review the Sprint Backlog) as an alternative to round-robin status
 
 ### Sprint Planning
 
 - Ensure the Product Owner has a refined backlog before the event starts
 - Facilitate Sprint Goal creation first (Topic 1) before selecting items (Topic 2)
-- Developers own the selection and decomposition -- the SM facilitates, does not decide
+- Developers own the selection and decomposition - the SM facilitates, does not decide
 - If planning consistently takes the full timebox, coach the team on pre-refinement
 
 ### Sprint Review
 
-- This is not a demo session -- it is an inspect-and-adapt event for the product
+- This is not a demo session - it is an inspect-and-adapt event for the product
 - Invite stakeholders and encourage their feedback
 - Compare what was delivered against the Sprint Goal
 - Discuss what to do next based on feedback and market changes

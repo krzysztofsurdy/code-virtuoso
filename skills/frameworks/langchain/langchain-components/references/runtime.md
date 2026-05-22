@@ -207,8 +207,8 @@ supervisor = create_agent(
 - Define context schemas as dataclasses for type safety
 - Use runtime dependency injection instead of global state or hardcoded values
 - Access the store for user-specific data that persists across conversations
-- Keep context schemas focused -- include only what tools and middleware need
+- Keep context schemas focused - include only what tools and middleware need
 - Use the stream writer for long-running operations to provide progress feedback
 - Test tools by mocking the runtime context rather than real dependencies
-- Separate concerns across architectural layers -- avoid mixing retrieval logic with generation
+- Separate concerns across architectural layers - avoid mixing retrieval logic with generation
 - Use the agent pattern (tools + model) rather than building custom chains for most use cases

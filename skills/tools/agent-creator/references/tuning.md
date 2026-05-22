@@ -38,7 +38,7 @@ On first activation, this agent checks for a `.reviewer.tune.md` file alongside 
 ```markdown
 ## Process
 
-1. **Load preferences** -- Check for `.reviewer.tune.md` alongside this file.
+1. **Load preferences** - Check for `.reviewer.tune.md` alongside this file.
    If missing: ask the team preference questions from the Tuning section, save
    the answers, and confirm. If present: load silently and proceed.
 2. [rest of process...]
@@ -49,7 +49,7 @@ On first activation, this agent checks for a `.reviewer.tune.md` file alongside 
 Use `$VARIABLE_NAME` placeholders in the process and rules:
 
 ```markdown
-3. **Analyze** -- Check each category in the review checklist. If `$REVIEW_DEPTH`
+3. **Analyze** - Check each category in the review checklist. If `$REVIEW_DEPTH`
    is `surface`, focus on correctness and security only. If `deep`, include all
    categories plus cross-cutting concerns.
 ```
@@ -72,6 +72,6 @@ FRAMEWORK_CONTEXT: symfony
 ## Rules
 
 - The tune file is dot-prefixed (`.reviewer.tune.md`) to stay out of agent discovery
-- Never force tuning -- if the user declines to answer, use defaults
+- Never force tuning - if the user declines to answer, use defaults
 - Keep questions to 3-5 maximum. More than that is a configuration burden.
-- Settings should be stable across sessions. Anything that changes per-task is not a tuning knob -- it is an input parameter.
+- Settings should be stable across sessions. Anything that changes per-task is not a tuning knob - it is an input parameter.

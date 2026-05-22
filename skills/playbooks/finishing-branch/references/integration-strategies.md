@@ -1,6 +1,6 @@
 # Integration Strategies
 
-Choosing the right integration strategy determines the shape of your history, the ease of reverting changes, and how much friction the team experiences during code review. There is no universally correct answer -- the right choice depends on team size, release model, and commit discipline.
+Choosing the right integration strategy determines the shape of your history, the ease of reverting changes, and how much friction the team experiences during code review. There is no universally correct answer - the right choice depends on team size, release model, and commit discipline.
 
 ## Strategy Overview
 
@@ -64,7 +64,7 @@ git push origin main
 
 **Pros:** Linear history with individual commits preserved. No merge commits. Clean `git log`. Good for `git bisect`.
 
-**Cons:** Rewrites commit hashes (breaks references to old SHAs). Requires clean commit discipline -- every commit should compile and pass tests. Conflicts must be resolved per commit during rebase.
+**Cons:** Rewrites commit hashes (breaks references to old SHAs). Requires clean commit discipline - every commit should compile and pass tests. Conflicts must be resolved per commit during rebase.
 
 **Best for:** Teams with strong commit discipline who want linear history without losing individual commits.
 
@@ -101,11 +101,11 @@ Use this matrix to pick the right strategy for your situation.
 
 ### Quick Decision Guide
 
-1. **Does the team require review before merge?** -- Use a PR workflow with your preferred merge strategy.
-2. **Is the branch history clean and meaningful?** -- Use rebase and merge to preserve commits linearly.
-3. **Is the branch history messy with WIP commits?** -- Use squash and merge to collapse into one clean commit.
-4. **Do you need to see branch topology in the graph?** -- Use direct merge with `--no-ff`.
-5. **Solo project or pre-approved change?** -- Direct merge or rebase, depending on history preference.
+1. **Does the team require review before merge?** - Use a PR workflow with your preferred merge strategy.
+2. **Is the branch history clean and meaningful?** - Use rebase and merge to preserve commits linearly.
+3. **Is the branch history messy with WIP commits?** - Use squash and merge to collapse into one clean commit.
+4. **Do you need to see branch topology in the graph?** - Use direct merge with `--no-ff`.
+5. **Solo project or pre-approved change?** - Direct merge or rebase, depending on history preference.
 
 ---
 
@@ -138,7 +138,7 @@ git rebase origin/main
 git push --force-with-lease origin feat/my-branch
 
 # DANGEROUS: rebase a branch others have checked out
-# This rewrites shared history -- do not do this
+# This rewrites shared history - do not do this
 ```
 
 ---
@@ -240,4 +240,4 @@ git merge origin/main
 # Re-run verification after merge
 ```
 
-After either operation, re-run the full verification suite. Merging or rebasing can introduce subtle bugs even without textual conflicts -- a clean merge does not guarantee correct behavior.
+After either operation, re-run the full verification suite. Merging or rebasing can introduce subtle bugs even without textual conflicts - a clean merge does not guarantee correct behavior.

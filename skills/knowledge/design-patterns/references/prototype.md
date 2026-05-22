@@ -306,7 +306,7 @@ echo $doc2->describe(); // Document: title=Report, author=John Doe
 
 - **Abstract Factory**: Both abstract away creation, but Prototype relies on copying while Abstract Factory calls constructors
 - **Factory Method**: Shares the goal of hiding creation details; Factory Method builds new instances, Prototype duplicates existing ones
-- **Singleton**: Conceptually opposite -- Singleton restricts to one instance, Prototype encourages many copies
+- **Singleton**: Conceptually opposite - Singleton restricts to one instance, Prototype encourages many copies
 - **Builder**: Both tackle complex object assembly; Builder does it step by step, Prototype does it in a single copy
 - **Composite**: Frequently combined with Prototype to clone entire tree structures
 - **Decorator**: Can be paired with Prototype to clone decorated objects

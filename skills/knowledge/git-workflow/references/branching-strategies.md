@@ -2,12 +2,12 @@
 
 ## Trunk-Based Development
 
-Trunk-based development centers on a single long-lived branch -- typically called `main` or `trunk`. All developers integrate their work into this branch frequently, ideally multiple times per day. The goal is to keep the integration cycle as short as possible so that merge conflicts stay small and feedback from CI arrives quickly.
+Trunk-based development centers on a single long-lived branch - typically called `main` or `trunk`. All developers integrate their work into this branch frequently, ideally multiple times per day. The goal is to keep the integration cycle as short as possible so that merge conflicts stay small and feedback from CI arrives quickly.
 
 ### How It Works
 
 1. Developers pull the latest `main` and create a short-lived branch (hours, rarely more than a day)
-2. Work is done in small increments -- each commit should leave the codebase in a deployable state
+2. Work is done in small increments - each commit should leave the codebase in a deployable state
 3. The branch is merged back to `main` through a pull request (or directly for very small teams)
 4. CI runs on every push to `main`, and deployment follows automatically
 
@@ -21,7 +21,7 @@ git checkout -b feat/add-email-notifications
 git add src/Notification/EmailSender.php
 git commit -m "feat(notification): add email sender service"
 
-# Merge back quickly -- ideally same day
+# Merge back quickly - ideally same day
 git checkout main
 git pull origin main
 git merge feat/add-email-notifications
@@ -87,7 +87,7 @@ git push
 
 - Only one long-lived branch (`main`)
 - No separate develop, release, or hotfix branches
-- PRs are the quality gate -- CI and review happen here
+- PRs are the quality gate - CI and review happen here
 - Deployment happens from `main` after every merge (or on demand)
 
 ### When GitHub Flow Fits
@@ -120,7 +120,7 @@ Git Flow uses multiple long-lived branches with specific roles. It provides stru
 git checkout develop
 git checkout -b feature/shopping-cart
 
-# Complete feature -- merge back to develop
+# Complete feature - merge back to develop
 git checkout develop
 git merge --no-ff feature/shopping-cart
 git branch -d feature/shopping-cart
@@ -177,9 +177,9 @@ GitLab Flow sits between GitHub Flow and Git Flow. It adds environment branches 
 main  ->  staging  ->  production
 ```
 
-- `main` -- latest development work, always tested by CI
-- `staging` -- mirrors what is deployed to the staging environment
-- `production` -- mirrors what is deployed to production
+- `main` - latest development work, always tested by CI
+- `staging` - mirrors what is deployed to the staging environment
+- `production` - mirrors what is deployed to production
 
 Merges flow in one direction: main -> staging -> production. You never merge production back into main.
 
@@ -229,7 +229,7 @@ git push origin production
 
 ### From Git Flow to GitHub Flow
 
-1. Stop creating new feature branches from `develop` -- branch from `main` instead
+1. Stop creating new feature branches from `develop` - branch from `main` instead
 2. Set up CI to run on all PRs targeting `main`
 3. Enable branch protection on `main` (require CI pass, require review)
 4. Merge `develop` into `main` one final time and delete `develop`
@@ -237,7 +237,7 @@ git push origin production
 
 ### From GitHub Flow to Trunk-Based
 
-1. Invest in CI speed -- trunk-based requires fast feedback
+1. Invest in CI speed - trunk-based requires fast feedback
 2. Establish feature flag infrastructure
 3. Set team guidelines for maximum branch lifetime (target: same day)
 4. Practice breaking large features into small, independently mergeable increments

@@ -7,7 +7,7 @@ argument-hint: "<team-name>"
 
 # Dispatching Agent Teams
 
-Read a team definition file, resolve its agents and skills, and execute the coordination protocol. The team file is the recipe -- this skill is the cook.
+Read a team definition file, resolve its agents and skills, and execute the coordination protocol. The team file is the recipe - this skill is the cook.
 
 ## Core Principles
 
@@ -27,8 +27,8 @@ Read a team definition file, resolve its agents and skills, and execute the coor
 
 Teams are discovered from two locations in this order:
 
-1. **Project teams** -- `teams/{name}.md` at the user's project root (user-authored teams)
-2. **Library teams** -- bundled with the `agent-teams` skill at `skills/tools/agent-teams/teams/{name}.md` (or wherever the agent-teams skill is installed)
+1. **Project teams** - `teams/{name}.md` at the user's project root (user-authored teams)
+2. **Library teams** - bundled with the `agent-teams` skill at `skills/tools/agent-teams/teams/{name}.md` (or wherever the agent-teams skill is installed)
 
 Resolution:
 
@@ -64,14 +64,14 @@ Check what the current platform supports:
 |---|---|---|
 | Platform supports agent teams with peer messaging and shared task lists | Team creation tools are available | **Peer mode** |
 | Platform supports sub-agent spawning but no peer messaging | Agent delegation tools are available | **Sequential mode** |
-| Neither | No delegation support | **Inline mode** -- lead executes all phases in the current session |
+| Neither | No delegation support | **Inline mode** - lead executes all phases in the current session |
 
 Then check the team's `workflow` type for special handling:
 
 | Workflow | Special protocol |
 |---|---|
 | `parallel` | Check Coordination Rules for per-agent context restrictions. If present, build differential briefs per agent (see [spawning-protocol](references/spawning-protocol.md)). |
-| `war-room` | Use multi-pass rounds: position round, then challenge round, then synthesis. Agents respond with perspective only -- no tool use during the debate (see [spawning-protocol](references/spawning-protocol.md)). |
+| `war-room` | Use multi-pass rounds: position round, then challenge round, then synthesis. Agents respond with perspective only - no tool use during the debate (see [spawning-protocol](references/spawning-protocol.md)). |
 | `sequential`, `hybrid` | Standard protocol. |
 
 ### Phase 5: Dispatch

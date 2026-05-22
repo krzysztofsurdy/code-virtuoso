@@ -6,7 +6,7 @@ A structured approach to identifying, assessing, and managing project risks. The
 
 ## Risk Register Template
 
-### [Project Name] -- Risk Register
+### [Project Name] - Risk Register
 
 **Last Updated**: [YYYY-MM-DD]
 

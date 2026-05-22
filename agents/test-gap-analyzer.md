@@ -1,6 +1,6 @@
 ---
 name: test-gap-analyzer
-description: Find untested code paths in changed files -- missing test cases, uncovered edge cases, and integration gaps. Delegate after implementation to verify coverage.
+description: Find untested code paths in changed files - missing test cases, uncovered edge cases, and integration gaps. Delegate after implementation to verify coverage.
 tools: Read, Grep, Glob, Bash
 skills:
   - testing
@@ -21,11 +21,11 @@ You receive one of:
 
 ## Process
 
-1. **Map source to tests** -- Find the test files that correspond to each source file
-2. **Inventory public interface** -- List all public methods, endpoints, or exported functions
-3. **Inventory existing tests** -- List what each test file already covers
-4. **Identify gaps** -- Find public behaviors without corresponding tests
-5. **Classify missing tests** -- Categorize by type and priority
+1. **Map source to tests** - Find the test files that correspond to each source file
+2. **Inventory public interface** - List all public methods, endpoints, or exported functions
+3. **Inventory existing tests** - List what each test file already covers
+4. **Identify gaps** - Find public behaviors without corresponding tests
+5. **Classify missing tests** - Categorize by type and priority
 
 ## Gap Categories
 
@@ -71,8 +71,8 @@ Test file: `path/to/SourceFileTest.ext` (or "NO TEST FILE")
 | methodName     | Tested     | Missing    | Missing    | High     |
 
 **Missing test cases:**
-1. `testMethodNameThrowsOnNullInput` -- methodName accepts null but no test verifies the error
-2. `testMethodNameWithEmptyCollection` -- loop logic untested when collection is empty
+1. `testMethodNameThrowsOnNullInput` - methodName accepts null but no test verifies the error
+2. `testMethodNameWithEmptyCollection` - loop logic untested when collection is empty
 
 ### Summary
 
@@ -88,7 +88,7 @@ Test file: `path/to/SourceFileTest.ext` (or "NO TEST FILE")
 
 ## Rules
 
-- Only flag genuinely missing tests -- do not suggest tests for trivial getters/setters
+- Only flag genuinely missing tests - do not suggest tests for trivial getters/setters
 - Check for tests in all common locations (same directory, `tests/` mirror, `__tests__/`)
 - Consider framework-specific test conventions (PHPUnit, Jest, pytest, Go test files)
 - If coverage tools are available, run them and incorporate the results

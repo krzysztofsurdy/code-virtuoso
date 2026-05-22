@@ -231,7 +231,7 @@ echo $document->getContent(); // "Hello World"
 
 ## Real-World Analogies
 
-**Diner Order Ticket**: A customer scribbles their order on a slip and passes it to the counter. The slip waits in a queue until a cook picks it up and prepares the meal. The ticket is the command -- it records what to make, who asked, and can be tracked or cancelled before cooking starts.
+**Diner Order Ticket**: A customer scribbles their order on a slip and passes it to the counter. The slip waits in a queue until a cook picks it up and prepares the meal. The ticket is the command - it records what to make, who asked, and can be tracked or cancelled before cooking starts.
 
 **Air Traffic Control Clearances**: A controller issues takeoff and landing clearances as discrete instructions. Each instruction is logged, can be revoked, and is carried out by the pilot independently of the controller's subsequent decisions.
 
@@ -245,7 +245,7 @@ echo $document->getContent(); // "Hello World"
 - Lends itself to batching, scheduling, and deferred execution without additional infrastructure
 - New command types slot in without modifying existing invoker or receiver code
 - Produces a built-in audit trail of every operation the system has performed
-- Commands are portable values -- they can be serialized, persisted, or transmitted across process boundaries
+- Commands are portable values - they can be serialized, persisted, or transmitted across process boundaries
 
 ### Cons
 - Generates a high number of small classes, one per operation, which can fragment a codebase

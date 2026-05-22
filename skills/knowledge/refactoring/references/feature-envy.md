@@ -1,6 +1,6 @@
 ## Overview
 
-Feature Envy describes a method that reaches into another object's data far more than it uses its own. The method is effectively doing work that belongs to the other class -- it is "envious" of that class's fields and methods. This violates encapsulation and is a strong signal that the logic should live closer to the data it operates on.
+Feature Envy describes a method that reaches into another object's data far more than it uses its own. The method is effectively doing work that belongs to the other class - it is "envious" of that class's fields and methods. This violates encapsulation and is a strong signal that the logic should live closer to the data it operates on.
 
 ## Why It's a Problem
 
@@ -165,9 +165,9 @@ Feature Envy is sometimes acceptable:
 
 ## Related Smells
 
-- **Inappropriate Intimacy**: Classes that dig into each other's private implementation details -- a broader form of the same coupling issue
+- **Inappropriate Intimacy**: Classes that dig into each other's private implementation details - a broader form of the same coupling issue
 - **Message Chains**: Traversing a chain of method calls (like `object->a()->b()->c()`) is often a symptom of envy for data buried deep in the object graph
 - **Lazy Class**: An object that does very little itself and mostly delegates, pushing logic outward where it becomes envious
 - **Anemic Domain Model**: Domain objects that hold data but no behavior, forcing all logic into service classes that are inherently envious
 
-A useful rule of thumb: if things change together, keep them together. When a method uses data from several classes, determine which class owns the majority of that data and place the method there. The exception is when behavior is intentionally kept separate to enable runtime flexibility -- patterns like Strategy and Visitor deliberately separate behavior from data.
+A useful rule of thumb: if things change together, keep them together. When a method uses data from several classes, determine which class owns the majority of that data and place the method there. The exception is when behavior is intentionally kept separate to enable runtime flexibility - patterns like Strategy and Visitor deliberately separate behavior from data.

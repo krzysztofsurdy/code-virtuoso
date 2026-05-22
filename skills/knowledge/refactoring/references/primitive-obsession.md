@@ -2,12 +2,12 @@
 
 ## Overview
 
-Primitive Obsession is the habit of using basic data types -- strings, integers, floats, arrays -- to represent domain concepts that deserve their own objects. Instead of an `Email` class with validation, you pass a raw string. Instead of a `Money` value object, you pass a float and a currency string separately. The result is logic scattered across the codebase, domain rules that are enforced inconsistently (or not at all), and code that fails to express the actual business vocabulary.
+Primitive Obsession is the habit of using basic data types - strings, integers, floats, arrays - to represent domain concepts that deserve their own objects. Instead of an `Email` class with validation, you pass a raw string. Instead of a `Money` value object, you pass a float and a currency string separately. The result is logic scattered across the codebase, domain rules that are enforced inconsistently (or not at all), and code that fails to express the actual business vocabulary.
 
 ## Why It's a Problem
 
 - **Fragmented Logic**: Data and the operations that belong to it are spread across multiple classes instead of living together
-- **No Built-In Validation**: Primitives accept any value -- a string meant to hold an email will happily accept "not-an-email"
+- **No Built-In Validation**: Primitives accept any value - a string meant to hold an email will happily accept "not-an-email"
 - **Weak Type Safety**: The compiler and IDE cannot distinguish between two strings that represent fundamentally different concepts
 - **Obscured Meaning**: Magic numbers and string constants hide business intent behind opaque values
 - **Repeated Validation**: The same constraints are checked in multiple places, leading to inconsistencies when one is updated and others are not
@@ -182,7 +182,7 @@ Primitive Obsession is acceptable when:
 
 ## Related Smells
 
-- **Data Clumps**: Groups of primitives that always appear together -- the natural next step from Primitive Obsession is bundling them into an object
+- **Data Clumps**: Groups of primitives that always appear together - the natural next step from Primitive Obsession is bundling them into an object
 - **Magic Numbers**: Unexplained numeric literals embedded in logic, which proper value objects or enums would eliminate
 - **Duplicate Code**: The same validation and constraint checks scattered across the codebase because there is no central type to enforce them
 - **Feature Envy**: Classes reaching into other objects to manipulate primitive fields, a pattern that disappears when those fields become rich objects

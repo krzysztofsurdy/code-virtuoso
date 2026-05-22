@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Object Pool pattern is a creational design pattern that avoids the cost of repeated object construction and destruction by maintaining a reservoir of pre-built, reusable instances. When a client needs an object, it borrows one from the pool; when finished, it returns the object so the next client can use it. This recycling approach pays off most when instantiation is expensive -- database connections, network sockets, heavyweight data structures, or thread handles.
+The Object Pool pattern is a creational design pattern that avoids the cost of repeated object construction and destruction by maintaining a reservoir of pre-built, reusable instances. When a client needs an object, it borrows one from the pool; when finished, it returns the object so the next client can use it. This recycling approach pays off most when instantiation is expensive - database connections, network sockets, heavyweight data structures, or thread handles.
 
 ## Intent
 
@@ -234,7 +234,7 @@ $pool->releaseWorker($worker);
 
 **Tool Crib at a Factory**: A manufacturing plant keeps a shared inventory of expensive power tools. Workers check out the tool they need, use it, and return it to the crib for the next person. Buying a new tool for every task would be wasteful; sharing a finite set keeps costs down.
 
-**City Bike-Share Program**: A network of docking stations holds bicycles that anyone can unlock, ride, and return. The system does not build a new bike per trip -- it recycles a fixed fleet, rebalancing stations as needed to meet demand.
+**City Bike-Share Program**: A network of docking stations holds bicycles that anyone can unlock, ride, and return. The system does not build a new bike per trip - it recycles a fixed fleet, rebalancing stations as needed to meet demand.
 
 **Hotel Laundry Service**: A hotel owns a set number of towels and linens. Used items are collected, washed, and returned to the supply closet rather than discarded. The pool size is tuned so that clean inventory is always available without over-purchasing.
 

@@ -7,7 +7,7 @@ argument-hint: "[optional: one-line topic]"
 
 # Brainstorming
 
-Structured pre-implementation design exploration. Transforms a vague idea into a written spec through focused, one-at-a-time questioning before any code is written, any plan is created, or any architecture is decided. The spec is the deliverable -- everything else follows from it.
+Structured pre-implementation design exploration. Transforms a vague idea into a written spec through focused, one-at-a-time questioning before any code is written, any plan is created, or any architecture is decided. The spec is the deliverable - everything else follows from it.
 
 **No code until the spec is written and approved.**
 
@@ -33,7 +33,7 @@ If `$ARGUMENTS` is provided, use it as the initial topic and skip straight to Ph
 
 ## Workflow
 
-This skill uses **guided phases** -- each phase is a separate file loaded one at a time. Every phase ends with a gate where you must wait for user confirmation before proceeding. Do not skip phases or merge them.
+This skill uses **guided phases** - each phase is a separate file loaded one at a time. Every phase ends with a gate where you must wait for user confirmation before proceeding. Do not skip phases or merge them.
 
 | Phase | File | What it covers |
 |---|---|---|
@@ -69,7 +69,7 @@ This skill uses **guided phases** -- each phase is a separate file loaded one at
 | **One at a time** | One question, one message |
 | **Open before closed** | "What" and "why" first; "which" and "would you prefer" later |
 | **Challenge assumptions** | When something is stated as obvious, ask what would happen if it were not true |
-| **Surface constraints early** | Constraints eliminate solution space -- the sooner known, the less rework |
+| **Surface constraints early** | Constraints eliminate solution space - the sooner known, the less rework |
 | **Offer options when narrowing** | Present 2-3 concrete choices instead of open-ended questions during convergence |
 | **Name the silence** | If an important topic has not come up, ask about it explicitly |
 

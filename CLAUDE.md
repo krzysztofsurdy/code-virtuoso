@@ -45,8 +45,8 @@ File: `.claude-plugin/marketplace.json`
 
 Reference documentation for the skills ecosystem and agent architecture:
 
-- [Agent Skills Open Standard](https://agentskills.io) -- cross-platform skill standard
-- [Vercel Agent Skills](https://github.com/vercel-labs/skills/tree/main) -- example skills from Vercel Labs
-- [Anthropic Skills](https://github.com/anthropics/skills) -- official Anthropic skills repository
-- [Claude Code Skills Docs](https://code.claude.com/docs/en/skills) -- how skills work in Claude Code
-- [Claude Code Sub-Agents Docs](https://code.claude.com/docs/en/sub-agents) -- sub-agent architecture and patterns
+- [Agent Skills Open Standard](https://agentskills.io) - cross-platform skill standard
+- [Vercel Agent Skills](https://github.com/vercel-labs/skills/tree/main) - example skills from Vercel Labs
+- [Anthropic Skills](https://github.com/anthropics/skills) - official Anthropic skills repository
+- [Claude Code Skills Docs](https://code.claude.com/docs/en/skills) - how skills work in Claude Code
+- [Claude Code Sub-Agents Docs](https://code.claude.com/docs/en/sub-agents) - sub-agent architecture and patterns

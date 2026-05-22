@@ -1,6 +1,6 @@
 # When to Exit
 
-Criteria for determining whether brainstorming is complete or needs more rounds. The goal is to stop at the point of diminishing returns -- thorough enough that the spec is reliable, not so thorough that the session becomes an end in itself.
+Criteria for determining whether brainstorming is complete or needs more rounds. The goal is to stop at the point of diminishing returns - thorough enough that the spec is reliable, not so thorough that the session becomes an end in itself.
 
 ---
 
@@ -8,9 +8,9 @@ Criteria for determining whether brainstorming is complete or needs more rounds.
 
 All of the following must be true:
 
-1. **The spec is written.** All mandatory sections of the spec template are filled in. Empty sections are marked "N/A -- [reason]" with a genuine reason.
+1. **The spec is written.** All mandatory sections of the spec template are filled in. Empty sections are marked "N/A - [reason]" with a genuine reason.
 
-2. **The user has explicitly approved.** "Looks good," "approve," "yes," or equivalent affirmative. Silence, "sure," or proceeding without comment does NOT count as approval -- ask directly.
+2. **The user has explicitly approved.** "Looks good," "approve," "yes," or equivalent affirmative. Silence, "sure," or proceeding without comment does NOT count as approval - ask directly.
 
 3. **No unresolved contradictions.** If the spec says both "real-time updates" and "works offline," those have been reconciled into a coherent design direction (e.g., "offline-first with sync-on-reconnect").
 
@@ -40,7 +40,7 @@ Any of the following indicate the session is not yet complete:
 
 | Signal | What It Means | Action |
 |---|---|---|
-| User has not disagreed with or refined anything | Possible fake consensus | Probe engagement -- see anti-patterns reference |
+| User has not disagreed with or refined anything | Possible fake consensus | Probe engagement - see anti-patterns reference |
 | User introduced new scope after convergence | Scope is not locked | Return to divergence for the new item, then re-converge |
 | User expressed uncertainty about a key decision | A blocking question exists | Resolve before proceeding to approval |
 | User deferred a decision ("let's figure that out later") | An open question may be blocking | Assess: is this genuinely non-blocking, or is it avoidance? |
@@ -89,7 +89,7 @@ If the user pushes to skip ahead, acknowledge the pressure and demonstrate value
 
 ### The User Approves Too Quickly
 
-If the user approves the spec within seconds of seeing it, they probably did not read it. Ask a specific question about one acceptance criterion: "Just to confirm -- criterion #3 says [specific detail]. Is that accurate?" This forces engagement without being confrontational.
+If the user approves the spec within seconds of seeing it, they probably did not read it. Ask a specific question about one acceptance criterion: "Just to confirm - criterion #3 says [specific detail]. Is that accurate?" This forces engagement without being confrontational.
 
 ### The User Wants to Iterate Forever
 

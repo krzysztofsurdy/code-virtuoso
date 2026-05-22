@@ -1,12 +1,12 @@
 ## Overview
 
-Replace Constructor with Factory Method introduces a static creation method that takes over the job of instantiating objects. A factory method can perform logic that constructors cannot -- selecting which subclass to return, caching previously created instances, or expressing intent through a descriptive name. The constructor itself often becomes private, funneling all creation through the factory.
+Replace Constructor with Factory Method introduces a static creation method that takes over the job of instantiating objects. A factory method can perform logic that constructors cannot - selecting which subclass to return, caching previously created instances, or expressing intent through a descriptive name. The constructor itself often becomes private, funneling all creation through the factory.
 
 ## Motivation
 
 This refactoring becomes essential in several scenarios:
 
-1. **Subclass-based type handling**: After refactoring type codes into subclasses, factory methods enable returning the correct subclass instance based on parameters -- something constructors cannot accomplish.
+1. **Subclass-based type handling**: After refactoring type codes into subclasses, factory methods enable returning the correct subclass instance based on parameters - something constructors cannot accomplish.
 
 2. **Complex initialization logic**: When constructors perform operations beyond simple field assignment, a factory method can better express intent and manage this complexity.
 

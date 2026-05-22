@@ -41,7 +41,7 @@ The foundation of effective facilitation. Fully engage with team members, unders
 - Make eye contact and give full attention
 - Paraphrase what you heard before responding
 - Ask clarifying questions rather than assuming
-- Listen for what is not being said -- silence, body language, reluctance
+- Listen for what is not being said - silence, body language, reluctance
 
 #### Adaptive Communication
 
@@ -71,13 +71,13 @@ Use visual aids to create shared understanding and make work visible.
 
 #### Conflict Resolution
 
-A skilled Scrum Master mediates conflicts constructively. Conflict is not inherently bad -- disagreement often surfaces important information.
+A skilled Scrum Master mediates conflicts constructively. Conflict is not inherently bad - disagreement often surfaces important information.
 
 **Approach:**
-1. Acknowledge the conflict openly -- do not ignore or suppress it
+1. Acknowledge the conflict openly - do not ignore or suppress it
 2. Ensure both sides feel heard (active listening)
 3. Reframe the conflict around the shared goal (Sprint Goal, Product Goal)
-4. Focus on interests, not positions -- "what do you need?" not "what do you want?"
+4. Focus on interests, not positions - "what do you need?" not "what do you want?"
 5. If resolution is not immediate, agree on next steps and follow up
 
 **Escalation:** If conflict persists or is interpersonal rather than professional, involve HR or management. The Scrum Master is a facilitator, not a therapist.
@@ -142,7 +142,7 @@ The Product Owner owns product value maximization. They are the single point of 
 
 ## Developers
 
-The Developers are the people in the Scrum Team who are committed to creating any aspect of a usable Increment each Sprint. "Developers" includes anyone doing the work, not just programmers -- designers, testers, analysts, and other specialists.
+The Developers are the people in the Scrum Team who are committed to creating any aspect of a usable Increment each Sprint. "Developers" includes anyone doing the work, not just programmers - designers, testers, analysts, and other specialists.
 
 ### Key Accountabilities
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Abstract Factory is a creational pattern that provides an interface for manufacturing entire families of related objects without specifying their concrete classes. Rather than scattering `new` calls throughout the codebase, it channels all instantiation through a factory abstraction, so replacing one product family with another requires changing only the factory instance -- not the code that consumes the products.
+The Abstract Factory is a creational pattern that provides an interface for manufacturing entire families of related objects without specifying their concrete classes. Rather than scattering `new` calls throughout the codebase, it channels all instantiation through a factory abstraction, so replacing one product family with another requires changing only the factory instance - not the code that consumes the products.
 
 ## Intent
 
@@ -243,7 +243,7 @@ $migration = $factory->createMigration();
 
 ## Real-World Analogies
 
-**Furniture Showroom by Style**: Picture a showroom organized into curated collections -- Mid-Century Modern, Industrial, Scandinavian. Choosing a collection determines every piece you receive (sofa, table, lamp), and the showroom guarantees aesthetic coherence across the set.
+**Furniture Showroom by Style**: Picture a showroom organized into curated collections - Mid-Century Modern, Industrial, Scandinavian. Choosing a collection determines every piece you receive (sofa, table, lamp), and the showroom guarantees aesthetic coherence across the set.
 
 **Operating System Widget Toolkits**: Each desktop OS bundles its own control library. The same "create dialog" call yields Windows-native widgets on Windows and macOS-native widgets on macOS, while the application logic remains identical on both platforms.
 
@@ -252,7 +252,7 @@ $migration = $factory->createMigration();
 ### Advantages
 - **Isolates client code from concrete classes**: All instantiation flows through abstract interfaces, so business logic never references specific product implementations
 - **Enforces family coherence**: A single factory produces every related product, eliminating accidental mismatches between incompatible parts
-- **Simplifies family extension**: Supporting a new product family means adding one factory class -- existing client code stays untouched
+- **Simplifies family extension**: Supporting a new product family means adding one factory class - existing client code stays untouched
 - **Localizes construction logic**: Object creation is consolidated in factory implementations rather than spread across consumers
 - **Respects the Open/Closed Principle**: Growth happens by introducing new classes, not by editing existing ones
 
@@ -260,7 +260,7 @@ $migration = $factory->createMigration();
 - **Increases class count**: Every new family requires a factory class plus one concrete class per product type
 - **Overkill for single-family systems**: When only one product family exists, the abstraction layer adds complexity without payoff
 - **Painful to expand the product set**: Adding a new product type to the family means modifying every existing factory implementation
-- **Limited configuration flexibility**: When individual products need multi-step setup, Abstract Factory alone falls short -- Builder is the better companion
+- **Limited configuration flexibility**: When individual products need multi-step setup, Abstract Factory alone falls short - Builder is the better companion
 
 ## Relations with Other Patterns
 
@@ -268,7 +268,7 @@ $migration = $factory->createMigration();
 - **Singleton**: Concrete factories are frequently singletons, since a single instance per family is usually sufficient
 - **Prototype**: Factories can clone pre-configured template objects instead of invoking constructors, combining both patterns
 - **Builder**: Builder handles complex, multi-step construction; Abstract Factory handles coordinated creation of simple products across a family
-- **Strategy**: Both swap implementations behind an interface, but at different scales -- Strategy replaces algorithms, Abstract Factory replaces entire object families
+- **Strategy**: Both swap implementations behind an interface, but at different scales - Strategy replaces algorithms, Abstract Factory replaces entire object families
 
 ## Examples in Other Languages
 

@@ -1,6 +1,6 @@
 ---
 name: refactor-scout
-description: Scan code for structural health -- code smells, duplication, complexity hotspots, and refactoring opportunities. Delegate for codebase health assessments.
+description: Scan code for structural health - code smells, duplication, complexity hotspots, and refactoring opportunities. Delegate for codebase health assessments.
 tools: Read, Grep, Glob, Bash
 skills:
   - refactoring
@@ -23,10 +23,10 @@ You receive one of:
 
 ## Process
 
-1. **Discover** -- Find relevant files using Glob patterns and directory structure
-2. **Measure** -- Assess each file for size, complexity, and coupling
-3. **Classify** -- Categorize findings by code smell type
-4. **Recommend** -- Map each smell to a specific refactoring technique
+1. **Discover** - Find relevant files using Glob patterns and directory structure
+2. **Measure** - Assess each file for size, complexity, and coupling
+3. **Classify** - Categorize findings by code smell type
+4. **Recommend** - Map each smell to a specific refactoring technique
 
 ## Code Smell Categories
 
@@ -84,7 +84,7 @@ For each finding:
 
 ## Rules
 
-- Use concrete evidence -- line counts, parameter counts, dependency counts
+- Use concrete evidence - line counts, parameter counts, dependency counts
 - Name specific refactoring techniques, not vague advice like "simplify this"
 - Focus on structural issues, not style preferences
 - Prioritize by impact: what causes the most pain when changing code?

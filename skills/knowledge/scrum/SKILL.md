@@ -76,9 +76,9 @@ All events are timeboxed. Shorter Sprints use proportionally shorter event timeb
 
 ### Sprint Planning: Three Topics
 
-1. **Why is this Sprint valuable?** -- Product Owner proposes how to increase value; team defines Sprint Goal
-2. **What can be done this Sprint?** -- Developers select Product Backlog items based on capacity and velocity
-3. **How will the chosen work get done?** -- Developers decompose items into tasks (typically one day or less)
+1. **Why is this Sprint valuable?** - Product Owner proposes how to increase value; team defines Sprint Goal
+2. **What can be done this Sprint?** - Developers select Product Backlog items based on capacity and velocity
+3. **How will the chosen work get done?** - Developers decompose items into tasks (typically one day or less)
 
 See [Scrum Events Reference](references/scrum-events.md) for detailed facilitation guidance, formats, and tips.
 
@@ -112,7 +112,7 @@ Each artifact contains a commitment that provides transparency and focus:
 
 A formal description of the state of the Increment when it meets quality standards. If a Product Backlog item does not meet the Definition of Done, it cannot be released or presented at the Sprint Review. It returns to the Product Backlog for future consideration.
 
-The Definition of Done creates transparency by giving everyone a shared understanding of what "complete" means. It is a minimum quality bar -- individual items may have additional acceptance criteria.
+The Definition of Done creates transparency by giving everyone a shared understanding of what "complete" means. It is a minimum quality bar - individual items may have additional acceptance criteria.
 
 ---
 

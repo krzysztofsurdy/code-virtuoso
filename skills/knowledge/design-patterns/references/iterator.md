@@ -244,7 +244,7 @@ foreach ($reverseIterator as $key => $item) {
 
 ## Real-World Analogies
 
-**Jukebox Playlist**: A jukebox lets you skip forward and backward through songs without exposing how the tracks are stored internally -- vinyl records, CDs, or digital files. The "next track" button is the iterator.
+**Jukebox Playlist**: A jukebox lets you skip forward and backward through songs without exposing how the tracks are stored internally - vinyl records, CDs, or digital files. The "next track" button is the iterator.
 
 **Museum Audio Guide**: Visitors follow a numbered tour through exhibits. The audio guide advances from one stop to the next regardless of how the museum is physically laid out, providing a consistent traversal experience.
 

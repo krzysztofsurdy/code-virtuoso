@@ -19,7 +19,7 @@ Order stages so the cheapest, fastest checks run first.
 
 Identify stages with no dependencies and run them concurrently.
 
-**GitHub Actions -- parallel jobs:**
+**GitHub Actions - parallel jobs:**
 ```yaml
 jobs:
   lint:
@@ -42,7 +42,7 @@ jobs:
       - run: make build
 ```
 
-**GitLab CI -- parallel stages (jobs in the same stage run concurrently):**
+**GitLab CI - parallel stages (jobs in the same stage run concurrently):**
 ```yaml
 stages: [check, build, deploy]
 
@@ -59,7 +59,7 @@ build:
   script: make build
 ```
 
-**Shell -- split tests across parallel runners:**
+**Shell - split tests across parallel runners:**
 ```bash
 #!/usr/bin/env bash
 TOTAL_RUNNERS=4
@@ -106,14 +106,14 @@ Do not cache secrets, test results, or deployment artifacts.
 
 Only build, test, and deploy packages that changed.
 
-**GitHub Actions -- path-based triggers:**
+**GitHub Actions - path-based triggers:**
 ```yaml
 on:
   push:
     paths: ['services/api/**', 'packages/shared/**']
 ```
 
-**GitLab CI -- rules with changes:**
+**GitLab CI - rules with changes:**
 ```yaml
 build-api:
   stage: build
@@ -122,7 +122,7 @@ build-api:
     - changes: [services/api/**/*, packages/shared/**/*]
 ```
 
-**Shell -- git-based change detection:**
+**Shell - git-based change detection:**
 ```bash
 #!/usr/bin/env bash
 CHANGED=$(git diff --name-only origin/main...HEAD | cut -d'/' -f1-2 | sort -u)
@@ -159,7 +159,7 @@ jobs:
       - run: make test
 ```
 
-**GitLab CI -- extends and includes:**
+**GitLab CI - extends and includes:**
 ```yaml
 include:
   - local: templates/test.yml
@@ -201,11 +201,11 @@ deploy:
   script: deploy --token "$DEPLOY_TOKEN"
 ```
 
-**Shell -- vault integration:**
+**Shell - vault integration:**
 ```bash
 #!/usr/bin/env bash
 export DB_PASSWORD=$(vault kv get -field=password secret/myapp/db)
 php bin/console doctrine:migrations:migrate --no-interaction
 ```
 
-Dynamic secrets are generated on demand with built-in expiration. The pipeline requests a credential, uses it for the run, and it expires automatically -- eliminating manual rotation and limiting blast radius.
+Dynamic secrets are generated on demand with built-in expiration. The pipeline requests a credential, uses it for the run, and it expires automatically - eliminating manual rotation and limiting blast radius.

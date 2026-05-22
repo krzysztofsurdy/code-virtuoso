@@ -285,7 +285,7 @@ Scan installed skills, agents, and teams at runtime. Do not rely on hardcoded in
 
 ### Scanning Process
 
-Scan for installed skills, agents, and teams using the platform's standard locations. Each AI coding tool stores skills differently -- check the user-level and project-level directories for the chosen agent from Phase 1.
+Scan for installed skills, agents, and teams using the platform's standard locations. Each AI coding tool stores skills differently - check the user-level and project-level directories for the chosen agent from Phase 1.
 
 Common locations to scan for `SKILL.md` files (skills), `*.md` agent definitions, and `*.md` team definitions:
 
@@ -293,16 +293,16 @@ Common locations to scan for `SKILL.md` files (skills), `*.md` agent definitions
 - Project-level `.{agent}/skills/`, `.{agent}/agents/`, `.{agent}/teams/`
 - Plugin cache directories (if the platform uses a plugin system)
 
-If the `using-ecosystem` skill is installed, invoke it -- it provides platform-aware discovery commands.
+If the `using-ecosystem` skill is installed, invoke it - it provides platform-aware discovery commands.
 
 For each found file, read the YAML frontmatter (`name`, `description`) and build the rules sections:
 
-1. **Skills section** -- one bullet per installed skill: `When [trigger from description] -> use /skill-name`
-2. **Custom Agents section** -- agents with capability summary (read-only vs worktree, specialist vs role)
-3. **Agent Roles section** -- role agents with their domain of responsibility
-4. **Teams section** -- pre-composed teams with lead and use case
+1. **Skills section** - one bullet per installed skill: `When [trigger from description] -> use /skill-name`
+2. **Custom Agents section** - agents with capability summary (read-only vs worktree, specialist vs role)
+3. **Agent Roles section** - role agents with their domain of responsibility
+4. **Teams section** - pre-composed teams with lead and use case
 
-The AI coding agent itself is the primary discovery mechanism -- it reads skill frontmatter (`name`, `description`) to decide when to activate each skill. The `using-ecosystem` skill is a supplementary advisor that helps when the agent is unsure which skill or agent fits a situation. If installed, it provides matching heuristics and chaining patterns.
+The AI coding agent itself is the primary discovery mechanism - it reads skill frontmatter (`name`, `description`) to decide when to activate each skill. The `using-ecosystem` skill is a supplementary advisor that helps when the agent is unsure which skill or agent fits a situation. If installed, it provides matching heuristics and chaining patterns.
 
 ### Parallelization add-on
 

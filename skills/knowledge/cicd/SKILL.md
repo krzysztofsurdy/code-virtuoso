@@ -27,12 +27,12 @@ A well-designed pipeline gives developers fast, trustworthy feedback while preve
 
 | Principle | Meaning |
 |---|---|
-| **Fast feedback** | Run the cheapest, fastest checks first -- lint and unit tests before integration tests and builds |
-| **Fail early** | Stop the pipeline at the first failure -- do not waste time on downstream stages when upstream checks fail |
-| **Reproducibility** | Every pipeline run with the same inputs must produce the same outputs -- pin dependencies, use immutable base images |
+| **Fast feedback** | Run the cheapest, fastest checks first - lint and unit tests before integration tests and builds |
+| **Fail early** | Stop the pipeline at the first failure - do not waste time on downstream stages when upstream checks fail |
+| **Reproducibility** | Every pipeline run with the same inputs must produce the same outputs - pin dependencies, use immutable base images |
 | **Idempotency** | Re-running a pipeline stage should be safe and produce the same result |
-| **Isolation** | Each pipeline run operates in a clean environment -- no shared state between runs |
-| **Security by default** | Secrets are injected at runtime, never stored in source -- scan for vulnerabilities early |
+| **Isolation** | Each pipeline run operates in a clean environment - no shared state between runs |
+| **Security by default** | Secrets are injected at runtime, never stored in source - scan for vulnerabilities early |
 
 ---
 
@@ -46,7 +46,7 @@ A well-designed pipeline gives developers fast, trustworthy feedback while preve
 | **Recreate** | Yes (brief) | Slow (full redeploy) | 1x | Minimal | Dev/staging environments, stateful apps that cannot run two versions |
 | **Feature Flags** | Zero | Instant (toggle off) | 1x | Medium | Progressive rollout, A/B testing, trunk-based development |
 
-No single strategy fits every situation. Many teams combine approaches -- for example, canary releases with feature flags for granular control over who sees new functionality.
+No single strategy fits every situation. Many teams combine approaches - for example, canary releases with feature flags for granular control over who sees new functionality.
 
 ---
 
@@ -59,10 +59,10 @@ dev -> staging -> production
 ```
 
 Key principles:
-- **Artifact immutability** -- Build once, deploy the same artifact everywhere. Never rebuild for each environment.
-- **Configuration separation** -- Environment-specific values (database URLs, API keys, feature toggles) live outside the artifact.
-- **Parity** -- Staging should mirror production as closely as possible in infrastructure, data shape, and scale.
-- **Ephemeral environments** -- Spin up isolated environments per pull request for testing and review, then tear them down automatically.
+- **Artifact immutability** - Build once, deploy the same artifact everywhere. Never rebuild for each environment.
+- **Configuration separation** - Environment-specific values (database URLs, API keys, feature toggles) live outside the artifact.
+- **Parity** - Staging should mirror production as closely as possible in infrastructure, data shape, and scale.
+- **Ephemeral environments** - Spin up isolated environments per pull request for testing and review, then tear them down automatically.
 
 ---
 

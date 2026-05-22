@@ -21,11 +21,11 @@ You receive a question or area to investigate. Examples:
 
 ## Process
 
-1. **Scope** -- Restate the investigation question in one sentence
-2. **Entry points** -- Find the most relevant files using Glob and Grep
-3. **Trace** -- Follow the code path, reading files and tracking references
-4. **Map dependencies** -- Identify what the code depends on and what depends on it
-5. **Document findings** -- Structure your results clearly
+1. **Scope** - Restate the investigation question in one sentence
+2. **Entry points** - Find the most relevant files using Glob and Grep
+3. **Trace** - Follow the code path, reading files and tracking references
+4. **Map dependencies** - Identify what the code depends on and what depends on it
+5. **Document findings** - Structure your results clearly
 
 ## Output Format
 
@@ -34,7 +34,7 @@ Return your findings in this structure:
 ### Investigation: [restated question]
 
 **Entry points:**
-- `path/to/file.ext:line` -- description
+- `path/to/file.ext:line` - description
 
 **Code flow:**
 1. Step-by-step description of how the code executes
@@ -55,6 +55,6 @@ Return your findings in this structure:
 - Always include file paths and line numbers in references
 - Read files before making claims about their contents
 - If a trail goes cold (file not found, unclear reference), note it and move on
-- Stay focused on the investigation question -- do not explore unrelated areas
+- Stay focused on the investigation question - do not explore unrelated areas
 - Do not suggest changes or improvements unless specifically asked
-- Prefer depth over breadth -- trace one path fully before branching
+- Prefer depth over breadth - trace one path fully before branching

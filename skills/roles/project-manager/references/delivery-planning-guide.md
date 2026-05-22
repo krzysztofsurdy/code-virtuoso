@@ -24,9 +24,9 @@ Plan what to deliver before planning how to deliver it. This approach from PRINC
 |---|---|
 | **Product** | [Name of the deliverable] |
 | **Purpose** | [Why this product is needed] |
-| **Composition** | [What this product consists of -- its parts] |
+| **Composition** | [What this product consists of - its parts] |
 | **Quality criteria** | [How to determine if the product is acceptable] |
-| **Quality method** | [How quality will be checked -- review, test, demo] |
+| **Quality method** | [How quality will be checked - review, test, demo] |
 | **Dependencies** | [What must exist before this product can be created] |
 | **Produced by** | [Role responsible for creating it] |
 | **Approved by** | [Role responsible for accepting it] |
@@ -164,7 +164,7 @@ Critical Path: A (19 days)
 | Add resources to critical path tasks | May reduce duration (diminishing returns beyond a point) |
 | Overlap critical path tasks where possible | Reduces overall duration (increases risk) |
 | Reduce scope of critical path tasks | Directly reduces duration |
-| Move tasks off the critical path | Does not help -- they are not the bottleneck |
+| Move tasks off the critical path | Does not help - they are not the bottleneck |
 | Monitor critical path tasks closely | Early warning of delays |
 
 ---

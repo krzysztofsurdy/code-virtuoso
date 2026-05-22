@@ -7,7 +7,7 @@ user-invocable: false
 
 # Microservices and Distributed Systems
 
-Microservices architecture splits a system into independently deployable services, each owning a specific business capability. This approach trades the simplicity of a monolith for flexibility in scaling, deployment, and technology choice -- but only when the organizational and technical complexity is justified.
+Microservices architecture splits a system into independently deployable services, each owning a specific business capability. This approach trades the simplicity of a monolith for flexibility in scaling, deployment, and technology choice - but only when the organizational and technical complexity is justified.
 
 ## When to Use Microservices vs Monolith
 
@@ -28,7 +28,7 @@ There is no universal answer. The decision depends on team size, domain complexi
 
 ## Service Decomposition Strategies
 
-Deciding where to draw service boundaries is the hardest part. Get it wrong and you end up with a distributed monolith -- all the costs of distribution with none of the benefits.
+Deciding where to draw service boundaries is the hardest part. Get it wrong and you end up with a distributed monolith - all the costs of distribution with none of the benefits.
 
 ### By Business Capability
 
@@ -36,7 +36,7 @@ Align services to what the organization does rather than how the software is str
 
 ### By Subdomain (Domain-Driven Design)
 
-Use bounded contexts from domain-driven design to identify natural boundaries. Each bounded context has its own ubiquitous language and internal model. A "Customer" in the billing context may carry different attributes than a "Customer" in the shipping context -- and that is fine.
+Use bounded contexts from domain-driven design to identify natural boundaries. Each bounded context has its own ubiquitous language and internal model. A "Customer" in the billing context may carry different attributes than a "Customer" in the shipping context - and that is fine.
 
 ### Strangler Fig Migration
 
@@ -44,10 +44,10 @@ When migrating from a monolith, extract services incrementally rather than doing
 
 ### Decomposition Heuristics
 
-- **High coupling between candidates** -- keep them together, they are likely one service
-- **Different rates of change** -- separate them, they will benefit from independent deployment
-- **Different scaling profiles** -- separate them, they need different resource allocation
-- **Shared data** -- if two candidates always read and write the same tables, splitting them creates unnecessary network chatter
+- **High coupling between candidates** - keep them together, they are likely one service
+- **Different rates of change** - separate them, they will benefit from independent deployment
+- **Different scaling profiles** - separate them, they need different resource allocation
+- **Shared data** - if two candidates always read and write the same tables, splitting them creates unnecessary network chatter
 
 ---
 
@@ -73,10 +73,10 @@ Each service should own its data. Shared databases create hidden coupling that d
 
 ### Key Principles
 
-- **Database per service** -- each service has its own data store, accessed only through its API
-- **No direct database sharing** -- if another service needs data, it requests it through the owning service's interface
-- **Eventual consistency is the norm** -- strong consistency across services requires distributed transactions, which are fragile and slow
-- **Choose the right data store** -- different services may use different database technologies based on their access patterns
+- **Database per service** - each service has its own data store, accessed only through its API
+- **No direct database sharing** - if another service needs data, it requests it through the owning service's interface
+- **Eventual consistency is the norm** - strong consistency across services requires distributed transactions, which are fragile and slow
+- **Choose the right data store** - different services may use different database technologies based on their access patterns
 
 ### Core Data Patterns
 

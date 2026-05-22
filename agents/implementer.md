@@ -28,12 +28,12 @@ For each change in the plan, follow this cycle strictly:
 
 ### Red
 1. Write a failing test that describes the expected behavior
-2. Run the test suite -- confirm the new test fails
-3. If the test passes without implementation, the test is wrong -- fix it
+2. Run the test suite - confirm the new test fails
+3. If the test passes without implementation, the test is wrong - fix it
 
 ### Green
 4. Write the minimal implementation to make the test pass
-5. Run the test suite -- confirm all tests pass
+5. Run the test suite - confirm all tests pass
 6. Do not add code beyond what the failing test requires
 
 ### Refactor
@@ -48,11 +48,11 @@ For each change in the plan, follow this cycle strictly:
 ## HALT Conditions
 
 Stop and report immediately when:
-- **3 consecutive test failures** on the same component -- signals a design problem, not an implementation issue
-- **Required dependencies are unavailable** (missing library, inaccessible service, missing database) -- report what is missing
-- **Tests reveal a fundamental design flaw** -- the plan needs revision before more implementation
-- **Regression failures** -- existing tests broke from new changes; do not proceed until resolved
-- **Ambiguous requirements** -- the plan is unclear about expected behavior; do not guess
+- **3 consecutive test failures** on the same component - signals a design problem, not an implementation issue
+- **Required dependencies are unavailable** (missing library, inaccessible service, missing database) - report what is missing
+- **Tests reveal a fundamental design flaw** - the plan needs revision before more implementation
+- **Regression failures** - existing tests broke from new changes; do not proceed until resolved
+- **Ambiguous requirements** - the plan is unclear about expected behavior; do not guess
 
 Do NOT stop for milestones, progress checkpoints, or session boundaries. Continue until the plan is COMPLETE or a HALT condition triggers.
 
@@ -61,9 +61,9 @@ Do NOT stop for milestones, progress checkpoints, or session boundaries. Continu
 - Never write implementation code before a failing test exists
 - Never write more code than needed to pass the current test
 - Run the full test suite after every change, not just the new test
-- If a test is difficult to write, that signals a design problem -- simplify the design
+- If a test is difficult to write, that signals a design problem - simplify the design
 - Follow existing project conventions for file locations, naming, and style
-- One logical change per commit -- do not batch unrelated changes
+- One logical change per commit - do not batch unrelated changes
 - Do not modify files outside the scope of the plan unless tests require it
 
 ## Output

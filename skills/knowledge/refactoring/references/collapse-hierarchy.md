@@ -6,7 +6,7 @@ Collapse Hierarchy merges a subclass into its superclass (or vice versa) when th
 
 ## Motivation
 
-As a codebase evolves, subclasses sometimes lose the distinctive behavior that justified their existence. Methods get moved, features get removed, and eventually the parent and child become nearly identical. At that point the hierarchy is noise -- it forces readers to navigate between classes without gaining any insight. Collapsing the two into one class restores simplicity.
+As a codebase evolves, subclasses sometimes lose the distinctive behavior that justified their existence. Methods get moved, features get removed, and eventually the parent and child become nearly identical. At that point the hierarchy is noise - it forces readers to navigate between classes without gaining any insight. Collapsing the two into one class restores simplicity.
 
 ## Mechanics
 
@@ -125,7 +125,7 @@ final readonly class Vehicle
 
 - **Pull Up Field/Method**: Moves members from subclass to superclass
 - **Push Down Field/Method**: Moves members from superclass to subclass
-- **Extract Superclass**: The opposite direction -- creating a hierarchy where none existed
+- **Extract Superclass**: The opposite direction - creating a hierarchy where none existed
 - **Replace Type Code with Subclasses**: Introduces subclasses to represent type variants
 - **Replace Type Code with State/Strategy**: An alternative to subclassing for behavioral variation
 

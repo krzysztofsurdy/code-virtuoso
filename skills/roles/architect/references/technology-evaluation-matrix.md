@@ -23,7 +23,7 @@ Before scoring anything, document what you are deciding and why.
 |---|---|
 | **Decision** | [What technology choice is being made] |
 | **Trigger** | [What problem or need triggered this evaluation] |
-| **Constraints** | [Non-negotiable requirements -- must support target language/runtime, must run on target platform, etc.] |
+| **Constraints** | [Non-negotiable requirements - must support target language/runtime, must run on target platform, etc.] |
 | **Timeline** | [When must the decision be made] |
 | **Evaluators** | [Who is involved in the evaluation] |
 
@@ -59,11 +59,11 @@ Score each candidate against each criterion using a 1-5 scale.
 
 | Score | Meaning |
 |---|---|
-| 5 | Excellent -- fully meets or exceeds the criterion |
-| 4 | Good -- meets the criterion with minor gaps |
-| 3 | Adequate -- meets the criterion but with notable limitations |
-| 2 | Poor -- partially meets the criterion, significant gaps |
-| 1 | Unacceptable -- does not meet the criterion |
+| 5 | Excellent - fully meets or exceeds the criterion |
+| 4 | Good - meets the criterion with minor gaps |
+| 3 | Adequate - meets the criterion but with notable limitations |
+| 2 | Poor - partially meets the criterion, significant gaps |
+| 1 | Unacceptable - does not meet the criterion |
 
 ### Step 5: Calculate Weighted Scores
 
@@ -104,7 +104,7 @@ For each candidate: multiply each criterion score by its weight, sum all weighte
 
 [Interpret the scores. Raw numbers do not tell the whole story.]
 
-- Candidate C (current solution) scores highest due to team expertise and integration -- the cost of switching is real.
+- Candidate C (current solution) scores highest due to team expertise and integration - the cost of switching is real.
 - Candidate B has the best functional fit but lower community support.
 - If functional fit is the deciding factor and the team has time to learn, Candidate B is the best choice.
 - If stability and speed of delivery matter most, staying with Candidate C and working around its functional gaps is the pragmatic choice.
@@ -151,7 +151,7 @@ For each candidate: multiply each criterion score by its weight, sum all weighte
 #### Analysis
 
 - PostgreSQL FTS scores highest overall due to zero infrastructure overhead and team familiarity
-- However, it scores lowest on search quality -- the reason we started this evaluation
+- However, it scores lowest on search quality - the reason we started this evaluation
 - Meilisearch offers a strong middle ground: good search quality, low operational burden, reasonable cost
 - Elasticsearch is the most capable but the operational cost is high for a small team
 
@@ -175,7 +175,7 @@ When scores are close or confidence is low, run a proof of concept before decidi
 
 ### PoC Success Criteria
 
-Define before starting -- what must be true for the PoC to be considered successful:
+Define before starting - what must be true for the PoC to be considered successful:
 
 - [ ] Core use case works end-to-end
 - [ ] Performance meets the target under realistic data volume
@@ -190,7 +190,7 @@ Define before starting -- what must be true for the PoC to be considered success
 | Pitfall | Description | Mitigation |
 |---|---|---|
 | **Shiny object bias** | Favoring new technology because it is new | Always include the current solution as a candidate |
-| **Resume-driven development** | Choosing technology because the team wants to learn it | Weight "team wants to learn" at 0 -- it is not a business criterion |
+| **Resume-driven development** | Choosing technology because the team wants to learn it | Weight "team wants to learn" at 0 - it is not a business criterion |
 | **Ignoring switching costs** | Underestimating the cost of adopting something new | Explicitly score migration effort and learning curve |
 | **Vendor demo bias** | Basing the decision on a polished demo, not real-world usage | Always run a PoC with your actual data and use cases |
 | **Analysis paralysis** | Evaluating endlessly without deciding | Set a deadline. If scores are within 10%, pick the one with lower risk. |

@@ -13,7 +13,7 @@ Default tab order follows DOM order of focusable elements (links, buttons, form 
 | Rule | Explanation |
 |---|---|
 | DOM order should match visual order | CSS reordering (flexbox `order`, grid) can break logical tab sequence |
-| `tabindex="0"` | Adds custom elements to tab order -- use only for interactive widgets |
+| `tabindex="0"` | Adds custom elements to tab order - use only for interactive widgets |
 | `tabindex="-1"` | Focusable via `.focus()` only, not reachable by Tab |
 | Never use `tabindex` > 0 | Positive values override natural order and create maintenance problems |
 
@@ -130,7 +130,7 @@ The first focusable element on the page, letting keyboard users bypass navigatio
 
 ## Focus Trapping
 
-When a modal is open, Tab/Shift+Tab must cycle within it. The native `<dialog>` with `.showModal()` handles this automatically -- prefer it over custom solutions.
+When a modal is open, Tab/Shift+Tab must cycle within it. The native `<dialog>` with `.showModal()` handles this automatically - prefer it over custom solutions.
 
 **Vanilla JS trap (for custom dialogs):**
 ```js

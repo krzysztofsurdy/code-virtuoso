@@ -131,7 +131,7 @@ echo $person->getTelephoneNumber();
 
 ## Related Refactorings
 
-- **Extract Class**: The inverse -- splitting a class when it takes on too many responsibilities
+- **Extract Class**: The inverse - splitting a class when it takes on too many responsibilities
 - **Hide Delegate**: Consider hiding the delegation before deciding to inline
 - **Replace Temp with Query**: Simplifies code by removing intermediate variables during inlining
 - **Collapse Hierarchy**: A parallel refactoring that merges a subclass into its parent

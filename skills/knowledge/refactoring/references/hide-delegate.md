@@ -15,7 +15,7 @@ Hide Delegate shields client code from knowing about the internal objects a clas
 
 ### Why It Matters
 
-When clients reach through delegation chains, they become tightly coupled to the internal wiring of the objects involved. Any change to that wiring -- renaming a method, replacing an internal object, reorganizing responsibilities -- ripples out to every call site. Providing a facade method on the owning class absorbs that change in a single place.
+When clients reach through delegation chains, they become tightly coupled to the internal wiring of the objects involved. Any change to that wiring - renaming a method, replacing an internal object, reorganizing responsibilities - ripples out to every call site. Providing a facade method on the owning class absorbs that change in a single place.
 
 ## Mechanics: Step-by-Step
 
@@ -178,7 +178,7 @@ $employee->reportToManager();     // Output: Reporting to: John Smith
 
 ## Related Refactorings
 
-- **Remove Middle Man**: The inverse -- exposing the delegated object when too many wrapper methods accumulate
+- **Remove Middle Man**: The inverse - exposing the delegated object when too many wrapper methods accumulate
 - **Encapsulate Field**: Hides internal fields behind accessors, following the same encapsulation principle
 - **Extract Class**: Pulls delegation-heavy logic into its own class when responsibility grows
 - **Facade Pattern**: A broader application of the same idea, abstracting an entire subsystem

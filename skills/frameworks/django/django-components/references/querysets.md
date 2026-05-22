@@ -8,7 +8,7 @@ QuerySets represent a collection of objects from the database. They are lazy (no
 
 ### QuerySet Evaluation
 
-QuerySets are lazy -- no database query executes until the QuerySet is evaluated through:
+QuerySets are lazy - no database query executes until the QuerySet is evaluated through:
 
 - Iteration: `for obj in queryset`
 - Slicing with step: `queryset[::2]`
@@ -24,14 +24,14 @@ Use `exists()` instead of `bool()` and `count()` instead of `len()` for efficien
 entry = Entry(headline="Hello", pub_date=date.today())
 entry.save()
 
-# Method 2: create() -- single step
+# Method 2: create() - single step
 entry = Entry.objects.create(headline="Hello", pub_date=date.today())
 
 # ForeignKey assignment
 entry.blog = blog_instance
 entry.save()
 
-# ManyToMany -- use add()
+# ManyToMany - use add()
 entry.authors.add(author1, author2)
 entry.authors.set([author1, author2])
 ```
@@ -104,7 +104,7 @@ Blog.objects.annotate(num_entries=Count("entry")).filter(num_entries__gt=5)
 
 ### alias()
 
-Like `annotate()` but does not select the value -- for intermediate calculations.
+Like `annotate()` but does not select the value - for intermediate calculations.
 
 ```python
 Blog.objects.alias(entries=Count("entry")).filter(entries__gt=5)

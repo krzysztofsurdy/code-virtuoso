@@ -2,7 +2,7 @@
 
 ## Overview
 
-A Long Method signals that a method has taken on far more responsibility than it should -- as a rule of thumb, anything exceeding ten lines warrants a closer look. Methods expand gradually as developers tack on "just one more thing," and over time they become dense, intertwined, and fragile. The longer a method grows, the harder it becomes to name precisely, test comprehensively, and reason about with confidence.
+A Long Method signals that a method has taken on far more responsibility than it should - as a rule of thumb, anything exceeding ten lines warrants a closer look. Methods expand gradually as developers tack on "just one more thing," and over time they become dense, intertwined, and fragile. The longer a method grows, the harder it becomes to name precisely, test comprehensively, and reason about with confidence.
 
 ## Why It's a Problem
 
@@ -175,7 +175,7 @@ class OrderProcessor
 
 2. **Replace Temp with Query**: Remove temporary local variables by converting them into method calls that compute the value on demand. This clears obstacles for further extraction.
 
-3. **Introduce Parameter Object**: When a method juggles numerous parameters or passes clusters of values together, consolidate them into a dedicated object. This pairs well with **Preserve Whole Object** -- pass the source object rather than pulling individual fields from it.
+3. **Introduce Parameter Object**: When a method juggles numerous parameters or passes clusters of values together, consolidate them into a dedicated object. This pairs well with **Preserve Whole Object** - pass the source object rather than pulling individual fields from it.
 
 4. **Replace Method with Method Object**: A fallback for cases where local variable entanglement makes extraction impractical. Promote the entire method into its own class where local variables become fields.
 
@@ -183,7 +183,7 @@ class OrderProcessor
 
 6. **Use Enums and Readonly Classes**: Leverage PHP 8.1+ features to construct self-describing, immutable data structures that eliminate the need for inline logic.
 
-Note that breaking methods into shorter ones carries negligible performance overhead from extra calls -- modern runtimes optimize this efficiently, and the readability improvements far outweigh any micro-cost.
+Note that breaking methods into shorter ones carries negligible performance overhead from extra calls - modern runtimes optimize this efficiently, and the readability improvements far outweigh any micro-cost.
 
 ## Exceptions
 

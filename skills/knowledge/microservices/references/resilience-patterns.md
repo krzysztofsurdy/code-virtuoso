@@ -14,10 +14,10 @@ A circuit breaker monitors calls to a dependency and prevents further calls when
 
 ### Configuration Parameters
 
-- **Failure threshold** -- number or percentage of failures before opening (e.g., 5 failures in 60 seconds)
-- **Reset timeout** -- how long to wait in Open state before trying Half-Open (e.g., 30 seconds)
-- **Probe count** -- how many requests to allow in Half-Open state (e.g., 3)
-- **Monitored exceptions** -- which failure types count toward the threshold (not all errors should trip the breaker)
+- **Failure threshold** - number or percentage of failures before opening (e.g., 5 failures in 60 seconds)
+- **Reset timeout** - how long to wait in Open state before trying Half-Open (e.g., 30 seconds)
+- **Probe count** - how many requests to allow in Half-Open state (e.g., 3)
+- **Monitored exceptions** - which failure types count toward the threshold (not all errors should trip the breaker)
 
 **PHP:**
 ```php
@@ -83,13 +83,13 @@ The bulkhead pattern isolates components so that a failure in one does not drain
 | Strategy | Mechanism | Trade-off |
 |---|---|---|
 | **Thread pool isolation** | Each dependency gets its own thread pool with a fixed size | Strong isolation but higher resource overhead from many thread pools |
-| **Semaphore isolation** | Each dependency gets a concurrency semaphore limiting concurrent calls | Lightweight but shares the caller's thread -- a slow call still ties up a thread |
+| **Semaphore isolation** | Each dependency gets a concurrency semaphore limiting concurrent calls | Lightweight but shares the caller's thread - a slow call still ties up a thread |
 | **Process isolation** | Run dependencies in separate processes or containers | Strongest isolation but highest operational cost |
 
 ### Sizing Considerations
 
 - Set pool size based on expected concurrency for that dependency, not the overall system capacity
-- Monitor rejection rates -- too small and you reject legitimate traffic, too large and isolation is ineffective
+- Monitor rejection rates - too small and you reject legitimate traffic, too large and isolation is ineffective
 - Combine with circuit breakers: the bulkhead limits concurrency while the circuit breaker detects systemic failures
 
 ---
@@ -149,10 +149,10 @@ Every outbound call must have a timeout. Without one, a hung dependency can tie 
 
 ### Guidelines
 
-- **Set timeouts on every external call** -- HTTP requests, database queries, message broker operations
-- **Use shorter timeouts for user-facing paths** -- a user waiting 30 seconds for a page load will leave
-- **Propagate deadline context** -- pass a remaining-time budget through the call chain so downstream services know how much time is left
-- **Distinguish connect timeout from read timeout** -- a fast connect but slow response may indicate a different problem than connection refused
+- **Set timeouts on every external call** - HTTP requests, database queries, message broker operations
+- **Use shorter timeouts for user-facing paths** - a user waiting 30 seconds for a page load will leave
+- **Propagate deadline context** - pass a remaining-time budget through the call chain so downstream services know how much time is left
+- **Distinguish connect timeout from read timeout** - a fast connect but slow response may indicate a different problem than connection refused
 
 ---
 
@@ -177,13 +177,13 @@ Container orchestrators and load balancers need to know whether a service instan
 
 | Check Type | Purpose | What It Verifies |
 |---|---|---|
-| **Liveness** | Is the process running and not deadlocked? | Basic health -- responds to a ping, not stuck in an infinite loop |
-| **Readiness** | Can this instance serve traffic right now? | Deeper health -- database connection is live, caches are warm, dependencies are reachable |
-| **Startup** | Has the service finished initializing? | One-time check -- prevents traffic before initialization completes |
+| **Liveness** | Is the process running and not deadlocked? | Basic health - responds to a ping, not stuck in an infinite loop |
+| **Readiness** | Can this instance serve traffic right now? | Deeper health - database connection is live, caches are warm, dependencies are reachable |
+| **Startup** | Has the service finished initializing? | One-time check - prevents traffic before initialization completes |
 
 ### Design Principles
 
-- Keep liveness checks lightweight -- they run frequently and should not do expensive work
+- Keep liveness checks lightweight - they run frequently and should not do expensive work
 - Readiness checks should verify critical dependencies but have their own timeouts
-- Never make a liveness check depend on an external service -- if the database is down, the service is alive but not ready
+- Never make a liveness check depend on an external service - if the database is down, the service is alive but not ready
 - Return structured responses with individual component status so operators can diagnose partial failures

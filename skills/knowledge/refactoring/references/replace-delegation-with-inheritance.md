@@ -142,7 +142,7 @@ final class Employee extends PersonAddress
 
 ## When NOT to Use
 
-- **Partial delegation**: If your class only delegates *some* methods, not all -- this violates Liskov Substitution Principle and breaks polymorphic contracts
+- **Partial delegation**: If your class only delegates *some* methods, not all - this violates Liskov Substitution Principle and breaks polymorphic contracts
 - **Multiple inheritance needed**: If the class already extends another class (use composition instead)
 - **Semantically incorrect**: If the relationship is truly "has-a" not "is-a"
 - **Encapsulation breaking**: If inheritance exposes methods that should remain hidden
@@ -151,7 +151,7 @@ final class Employee extends PersonAddress
 ## Related Refactorings
 
 - **Extract Superclass**: Create a common parent for multiple delegating classes
-- **Hide Delegate**: Reverse operation -- convert inheritance to delegation for better encapsulation
+- **Hide Delegate**: Reverse operation - convert inheritance to delegation for better encapsulation
 - **Replace Type Code with Subclasses**: Use inheritance to handle variant behaviors
 - **Form Template Method**: When subclasses have similar structure, extract common behavior
 - **Introduce Strategy Pattern**: Use composition when multiple algorithms apply to same data

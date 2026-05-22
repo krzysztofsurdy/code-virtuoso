@@ -14,13 +14,13 @@ Two identical production environments. One serves traffic (blue), the other rece
 
 ### Rollback
 
-Switch traffic back to the previous environment. No redeployment needed -- the old version is still running.
+Switch traffic back to the previous environment. No redeployment needed - the old version is still running.
 
 ### Database Considerations
 
 Both environments share a database. Schema changes must be backward-compatible with both versions. Use the expand-contract pattern: add new structures first, migrate data, remove old structures in a later release.
 
-**Shell -- load balancer switch:**
+**Shell - load balancer switch:**
 ```bash
 #!/usr/bin/env bash
 CURRENT=$(get-active-environment)
@@ -56,7 +56,7 @@ Phase 4: 100% canary (promote)
 
 If any metric degrades beyond threshold, route all traffic back to stable.
 
-**GitHub Actions -- canary workflow:**
+**GitHub Actions - canary workflow:**
 ```yaml
 jobs:
   canary:
@@ -168,7 +168,7 @@ ALTER TABLE users DROP COLUMN username;
 - Health check failures on >N% of instances
 - Business metric drops below threshold
 
-**Shell -- automated rollback:**
+**Shell - automated rollback:**
 ```bash
 #!/usr/bin/env bash
 DEPLOY_VERSION="$1"

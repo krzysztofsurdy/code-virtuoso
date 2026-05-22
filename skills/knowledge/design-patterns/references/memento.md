@@ -16,7 +16,7 @@ The Memento pattern addresses the need to preserve and restore object state whil
 
 **Problem:** An application needs to save an object's state and later rewind to it, but exposing internal fields via public getters to make copies undermines encapsulation. Callers become coupled to the object's implementation details, and any structural change breaks every backup site.
 
-**Solution:** Let the object itself produce a memento -- a sealed snapshot of its own internals. A separate caretaker stores and retrieves mementos without ever knowing what is inside them. When a rollback is needed, the originator accepts a memento and restores itself from it, keeping all state management behind its own API.
+**Solution:** Let the object itself produce a memento - a sealed snapshot of its own internals. A separate caretaker stores and retrieves mementos without ever knowing what is inside them. When a rollback is needed, the originator accepts a memento and restores itself from it, keeping all state management behind its own API.
 
 ## Structure
 
@@ -189,7 +189,7 @@ if ($history->canRedo()) {
 
 ## Real-World Analogies
 
-- **Bookmark in a Book**: Placing a bookmark captures your exact position. You can read ahead, then return to the bookmarked page without remembering the page number yourself -- the bookmark holds that state for you.
+- **Bookmark in a Book**: Placing a bookmark captures your exact position. You can read ahead, then return to the bookmarked page without remembering the page number yourself - the bookmark holds that state for you.
 - **Database Savepoints**: Before running a batch of risky SQL statements, you create a savepoint. If anything goes wrong, you roll back to that savepoint and the database reverts to its earlier state without losing unrelated work.
 - **Time Machine Backups**: macOS Time Machine takes periodic snapshots of your entire disk. You can browse to any past snapshot and restore individual files or the whole system, all without knowing the internal file-system layout.
 

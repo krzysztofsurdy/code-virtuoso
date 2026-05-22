@@ -2,11 +2,11 @@
 
 ## Overview
 
-Switch statements (and lengthy if-else chains) are a code smell that points to missed opportunities for polymorphism. When you see conditional logic branching on an object's type or category, it usually means the behavior should be distributed across specialized classes rather than centralized in one block. A single, isolated switch is rarely a problem -- the smell intensifies when similar switches appear in multiple places throughout the codebase.
+Switch statements (and lengthy if-else chains) are a code smell that points to missed opportunities for polymorphism. When you see conditional logic branching on an object's type or category, it usually means the behavior should be distributed across specialized classes rather than centralized in one block. A single, isolated switch is rarely a problem - the smell intensifies when similar switches appear in multiple places throughout the codebase.
 
 ## Why It's a Problem
 
-Branching on type creates a rigid bond between the conditional logic and the set of types it handles. Every time a new type is introduced, you must track down and update every switch that deals with that classification. This directly violates the Open/Closed Principle -- the system should accommodate new variants without modifying existing code.
+Branching on type creates a rigid bond between the conditional logic and the set of types it handles. Every time a new type is introduced, you must track down and update every switch that deals with that classification. This directly violates the Open/Closed Principle - the system should accommodate new variants without modifying existing code.
 
 Beyond maintainability, scattered switch statements signal missing abstractions. Each case branch typically represents a distinct behavior that belongs in its own class, where it can be tested independently and extended without ripple effects.
 
@@ -131,7 +131,7 @@ When behavior must vary at runtime, inject different strategy implementations. T
 Split a method that accepts a type parameter into separate, clearly named methods. The method name itself communicates the intent.
 
 **Extract Method and Move Method**
-Pull the switch logic into its own method first, then relocate it to the class where it belongs -- typically the class representing the type being switched on.
+Pull the switch logic into its own method first, then relocate it to the class where it belongs - typically the class representing the type being switched on.
 
 **Introduce Null Object**
 When one of the cases handles null, replace the null check with a dedicated null object that implements the expected interface with default behavior.

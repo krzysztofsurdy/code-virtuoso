@@ -13,12 +13,12 @@ Symfony's upgrade model is built on one core insight: a new major version is ide
 
 | Principle | Meaning |
 |---|---|
-| **Changelog first** | Before any upgrade, search the web for the actual UPGRADE-X.Y.md file or ask the user for the changelog -- never rely on static knowledge alone |
-| **Deprecation-first** | Fix every deprecation on the current version before upgrading to the next major -- Symfony 8.0 is 7.4 minus deprecations |
-| **Incremental minor upgrades** | Upgrade 6.2 -> 6.3 -> 6.4, never skip minors -- each surfaces new deprecations |
+| **Changelog first** | Before any upgrade, search the web for the actual UPGRADE-X.Y.md file or ask the user for the changelog - never rely on static knowledge alone |
+| **Deprecation-first** | Fix every deprecation on the current version before upgrading to the next major - Symfony 8.0 is 7.4 minus deprecations |
+| **Incremental minor upgrades** | Upgrade 6.2 -> 6.3 -> 6.4, never skip minors - each surfaces new deprecations |
 | **Recipes keep config current** | Run `composer recipes:update` after every upgrade to sync configuration files |
 | **Test deprecation count** | Use `SYMFONY_DEPRECATIONS_HELPER` to fail builds when direct deprecations appear |
-| **Update bundles first** | Third-party bundles are the most common blocker -- update them before bumping Symfony |
+| **Update bundles first** | Third-party bundles are the most common blocker - update them before bumping Symfony |
 
 ---
 
@@ -179,7 +179,7 @@ composer update "symfony/*" --with-all-dependencies
 rm -rf var/cache/*
 ```
 
-Note: packages like `symfony/polyfill-*`, `symfony/ux-*`, and some `symfony/*-bundle` follow their own versioning -- do not force them to the new major.
+Note: packages like `symfony/polyfill-*`, `symfony/ux-*`, and some `symfony/*-bundle` follow their own versioning - do not force them to the new major.
 
 ### Phase 4: Update Recipes
 
@@ -220,18 +220,18 @@ See [Upgrade Workflow Reference](references/upgrade-workflow.md) for detailed de
 
 Bundles are the most common upgrade blocker. Follow this order:
 
-1. **Check compatibility** -- look at each bundle's `composer.json` for Symfony version constraints
-2. **Update bundles first** -- `composer update` before bumping Symfony version
-3. **Check for forks** -- if a bundle is abandoned, look for maintained forks on Packagist
-4. **Wrap risky dependencies** -- use adapter pattern to isolate bundles that may not keep up
+1. **Check compatibility** - look at each bundle's `composer.json` for Symfony version constraints
+2. **Update bundles first** - `composer update` before bumping Symfony version
+3. **Check for forks** - if a bundle is abandoned, look for maintained forks on Packagist
+4. **Wrap risky dependencies** - use adapter pattern to isolate bundles that may not keep up
 
 For bundle maintainers, use feature detection instead of version checks:
 
 ```php
-// Bad -- version-based check
+// Bad - version-based check
 if (Kernel::VERSION_ID <= 60400) { ... }
 
-// Good -- feature-based check
+// Good - feature-based check
 if (!method_exists(OptionsResolver::class, 'setDefined')) { ... }
 ```
 

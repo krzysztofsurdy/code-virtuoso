@@ -26,12 +26,12 @@ You receive one or more of:
 
 ## Process
 
-1. **Load preferences** -- Check for `.qa-engineer.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
+1. **Load preferences** - Check for `.qa-engineer.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
 2. **Review all acceptance criteria** and non-functional requirements.
-2. **Derive test cases** -- At least one positive and one negative per criterion. Structure each: ID, Title, Preconditions, Steps, Expected Result, Priority.
+2. **Derive test cases** - At least one positive and one negative per criterion. Structure each: ID, Title, Preconditions, Steps, Expected Result, Priority.
 3. **Execute P0 cases first**, then P1, then exploratory testing beyond scripted cases.
 4. **File bug reports immediately** on failure with reproduction steps, severity, and evidence.
-5. **Assess exit criteria** -- All P0 test cases pass, all critical bugs resolved, coverage meets target.
+5. **Assess exit criteria** - All P0 test cases pass, all critical bugs resolved, coverage meets target.
 6. **Issue sign-off decision** with documented rationale.
 
 ## Rules
@@ -39,9 +39,9 @@ You receive one or more of:
 - Every acceptance criterion has at least one test case mapped to it
 - Every test case has an objectively verifiable expected result
 - All bugs include reproduction steps, severity, and evidence
-- Block releases when P0 bugs are open -- never compromise on critical issues
+- Block releases when P0 bugs are open - never compromise on critical issues
 - Escalate to the product manager when acceptance criteria are ambiguous
-- Do not fix bugs -- report them
+- Do not fix bugs - report them
 - Do not modify production code
 
 ## Severity Classification

@@ -62,10 +62,10 @@ request_finished.connect(my_callback)
 ```
 
 Parameters:
-- `receiver` -- callback function
-- `sender` -- receive signals only from this sender (optional)
-- `weak` -- store as weak reference (default: `True`); set to `False` for local functions
-- `dispatch_uid` -- unique identifier to prevent duplicate registration
+- `receiver` - callback function
+- `sender` - receive signals only from this sender (optional)
+- `weak` - store as weak reference (default: `True`); set to `False` for local functions
+- `dispatch_uid` - unique identifier to prevent duplicate registration
 
 ### Where to Connect Signals
 
@@ -228,17 +228,17 @@ def toppings_changed(sender, instance, action, reverse, model, pk_set, using, **
 ```
 
 Arguments:
-- `sender` -- intermediate model class (the `.through` table)
-- `instance` -- the instance whose M2M relation changed
-- `action` -- one of: `"pre_add"`, `"post_add"`, `"pre_remove"`, `"post_remove"`, `"pre_clear"`, `"post_clear"`
-- `reverse` -- which side of the relation was updated
-- `model` -- class of objects added/removed/cleared
-- `pk_set` -- set of primary keys (or `None` for clear actions)
-- `using` -- database alias
+- `sender` - intermediate model class (the `.through` table)
+- `instance` - the instance whose M2M relation changed
+- `action` - one of: `"pre_add"`, `"post_add"`, `"pre_remove"`, `"post_remove"`, `"pre_clear"`, `"post_clear"`
+- `reverse` - which side of the relation was updated
+- `model` - class of objects added/removed/cleared
+- `pk_set` - set of primary keys (or `None` for clear actions)
+- `using` - database alias
 
 #### class_prepared
 
-Sent when a model class is fully defined and registered. Cannot be connected in `AppConfig.ready()` -- use `AppConfig.__init__()` instead.
+Sent when a model class is fully defined and registered. Cannot be connected in `AppConfig.ready()` - use `AppConfig.__init__()` instead.
 
 ### Management Signals
 

@@ -1,6 +1,6 @@
 ## Overview
 
-Dead code is any code that exists in the codebase but is never executed -- unused variables, unreferenced methods, unreachable branches, abandoned classes, or parameters that no caller passes meaningfully. It typically accumulates when requirements change or refactoring is left half-finished: new logic is added, but the old implementation it replaces is never cleaned up.
+Dead code is any code that exists in the codebase but is never executed - unused variables, unreferenced methods, unreachable branches, abandoned classes, or parameters that no caller passes meaningfully. It typically accumulates when requirements change or refactoring is left half-finished: new logic is added, but the old implementation it replaces is never cleaned up.
 
 ## Why It's a Problem
 

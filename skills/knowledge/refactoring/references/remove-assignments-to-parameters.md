@@ -14,7 +14,7 @@ Remove Assignments to Parameters stops the practice of overwriting method parame
 
 ### Why It Matters
 
-A parameter name communicates what the caller sent in. The moment the method overwrites that value, the name becomes misleading -- it no longer represents the caller's input. A local variable with a distinct name separates the "what came in" from the "what we computed," making the method easier to read, debug, and extend.
+A parameter name communicates what the caller sent in. The moment the method overwrites that value, the name becomes misleading - it no longer represents the caller's input. A local variable with a distinct name separates the "what came in" from the "what we computed," making the method easier to read, debug, and extend.
 
 ## Mechanics: Step-by-Step
 

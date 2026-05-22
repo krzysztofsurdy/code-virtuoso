@@ -1,6 +1,6 @@
 ## Overview
 
-Inappropriate Intimacy describes classes that are entangled with each other's internal implementation details. Rather than communicating through well-defined public interfaces, one class reaches directly into another's private fields and methods. This tight coupling makes both classes fragile -- changes to one can silently break the other, and neither can be understood, tested, or reused in isolation.
+Inappropriate Intimacy describes classes that are entangled with each other's internal implementation details. Rather than communicating through well-defined public interfaces, one class reaches directly into another's private fields and methods. This tight coupling makes both classes fragile - changes to one can silently break the other, and neither can be understood, tested, or reused in isolation.
 
 ## Why It's a Problem
 
@@ -186,7 +186,7 @@ Appropriate Intimacy is acceptable in these cases:
 
 ## Related Smells
 
-- **Feature Envy**: A method that uses more of another class's data than its own -- a frequent companion to Inappropriate Intimacy
+- **Feature Envy**: A method that uses more of another class's data than its own - a frequent companion to Inappropriate Intimacy
 - **Message Chains**: Traversing returned objects to reach deeply nested data, creating implicit structural dependencies
 - **Middle Man**: A class that exists solely to delegate, sometimes introduced as an overcorrection for intimacy
 - **Data Clumps**: Groups of variables that travel together and should be encapsulated, reducing the need for cross-class field access

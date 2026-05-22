@@ -4,7 +4,7 @@
 
 ### CPU Profiling
 
-Identifies which functions consume the most processing time. Look for hot paths -- functions called frequently or with high per-call cost.
+Identifies which functions consume the most processing time. Look for hot paths - functions called frequently or with high per-call cost.
 
 **Common tools by language:**
 - **PHP**: Xdebug (trace/profiling mode), SPX, Blackfire
@@ -22,7 +22,7 @@ Identifies which functions consume the most processing time. Look for hot paths 
 
 Tracks allocations, heap size, and object retention to find leaks and excessive memory use.
 
-**PHP -- tracking memory within a process:**
+**PHP - tracking memory within a process:**
 ```php
 $before = memory_get_usage(true);
 $result = $this->processLargeDataset($data);
@@ -31,7 +31,7 @@ $consumed = ($after - $before) / 1024 / 1024;
 // Log if consumed exceeds threshold
 ```
 
-**Python -- tracemalloc for allocation tracking:**
+**Python - tracemalloc for allocation tracking:**
 ```python
 import tracemalloc
 
@@ -43,7 +43,7 @@ for stat in top_stats[:10]:
     print(stat)
 ```
 
-**TypeScript -- Node.js heap snapshot:**
+**TypeScript - Node.js heap snapshot:**
 ```typescript
 import v8 from "node:v8";
 import fs from "node:fs";
@@ -53,7 +53,7 @@ v8.writeHeapSnapshot(snapshotPath);
 // Load in Chrome DevTools for analysis
 ```
 
-**Java -- programmatic heap info:**
+**Java - programmatic heap info:**
 ```java
 MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
 MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
@@ -94,7 +94,7 @@ Before changing anything, measure current performance under realistic conditions
 - Measure throughput (requests per second) at current load
 - Capture resource usage (CPU, memory, connections) during normal operation
 - Document query counts and external call counts per request
-- Use production-like data volumes -- performance on 100 rows does not predict performance on 10 million
+- Use production-like data volumes - performance on 100 rows does not predict performance on 10 million
 
 ### Step 2: Identify the Bottleneck
 
@@ -183,12 +183,12 @@ SLOs define the performance contract with your users. They are more formal than 
 
 ### Load Testing Principles
 
-1. **Test with production-like data** -- empty databases perform differently than full ones
-2. **Ramp up gradually** -- sudden load does not reveal where the system starts struggling
-3. **Monitor everything during the test** -- CPU, memory, connections, queue depths, error rates
-4. **Test the whole path** -- include load balancers, caches, databases, and external services
-5. **Automate and run regularly** -- performance regressions creep in between releases
-6. **Establish pass/fail criteria before running** -- define what "acceptable" means in advance
+1. **Test with production-like data** - empty databases perform differently than full ones
+2. **Ramp up gradually** - sudden load does not reveal where the system starts struggling
+3. **Monitor everything during the test** - CPU, memory, connections, queue depths, error rates
+4. **Test the whole path** - include load balancers, caches, databases, and external services
+5. **Automate and run regularly** - performance regressions creep in between releases
+6. **Establish pass/fail criteria before running** - define what "acceptable" means in advance
 
 ### Interpreting Results
 

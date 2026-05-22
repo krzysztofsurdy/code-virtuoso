@@ -6,7 +6,7 @@
 
 REST over HTTP remains the most common inter-service communication style. It is well understood, widely supported, and simple to debug with standard tools. Use it when the caller needs an immediate response and the interaction follows a resource-oriented model.
 
-**Trade-offs:** Simple to implement and test. Generates tight temporal coupling -- the caller blocks until the response arrives. If the downstream service is slow or down, the caller suffers directly.
+**Trade-offs:** Simple to implement and test. Generates tight temporal coupling - the caller blocks until the response arrives. If the downstream service is slow or down, the caller suffers directly.
 
 ### gRPC
 
@@ -36,7 +36,7 @@ GraphQL federation composes a single graph from schemas owned by different servi
 
 ### Message Queues (Point-to-Point)
 
-A producer sends a message to a queue, and exactly one consumer picks it up. This decouples the sender from the receiver in time -- the sender does not need the receiver to be running at the moment the message is sent.
+A producer sends a message to a queue, and exactly one consumer picks it up. This decouples the sender from the receiver in time - the sender does not need the receiver to be running at the moment the message is sent.
 
 **Common brokers:** RabbitMQ, Amazon SQS, Azure Service Bus.
 
@@ -60,7 +60,7 @@ A producer publishes an event to a topic, and all subscribers receive a copy. Th
 
 | Need | Queue (Point-to-Point) | Pub/Sub (Fan-Out) |
 |---|---|---|
-| One consumer per message | Yes | No -- all subscribers get every message |
+| One consumer per message | Yes | No - all subscribers get every message |
 | Multiple consumers per message | No | Yes |
 | Load balancing across workers | Built-in (competing consumers) | Requires consumer groups (e.g., Kafka) |
 | Message replay | Typically not supported | Supported by log-based brokers like Kafka |
@@ -84,9 +84,9 @@ An API gateway sits at the edge of your microservices architecture and acts as t
 
 ### Gateway Anti-patterns
 
-- **Business logic in the gateway** -- the gateway should route and transform, not make business decisions
-- **Gateway as single point of failure** -- deploy multiple instances behind a load balancer
-- **Monolithic gateway** -- if the gateway grows too large, split it into multiple gateways per client type (Backend-for-Frontend pattern)
+- **Business logic in the gateway** - the gateway should route and transform, not make business decisions
+- **Gateway as single point of failure** - deploy multiple instances behind a load balancer
+- **Monolithic gateway** - if the gateway grows too large, split it into multiple gateways per client type (Backend-for-Frontend pattern)
 
 ---
 
@@ -109,7 +109,7 @@ The client sends the request to a load balancer or router, which queries the reg
 
 **Flow:** Client -> Load Balancer -> Load Balancer queries Registry -> Forward to instance.
 
-**Strengths:** Clients are simple -- they call one address. Discovery logic is centralized.
+**Strengths:** Clients are simple - they call one address. Discovery logic is centralized.
 **Weaknesses:** Extra network hop. The load balancer can become a bottleneck or single point of failure.
 
 ### Service Registry
@@ -134,7 +134,7 @@ A sidecar is a helper process deployed alongside each service instance, sharing 
 
 ### How It Works
 
-The service communicates with the sidecar over localhost (fast, no network hops). The sidecar handles all outbound and inbound network traffic on behalf of the service. This means the service does not need libraries for retries, TLS, or tracing -- the sidecar does it transparently.
+The service communicates with the sidecar over localhost (fast, no network hops). The sidecar handles all outbound and inbound network traffic on behalf of the service. This means the service does not need libraries for retries, TLS, or tracing - the sidecar does it transparently.
 
 **Trade-off:** Simplifies application code significantly. Adds memory and CPU overhead per instance. Debugging network issues requires understanding the sidecar's behavior.
 

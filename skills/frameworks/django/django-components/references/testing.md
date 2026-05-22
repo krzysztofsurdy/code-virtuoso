@@ -157,7 +157,7 @@ response.redirect_chain  # [('http://testserver/next/', 302)]
 # Simulate login (goes through auth backend)
 c.login(username="fred", password="secret")
 
-# Force login (bypasses authentication -- faster)
+# Force login (bypasses authentication - faster)
 c.force_login(user, backend=None)
 
 # Logout

@@ -89,9 +89,9 @@ Follow `MAJOR.MINOR.PATCH`:
 
 ### Where to set the version
 
-- **In `plugin.json`** -- the manifest is authoritative. If the plugin lives outside a marketplace, set it here.
-- **In the marketplace entry** -- if the plugin lives inside a marketplace directory, omit `version` from `plugin.json` and manage it in `marketplace.json` instead.
-- **Never both** -- when both are set, `plugin.json` wins, but the inconsistency is a maintenance trap.
+- **In `plugin.json`** - the manifest is authoritative. If the plugin lives outside a marketplace, set it here.
+- **In the marketplace entry** - if the plugin lives inside a marketplace directory, omit `version` from `plugin.json` and manage it in `marketplace.json` instead.
+- **Never both** - when both are set, `plugin.json` wins, but the inconsistency is a maintenance trap.
 
 ## Release Workflow
 
@@ -141,7 +141,7 @@ To also force-install specific plugins, pair `extraKnownMarketplaces` with an `e
 
 - Marketplace plugins are copied to `~/.claude/plugins/cache` on install. Each version is a separate directory.
 - Old versions are marked orphaned on update and removed after 7 days, letting concurrent sessions finish cleanly.
-- **Paths outside the plugin directory (`../shared-utils`) do not work** -- the cache does not copy them.
+- **Paths outside the plugin directory (`../shared-utils`) do not work** - the cache does not copy them.
 - **Symlinks are preserved** by the cache, so use `ln -s /path/to/external ./link-name` if you truly need cross-plugin sharing. Resolved at runtime on the user's machine.
 - `${CLAUDE_PLUGIN_DATA}` survives updates; `${CLAUDE_PLUGIN_ROOT}` changes on each update.
 

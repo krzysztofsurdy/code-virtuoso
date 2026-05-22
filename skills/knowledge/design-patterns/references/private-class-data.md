@@ -188,7 +188,7 @@ echo "Annual Benefit Value: $" . number_format($employee->getAnnualBenefitValue(
 
 ## Real-World Analogies
 
-**Passport/ID Document**: After a passport is issued, the data printed in it -- name, number, expiry -- cannot be edited. You carry it and present it, but modifying it requires issuing an entirely new document.
+**Passport/ID Document**: After a passport is issued, the data printed in it - name, number, expiry - cannot be edited. You carry it and present it, but modifying it requires issuing an entirely new document.
 
 **Birth Certificate**: The facts recorded at birth are permanent. Institutions reference the certificate but have no ability to alter its contents.
 
