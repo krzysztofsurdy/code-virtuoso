@@ -78,7 +78,7 @@ That is the whole tour. For fine-grained install modes (per-skill, global, offli
 | Category | Count | Summary |
 |---|---|---|
 | [Knowledge](#knowledge-skills) | 18 | Principles, craft, process, and agent workflow references |
-| [Tools](#tool-skills) | 10 | Interactive generators - rules files, tickets, agents, plugins, PR messages, reports, updates, screenshots |
+| [Tools](#tool-skills) | 11 | Interactive generators - rules files, tickets, agents, plugins, PR messages, reports, updates, screenshots, image annotation |
 | [Frameworks](#framework-skills) | 4 | Symfony, Django, LangChain component libraries and upgrade guides |
 | [Playbooks](#playbook-skills) | 5 | Step-by-step procedures for recurring operational tasks |
 | [Roles](#role-skills) | 6 | Team-role reference skills used by role agents |
@@ -147,6 +147,7 @@ Interactive generators. Each is user-invocable via `/skill-name`.
 | [Report Writer](skills/tools/report-writer/SKILL.md) | Generate standalone HTML reports summarizing changes, investigations, or architectural decisions |
 | [Stakeholder Update Writer](skills/tools/stakeholder-update-writer/SKILL.md) | Draft stakeholder Slack or email updates about project status, blockers, and decisions |
 | [Web Screenshot](skills/tools/web-screenshot/SKILL.md) | Capture web page screenshots with shot-scraper - full page, element, viewport, multi-device, batch |
+| [Image Annotate](skills/tools/image-annotate/SKILL.md) | Mark up images with arrows, boxes, text, numbered steps, highlights, blur, and solid redaction |
 
 ---
 
@@ -434,7 +435,8 @@ code-virtuoso/
 │       ├── pr-message-writer/
 │       ├── report-writer/
 │       ├── stakeholder-update-writer/
-│       └── web-screenshot/
+│       ├── web-screenshot/
+│       └── image-annotate/
 ├── spec/                          # Format specifications
 │   ├── skill-spec.md
 │   ├── agent-spec.md

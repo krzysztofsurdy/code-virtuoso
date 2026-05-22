@@ -4,8 +4,8 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "44 skills and 19 agents for software engineering — knowledge, tools, frameworks, playbooks, roles, and agents",
-    "version": "9.6.0"
+    "description": "45 skills and 19 agents for software engineering — knowledge, tools, frameworks, playbooks, roles, and agents",
+    "version": "9.7.0"
   },
   "plugins": [
     {
@@ -33,7 +33,7 @@
     },
     {
       "name": "tools-virtuoso",
-      "description": "10 tool skills — rules writer, ticket writer, agent creator, plugin creator, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, and web screenshot",
+      "description": "11 tool skills — rules writer, ticket writer, agent creator, plugin creator, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, web screenshot, and image annotate",
       "source": "./",
       "strict": false,
       "skills": [
@@ -46,7 +46,8 @@
         "./skills/tools/pr-message-writer",
         "./skills/tools/report-writer",
         "./skills/tools/stakeholder-update-writer",
-        "./skills/tools/web-screenshot"
+        "./skills/tools/web-screenshot",
+        "./skills/tools/image-annotate"
       ]
     },
     {
