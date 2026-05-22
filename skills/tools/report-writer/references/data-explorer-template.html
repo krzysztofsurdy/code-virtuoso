@@ -1,0 +1,564 @@
+<!--
+Generic data-explorer template. Replace the {{TOKEN}} placeholders from your
+generator and the page works on any tabular dataset.
+
+Required tokens:
+  {{REPORT_TITLE}}           - page title
+  {{REPORT_SUBTITLE}}        - one-line context (source, date, count)
+  {{REQUIREMENTS_HTML}}      - HTML content for the "What this report measures"
+                               section. Three collapsible <details> blocks is the
+                               recommended shape but anything goes.
+  {{DEFAULT_FILTERS_JSON}}   - JSON array of preloaded filters; each entry is
+                               {field, op, value, enabled?: bool}.
+                               Example: [{"field":"status","op":"one_of","value":["active"]}]
+  {{CHARTS_CONFIG_JSON}}     - JSON array of chart definitions (see CHART_TYPES below).
+  {{STATS_CONFIG_JSON}}      - JSON array of stat-card definitions:
+                               {label, type: "total"|"count", field?, match?, color?: "good"|"bad"|"warn"}
+                               "total" counts all rows in view. "count" counts rows where field == match.
+  {{SEARCH_FIELDS_JSON}}     - JSON array of column names to scan with the free-text search box.
+  {{MULTI_VALUED_FIELDS_JSON}} - JSON object {fieldName: separator}, e.g. {"languages":"|"}.
+  {{COLOR_MAP_JSON}}         - JSON object mapping field values to fixed colors, e.g.
+                               {"status":{"compliant":"#34d399","failed":"#f87171"}}.
+  {{RECORDS_JSON}}           - JSON array of every row (objects keyed by column).
+  {{COLUMNS_JSON}}           - JSON array of column names in source order.
+
+Chart types (in CHARTS_CONFIG_JSON):
+  doughnut         {id, title, type: "doughnut", groupBy: "<field>", topN?: 8}
+  bar              {id, title, type: "bar", groupBy: "<field>", topN?, stackedBy?: "<field>"}
+  bar-horizontal   {id, title, type: "bar-horizontal", groupBy: "<field>", topN?: 12, stackedBy?, tall?: true}
+
+If groupBy points at a multi-valued field, each atom is counted independently.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{REPORT_TITLE}}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --panel2: #273449;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --good: #34d399;
+    --bad: #f87171;
+    --warn: #fbbf24;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+  header { padding: 20px 32px; border-bottom: 1px solid var(--border); background: var(--panel); }
+  header h1 { margin: 0 0 4px 0; font-size: 22px; }
+  header .meta { color: var(--muted); font-size: 13px; }
+  main { padding: 24px 32px; max-width: 1600px; margin: 0 auto; }
+  section { margin-bottom: 32px; }
+  h2 { font-size: 18px; margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  h3 { font-size: 15px; margin: 12px 0 6px 0; color: var(--muted); }
+  details { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details[open] summary { margin-bottom: 12px; }
+  details table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  details th, details td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  details th { background: var(--panel2); }
+  .filter-builder { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
+  .filter-row.disabled .filter-field, .filter-row.disabled .filter-op, .filter-row.disabled .filter-value { opacity: 0.4; text-decoration: line-through; }
+  .filter-row select, .filter-row input { background: var(--panel2); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; font-size: 13px; }
+  .filter-row .filter-field { min-width: 220px; }
+  .filter-row .filter-op { min-width: 150px; }
+  .filter-row .filter-value { min-width: 240px; flex: 1; }
+  .filter-row select.filter-value[multiple] { min-height: 70px; }
+  .filter-row .pill { background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 6px 10px; cursor: pointer; color: var(--text); font-size: 13px; }
+  .filter-row .pill.off { opacity: 0.4; }
+  .filter-row .pill.danger:hover { background: var(--bad); color: #0f172a; }
+  .filter-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .filter-search { display: flex; gap: 16px; margin-top: 12px; }
+  .filter-search label { display: flex; flex-direction: column; font-size: 12px; color: var(--muted); flex: 1; }
+  .filter-search input { background: var(--panel2); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; font-size: 13px; }
+  .filter-hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .stat { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .stat .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat .value { font-size: 24px; font-weight: 700; margin-top: 4px; }
+  .stat.good .value { color: var(--good); }
+  .stat.bad .value { color: var(--bad); }
+  .stat.warn .value { color: var(--warn); }
+  .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px; }
+  .chart { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; }
+  .chart h3 { color: var(--text); margin: 0 0 8px 0; }
+  .chart .canvas-wrap { position: relative; flex: 1 1 auto; height: 300px; }
+  .chart canvas { max-width: 100%; }
+  .chart.tall .canvas-wrap { height: 420px; }
+  table.records { width: 100%; border-collapse: collapse; font-size: 12px; background: var(--panel); border-radius: 8px; overflow: hidden; }
+  table.records th, table.records td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.records th { background: var(--panel2); position: sticky; top: 0; cursor: pointer; font-weight: 600; }
+  table.records tbody tr:hover { background: var(--panel2); }
+  .table-wrap { max-height: 560px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .pager { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; color: var(--muted); font-size: 12px; }
+  button.btn { background: var(--panel2); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; cursor: pointer; }
+  button.btn:hover { background: var(--accent); color: #0f172a; }
+  code { background: var(--panel2); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>{{REPORT_TITLE}}</h1>
+  <div class="meta">{{REPORT_SUBTITLE}}</div>
+</header>
+<main>
+
+<section>
+  <h2>What this report measures</h2>
+  {{REQUIREMENTS_HTML}}
+</section>
+
+<section>
+  <h2>Filters</h2>
+  <div class="filter-builder">
+    <div id="filter-list"></div>
+    <div class="filter-actions">
+      <button class="btn" id="btn-add-filter" type="button">+ Add filter</button>
+      <button class="btn" id="btn-reset" type="button">Reset to defaults</button>
+    </div>
+    <div class="filter-hint">All filters AND-combined. Click the &#10004; pill to disable a row without deleting it. Multi-valued fields match if ANY value qualifies.</div>
+    <div class="filter-search">
+      <label>Search
+        <input type="text" id="filter-search" placeholder="free-text across configured fields" />
+      </label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Records</h2>
+  <div class="pager"><span id="pager-info">0 of 0</span><span><button class="btn" id="btn-export">Export filtered CSV</button></span></div>
+  <div class="table-wrap"><table class="records" id="records-table"></table></div>
+</section>
+
+<section>
+  <h2>Summary</h2>
+  <div class="summary" id="stats-grid"></div>
+</section>
+
+<section>
+  <h2>Breakdowns</h2>
+  <div class="charts" id="charts-grid"></div>
+</section>
+
+</main>
+
+<script id="data-records" type="application/json">{{RECORDS_JSON}}</script>
+<script id="data-columns" type="application/json">{{COLUMNS_JSON}}</script>
+<script id="data-default-filters" type="application/json">{{DEFAULT_FILTERS_JSON}}</script>
+<script id="data-charts-config" type="application/json">{{CHARTS_CONFIG_JSON}}</script>
+<script id="data-stats-config" type="application/json">{{STATS_CONFIG_JSON}}</script>
+<script id="data-search-fields" type="application/json">{{SEARCH_FIELDS_JSON}}</script>
+<script id="data-multi-valued" type="application/json">{{MULTI_VALUED_FIELDS_JSON}}</script>
+<script id="data-color-map" type="application/json">{{COLOR_MAP_JSON}}</script>
+
+<script>
+const RECORDS = JSON.parse(document.getElementById("data-records").textContent);
+const COLUMNS = JSON.parse(document.getElementById("data-columns").textContent);
+const DEFAULT_FILTERS = JSON.parse(document.getElementById("data-default-filters").textContent);
+const CHARTS_CONFIG = JSON.parse(document.getElementById("data-charts-config").textContent);
+const STATS_CONFIG = JSON.parse(document.getElementById("data-stats-config").textContent);
+const SEARCH_FIELDS = JSON.parse(document.getElementById("data-search-fields").textContent);
+const MULTI_VALUED = JSON.parse(document.getElementById("data-multi-valued").textContent);
+const COLOR_MAP = JSON.parse(document.getElementById("data-color-map").textContent);
+
+const PALETTE = ["#38bdf8","#34d399","#fbbf24","#f87171","#a78bfa","#fb7185","#22d3ee","#facc15","#f472b6","#60a5fa","#4ade80","#fde047"];
+const charts = {};
+
+const OPS = {
+  is:           { label: "is",               needsValue: true,  multi: false, numeric: false },
+  is_not:       { label: "is not",           needsValue: true,  multi: false, numeric: false },
+  contains:     { label: "contains",         needsValue: true,  multi: false, numeric: false },
+  not_contains: { label: "does not contain", needsValue: true,  multi: false, numeric: false },
+  one_of:       { label: "is one of",        needsValue: true,  multi: true,  numeric: false },
+  not_one_of:   { label: "is not one of",    needsValue: true,  multi: true,  numeric: false },
+  exists:       { label: "exists",           needsValue: false, multi: false, numeric: false },
+  not_exists:   { label: "does not exist",   needsValue: false, multi: false, numeric: false },
+  gt:           { label: ">",                needsValue: true,  multi: false, numeric: true },
+  gte:          { label: ">=",               needsValue: true,  multi: false, numeric: true },
+  lt:           { label: "<",                needsValue: true,  multi: false, numeric: true },
+  lte:          { label: "<=",               needsValue: true,  multi: false, numeric: true },
+};
+
+let filters = [];
+let nextFilterId = 1;
+
+function splitMulti(value, field) {
+  const sep = MULTI_VALUED[field];
+  if (!sep) return [value || ""];
+  return (value || "").split(sep).map(x => x.trim()).filter(Boolean);
+}
+
+function fieldValue(record, field) {
+  const raw = (record[field] != null ? record[field] : "").toString();
+  return MULTI_VALUED[field] ? splitMulti(raw, field) : raw;
+}
+
+function uniqueValuesForField(field) {
+  const out = new Set();
+  for (const r of RECORDS) {
+    const v = fieldValue(r, field);
+    if (Array.isArray(v)) { for (const x of v) if (x !== "") out.add(x); }
+    else if (v !== "") out.add(v);
+  }
+  return Array.from(out).sort();
+}
+
+function matchesFilter(record, f) {
+  const opDef = OPS[f.op];
+  const v = fieldValue(record, f.field);
+  const isArr = Array.isArray(v);
+  if (f.op === "exists")     return isArr ? v.length > 0 : v !== "";
+  if (f.op === "not_exists") return isArr ? v.length === 0 : v === "";
+  if (opDef.numeric) {
+    const a = parseFloat(isArr ? (v[0] || "") : v);
+    const b = parseFloat(f.value);
+    if (isNaN(a) || isNaN(b)) return false;
+    if (f.op === "gt")  return a >  b;
+    if (f.op === "gte") return a >= b;
+    if (f.op === "lt")  return a <  b;
+    return a <= b;
+  }
+  if (opDef.multi) {
+    const set = Array.isArray(f.value) ? f.value : [];
+    if (set.length === 0) return f.op === "one_of" ? false : true;
+    if (isArr) {
+      const hit = v.some(x => set.includes(x));
+      return f.op === "one_of" ? hit : !hit;
+    }
+    return f.op === "one_of" ? set.includes(v) : !set.includes(v);
+  }
+  const needle = (f.value || "").toString();
+  if (f.op === "is")           return isArr ? v.includes(needle) : v === needle;
+  if (f.op === "is_not")       return isArr ? !v.includes(needle) : v !== needle;
+  if (f.op === "contains")     return (isArr ? v.join("|") : v).toLowerCase().includes(needle.toLowerCase());
+  if (f.op === "not_contains") return !(isArr ? v.join("|") : v).toLowerCase().includes(needle.toLowerCase());
+  return true;
+}
+
+function applyFilters() {
+  const search = (document.getElementById("filter-search").value || "").trim().toLowerCase();
+  return RECORDS.filter(r => {
+    for (const f of filters) {
+      if (!f.enabled) continue;
+      if (!matchesFilter(r, f)) return false;
+    }
+    if (search && SEARCH_FIELDS.length) {
+      const hay = SEARCH_FIELDS.map(c => r[c] || "").join(" ").toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+}
+
+function makeEl(tag, attrs, children) {
+  const el = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") el.className = v;
+    else if (k === "text") el.textContent = v;
+    else if (k.startsWith("on") && typeof v === "function") el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v);
+  }
+  for (const c of (children || [])) if (c) el.appendChild(c);
+  return el;
+}
+
+function renderFilterRow(f) {
+  const row = makeEl("div", { class: "filter-row" + (f.enabled ? "" : " disabled") });
+
+  row.appendChild(makeEl("button", {
+    class: "pill" + (f.enabled ? "" : " off"),
+    type: "button",
+    title: f.enabled ? "Disable filter" : "Enable filter",
+    text: f.enabled ? "✔" : "✕",
+    onclick: () => { f.enabled = !f.enabled; renderFilters(); render(); },
+  }));
+
+  const fieldSel = makeEl("select", { class: "filter-field" });
+  for (const col of COLUMNS) {
+    const o = makeEl("option", { value: col, text: col });
+    if (col === f.field) o.selected = true;
+    fieldSel.appendChild(o);
+  }
+  fieldSel.addEventListener("change", () => {
+    f.field = fieldSel.value;
+    f.value = OPS[f.op].multi ? [] : "";
+    renderFilters(); render();
+  });
+  row.appendChild(fieldSel);
+
+  const opSel = makeEl("select", { class: "filter-op" });
+  for (const [key, def] of Object.entries(OPS)) {
+    const o = makeEl("option", { value: key, text: def.label });
+    if (key === f.op) o.selected = true;
+    opSel.appendChild(o);
+  }
+  opSel.addEventListener("change", () => {
+    const prev = OPS[f.op]; f.op = opSel.value; const next = OPS[f.op];
+    if (prev.multi !== next.multi) f.value = next.multi ? [] : "";
+    renderFilters(); render();
+  });
+  row.appendChild(opSel);
+
+  const opDef = OPS[f.op];
+  if (opDef.needsValue) {
+    if (opDef.multi) {
+      const valSel = makeEl("select", { class: "filter-value", multiple: "multiple" });
+      for (const v of uniqueValuesForField(f.field)) {
+        const o = makeEl("option", { value: v, text: v });
+        if ((f.value || []).includes(v)) o.selected = true;
+        valSel.appendChild(o);
+      }
+      valSel.addEventListener("change", () => {
+        f.value = Array.from(valSel.selectedOptions).map(o => o.value);
+        render();
+      });
+      row.appendChild(valSel);
+    } else {
+      const dlId = `dl-${f.id}`;
+      const input = makeEl("input", { class: "filter-value", type: opDef.numeric ? "number" : "text", placeholder: "value", list: dlId });
+      input.value = f.value || "";
+      input.addEventListener("input", () => { f.value = input.value; render(); });
+      row.appendChild(input);
+      if (!opDef.numeric) {
+        const dl = makeEl("datalist", { id: dlId });
+        for (const v of uniqueValuesForField(f.field)) dl.appendChild(makeEl("option", { value: v }));
+        row.appendChild(dl);
+      }
+    }
+  }
+
+  row.appendChild(makeEl("button", {
+    class: "pill danger", type: "button", title: "Remove", text: "✕",
+    onclick: () => { filters = filters.filter(x => x.id !== f.id); renderFilters(); render(); },
+  }));
+  return row;
+}
+
+function renderFilters() {
+  const list = document.getElementById("filter-list");
+  list.innerHTML = "";
+  for (const f of filters) list.appendChild(renderFilterRow(f));
+}
+
+function resetFilters() {
+  filters = DEFAULT_FILTERS.map(f => Object.assign({ id: nextFilterId++, enabled: true }, f));
+  document.getElementById("filter-search").value = "";
+  renderFilters();
+}
+
+function renderStats(rows) {
+  const grid = document.getElementById("stats-grid");
+  grid.innerHTML = "";
+  for (const cfg of STATS_CONFIG) {
+    let n;
+    if (cfg.type === "total") n = rows.length;
+    else if (cfg.type === "count") n = rows.filter(r => (r[cfg.field] || "") === cfg.match).length;
+    else if (cfg.type === "percent") {
+      const m = rows.filter(r => (r[cfg.field] || "") === cfg.match).length;
+      n = rows.length ? Math.round(100 * m / rows.length) + "%" : "0%";
+    } else n = "—";
+    const card = makeEl("div", { class: "stat" + (cfg.color ? " " + cfg.color : "") });
+    card.appendChild(makeEl("div", { class: "label", text: cfg.label }));
+    card.appendChild(makeEl("div", { class: "value", text: String(n) }));
+    grid.appendChild(card);
+  }
+}
+
+function countBy(rows, fn) {
+  const m = new Map();
+  for (const r of rows) {
+    const k = fn(r);
+    if (Array.isArray(k)) {
+      for (const x of k) m.set(x, (m.get(x) || 0) + 1);
+    } else if (k != null && k !== "") {
+      m.set(k, (m.get(k) || 0) + 1);
+    } else {
+      m.set("(empty)", (m.get("(empty)") || 0) + 1);
+    }
+  }
+  return m;
+}
+
+function topN(map, n) {
+  const arr = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+  return n ? arr.slice(0, n) : arr;
+}
+
+function colorFor(field, value, i) {
+  if (COLOR_MAP[field] && COLOR_MAP[field][value]) return COLOR_MAP[field][value];
+  return PALETTE[i % PALETTE.length];
+}
+
+function ensureChart(id, type, labels, datasets, options) {
+  if (charts[id]) {
+    charts[id].data.labels = labels;
+    charts[id].data.datasets = datasets;
+    charts[id].update();
+    return;
+  }
+  charts[id] = new Chart(document.getElementById(id), {
+    type, data: { labels, datasets },
+    options: Object.assign({
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: "#e2e8f0" } } },
+    }, options || {}),
+  });
+}
+
+function renderChart(cfg, rows) {
+  if (cfg.type === "doughnut") {
+    const counts = countBy(rows, r => fieldValue(r, cfg.groupBy));
+    const top = topN(counts, cfg.topN || 8);
+    ensureChart(cfg.id, "doughnut", top.map(x => x[0]), [{
+      data: top.map(x => x[1]),
+      backgroundColor: top.map((x, i) => colorFor(cfg.groupBy, x[0], i)),
+    }]);
+    return;
+  }
+  if (cfg.type === "bar" || cfg.type === "bar-horizontal") {
+    const horizontal = cfg.type === "bar-horizontal";
+    if (cfg.stackedBy) {
+      const buckets = {};
+      const stackValues = new Set();
+      for (const r of rows) {
+        const groups = [].concat(fieldValue(r, cfg.groupBy));
+        const stacks = [].concat(fieldValue(r, cfg.stackedBy));
+        for (const g of groups) {
+          buckets[g] = buckets[g] || {};
+          for (const s of stacks) {
+            buckets[g][s] = (buckets[g][s] || 0) + 1;
+            stackValues.add(s);
+          }
+        }
+      }
+      const labels = Object.keys(buckets).sort();
+      const stacks = Array.from(stackValues).sort();
+      const datasets = stacks.map((s, i) => ({
+        label: s,
+        data: labels.map(l => buckets[l][s] || 0),
+        backgroundColor: colorFor(cfg.stackedBy, s, i),
+      }));
+      ensureChart(cfg.id, "bar", labels, datasets, {
+        indexAxis: horizontal ? "y" : "x",
+        scales: {
+          x: { ticks: { color: "#94a3b8" }, grid: { color: "#334155" }, stacked: true, beginAtZero: true },
+          y: { ticks: { color: "#94a3b8" }, grid: { color: "#334155" }, stacked: true, beginAtZero: true },
+        },
+      });
+      return;
+    }
+    const counts = countBy(rows, r => fieldValue(r, cfg.groupBy));
+    const top = topN(counts, cfg.topN);
+    ensureChart(cfg.id, "bar", top.map(x => x[0]),
+      [{ label: cfg.title, data: top.map(x => x[1]), backgroundColor: top.map((x, i) => colorFor(cfg.groupBy, x[0], i)) }],
+      {
+        indexAxis: horizontal ? "y" : "x",
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: "#94a3b8" }, grid: { color: "#334155" }, beginAtZero: true },
+          y: { ticks: { color: "#94a3b8" }, grid: { color: "#334155" }, beginAtZero: true },
+        },
+      });
+  }
+}
+
+function setupCharts() {
+  const grid = document.getElementById("charts-grid");
+  for (const cfg of CHARTS_CONFIG) {
+    const div = makeEl("div", { class: "chart" + (cfg.tall ? " tall" : "") });
+    div.appendChild(makeEl("h3", { text: cfg.title }));
+    const wrap = makeEl("div", { class: "canvas-wrap" });
+    wrap.appendChild(makeEl("canvas", { id: cfg.id }));
+    div.appendChild(wrap);
+    grid.appendChild(div);
+  }
+}
+
+function renderCharts(rows) {
+  for (const cfg of CHARTS_CONFIG) renderChart(cfg, rows);
+}
+
+let sortField = COLUMNS[0], sortDir = 1;
+
+function renderTable(rows) {
+  const table = document.getElementById("records-table");
+  const sorted = rows.slice().sort((a, b) => {
+    const av = (a[sortField] || "").toString();
+    const bv = (b[sortField] || "").toString();
+    return av.localeCompare(bv) * sortDir;
+  });
+  const shown = sorted.slice(0, 500);
+  let html = "<thead><tr>";
+  for (const col of COLUMNS) {
+    const arrow = col === sortField ? (sortDir === 1 ? " ▲" : " ▼") : "";
+    html += `<th data-col="${col}">${col}${arrow}</th>`;
+  }
+  html += "</tr></thead><tbody>";
+  for (const r of shown) {
+    html += "<tr>";
+    for (const col of COLUMNS) html += `<td>${escapeHtml((r[col] || "").toString())}</td>`;
+    html += "</tr>";
+  }
+  html += "</tbody>";
+  table.innerHTML = html;
+  document.getElementById("pager-info").textContent = `showing ${shown.length} of ${rows.length} (sorted by ${sortField})`;
+  table.querySelectorAll("th").forEach(th => {
+    th.addEventListener("click", () => {
+      const col = th.dataset.col;
+      if (col === sortField) sortDir *= -1; else { sortField = col; sortDir = 1; }
+      render();
+    });
+  });
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+}
+
+function exportCsv() {
+  const rows = applyFilters();
+  const out = [COLUMNS.join(",")];
+  for (const r of rows) {
+    out.push(COLUMNS.map(c => {
+      const v = (r[c] || "").toString();
+      return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    }).join(","));
+  }
+  const blob = new Blob([out.join("\n")], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "filtered.csv";
+  a.click();
+}
+
+function render() {
+  const rows = applyFilters();
+  renderStats(rows);
+  renderCharts(rows);
+  renderTable(rows);
+}
+
+document.getElementById("btn-add-filter").addEventListener("click", () => {
+  filters.push({ id: nextFilterId++, field: COLUMNS[0], op: "is", value: "", enabled: true });
+  renderFilters(); render();
+});
+document.getElementById("btn-reset").addEventListener("click", () => { resetFilters(); render(); });
+document.getElementById("filter-search").addEventListener("input", render);
+document.getElementById("btn-export").addEventListener("click", exportCsv);
+
+resetFilters();
+setupCharts();
+render();
+</script>
+</body>
+</html>

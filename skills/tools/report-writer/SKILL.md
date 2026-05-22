@@ -71,6 +71,195 @@ Sections to include:
 6. **Recommendations** -- Suggested actions
 7. **Open Questions** -- Unresolved items
 
+### Data Explorer / Interactive Dashboard Report
+
+For when the report is *data*, not a narrative -- e.g. a CSV export, a compliance audit, an error-frequency dump. Output is a single standalone HTML file that lets the reader filter, slice, chart, and export the dataset themselves. Use this instead of a narrative report when the reader is going to do `awk` / `grep` / pivot-table work.
+
+#### Default path
+
+For most cases use the generic files in this skill directly -- you do NOT need to write new HTML or JS:
+
+- **[data-explorer-template.html](references/data-explorer-template.html)** -- domain-agnostic template with `{{TOKEN}}` placeholders (filter builder, Chart.js charts, dynamic stat cards, sortable records table, CSV export -- all dark-themed).
+- **[data-explorer-generator.py](references/data-explorer-generator.py)** -- ~60-line script that fills the template:
+
+  ```bash
+  python references/data-explorer-generator.py --csv data.csv --out report.html --config report_config.json
+  ```
+
+  The config JSON declares title, requirements HTML, default filters, charts, stat cards, search fields, multi-valued columns, and a fixed value-to-color map.
+
+If the dataset has quirks (synthetic derived fields, custom reason categorization, bespoke charts), copy `data-explorer-template.html` and inline-edit the JS.
+
+#### Page layout (top to bottom)
+
+1. **Header** -- title, source filename, generation timestamp, total record count.
+2. **What this report measures** -- three collapsible `<details>` blocks: (a) every check the dataset encodes, (b) requirements we deliberately cannot measure and why, (c) checks the upstream system runs but does not persist. The reader has to know what is and is not in the data before slicing it. This is the single biggest difference from narrative reports.
+3. **Filters** (see Filter Builder below). Pre-load at least one sensible default (e.g. `teacher_type is one of [b2c]`); Reset returns to the default, not to empty.
+4. **Records table** -- placed directly under the filters so the reader sees their filter changes reflected immediately. ALL columns from the CSV (horizontal scroll; do not pre-pick). Includes the "Export filtered CSV" button so the reader can grab the filtered subset without leaving the page.
+5. **Summary stat cards** -- live counts that re-render on every filter change. Color cards by polarity (`good` / `bad` / `warn`).
+6. **Breakdowns / charts** -- `repeat(auto-fit, minmax(380px, 1fr))` so it reflows on resize.
+
+**Order matters:** filters → records → summary → charts. The reader's first instinct is to filter, then verify the filtered rows look right in the table, *then* check the aggregates and visuals. The table is the source of truth.
+
+#### Source format
+
+Take a CSV (or any tabular export) and a generator script that emits one HTML file. Keep the generator tiny -- the page does all the work.
+
+```
+src/scripts/<topic>_report_html.py     # generator (or use the generic one)
+<topic>.csv                            # input
+<topic>_report.html                    # output (1-2 MB is fine)
+```
+
+The generator should:
+
+1. `csv.DictReader` the input.
+2. Embed the rows as JSON in a `<script type="application/json">` tag (do NOT inline as a JS literal -- the browser parses JSON faster and quoting is safer).
+3. Embed the column order as a separate JSON tag so the table and CSV-export reuse it.
+4. Replace `{{TOKEN}}` placeholders in the HTML template.
+
+Reading the embedded JSON in the page:
+
+```js
+const RECORDS = JSON.parse(document.getElementById("data-records").textContent);
+const COLUMNS = JSON.parse(document.getElementById("data-columns").textContent);
+```
+
+#### Filter Builder (Kibana-style)
+
+Each filter is a row: `[enable toggle] [field] [operator] [value] [×]`. Filters are AND-combined. Disabling a row keeps its config but stops applying it -- this is the "ignore value" affordance.
+
+**Operators to ship:**
+
+| Operator key | Label | Value UI | Notes |
+|---|---|---|---|
+| `is` | is | text + datalist | exact match |
+| `is_not` | is not | text + datalist | exact non-match |
+| `contains` | contains | text + datalist | case-insensitive substring |
+| `not_contains` | does not contain | text + datalist | |
+| `one_of` | is one of | multi-select | values list from the field |
+| `not_one_of` | is not one of | multi-select | |
+| `exists` | exists | (none) | non-empty value |
+| `not_exists` | does not exist | (none) | |
+| `gt` / `gte` / `lt` / `lte` | `>`, `>=`, `<`, `<=` | number input | for numeric columns |
+
+**State shape:**
+
+```js
+let filters = [
+  { id: 1, field: "teacher_type", op: "one_of", value: ["b2c"], enabled: true }
+];
+```
+
+`field` may be a real column, a multi-valued column, or a synthetic field that you compute from a row (e.g. `(probe state)` for a derived bucket). Treat both in `fieldValue(record, field)`.
+
+**Multi-valued field handling:** if a column packs multiple values (e.g. `"german|english|spanish"`), split at lookup time and make `is` / `contains` / `one_of` match if ANY element qualifies. Document this in the filter-builder hint text; it surprises users otherwise. The generic template handles this via a `MULTI_VALUED` config map (`{"languages": "|"}`).
+
+**Why not five separate dropdowns?** You can ship narrow reports with hard-coded filters (teacher type, language, state). The moment the reader asks "what about CPU thread count >= 4 AND browser contains Chrome AND state is non_compliant" you have to ship the builder anyway. Build it once.
+
+#### Charts (Chart.js)
+
+Load from CDN: `<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>`. No npm, no bundler.
+
+**Container CSS -- the gotcha.** Chart.js with `responsive: true` + `maintainAspectRatio: false` expands the canvas to fill its parent. If the parent has no fixed height, you get a 2000px-tall chart. **Always** wrap the canvas in a `position: relative` div with an explicit height:
+
+```css
+.chart .canvas-wrap { position: relative; flex: 1 1 auto; height: 300px; }
+.chart canvas { max-width: 100%; }
+.chart.tall .canvas-wrap { height: 420px; }   /* horizontal bars with many rows */
+```
+
+```html
+<div class="chart"><h3>...</h3><div class="canvas-wrap"><canvas id="..."></canvas></div></div>
+```
+
+**Re-render, don't recreate.** Cache chart instances by id and call `chart.update()` when filters change. Recreating destroys the canvas context every time and leaks memory.
+
+**Chart mix that usually pays off:**
+
+| Visual | Use for |
+|---|---|
+| Doughnut | Pass/fail status, vendor distribution, single categorical breakdown |
+| Stacked bar (vertical) | Compliance broken down by another category (e.g. by teacher type) |
+| Stacked bar (`indexAxis: "y"`) | Top-N reasons, long category labels |
+| Plain bar | Quality levels with semantic colors (GOOD = green, BAD = red) |
+
+**Categorizing free-text reasons.** If your dataset has a `reason` column with delimited atoms (`"completion_type=partial; unsupported:Virtual Background; build_bitness=32-bit"`), bucket them in JS before charting so the top-N bar is readable:
+
+```js
+function categorizeReason(atom) {
+  const s = atom.trim();
+  if (s.startsWith("unsupported:")) return "Unsupported feature: " + s.slice(12);
+  if (s.startsWith("build_bitness=")) return "Not 64-bit OS";
+  if (s.startsWith("hardware_acceleration=")) return "Hardware acceleration off";
+  return s;
+}
+```
+
+#### Records table conventions
+
+- Render ALL CSV columns (`TABLE_COLUMNS = COLUMNS`). Horizontal scroll handles width.
+- Click-to-sort by any column (toggle ascending / descending).
+- Cap visible rows at 500 for performance; show `"500 of 12345 (sorted by X)"` in a pager line.
+- Position `<th>` as `position: sticky; top: 0` so headers stay visible while scrolling.
+
+#### Search vs filter builder
+
+Keep a free-text search input in addition to the builder. It is faster than building `contains` filters across five identity fields:
+
+```js
+const hay = SEARCH_FIELDS.map(c => r[c] || "").join(" ").toLowerCase();
+if (!hay.includes(search)) return false;
+```
+
+#### CSV export
+
+```js
+function exportCsv() {
+  const rows = applyFilters();
+  const out = [COLUMNS.join(",")];
+  for (const r of rows) {
+    out.push(COLUMNS.map(c => {
+      const v = (r[c] || "").toString();
+      return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    }).join(","));
+  }
+  const blob = new Blob([out.join("\n")], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "filtered.csv";
+  a.click();
+}
+```
+
+#### Theming
+
+Dark theme works better for dense data screens (less eye strain over a 30-minute filtering session). CSS custom properties for swappable palettes:
+
+```css
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --panel2: #273449;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --border: #334155;
+  --good: #34d399;
+  --bad: #f87171;
+  --warn: #fbbf24;
+}
+```
+
+Keep all dark-bg charts grid + tick text in `--muted` (`#94a3b8`) so axes don't dominate.
+
+#### Pitfalls worth naming
+
+- **Don't embed data as a JS literal** -- escaping breaks on quotes / newlines. Use `<script type="application/json">` and `JSON.parse`.
+- **Don't forget the canvas wrapper height** -- you'll think the charts are broken; they're just unbounded.
+- **Don't ship per-feature columns AND a feature donut AND a feature stacked bar.** Pick one place for that dimension; redundancy clutters the page.
+- **Don't pre-filter the data in Python.** Embed the full dataset and let the page filter. The reader will want to slice it differently than you predicted.
+- **Don't forget the documentation `<details>`.** A reader without context will misread the chart axes and you'll get the wrong follow-up question.
+
 ## Generating the Report
 
 ### Step 1: Gather Data
@@ -439,7 +628,9 @@ The report generator will automatically gather git diff data, commit history, an
 
 | Reference | Contents |
 |---|---|
-| [template.html](references/template.html) | Full standalone HTML template with all CSS, JS, and component styles baked in |
+| [template.html](references/template.html) | Standalone HTML template for narrative-style reports (bug fixes, features, investigations). All CSS, JS, and component styles inlined. |
+| [data-explorer-template.html](references/data-explorer-template.html) | Generic, domain-agnostic data-explorer template -- filter builder, configurable charts, dynamic stat cards, sortable records table, CSV export. Fill the `{{TOKEN}}` placeholders. |
+| [data-explorer-generator.py](references/data-explorer-generator.py) | Tiny Python generator that takes any CSV + a JSON config and produces a ready-to-open data-explorer HTML report from the template. |
 
 ## Integration with Other Skills
 
