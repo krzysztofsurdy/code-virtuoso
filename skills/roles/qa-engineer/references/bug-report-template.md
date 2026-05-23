@@ -1,6 +1,13 @@
 # Bug Report Template
 
-A structured template for reporting defects. Good bug reports reduce back-and-forth between QA and developers, leading to faster fixes.
+A template for reporting defects. A good bug report cuts back-and-forth between QA and developers and gets the fix out faster.
+
+## Contents
+
+- [Template](#template)
+- [Severity classification](#severity-classification)
+- [API bug report example](#api-bug-report-example)
+- [Bug report writing tips](#bug-report-writing-tips)
 
 ---
 
@@ -90,7 +97,7 @@ Any other information that might help the developer understand or fix the bug:
 
 ---
 
-## Severity Classification
+## Severity classification
 
 | Severity | Definition | Examples | Release Impact |
 |---|---|---|---|
@@ -112,7 +119,7 @@ Priority is determined by business context. A P3 severity bug on the CEO's demo 
 
 ---
 
-## API Bug Report Example
+## API bug report example
 
 ### BUG-042: Product API - Returns 500 for PUT request with empty name field
 
@@ -187,9 +194,9 @@ at src/models/Product line 42
 
 ---
 
-## Bug Report Writing Tips
+## Bug report writing tips
 
-### Common Mistakes
+### Common mistakes
 
 | Mistake | Problem | Fix |
 |---|---|---|
@@ -200,7 +207,7 @@ at src/models/Product line 42
 | Describing the fix | "The code should check for null" prescribes implementation | Describe the expected behavior, let the developer decide the fix |
 | Emotional language | "This is terrible" adds no information | Stick to facts: what happened, what should have happened |
 
-### Good Title Patterns
+### Good title patterns
 
 | Pattern | Example |
 |---|---|
@@ -208,9 +215,9 @@ at src/models/Product line 42
 | [Action] produces [wrong result] instead of [expected result] | "Submitting empty form produces 500 instead of validation errors" |
 | [Feature] [fails/crashes/shows wrong data] when [condition] | "Dashboard crashes when user has more than 1000 orders" |
 
-### Reproduction Steps Quality Check
+### Reproduction steps quality check
 
-Before submitting, verify your steps by:
+Before submitting, check the steps by:
 
 1. Reading them as if you know nothing about the system
 2. Following them literally, step by step

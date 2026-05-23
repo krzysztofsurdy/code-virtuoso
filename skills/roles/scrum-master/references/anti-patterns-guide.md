@@ -1,10 +1,20 @@
 # Anti-Patterns Guide
 
-Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-pattern includes symptoms, consequences, root cause, and a correction strategy. Recognizing these patterns early prevents them from becoming entrenched.
+Common Scrum Master anti-patterns that undermine team effectiveness. Each one lists symptoms, consequences, root cause, and a correction strategy. Catch them early, before they become habits.
+
+## Contents
+
+- [Anti-pattern categories](#anti-pattern-categories)
+- [Role confusion anti-patterns](#role-confusion-anti-patterns)
+- [Over-protection anti-patterns](#over-protection-anti-patterns)
+- [Under-challenge anti-patterns](#under-challenge-anti-patterns)
+- [Process rigidity anti-patterns](#process-rigidity-anti-patterns)
+- [Metric misuse anti-patterns](#metric-misuse-anti-patterns)
+- [Anti-pattern assessment](#anti-pattern-assessment)
 
 ---
 
-## Anti-Pattern Categories
+## Anti-pattern categories
 
 | Category | Description |
 |---|---|
@@ -16,7 +26,7 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 
 ---
 
-## Role Confusion Anti-Patterns
+## Role confusion anti-patterns
 
 ### The Project Manager in Disguise
 
@@ -63,7 +73,7 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 
 ---
 
-## Over-Protection Anti-Patterns
+## Over-protection anti-patterns
 
 ### The Bubble Wrapper
 
@@ -96,7 +106,7 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 
 ---
 
-## Under-Challenge Anti-Patterns
+## Under-challenge anti-patterns
 
 ### The Conflict Avoider
 
@@ -124,13 +134,13 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 **Correction**:
 1. Track improvement trends - show the team their trajectory
 2. Ask: "Are we getting better? How do we know?"
-3. Introduce stretch goals: "What would world-class look like for this team?"
+3. Introduce stretch goals: "What would the best version of this team look like?"
 4. Bring external perspectives - share how other teams approach similar challenges
 5. Challenge gently but persistently: "We have talked about this in three retrospectives. What is different this time?"
 
 ---
 
-## Process Rigidity Anti-Patterns
+## Process rigidity anti-patterns
 
 ### The Scrum Police
 
@@ -163,7 +173,7 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 
 ---
 
-## Metric Misuse Anti-Patterns
+## Metric misuse anti-patterns
 
 ### The Velocity Optimizer
 
@@ -197,9 +207,9 @@ Common Scrum Master anti-patterns that undermine team effectiveness. Each anti-p
 
 ---
 
-## Anti-Pattern Assessment
+## Anti-pattern assessment
 
-Use this checklist to audit your own behavior each Sprint:
+Audit your own behavior with this checklist each Sprint:
 
 - [ ] I did not assign tasks to individual team members
 - [ ] I did not make technical decisions that belong to the developers

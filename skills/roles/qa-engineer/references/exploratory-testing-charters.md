@@ -1,12 +1,20 @@
 # Exploratory Testing Charters
 
-Templates and heuristics for session-based exploratory testing. Exploratory testing finds bugs that scripted tests miss by combining learning, test design, and execution simultaneously.
+Templates and heuristics for session-based exploratory testing. Exploratory testing finds bugs that scripted tests miss because learning, test design, and execution happen at the same time.
+
+## Contents
+
+- [What is exploratory testing](#what-is-exploratory-testing)
+- [Session-based testing](#session-based-testing)
+- [Charter templates](#charter-templates)
+- [Testing heuristics](#testing-heuristics)
+- [Backend-specific areas to explore](#backend-specific-areas-to-explore)
 
 ---
 
-## What Is Exploratory Testing
+## What is exploratory testing
 
-| Aspect | Scripted Testing | Exploratory Testing |
+| Aspect | Scripted testing | Exploratory testing |
 |---|---|---|
 | Test design | Written before execution | Designed during execution |
 | Approach | Follow predetermined steps | Adapt based on what you discover |
@@ -19,7 +27,7 @@ Exploratory testing is not random clicking. It is structured investigation guide
 
 ## Session-Based Testing
 
-### Session Structure
+### Session structure
 
 Each exploratory testing session follows this structure:
 
@@ -29,7 +37,7 @@ Each exploratory testing session follows this structure:
 | **Exploration** | 45-90 min | Execute the charter, take notes, file bugs as found |
 | **Debrief** | 10-15 min | Review findings, update the session report, identify follow-up charters |
 
-### Session Report Template
+### Session report template
 
 ```
 Session: [Session ID]
@@ -66,9 +74,9 @@ Environment: [URL, build, browser]
 
 ---
 
-## Charter Templates
+## Charter templates
 
-### General Charter Format
+### General charter format
 
 ```
 Explore [target area]
@@ -76,9 +84,9 @@ With [resources, tools, data, techniques]
 To discover [what information we want to learn]
 ```
 
-### Charter Library
+### Charter library
 
-#### Authentication and Authorization
+#### Authentication and authorization
 
 **Charter: Login boundary testing**
 
@@ -112,7 +120,7 @@ Focus areas:
 - Access API endpoints without the required role
 - View data that belongs to another organization/tenant
 
-#### Data Input and Validation
+#### Data input and validation
 
 **Charter: Form input stress testing**
 
@@ -151,7 +159,7 @@ Focus areas:
 - Network interruption during a save operation
 - State changes via API while viewing in the UI
 
-#### Performance and Reliability
+#### Performance and reliability
 
 **Charter: Performance under stress**
 
@@ -169,7 +177,7 @@ Focus areas:
 - Multiple browser tabs open to the same feature
 - Long-running operations (do they timeout gracefully?)
 
-#### API-Specific
+#### API-specific
 
 **Charter: API contract testing**
 
@@ -191,13 +199,13 @@ Focus areas:
 
 ---
 
-## Testing Heuristics
+## Testing heuristics
 
 ### SFDPOT (San Francisco Depot)
 
 A mnemonic for areas to explore in any feature:
 
-| Letter | Area | Questions to Ask |
+| Letter | Area | Questions to ask |
 |---|---|---|
 | **S** | Structure | What are the components? How are they organized? What are the data structures? |
 | **F** | Function | What does each component do? What are the inputs and outputs? |
@@ -206,11 +214,11 @@ A mnemonic for areas to explore in any feature:
 | **O** | Operations | What happens over time? During maintenance? After restart? Under load? |
 | **T** | Time | What happens at boundaries (midnight, end of month)? With timeouts? With delays? |
 
-### HICCUPPS (Consistency Heuristics)
+### HICCUPPS (consistency heuristics)
 
-Use these to identify bugs by noticing inconsistencies:
+Use these to spot bugs by noticing inconsistencies:
 
-| Letter | Heuristic | What to Look For |
+| Letter | Heuristic | What to look for |
 |---|---|---|
 | **H** | History | Does the feature behave differently than it used to? |
 | **I** | Image | Does the behavior match what the user expects based on similar products? |
@@ -221,9 +229,9 @@ Use these to identify bugs by noticing inconsistencies:
 | **P** | Purpose | Does the behavior serve the feature's stated purpose? |
 | **S** | Standards | Does it follow relevant standards? (HTTP status codes, date formats, accessibility guidelines) |
 
-### FEW HICCUPPS (Extended)
+### FEW HICCUPPS (extended)
 
-| Letter | Heuristic | What to Look For |
+| Letter | Heuristic | What to look for |
 |---|---|---|
 | **F** | Familiar problems | Common bug patterns - off-by-one, null handling, encoding, timezone |
 | **E** | Explainability | Can you explain the behavior to someone? If not, it might be a bug. |
@@ -231,9 +239,9 @@ Use these to identify bugs by noticing inconsistencies:
 
 ---
 
-## Backend-Specific Areas to Explore
+## Backend-specific areas to explore
 
-### Common Backend Exploration Targets
+### Common backend exploration targets
 
 | Area | What to Explore |
 |---|---|
@@ -245,7 +253,7 @@ Use these to identify bugs by noticing inconsistencies:
 | **Async processing** | What happens when async messages fail? Are retries working? Does the dead-letter queue catch failures? |
 | **CLI commands** | Run commands with missing arguments, invalid options, interrupted execution (Ctrl+C) |
 
-### Quick Exploratory Checklist
+### Quick exploratory checklist
 
 Before any release, spend 30 minutes exploring:
 

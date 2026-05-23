@@ -1,10 +1,20 @@
 # Facilitation Techniques
 
-Practical methods for facilitating scrum events effectively. A good facilitator ensures every voice is heard, discussions stay focused, and events produce clear outcomes within their timebox.
+Practical methods for facilitating scrum events. A good facilitator hears every voice, keeps discussions focused, and ends each event with clear outcomes inside the timebox.
+
+## Contents
+
+- [Core facilitation principles](#core-facilitation-principles)
+- [Timeboxing strategies](#timeboxing-strategies)
+- [Ensuring participation](#ensuring-participation)
+- [Handling conflict](#handling-conflict)
+- [Retrospective formats](#retrospective-formats)
+- [Event-specific facilitation tips](#event-specific-facilitation-tips)
+- [Facilitation checklist](#facilitation-checklist)
 
 ---
 
-## Core Facilitation Principles
+## Core facilitation principles
 
 | Principle | Application |
 |---|---|
@@ -17,9 +27,9 @@ Practical methods for facilitating scrum events effectively. A good facilitator 
 
 ---
 
-## Timeboxing Strategies
+## Timeboxing strategies
 
-### Setting and Enforcing Timeboxes
+### Setting and enforcing timeboxes
 
 | Technique | Description |
 |---|---|
@@ -29,7 +39,7 @@ Practical methods for facilitating scrum events effectively. A good facilitator 
 | **Parking lot** | Capture off-topic items on a visible list for discussion after the event |
 | **Consent to extend** | If the timebox must extend, get explicit team agreement and set a new hard stop |
 
-### Timebox Recovery
+### Timebox recovery
 
 When a discussion is running long:
 
@@ -41,11 +51,11 @@ When a discussion is running long:
 
 ---
 
-## Ensuring Participation
+## Ensuring participation
 
-### Techniques for Balanced Participation
+### Techniques for balanced participation
 
-| Technique | When to Use | How It Works |
+| Technique | When to use | How it works |
 |---|---|---|
 | **Round robin** | When a few people dominate | Go around the room, each person speaks in turn |
 | **Silent writing** | When groupthink is a risk | Everyone writes ideas independently before sharing |
@@ -54,14 +64,14 @@ When a discussion is running long:
 | **Fist of five** | When checking consensus | Hold up 1-5 fingers to indicate agreement level |
 | **Lean coffee** | When the team wants to set the agenda | Topics proposed, voted on, discussed in timeboxed rounds |
 
-### Handling Dominant Participants
+### Handling dominant participants
 
 1. Acknowledge their contribution: "Good point. Let's hear from others on this."
 2. Use structured formats (round robin, silent writing) that distribute speaking time
 3. Redirect privately if needed: "I value your input. Can you help me draw out the quieter members?"
 4. Set ground rules at the start: "Let's aim for everyone to speak before anyone speaks twice."
 
-### Drawing Out Quiet Participants
+### Drawing out quiet participants
 
 1. Ask specific, non-threatening questions: "What is your perspective on this?" rather than putting them on the spot
 2. Use silent writing so they can contribute without speaking first
@@ -71,9 +81,9 @@ When a discussion is running long:
 
 ---
 
-## Handling Conflict
+## Handling conflict
 
-### Healthy vs Unhealthy Conflict
+### Healthy vs unhealthy conflict
 
 | Healthy | Unhealthy |
 |---|---|
@@ -82,9 +92,9 @@ When a discussion is running long:
 | Passionate debate that leads to better decisions | Repeated arguments without resolution |
 | Openness to changing your mind | Entrenched positions defended out of ego |
 
-### Conflict Resolution Techniques
+### Conflict resolution techniques
 
-| Technique | When to Use |
+| Technique | When to use |
 |---|---|
 | **Name it** | "I notice we have different views on this. Let's explore both." |
 | **Separate people from positions** | "What problem are we trying to solve?" rather than "Why do you want X?" |
@@ -94,7 +104,7 @@ When a discussion is running long:
 | **Break** | If emotions are high, take a five-minute break before continuing |
 | **Offline resolution** | If two people are stuck, facilitate a private conversation after the event |
 
-### Escalation Path
+### Escalation path
 
 1. Let the team attempt to resolve it themselves
 2. Facilitate a structured discussion if they are stuck
@@ -103,11 +113,11 @@ When a discussion is running long:
 
 ---
 
-## Retrospective Formats
+## Retrospective formats
 
-### Choosing a Format
+### Choosing a format
 
-| Format | Best For | Structure |
+| Format | Best for | Structure |
 |---|---|---|
 | **Start-Stop-Continue** | General purpose, simple | Three columns: what to start doing, stop doing, continue doing |
 | **Mad-Sad-Glad** | When morale or team dynamics need attention | Three columns based on emotions about the Sprint |
@@ -117,9 +127,9 @@ When a discussion is running long:
 | **Starfish** | Nuanced version of Start-Stop-Continue | Five categories: More of, Less of, Keep doing, Start doing, Stop doing |
 | **Three Questions** | Quick, focused | What went well? What did not? What will we do differently? |
 
-### Retrospective Flow
+### Retrospective flow
 
-Regardless of format, follow this five-phase structure:
+Whatever the format, use this five-phase structure:
 
 1. **Set the stage** (5 min) - Welcome, check in, state the purpose, review working agreements
 2. **Gather data** (15-20 min) - Collect observations using the chosen format; silent writing first, then sharing
@@ -127,7 +137,7 @@ Regardless of format, follow this five-phase structure:
 4. **Decide what to do** (10-15 min) - Select 1-3 actionable improvements; each must have an owner and deadline
 5. **Close** (5 min) - Summarize actions, thank the team, quick check-out
 
-### Common Retrospective Mistakes
+### Common retrospective mistakes
 
 | Mistake | Fix |
 |---|---|
@@ -141,7 +151,7 @@ Regardless of format, follow this five-phase structure:
 
 ---
 
-## Event-Specific Facilitation Tips
+## Event-specific facilitation tips
 
 ### Daily Scrum
 
@@ -153,7 +163,7 @@ Regardless of format, follow this five-phase structure:
 
 ### Sprint Planning
 
-- Ensure the Product Owner has a refined backlog before the event starts
+- Check that the Product Owner has a refined backlog before the event starts
 - Facilitate Sprint Goal creation first (Topic 1) before selecting items (Topic 2)
 - Developers own the selection and decomposition - the SM facilitates, does not decide
 - If planning consistently takes the full timebox, coach the team on pre-refinement
@@ -168,7 +178,7 @@ Regardless of format, follow this five-phase structure:
 
 ---
 
-## Facilitation Checklist
+## Facilitation checklist
 
 Before any scrum event:
 

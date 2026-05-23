@@ -1,19 +1,29 @@
 # Coaching Patterns
 
-Strategies for coaching scrum teams toward self-management. The Scrum Master's goal is to make themselves less necessary over time by building the team's capability to inspect, adapt, and improve independently.
+Strategies for coaching scrum teams toward self-management. The Scrum Master's goal is to become less necessary over time by building the team's ability to inspect, adapt, and improve on its own.
+
+## Contents
+
+- [Coaching vs mentoring vs directing](#coaching-vs-mentoring-vs-directing)
+- [Team maturity assessment](#team-maturity-assessment)
+- [Impediment resolution strategies](#impediment-resolution-strategies)
+- [Self-organization enablement](#self-organization-enablement)
+- [Powerful questions](#powerful-questions)
+- [Coaching anti-pattern recognition](#coaching-anti-pattern-recognition)
+- [Coaching checklist](#coaching-checklist)
 
 ---
 
-## Coaching vs Mentoring vs Directing
+## Coaching vs mentoring vs directing
 
-| Mode | When to Use | How It Looks |
+| Mode | When to use | How it looks |
 |---|---|---|
 | **Directing** | Team is brand new to scrum, needs structure and rules | "Here is how the Daily Scrum works. We will follow this format for the next two Sprints." |
 | **Mentoring** | Team understands the basics but needs guidance on applying them | "When I have seen teams struggle with this, they tried X. What do you think would work here?" |
 | **Coaching** | Team has experience but is stuck on a specific challenge | "What outcome are you trying to achieve? What have you tried so far? What else could you try?" |
 | **Delegating** | Team is self-managing and resolves most issues independently | Step back. Observe. Intervene only for systemic or organizational issues. |
 
-### Transitioning Between Modes
+### Transitioning between modes
 
 The goal is to move from directing toward delegating over time. Signs that a team is ready to move to the next level:
 
@@ -25,9 +35,9 @@ The goal is to move from directing toward delegating over time. Signs that a tea
 
 ---
 
-## Team Maturity Assessment
+## Team maturity assessment
 
-### Maturity Model
+### Maturity model
 
 Assess the team across five dimensions. Rate each dimension from 1 (beginning) to 4 (advanced).
 
@@ -37,9 +47,9 @@ Assess the team across five dimensions. Rate each dimension from 1 (beginning) t
 | **Self-management** | SM or manager assigns work to individuals | Team discusses who does what but defers to SM for decisions | Team self-assigns, re-balances during Sprint, asks for help proactively | Team reorganizes autonomously, mentors new members, manages conflicts internally |
 | **Continuous improvement** | No retrospective or retrospective with no actions | Retrospective happens but actions are rarely completed | Actions are completed; team tracks improvement trends | Team experiments proactively; improvements are measurable and sustained |
 | **Collaboration** | Work in silos; handoffs between individuals | Pair work happens occasionally; team helps when asked | Team swarms on blockers; knowledge sharing is routine | Cross-functional by default; no single points of failure; collective ownership |
-| **Transparency** | Backlog is invisible or outdated; impediments are hidden | Backlog is visible but not always current; some impediments are surfaced | Backlog is current; impediments are tracked visibly; metrics are shared | Full transparency - the team shares failures and learnings openly with stakeholders |
+| **Transparency** | Backlog is invisible or outdated; impediments are hidden | Backlog is visible but not always current; some impediments are surfaced | Backlog is current; impediments are tracked visibly; metrics are shared | Full transparency: the team shares failures and learnings openly with stakeholders |
 
-### Using the Assessment
+### Using the assessment
 
 1. Rate the team on each dimension through observation over 2-3 Sprints
 2. Identify the lowest-scoring dimension - this is the coaching priority
@@ -49,18 +59,18 @@ Assess the team across five dimensions. Rate each dimension from 1 (beginning) t
 
 ---
 
-## Impediment Resolution Strategies
+## Impediment resolution strategies
 
 ### Classification
 
-| Type | Description | Resolution Approach |
+| Type | Description | Resolution approach |
 |---|---|---|
 | **Team-level** | Within the team's control (process, technical practices, communication) | Coach the team to solve it themselves |
 | **Cross-team** | Involves another team or shared resource | Facilitate a conversation between teams; involve management if blocked |
 | **Organizational** | Policies, tools, or structures beyond the team's influence | Frame the problem, identify the decision-maker, escalate with data |
 | **Technical** | Requires specialist knowledge the team lacks | Connect the team with the right expert; arrange knowledge transfer |
 
-### Resolution Workflow
+### Resolution workflow
 
 1. **Make it visible** - Add every impediment to a shared board the moment it is raised
 2. **Classify** - Determine the type and who can resolve it
@@ -70,7 +80,7 @@ Assess the team across five dimensions. Rate each dimension from 1 (beginning) t
 6. **Verify** - Confirm with the team that the impediment is truly resolved
 7. **Learn** - If the same type of impediment recurs, address the root cause systemically
 
-### Escalation Template
+### Escalation template
 
 When escalating an organizational impediment:
 
@@ -85,9 +95,9 @@ URGENCY: [What happens if this is not resolved by X date]
 
 ---
 
-## Self-Organization Enablement
+## Self-organization enablement
 
-### Building Team Decision-Making
+### Building team decision-making
 
 | Pattern | Description |
 |---|---|
@@ -97,7 +107,7 @@ URGENCY: [What happens if this is not resolved by X date]
 | **Rotate responsibilities** | Rotate facilitation, note-taking, and other roles to build shared capability |
 | **Retrospective ownership** | Gradually hand retrospective facilitation to team members |
 
-### Growing Self-Management Over Time
+### Growing self-management over time
 
 **Sprint 1-3 (Forming)**:
 - SM facilitates all events
@@ -120,12 +130,12 @@ URGENCY: [What happens if this is not resolved by X date]
 **Sprint 16+ (Performing)**:
 - Team is fully self-managing for daily operations
 - SM focuses on organizational impediments and cross-team coordination
-- SM challenges the team to raise the bar - "What would world-class look like?"
+- SM challenges the team to raise the bar - "What would excellent look like for this team?"
 - SM may support multiple teams
 
 ---
 
-## Powerful Questions
+## Powerful questions
 
 Questions are the Scrum Master's primary tool. Good questions create insight; directives create dependency.
 
@@ -165,23 +175,23 @@ Questions are the Scrum Master's primary tool. Good questions create insight; di
 
 ---
 
-## Coaching Anti-Pattern Recognition
+## Coaching anti-pattern recognition
 
-### Signs the SM Is Over-Functioning
+### Signs the SM is over-functioning
 
 - The team waits for the SM to make decisions
 - Impediments are only raised to the SM, not discussed in the Daily Scrum
 - The SM is the only one who facilitates events
 - The team does not update the Sprint Backlog without the SM prompting
 
-### Signs the SM Is Under-Functioning
+### Signs the SM is under-functioning
 
 - Scrum events are skipped or consistently run over timebox
 - Impediments go untracked and unresolved for multiple Sprints
 - The team has stopped doing retrospectives or retrospective actions are never completed
 - Anti-patterns persist without being addressed
 
-### Recovery Actions
+### Recovery actions
 
 | Problem | Action |
 |---|---|
@@ -192,7 +202,7 @@ Questions are the Scrum Master's primary tool. Good questions create insight; di
 
 ---
 
-## Coaching Checklist
+## Coaching checklist
 
 Before and during each Sprint:
 

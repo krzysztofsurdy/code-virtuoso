@@ -1,6 +1,12 @@
 # Test Plan Template
 
-A structured template for planning testing activities. Copy and adapt for each feature or release.
+A template for planning testing activities. Copy and adapt it for each feature or release.
+
+## Contents
+
+- [Template](#template)
+- [Test case design guidelines](#test-case-design-guidelines)
+- [Test execution recording](#test-execution-recording)
 
 ---
 
@@ -151,20 +157,20 @@ Testing is complete when all of these are true:
 
 ---
 
-## Test Case Design Guidelines
+## Test case design guidelines
 
-### Deriving Test Cases from Acceptance Criteria
+### Deriving test cases from acceptance criteria
 
 For each acceptance criterion, create at minimum:
 
-| Case Type | Purpose | Example |
+| Case type | Purpose | Example |
 |---|---|---|
 | **Positive** | Verify the criterion works as specified | Valid input produces expected output |
 | **Negative** | Verify the criterion handles invalid input | Invalid email shows error message |
 | **Boundary** | Verify behavior at limits | Username with exactly 3 characters (minimum), exactly 50 characters (maximum) |
 | **Edge case** | Verify unusual but possible scenarios | Empty list, concurrent modification, expired token |
 
-### Test Case Priority Guide
+### Test case priority guide
 
 | Priority | When to Assign | Execution Order |
 |---|---|---|
@@ -173,9 +179,9 @@ For each acceptance criterion, create at minimum:
 | P2 | Edge cases, uncommon paths, minor UI behavior | Execute if time allows |
 | P3 | Cosmetic, rare scenarios, nice-to-have verification | Execute only with spare capacity |
 
-### Common Test Patterns by Area
+### Common test patterns by area
 
-| Test Area | Approach |
+| Test area | Approach |
 |---|---|
 | API endpoints | Send HTTP requests and assert response status, headers, and body |
 | Form validation | Test with valid data, each invalid field individually, and multiple invalid fields |
@@ -186,16 +192,16 @@ For each acceptance criterion, create at minimum:
 
 ---
 
-## Test Execution Recording
+## Test execution recording
 
-### Execution Log Template
+### Execution log template
 
 | TC ID | Title | Build | Result | Tester | Date | Bug ID |
 |---|---|---|---|---|---|---|
 | TC-001 | [Title] | [Build #] | Pass/Fail/Blocked | [Name] | [Date] | [BUG-xxx or N/A] |
 | TC-002 | [Title] | [Build #] | Pass/Fail/Blocked | [Name] | [Date] | [BUG-xxx or N/A] |
 
-### Test Summary Template
+### Test summary template
 
 | Metric | Value |
 |---|---|
