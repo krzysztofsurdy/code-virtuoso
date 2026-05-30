@@ -1,8 +1,19 @@
-# shot-scraper Options Reference
+# shot-scraper options reference
 
-This file documents every shot-scraper option that matters for an AI agent driving the tool. Options are grouped by purpose, with the practical "when to use" for each.
+The shot-scraper options that matter when an agent drives the tool, grouped by purpose.
 
-## Viewport and Device Emulation
+## Contents
+
+- [Viewport and device emulation](#viewport-and-device-emulation)
+- [Capture targets](#capture-targets)
+- [Output format](#output-format)
+- [Page interaction before capture](#page-interaction-before-capture)
+- [Browser behaviour](#browser-behaviour)
+- [Batch mode](#batch-mode)
+- [Color scheme](#color-scheme)
+- [Common mistakes](#common-mistakes)
+
+## Viewport and device emulation
 
 | Option | Purpose | Example |
 |---|---|---|
@@ -23,7 +34,7 @@ This file documents every shot-scraper option that matters for an AI agent drivi
 | Mobile (modern) | 393 | 852 | iPhone 14 Pro CSS pixels |
 | Mobile (small) | 375 | 667 | iPhone SE CSS pixels |
 
-## Capture Targets
+## Capture targets
 
 | Option | Purpose | Example |
 |---|---|---|
@@ -32,7 +43,7 @@ This file documents every shot-scraper option that matters for an AI agent drivi
 | (full page) | Set `--height 0` to capture from top of document to bottom | `--height 0` |
 | `--scale-factor N` | Resize the output by a factor (post-capture) | `--scale-factor 0.5` |
 
-## Output Format
+## Output format
 
 | Option | Purpose | Example |
 |---|---|---|
@@ -42,7 +53,7 @@ This file documents every shot-scraper option that matters for an AI agent drivi
 
 PNG vs JPEG quick rule: PNG for UI (sharp text, transparency). JPEG for photographic content or when file size matters.
 
-## Page Interaction Before Capture
+## Page interaction before capture
 
 | Option | Purpose | Example |
 |---|---|---|
@@ -55,7 +66,7 @@ PNG vs JPEG quick rule: PNG for UI (sharp text, transparency). JPEG for photogra
 | `--header "K: V"` | Custom request header (repeatable) | `--header "Authorization: Bearer xyz"` |
 | `--cookie K=V` | Cookie to set before navigation | `--cookie "session=abc123"` |
 
-## Browser Behaviour
+## Browser behaviour
 
 | Option | Purpose | Example |
 |---|---|---|
@@ -64,7 +75,7 @@ PNG vs JPEG quick rule: PNG for UI (sharp text, transparency). JPEG for photogra
 | `--bypass-csp` | Bypass Content-Security-Policy (lets injected JS run anywhere) | (no value) |
 | `--silent` | Suppress non-error output | (no value) |
 
-## Batch Mode
+## Batch mode
 
 `shot-scraper multi FILE.yaml` reads a YAML array where each entry mirrors the single-shot CLI options:
 
@@ -90,9 +101,9 @@ PNG vs JPEG quick rule: PNG for UI (sharp text, transparency). JPEG for photogra
 
 Snake_case in YAML maps to the hyphen-flag in the CLI (`wait_for` -> `--wait-for`, `reduced_motion` -> `--reduced-motion`).
 
-## Color Scheme
+## Color scheme
 
-shot-scraper does not have a top-level `--dark` flag, but two reliable workarounds:
+shot-scraper has no top-level `--dark` flag. Two workarounds:
 
 ### 1. Force `color-scheme` via JS
 
@@ -100,7 +111,7 @@ shot-scraper does not have a top-level `--dark` flag, but two reliable workaroun
 --javascript "document.documentElement.style.colorScheme = 'dark';"
 ```
 
-Works on sites that read `color-scheme` and adjust styles.
+Works on sites that read `color-scheme` and adjust their styles.
 
 ### 2. Emulate the media query (Playwright API)
 
@@ -110,7 +121,7 @@ For sites that use `@media (prefers-color-scheme: dark)`, escalate to raw Playwr
 context = browser.new_context(color_scheme="dark")
 ```
 
-## Common Mistakes
+## Common mistakes
 
 | Mistake | Symptom | Fix |
 |---|---|---|
@@ -119,4 +130,4 @@ context = browser.new_context(color_scheme="dark")
 | Full-page on a sticky-header site | Header repeats down the page | Capture viewport-only or remove the sticky header via `--javascript` |
 | No `--reduced-motion` on a comparison shot | Pixel diffs flake on every run | Add `--reduced-motion` and wait on `document.fonts.ready` |
 | JPEG without `--quality` | File is huge or weirdly compressed | Add `--quality 80` for documentation-grade JPEG |
-| Selector matches multiple elements | Captures only the first - silently | Make selector specific (`#id`, not `.class`) or use batch mode |
+| Selector matches multiple elements | Captures only the first, with no warning | Make selector specific (`#id`, not `.class`) or use batch mode |

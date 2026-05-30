@@ -1,12 +1,20 @@
-# Platform Selectors for Element Captures
+# Platform selectors for element captures
 
-When capturing a region of a page rather than the whole viewport, the right CSS selector matters more than the right tool. This reference collects selectors that work for the most common content types and platforms, plus the verification steps every agent should run before trusting one.
+When capturing a region instead of the whole viewport, the CSS selector matters more than the tool. This reference lists selectors for common content types and platforms, plus the checks to run before trusting one.
 
-The selectors below are observational - sites change markup without notice. Always confirm the chosen selector resolves to a sensible bounding box before relying on it. Treat the lists as starting points, not promises.
+The selectors below were observed on live sites, and sites change markup without notice. Confirm that the chosen selector resolves to a sensible bounding box before relying on it. Treat the lists as starting points.
 
-## Verification Routine
+## Contents
 
-Run these three checks every time, regardless of which selector was chosen:
+- [Verification routine](#verification-routine)
+- [By content type](#by-content-type)
+- [Generic semantic containers](#generic-semantic-containers)
+- [Multiple matches](#multiple-matches)
+- [When the selector is inside a shadow DOM](#when-the-selector-is-inside-a-shadow-dom)
+
+## Verification routine
+
+Run these three checks every time, whichever selector you chose:
 
 | Step | Tool | What to look for |
 |---|---|---|
@@ -16,7 +24,7 @@ Run these three checks every time, regardless of which selector was chosen:
 
 If step 1 or 2 fails, try the next selector down the list. Vendor-specific selectors break first; semantic-HTML selectors break last.
 
-## By Content Type
+## By content type
 
 ### Article body or blog post
 
@@ -77,9 +85,9 @@ If step 1 or 2 fails, try the next selector down the list. Vendor-specific selec
 | Pricing table | `[itemtype*="Offer"]` | `.pricing`, `.plans`, `section[id*="pricing"]` |
 | App-store listing | `[data-testid="app-card"]` | `main`, `article` |
 
-## Generic Semantic Containers
+## Generic semantic containers
 
-When all vendor-specific selectors fail, these almost always exist on a well-structured page:
+When all vendor-specific selectors fail, these usually exist on a well-structured page:
 
 | Selector | Semantic meaning |
 |---|---|
@@ -90,24 +98,24 @@ When all vendor-specific selectors fail, these almost always exist on a well-str
 | `[role="region"][aria-label]` | A labelled landmark - often a hero or content section |
 | `#content`, `#main`, `.content`, `.main` | Conventional id/class wrappers used by CMS templates |
 
-If even these are missing, the page is likely a single-page-app with all content nested under a div - try `body > div > div`-level selectors only as a last resort, and prefer a fixed-position viewport capture over a fragile selector.
+If even these are missing, the page is likely a single-page-app with all content nested under a div - try `body > div > div`-level selectors only as a last resort. A fixed-position viewport capture is better than a fragile selector.
 
-## Multiple Matches
+## Multiple matches
 
 A selector that returns many elements (`article` on a feed page) needs disambiguation:
 
 1. Add a position pseudo-class: `article:first-of-type`, `article:nth-of-type(2)`.
 2. Add a content predicate via `:has()`: `article:has(h1:contains("Title"))` (Playwright/Chrome 105+).
 3. Filter by visible text in the capture tool: most tools accept a `text=` qualifier.
-4. Click into the canonical permalink URL of the target post and the page becomes single-target - the first `article` is the right one.
+4. Open the canonical permalink URL of the target post. The page then has a single target, and the first `article` is the right one.
 
-Path 4 is usually the cleanest - permalinks expose just the target item without surrounding feed noise.
+Option 4 is usually the cleanest, because permalinks expose only the target item without surrounding feed noise.
 
-## When the Selector Is Inside a Shadow DOM
+## When the selector is inside a shadow DOM
 
-Modern web components hide their markup under a shadow root. `document.querySelector` from the page level cannot reach inside. Two ways through:
+Web components hide their markup under a shadow root, and `document.querySelector` at page level cannot reach inside. Two ways through:
 
-1. **Use the host element as the capture target** - the bounding box includes the shadow content even if the inner markup is inaccessible. Works for `shreddit-post` (Reddit), `ytd-watch-flexy` (YouTube), and most custom elements.
-2. **Pierce with `>>>` in Playwright / agent-browser** - some tools accept `host-tag >>> .inner-class` syntax to step through shadow boundaries.
+1. **Use the host element as the capture target.** The bounding box includes the shadow content even if the inner markup is inaccessible. Works for `shreddit-post` (Reddit), `ytd-watch-flexy` (YouTube), and most custom elements.
+2. **Pierce with `>>>` in Playwright / agent-browser.** Some tools accept `host-tag >>> .inner-class` syntax to step through shadow boundaries.
 
 If neither works and the capture still misses content, switch to a viewport-based capture and let the layout do the cropping.
