@@ -1,12 +1,23 @@
 # Django Views
 
+## Contents
+
+- [Overview](#overview)
+- [Function-based views](#function-based-views)
+- [Shortcut functions](#shortcut-functions)
+- [View decorators](#view-decorators)
+- [Returning errors](#returning-errors)
+- [Built-in error views](#built-in-error-views)
+- [Serving static files in development](#serving-static-files-in-development)
+- [Best practices](#best-practices)
+
 ## Overview
 
 A view is a Python function (or class) that takes a web request and returns a web response. Views contain the logic necessary to return a response - HTML content, a redirect, a 404 error, JSON data, an image, or anything else. Views are conventionally placed in a `views.py` file within each Django app.
 
-## Function-Based Views
+## Function-based views
 
-### Basic View Structure
+### Basic view structure
 
 Every view function takes an `HttpRequest` object as its first parameter and must return an `HttpResponse`:
 
@@ -20,7 +31,7 @@ def current_datetime(request):
     return HttpResponse(html)
 ```
 
-### Async Views
+### Async views
 
 Views can be asynchronous using `async def`. Django detects and runs them in an async context automatically:
 
@@ -36,7 +47,7 @@ async def current_datetime(request):
 
 An ASGI server is required for full async performance benefits.
 
-## Shortcut Functions
+## Shortcut functions
 
 ### render()
 
@@ -144,9 +155,9 @@ def my_view(request):
 
 Async version: `aget_list_or_404()`.
 
-## View Decorators
+## View decorators
 
-### HTTP Method Decorators
+### HTTP method decorators
 
 Located in `django.views.decorators.http`:
 
@@ -172,7 +183,7 @@ def safe_view(request):
 
 Returns `HttpResponseNotAllowed` (405) if the request method is not in the allowed list. Prefer `require_safe` over `require_GET` as it also handles HEAD requests.
 
-### Conditional View Decorators
+### Conditional view decorators
 
 Control caching behavior:
 
@@ -192,7 +203,7 @@ def my_view(request):
     pass
 ```
 
-### GZip Compression
+### GZip compression
 
 ```python
 from django.views.decorators.gzip import gzip_page
@@ -202,7 +213,7 @@ def my_view(request):
     pass
 ```
 
-### Vary Headers
+### Vary headers
 
 ```python
 from django.views.decorators.vary import vary_on_cookie, vary_on_headers
@@ -216,9 +227,9 @@ def my_view(request):
     pass
 ```
 
-## Returning Errors
+## Returning errors
 
-### HTTP Error Responses
+### HTTP error responses
 
 Use `HttpResponse` subclasses for specific status codes:
 
@@ -239,7 +250,7 @@ def my_view(request):
     return HttpResponse(status=201)
 ```
 
-### Http404 Exception
+### Http404 exception
 
 Raise `Http404` for Django to catch and return the standard 404 page:
 
@@ -258,9 +269,9 @@ def detail(request, poll_id):
 
 Create a `404.html` template at the root of your template directory for custom 404 pages (used when `DEBUG = False`).
 
-## Built-in Error Views
+## Built-in error views
 
-### Customizing Error Handlers
+### Customizing error handlers
 
 Override in your root URLconf:
 
@@ -271,7 +282,7 @@ handler404 = "mysite.views.my_custom_page_not_found_view"
 handler500 = "mysite.views.my_custom_error_view"
 ```
 
-### Default Error View Functions
+### Default error view functions
 
 | View | Function | Template | Context Variables |
 |------|----------|----------|-------------------|
@@ -290,7 +301,7 @@ def edit(request, pk):
         raise PermissionDenied
 ```
 
-## Serving Static Files in Development
+## Serving static files in development
 
 ```python
 from django.conf import settings
@@ -307,7 +318,7 @@ if settings.DEBUG:
     ]
 ```
 
-## Best Practices
+## Best practices
 
 - Keep view functions focused - delegate complex logic to services or model methods
 - Use shortcut functions (`render`, `redirect`, `get_object_or_404`) to reduce boilerplate

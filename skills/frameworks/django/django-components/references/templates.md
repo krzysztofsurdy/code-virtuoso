@@ -1,12 +1,24 @@
 # Django Templates
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Built-in template tags](#built-in-template-tags)
+- [Built-in filters](#built-in-filters)
+- [Automatic HTML escaping](#automatic-html-escaping)
+- [Template API](#template-api)
+- [Custom template tags and filters](#custom-template-tags-and-filters)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django's template system separates presentation from business logic, providing a powerful yet intentionally restricted language for generating HTML and other text-based formats. It supports multiple backends (Django Template Language and Jinja2), template inheritance, automatic HTML escaping, and extensibility through custom tags and filters.
+Django's template system separates presentation from business logic, using an intentionally restricted language for generating HTML and other text-based formats. It supports multiple backends (Django Template Language and Jinja2), template inheritance, automatic HTML escaping, and extensibility through custom tags and filters.
 
-## Core Concepts
+## Core concepts
 
-### Template Configuration
+### Template configuration
 
 Templates are configured via the `TEMPLATES` setting in `settings.py`:
 
@@ -91,9 +103,9 @@ Filters transform variable values using the pipe character:
 {% endcomment %}
 ```
 
-## Built-in Template Tags
+## Built-in template tags
 
-### Control Flow
+### Control flow
 
 ```django
 {% if athlete_list and coach_list %}
@@ -119,7 +131,7 @@ The `for` tag provides loop variables: `forloop.counter`, `forloop.counter0`, `f
 
 The `if` tag supports operators: `and`, `or`, `not`, `==`, `!=`, `<`, `>`, `<=`, `>=`, `in`, `not in`, `is`, `is not`.
 
-### Template Inheritance
+### Template inheritance
 
 ```django
 {# base.html #}
@@ -149,7 +161,7 @@ The `if` tag supports operators: `and`, `or`, `not`, `==`, `!=`, `<`, `>`, `<=`,
 
 Key rules: `{% extends %}` must be the first tag. Use `{{ block.super }}` to include parent content. Three-level inheritance is recommended: base -> section -> page.
 
-### Template Partials (Django 6.0)
+### Template partials (Django 6.0)
 
 ```django
 {% partialdef user-card %}
@@ -164,7 +176,7 @@ Key rules: `{% extends %}` must be the first tag. Use `{{ block.super }}` to inc
 
 Partials can be accessed from views: `render(request, "template.html#user-card", context)`.
 
-### URL Reversing
+### URL reversing
 
 ```django
 {% url 'some-url-name' arg1 arg2 %}
@@ -172,7 +184,7 @@ Partials can be accessed from views: `render(request, "template.html#user-card",
 {% url 'some-url-name' as the_url %}
 ```
 
-### Other Tags
+### Other tags
 
 ```django
 {% csrf_token %}
@@ -195,9 +207,9 @@ Partials can be accessed from views: `render(request, "template.html#user-card",
 {% querystring color="red" size="S" %}
 ```
 
-## Built-in Filters
+## Built-in filters
 
-### String Filters
+### String filters
 
 | Filter | Example | Description |
 |--------|---------|-------------|
@@ -219,7 +231,7 @@ Partials can be accessed from views: `render(request, "template.html#user-card",
 | `rjust` | `{{ val\|rjust:"10" }}` | Right-justify |
 | `urlize` | `{{ text\|urlize }}` | Convert URLs to links |
 
-### Date/Time Filters
+### Date/time filters
 
 | Filter | Example | Description |
 |--------|---------|-------------|
@@ -228,7 +240,7 @@ Partials can be accessed from views: `render(request, "template.html#user-card",
 | `timesince` | `{{ date\|timesince }}` | Time elapsed |
 | `timeuntil` | `{{ date\|timeuntil }}` | Time remaining |
 
-### List/Data Filters
+### List/data filters
 
 | Filter | Example | Description |
 |--------|---------|-------------|
@@ -241,7 +253,7 @@ Partials can be accessed from views: `render(request, "template.html#user-card",
 | `dictsort` | `{{ list\|dictsort:"name" }}` | Sort dicts by key |
 | `unordered_list` | `{{ list\|unordered_list }}` | Nested HTML list |
 
-### Default/Safety Filters
+### Default/safety filters
 
 | Filter | Example | Description |
 |--------|---------|-------------|
@@ -258,7 +270,7 @@ Partials can be accessed from views: `render(request, "template.html#user-card",
 | `yesno` | `{{ val\|yesno:"yes,no,maybe" }}` | Map boolean to text |
 | `add` | `{{ val\|add:"2" }}` | Add value |
 
-## Automatic HTML Escaping
+## Automatic HTML escaping
 
 Django auto-escapes `<`, `>`, `'`, `"`, and `&` by default. Control escaping per-variable or per-block:
 
@@ -276,7 +288,7 @@ Django auto-escapes `<`, `>`, `'`, `"`, and `&` by default. Control escaping per
 
 ## Template API
 
-### Loading and Rendering
+### Loading and rendering
 
 ```python
 from django.template.loader import get_template, render_to_string
@@ -292,7 +304,7 @@ partial = get_template("myapp/index.html#card")
 html = render_to_string("myapp/index.html", {"name": "World"}, request)
 ```
 
-### Engine and Context
+### Engine and context
 
 ```python
 from django.template import Template, Context, RequestContext
@@ -306,7 +318,7 @@ result = template.render(context)
 context = RequestContext(request, {"extra": "data"})
 ```
 
-### Template Loaders
+### Template loaders
 
 | Loader | Purpose |
 |--------|---------|
@@ -315,7 +327,7 @@ context = RequestContext(request, {"extra": "data"})
 | `cached.Loader` | Wraps other loaders with caching |
 | `locmem.Loader` | Loads from Python dictionary (testing) |
 
-### Built-in Context Processors
+### Built-in context processors
 
 | Processor | Variables Provided |
 |-----------|-------------------|
@@ -328,9 +340,9 @@ context = RequestContext(request, {"extra": "data"})
 | `request` | `request` |
 | `messages` | `messages`, `DEFAULT_MESSAGE_LEVELS` |
 
-## Custom Template Tags and Filters
+## Custom template tags and filters
 
-### Code Layout
+### Code layout
 
 ```
 myapp/
@@ -339,7 +351,7 @@ myapp/
         myapp_extras.py
 ```
 
-### Custom Filters
+### Custom filters
 
 ```python
 from django import template
@@ -365,7 +377,7 @@ def bold_first(text, autoescape=True):
     return mark_safe(f"<strong>{esc(first)}</strong>{esc(rest)}")
 ```
 
-### Simple Tags
+### Simple tags
 
 ```python
 @register.simple_tag
@@ -380,7 +392,7 @@ def greeting(context):
 
 Usage: `{% current_time "%Y-%m-%d" %}` or `{% current_time "%Y" as year %}`.
 
-### Inclusion Tags
+### Inclusion tags
 
 ```python
 @register.inclusion_tag("results.html")
@@ -392,7 +404,7 @@ def jump_link(context):
     return {"link": context["home_link"], "title": context["home_title"]}
 ```
 
-### Block Tags (Django 5.2+)
+### Block tags (Django 5.2+)
 
 ```python
 @register.simple_block_tag
@@ -401,7 +413,7 @@ def card(content):
     return mark_safe(f'<div class="card">{content}</div>')
 ```
 
-### Advanced Tags with Node Classes
+### Advanced tags with node classes
 
 ```python
 class CurrentTimeNode(template.Node):
@@ -420,9 +432,9 @@ def do_current_time(parser, token):
 
 Thread-safety: store render-specific state in `context.render_context`, not on the node.
 
-## Common Patterns
+## Common patterns
 
-### Template Organization
+### Template organization
 
 ```
 templates/
@@ -433,7 +445,7 @@ templates/
         detail.html
 ```
 
-### Looping with Metadata
+### Looping with metadata
 
 ```django
 {% for item in items %}
@@ -445,14 +457,14 @@ templates/
 {% endfor %}
 ```
 
-### Conditional Includes
+### Conditional includes
 
 ```django
 {% include template_name|default:"default.html" %}
 {% include "sidebar.html" with user=request.user only %}
 ```
 
-### Static Files
+### Static files
 
 ```django
 {% load static %}
@@ -461,7 +473,7 @@ templates/
 {% static "images/logo.png" as logo_url %}
 ```
 
-## Best Practices
+## Best practices
 
 - Use three-level template inheritance (base -> section -> page)
 - Always include `{% csrf_token %}` in POST forms

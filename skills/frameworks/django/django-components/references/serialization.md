@@ -1,12 +1,25 @@
 # Django Serialization
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Serialization formats](#serialization-formats)
+- [Key classes and methods](#key-classes-and-methods)
+- [Natural keys](#natural-keys)
+- [Handling inherited models](#handling-inherited-models)
+- [Custom serializers](#custom-serializers)
+- [Management commands](#management-commands)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
 Django's serialization framework translates Django model instances into various formats (JSON, XML, YAML, JSONL) for data export, fixtures, and inter-system communication. It provides both serialization (model to format) and deserialization (format to model) capabilities, with support for natural keys, relationship handling, and custom serializer implementations.
 
-## Core Concepts
+## Core concepts
 
-### Basic Serialization
+### Basic serialization
 
 ```python
 from django.core import serializers
@@ -18,7 +31,7 @@ data = serializers.serialize("json", SomeModel.objects.all())
 data = serializers.serialize("json", SomeModel.objects.all(), fields=["name", "size"])
 ```
 
-### Using Serializer Objects Directly
+### Using serializer objects directly
 
 ```python
 JSONSerializer = serializers.get_serializer("json")
@@ -31,7 +44,7 @@ with open("file.json", "w") as out:
     json_serializer.serialize(SomeModel.objects.all(), stream=out)
 ```
 
-### Basic Deserialization
+### Basic deserialization
 
 ```python
 for obj in serializers.deserialize("json", data):
@@ -49,7 +62,7 @@ for deserialized_object in serializers.deserialize("json", data):
 serializers.deserialize("json", data, ignorenonexistent=True)
 ```
 
-## Serialization Formats
+## Serialization formats
 
 ### JSON
 
@@ -131,7 +144,7 @@ data = serializers.serialize("yaml", SomeModel.objects.all())
     expire_date: 2013-01-16 08:16:59.844560+00:00
 ```
 
-## Key Classes and Methods
+## Key classes and methods
 
 ### DjangoJSONEncoder
 
@@ -151,17 +164,17 @@ serializers.serialize("json", queryset, cls=LazyEncoder)
 
 Supported types: `datetime`, `date`, `time`, `timedelta`, `Decimal`, `UUID`, `Promise` (lazy strings).
 
-### Exception Handling
+### Exception handling
 
 - `SerializerDoesNotExist` - unknown format passed to `get_serializer()`
 - `DeserializationError` - deserialization failure
 - `ValueError` - XML contains disallowed control characters
 
-## Natural Keys
+## Natural keys
 
 Natural keys provide human-readable, stable references to objects without relying on auto-generated primary keys.
 
-### Deserialization with Natural Keys
+### Deserialization with natural keys
 
 Define `get_by_natural_key()` on a custom manager:
 
@@ -186,7 +199,7 @@ class Person(models.Model):
         ]
 ```
 
-### Serialization with Natural Keys
+### Serialization with natural keys
 
 Add `natural_key()` method to the model:
 
@@ -226,7 +239,7 @@ With `use_natural_primary_keys=True`, the `pk` field is omitted from output:
 }
 ```
 
-### Dependencies Between Natural Keys
+### Dependencies between natural keys
 
 Control serialization order when natural keys reference other models:
 
@@ -241,7 +254,7 @@ class Book(models.Model):
     natural_key.dependencies = ["example_app.person"]
 ```
 
-### Forward References
+### Forward references
 
 Handle objects referencing other objects not yet deserialized:
 
@@ -259,13 +272,13 @@ for obj in objs_with_deferred_fields:
 
 Requires `null=True` on the ForeignKey field.
 
-## Handling Inherited Models
+## Handling inherited models
 
-### Abstract Base Classes
+### Abstract base classes
 
 No special handling required - serialization includes all inherited fields automatically.
 
-### Multi-table Inheritance
+### Multi-table inheritance
 
 Must serialize both parent and child explicitly:
 
@@ -284,7 +297,7 @@ all_objects = [*Restaurant.objects.all(), *Place.objects.all()]
 data = serializers.serialize("json", all_objects)
 ```
 
-## Custom Serializers
+## Custom serializers
 
 Register custom serializers in settings:
 
@@ -296,7 +309,7 @@ SERIALIZATION_MODULES = {
 
 Custom serializers extend `serializers.python.Serializer` and implement `get_dump_object()`, `end_object()`, and a `Deserializer` class.
 
-## Management Commands
+## Management commands
 
 ### dumpdata
 
@@ -329,9 +342,9 @@ Django searches for fixtures in:
 2. Directories listed in `FIXTURE_DIRS` setting
 3. The literal path provided
 
-## Common Patterns
+## Common patterns
 
-### Fixture Workflow
+### Fixture workflow
 
 ```bash
 # Export current data as fixture
@@ -344,18 +357,18 @@ python manage.py loaddata initial_data
 python manage.py loaddata initial_data.yaml
 ```
 
-### Selective Field Serialization
+### Selective field serialization
 
 ```python
 # Only serialize specific fields (pk always included)
 data = serializers.serialize("json", MyModel.objects.all(), fields=["name", "email"])
 ```
 
-### Primary Key Handling
+### Primary key handling
 
 When `pk` in serialized data is `None` or missing, a new instance is created on deserialization, enabling non-destructive imports.
 
-## Best Practices
+## Best practices
 
 - Use natural keys for fixtures shared across environments (avoids pk conflicts)
 - Add `UniqueConstraint` on fields used in `natural_key()` to guarantee uniqueness

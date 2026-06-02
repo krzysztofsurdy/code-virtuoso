@@ -1,12 +1,21 @@
 # Django Validators
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Built-in validators](#built-in-validators)
+- [Pre-configured validator instances](#pre-configured-validator-instances)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
 Django validators are callables that take a value and raise `ValidationError` if the value does not meet certain criteria. Validators are used on model fields, form fields, and can be written as functions or classes. They run during form validation and when explicitly calling `model.full_clean()`, but do not run automatically on `model.save()`.
 
-## Core Concepts
+## Core concepts
 
-### Writing a Custom Validator
+### Writing a custom validator
 
 ```python
 from django.core.exceptions import ValidationError
@@ -20,7 +29,7 @@ def validate_even(value):
         )
 ```
 
-### Using Validators on Model Fields
+### Using validators on model fields
 
 ```python
 from django.db import models
@@ -29,7 +38,7 @@ class MyModel(models.Model):
     even_field = models.IntegerField(validators=[validate_even])
 ```
 
-### Using Validators on Form Fields
+### Using validators on form fields
 
 ```python
 from django import forms
@@ -38,7 +47,7 @@ class MyForm(forms.Form):
     even_field = forms.IntegerField(validators=[validate_even])
 ```
 
-### Class-Based Validators
+### Class-based validators
 
 For complex validation logic, use a class with `__call__()`:
 
@@ -69,7 +78,7 @@ class MultipleOfValidator:
 
 Class-based validators used on model fields must implement `deconstruct()` and `__eq__()` for migration serialization.
 
-### When Validators Run
+### When validators run
 
 | Context | Runs Automatically? |
 |---|---|
@@ -79,7 +88,7 @@ Class-based validators used on model fields must implement `deconstruct()` and `
 | `model.save()` | No |
 | `model.clean_fields()` | Yes |
 
-## Built-in Validators
+## Built-in validators
 
 ### RegexValidator
 
@@ -155,7 +164,7 @@ class MyModel(models.Model):
     website = models.URLField(validators=[validate_url])
 ```
 
-### Numeric Validators
+### Numeric validators
 
 ```python
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -173,7 +182,7 @@ class Event(models.Model):
     date = models.DateField(validators=[MinValueValidator(timezone.now)])
 ```
 
-### Length Validators
+### Length validators
 
 ```python
 from django.core.validators import MaxLengthValidator, MinLengthValidator
@@ -241,7 +250,7 @@ class ProhibitNullCharactersValidator(message=None, code=None)
 
 Raises `ValidationError` if value contains null characters (`\x00`). Error code: `null_characters_not_allowed`.
 
-## Pre-configured Validator Instances
+## Pre-configured validator instances
 
 | Instance | Description |
 |---|---|
@@ -265,9 +274,9 @@ def int_list_validator(sep=",", message=None, code="invalid", allow_negative=Fal
 
 Returns a `RegexValidator` for integers separated by `sep`.
 
-## Common Patterns
+## Common patterns
 
-### Combining Multiple Validators
+### Combining multiple validators
 
 ```python
 class Product(models.Model):
@@ -288,7 +297,7 @@ class Product(models.Model):
     )
 ```
 
-### Validator with Database Lookup
+### Validator with database lookup
 
 ```python
 def validate_unique_email_domain(value):
@@ -298,7 +307,7 @@ def validate_unique_email_domain(value):
         raise ValidationError("This email domain is not allowed.")
 ```
 
-### Reusable Validator for File Size
+### Reusable validator for file size
 
 ```python
 from django.core.exceptions import ValidationError
@@ -312,7 +321,7 @@ class Upload(models.Model):
     file = models.FileField(validators=[validate_file_size])
 ```
 
-## Best Practices
+## Best practices
 
 - Prefer built-in validators over custom implementations when possible
 - Always provide meaningful error messages with translation support using `gettext_lazy`

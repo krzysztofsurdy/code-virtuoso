@@ -1,12 +1,25 @@
 # Django Static Files
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Configuration](#configuration)
+- [Management commands](#management-commands)
+- [Storage classes](#storage-classes)
+- [Serving static files](#serving-static-files)
+- [Template tags](#template-tags)
+- [Finders API](#finders-api)
+- [Testing](#testing)
+- [Best practices](#best-practices)
+
 ## Overview
 
 Django's `django.contrib.staticfiles` app collects static files (CSS, JavaScript, images) from each application and other specified locations into a single directory for production serving. It provides finders to locate files during development, storage backends for production optimization, and management commands for deployment.
 
-## Core Concepts
+## Core concepts
 
-### Static File Organization
+### Static file organization
 
 Store static files in a subdirectory matching the app name to avoid naming conflicts:
 
@@ -22,7 +35,7 @@ my_app/
                 logo.png
 ```
 
-### Using Static Files in Templates
+### Using static files in templates
 
 ```django
 {% load static %}
@@ -33,7 +46,7 @@ my_app/
 
 ## Configuration
 
-### Essential Settings
+### Essential settings
 
 ```python
 # settings.py
@@ -67,7 +80,7 @@ STATICFILES_FINDERS = [
 ]
 ```
 
-### Settings Summary
+### Settings summary
 
 | Setting | Purpose | Default |
 |---|---|---|
@@ -77,7 +90,7 @@ STATICFILES_FINDERS = [
 | `STATICFILES_FINDERS` | Finder backends to use | FileSystemFinder, AppDirectoriesFinder |
 | `STORAGES["staticfiles"]` | Storage backend for collected files | `StaticFilesStorage` |
 
-## Management Commands
+## Management commands
 
 ### collectstatic
 
@@ -117,7 +130,7 @@ python manage.py findstatic css/base.css
 python manage.py findstatic css/base.css --first  # Only first match
 ```
 
-## Storage Classes
+## Storage classes
 
 ### StaticFilesStorage
 
@@ -181,9 +194,9 @@ class MyManifestStaticFilesStorage(ManifestStaticFilesStorage):
 
 Mixin class for building custom storage backends with MD5 hash appending behavior.
 
-## Serving Static Files
+## Serving static files
 
-### During Development
+### During development
 
 When `DEBUG=True` and `django.contrib.staticfiles` is installed, `runserver` automatically serves static files.
 
@@ -198,19 +211,19 @@ urlpatterns = [
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ```
 
-### Serving User-Uploaded Files in Development
+### Serving user-uploaded files in development
 
 ```python
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 ```
 
-### Production Deployment
+### Production deployment
 
 1. Set `STATIC_ROOT` to the target directory
 2. Run `python manage.py collectstatic`
 3. Configure your web server (Nginx, Apache) to serve the `STATIC_ROOT` directory
 
-## Template Tags
+## Template tags
 
 ### static
 
@@ -257,7 +270,7 @@ class MyLiveTest(StaticLiveServerTestCase):
         pass
 ```
 
-## Best Practices
+## Best practices
 
 - Always namespace static files under app-named subdirectories to prevent collisions
 - Use `ManifestStaticFilesStorage` in production for cache-busting with hashed filenames

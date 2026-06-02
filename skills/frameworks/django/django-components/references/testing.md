@@ -1,12 +1,29 @@
 # Django Testing
 
+## Contents
+
+- [Overview](#overview)
+- [Test case classes](#test-case-classes)
+- [Test client](#test-client)
+- [Assertions](#assertions)
+- [Overriding settings](#overriding-settings)
+- [RequestFactory](#requestfactory)
+- [Fixtures](#fixtures)
+- [Test tagging](#test-tagging)
+- [Email testing](#email-testing)
+- [on_commit callbacks](#on_commit-callbacks)
+- [Running tests](#running-tests)
+- [Custom test runner](#custom-test-runner)
+- [Sequential test execution](#sequential-test-execution)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django provides a comprehensive testing framework built on Python's `unittest` module, with additional tools for testing web applications including a test client, assertion methods for HTTP responses, and database transaction management for test isolation.
+Django provides a testing framework built on Python's `unittest` module, with additional tools for testing web applications including a test client, assertion methods for HTTP responses, and database transaction management for test isolation.
 
-## Test Case Classes
+## Test case classes
 
-### Class Hierarchy
+### Class hierarchy
 
 ```
 unittest.TestCase
@@ -99,9 +116,9 @@ class MySeleniumTests(StaticLiveServerTestCase):
         username_input.send_keys("myuser")
 ```
 
-## Test Client
+## Test client
 
-### Basic Usage
+### Basic usage
 
 ```python
 from django.test import Client
@@ -111,7 +128,7 @@ response = c.get("/customers/details/", query_params={"name": "fred"})
 response = c.post("/login/", {"username": "john", "password": "smith"})
 ```
 
-### Client Constructor
+### Client constructor
 
 ```python
 Client(
@@ -124,7 +141,7 @@ Client(
 )
 ```
 
-### HTTP Methods
+### HTTP methods
 
 ```python
 # GET
@@ -178,7 +195,7 @@ c = AsyncClient()
 response = await c.get("/path/")
 ```
 
-### Response Object
+### Response object
 
 ```python
 response.status_code    # HTTP status code (int)
@@ -193,14 +210,14 @@ response.redirect_chain # List of (url, status_code) tuples when follow=True
 
 ## Assertions
 
-### Content Assertions
+### Content assertions
 
 ```python
 self.assertContains(response, "Hello", count=2, status_code=200, html=False)
 self.assertNotContains(response, "Goodbye", status_code=200, html=False)
 ```
 
-### Redirect Assertions
+### Redirect assertions
 
 ```python
 self.assertRedirects(
@@ -211,7 +228,7 @@ self.assertRedirects(
 )
 ```
 
-### Template Assertions
+### Template assertions
 
 ```python
 self.assertTemplateUsed(response, "myapp/index.html")
@@ -222,7 +239,7 @@ with self.assertTemplateUsed("index.html"):
     render_to_string("index.html")
 ```
 
-### Form Assertions
+### Form assertions
 
 ```python
 self.assertFormError(form, "email", "Enter a valid email address.")
@@ -234,7 +251,7 @@ self.assertFieldOutput(
 )
 ```
 
-### HTML/JSON/XML Assertions
+### HTML/JSON/XML assertions
 
 ```python
 # Semantic HTML comparison (ignores whitespace, attribute order)
@@ -252,7 +269,7 @@ self.assertJSONNotEqual('{"a": 1}', '{"a": 2}')
 self.assertXMLEqual(xml1, xml2)
 ```
 
-### QuerySet Assertions
+### QuerySet assertions
 
 ```python
 self.assertQuerySetEqual(
@@ -263,7 +280,7 @@ self.assertQuerySetEqual(
 )
 ```
 
-### Query Count Assertions
+### Query count assertions
 
 ```python
 self.assertNumQueries(7, my_function, using="default")
@@ -274,14 +291,14 @@ with self.assertNumQueries(2):
     Person.objects.create(name="Daniel")
 ```
 
-### URL Assertions
+### URL assertions
 
 ```python
 # Ignores query string parameter order
 self.assertURLEqual("/path/?a=1&b=2", "/path/?b=2&a=1")
 ```
 
-### Exception Assertions
+### Exception assertions
 
 ```python
 with self.assertRaisesMessage(ValueError, "invalid literal"):
@@ -291,7 +308,7 @@ with self.assertWarnsMessage(DeprecationWarning, "old method"):
     old_method()
 ```
 
-## Overriding Settings
+## Overriding settings
 
 ### Decorator
 
@@ -305,7 +322,7 @@ class LoginTestCase(TestCase):
         self.assertRedirects(response, "/other/login/?next=/sekrit/")
 ```
 
-### Context Manager
+### Context manager
 
 ```python
 def test_login(self):
@@ -314,7 +331,7 @@ def test_login(self):
         self.assertRedirects(response, "/other/login/?next=/sekrit/")
 ```
 
-### Modify Settings (append/prepend/remove list items)
+### Modify settings (append/prepend/remove list items)
 
 ```python
 from django.test import modify_settings
@@ -375,7 +392,7 @@ class MyTests(TestCase):
         pass
 ```
 
-## Test Tagging
+## Test tagging
 
 ```python
 from django.test import tag
@@ -396,7 +413,7 @@ class SampleTestCase(TestCase):
 ./manage.py test --tag=core --exclude-tag=slow
 ```
 
-## Email Testing
+## Email testing
 
 ```python
 from django.core import mail
@@ -409,7 +426,7 @@ class EmailTest(TestCase):
         self.assertEqual(mail.outbox[0].subject, "Subject")
 ```
 
-## on_commit Callbacks
+## on_commit callbacks
 
 ```python
 class ContactTests(TestCase):
@@ -419,7 +436,7 @@ class ContactTests(TestCase):
         self.assertEqual(len(callbacks), 1)
 ```
 
-## Running Tests
+## Running tests
 
 ```bash
 # Run all tests
@@ -437,7 +454,7 @@ class ContactTests(TestCase):
 ./manage.py test --pattern="tests_*.py"  # Custom file pattern
 ```
 
-## Custom Test Runner
+## Custom test runner
 
 ```python
 from django.test.runner import DiscoverRunner
@@ -460,7 +477,7 @@ class CustomTestRunner(DiscoverRunner):
 TEST_RUNNER = "myapp.runners.CustomTestRunner"
 ```
 
-## Sequential Test Execution
+## Sequential test execution
 
 ```python
 from django.test import TestCase
@@ -478,7 +495,7 @@ class ReadFileTests(FileTestMixin, TestCase):
         pass
 ```
 
-## Best Practices
+## Best practices
 
 - Use `TestCase` for database tests (transaction isolation, faster than `TransactionTestCase`)
 - Use `setUpTestData` for expensive setup shared across test methods

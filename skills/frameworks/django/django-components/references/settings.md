@@ -1,12 +1,34 @@
 # Django Settings
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Core settings](#core-settings)
+- [Database settings](#database-settings)
+- [Template settings](#template-settings)
+- [Static files settings](#static-files-settings)
+- [Media files settings](#media-files-settings)
+- [Authentication settings](#authentication-settings)
+- [Internationalization settings](#internationalization-settings)
+- [Email settings](#email-settings)
+- [Cache settings](#cache-settings)
+- [Security settings](#security-settings)
+- [Session settings](#session-settings)
+- [File upload settings](#file-upload-settings)
+- [Storage settings (Django 4.2+)](#storage-settings-django-42)
+- [Logging settings](#logging-settings)
+- [Admin and error reporting](#admin-and-error-reporting)
+- [Splitting settings](#splitting-settings)
+- [Best practices](#best-practices)
+
 ## Overview
 
 Django settings are Python module-level variables that configure every aspect of a Django application. Settings are accessed via `django.conf.settings` and determined by the `DJANGO_SETTINGS_MODULE` environment variable.
 
-## Core Concepts
+## Core concepts
 
-### Accessing Settings
+### Accessing settings
 
 ```python
 from django.conf import settings
@@ -18,7 +40,7 @@ if settings.DEBUG:
 # WRONG: from django.conf.settings import DEBUG
 ```
 
-### Settings Module
+### Settings module
 
 ```bash
 # Set via environment variable
@@ -28,7 +50,7 @@ export DJANGO_SETTINGS_MODULE=mysite.settings
 ./manage.py runserver --settings=mysite.settings
 ```
 
-### Standalone Configuration
+### Standalone configuration
 
 ```python
 from django.conf import settings
@@ -39,20 +61,20 @@ import django
 django.setup()
 ```
 
-### Checking Configuration State
+### Checking configuration state
 
 ```python
 if not settings.configured:
     settings.configure(DEBUG=True)
 ```
 
-### View Non-Default Settings
+### View non-default settings
 
 ```bash
 ./manage.py diffsettings
 ```
 
-## Core Settings
+## Core settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -66,7 +88,7 @@ if not settings.configured:
 | `DEFAULT_AUTO_FIELD` | `'django.db.models.BigAutoField'` | Default primary key type |
 | `APPEND_SLASH` | `True` | Append slash to URLs (requires `CommonMiddleware`) |
 
-## Database Settings
+## Database settings
 
 ```python
 DATABASES = {
@@ -102,7 +124,7 @@ DATABASES = {
 | SQLite | `django.db.backends.sqlite3` |
 | Oracle | `django.db.backends.oracle` |
 
-## Template Settings
+## Template settings
 
 ```python
 TEMPLATES = [
@@ -122,7 +144,7 @@ TEMPLATES = [
 ]
 ```
 
-## Static Files Settings
+## Static files settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -138,7 +160,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 ```
 
-## Media Files Settings
+## Media files settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -150,7 +172,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 ```
 
-## Authentication Settings
+## Authentication settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -159,7 +181,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 | `LOGIN_REDIRECT_URL` | `'/accounts/profile/'` | Default redirect after login |
 | `LOGOUT_REDIRECT_URL` | `None` | Redirect after logout |
 
-### Password Validators
+### Password validators
 
 ```python
 AUTH_PASSWORD_VALIDATORS = [
@@ -179,7 +201,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 ```
 
-## Internationalization Settings
+## Internationalization settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -204,7 +226,7 @@ LANGUAGES = [
 LOCALE_PATHS = [BASE_DIR / "locale"]
 ```
 
-## Email Settings
+## Email settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -233,7 +255,7 @@ EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"  # Discard
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 ```
 
-## Cache Settings
+## Cache settings
 
 ```python
 CACHES = {
@@ -259,9 +281,9 @@ CACHES = {
 | Redis | `django.core.cache.backends.redis.RedisCache` |
 | Dummy | `django.core.cache.backends.dummy.DummyCache` |
 
-## Security Settings
+## Security settings
 
-### CSRF Protection
+### CSRF protection
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -273,7 +295,7 @@ CACHES = {
 | `CSRF_TRUSTED_ORIGINS` | `[]` | Trusted origins for CSRF |
 | `CSRF_USE_SESSIONS` | `False` | Store CSRF token in session |
 
-### HTTPS/SSL Settings
+### HTTPS/SSL settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -298,7 +320,7 @@ SECURE_CSP = {
 }
 ```
 
-## Session Settings
+## Session settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -311,7 +333,7 @@ SECURE_CSP = {
 | `SESSION_EXPIRE_AT_BROWSER_CLOSE` | `False` | Expire on browser close |
 | `SESSION_SAVE_EVERY_REQUEST` | `False` | Save on every request |
 
-## File Upload Settings
+## File upload settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -321,7 +343,7 @@ SECURE_CSP = {
 | `DATA_UPLOAD_MAX_NUMBER_FILES` | `100` | Max file uploads |
 | `FILE_UPLOAD_PERMISSIONS` | `0o644` | File permissions |
 
-## Storage Settings (Django 4.2+)
+## Storage settings (Django 4.2+)
 
 ```python
 STORAGES = {
@@ -334,7 +356,7 @@ STORAGES = {
 }
 ```
 
-## Logging Settings
+## Logging settings
 
 ```python
 LOGGING = {
@@ -363,7 +385,7 @@ LOGGING = {
 }
 ```
 
-## Admin and Error Reporting
+## Admin and error reporting
 
 ```python
 ADMINS = [("Admin Name", "admin@example.com")]  # Notified on 500 errors
@@ -372,9 +394,9 @@ INTERNAL_IPS = ["127.0.0.1"]  # IPs that see debug info
 IGNORABLE_404_URLS = []  # 404 patterns to ignore
 ```
 
-## Splitting Settings
+## Splitting settings
 
-### Environment-Based Settings
+### Environment-based settings
 
 ```python
 # settings/base.py
@@ -397,7 +419,7 @@ DATABASES = {"default": {"ENGINE": "django.db.backends.postgresql", ...}}
 DJANGO_SETTINGS_MODULE=mysite.settings.production ./manage.py runserver
 ```
 
-### Environment Variable Pattern
+### Environment variable pattern
 
 ```python
 import os
@@ -418,7 +440,7 @@ DATABASES = {
 }
 ```
 
-## Best Practices
+## Best practices
 
 - Never deploy with `DEBUG = True`
 - Keep `SECRET_KEY` out of source control

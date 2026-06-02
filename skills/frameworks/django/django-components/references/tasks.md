@@ -1,10 +1,22 @@
 # Django Tasks Framework
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Key classes and methods](#key-classes-and-methods)
+- [Enqueueing tasks](#enqueueing-tasks)
+- [Task results](#task-results)
+- [Configuration](#configuration)
+- [Common patterns](#common-patterns)
+- [Comparison with Celery](#comparison-with-celery)
+- [Best practices](#best-practices)
+
 ## Overview
 
-The Django Tasks framework (new in Django 6.0) provides a built-in way to define and enqueue background work that runs outside the request-response cycle. Tasks are units of work with metadata, stored in a queue and executed by external worker processes. For older Django versions, the `django-tasks` backport package is available on PyPI.
+The Django Tasks framework (added in Django 6.0) provides a built-in way to define and enqueue background work that runs outside the request-response cycle. Tasks are units of work with metadata, stored in a queue and executed by external worker processes. For older Django versions, the `django-tasks` backport package is available on PyPI.
 
-## Core Concepts
+## Core concepts
 
 ### Architecture
 
@@ -15,7 +27,7 @@ The Django Tasks framework (new in Django 6.0) provides a built-in way to define
 | Worker | External process that claims, executes, and records results |
 | TaskResult | Tracking object with unique ID, status, and return value |
 
-### Task Lifecycle
+### Task lifecycle
 
 1. Task function is decorated with `@task`
 2. Task is enqueued via `.enqueue()` - returns a `TaskResult`
@@ -23,9 +35,9 @@ The Django Tasks framework (new in Django 6.0) provides a built-in way to define
 4. Worker executes the function
 5. Result (success or error) is saved back to the backend
 
-## Key Classes and Methods
+## Key classes and methods
 
-### Defining Tasks
+### Defining tasks
 
 Use the `@task` decorator on module-level functions. By convention, define tasks in `tasks.py`:
 
@@ -43,7 +55,7 @@ def email_users(emails, subject, message):
     )
 ```
 
-### Task Customization
+### Task customization
 
 ```python
 @task(priority=2, queue_name="emails")
@@ -56,7 +68,7 @@ def email_users(emails, subject, message):
     )
 ```
 
-### Task Context
+### Task context
 
 Access execution metadata with `takes_context=True`:
 
@@ -84,7 +96,7 @@ Context properties:
 - `context.attempt` - current attempt number
 - `context.task_result` - associated `TaskResult` instance
 
-### Modifying Task Parameters
+### Modifying task parameters
 
 Create modified task instances without changing the original:
 
@@ -93,9 +105,9 @@ email_users.priority          # 0
 email_users.using(priority=10).priority  # 10
 ```
 
-## Enqueueing Tasks
+## Enqueueing tasks
 
-### Basic Enqueueing
+### Basic enqueueing
 
 ```python
 result = email_users.enqueue(
@@ -105,7 +117,7 @@ result = email_users.enqueue(
 )
 ```
 
-### Async Enqueueing
+### Async enqueueing
 
 ```python
 result = await email_users.aenqueue(
@@ -115,7 +127,7 @@ result = await email_users.aenqueue(
 )
 ```
 
-### Serialization Requirements
+### Serialization requirements
 
 All task arguments and return values must be JSON-serializable:
 
@@ -134,7 +146,7 @@ result = double_dictionary.enqueue((1, 2, 3))
 
 Convert complex objects before passing them to tasks.
 
-### Enqueueing with Transactions
+### Enqueueing with transactions
 
 Use `transaction.on_commit()` to prevent workers from executing before data is committed:
 
@@ -151,9 +163,9 @@ with transaction.atomic():
     transaction.on_commit(partial(my_task.enqueue, thing_num=1))
 ```
 
-## Task Results
+## Task results
 
-### Retrieving Results
+### Retrieving results
 
 ```python
 # By task function
@@ -167,7 +179,7 @@ result = default_task_backend.get_result(result_id)
 result = await email_users.aget_result(result_id)
 ```
 
-### Refreshing Stale Results
+### Refreshing stale results
 
 ```python
 result.status    # RUNNING
@@ -175,7 +187,7 @@ result.refresh()  # or await result.arefresh()
 result.status    # SUCCESSFUL
 ```
 
-### Accessing Return Values
+### Accessing return values
 
 ```python
 result.status        # SUCCESSFUL
@@ -186,7 +198,7 @@ result.status        # RUNNING
 result.return_value  # ValueError: Task has not finished yet
 ```
 
-### Error Handling
+### Error handling
 
 ```python
 result.errors[0].exception_class  # <class 'ValueError'>
@@ -199,7 +211,7 @@ result.errors[0].traceback        # String traceback for debugging
 
 ## Configuration
 
-### Task Backends
+### Task backends
 
 Configure backends using the `TASKS` setting:
 
@@ -211,9 +223,9 @@ TASKS = {
 }
 ```
 
-### Built-in Backends
+### Built-in backends
 
-#### ImmediateBackend (Default)
+#### ImmediateBackend (default)
 
 Executes tasks immediately (synchronously). Useful for development:
 
@@ -247,11 +259,11 @@ len(default_task_backend.results)  # 1
 default_task_backend.clear()       # Clear stored results
 ```
 
-#### Third-party Backends
+#### Third-party backends
 
 For production, use backends with durable queue implementations. Check the Django community ecosystem page and Django Packages for available options.
 
-### Retrieving Backends
+### Retrieving backends
 
 ```python
 from django.tasks import task_backends, default_task_backend
@@ -261,16 +273,16 @@ task_backends["reserve"]    # Another configured backend
 default_task_backend        # Quick access to default
 ```
 
-### Custom Backend Requirements
+### Custom backend requirements
 
 Custom backends must:
 - Inherit from `BaseTaskBackend`
 - Implement `BaseTaskBackend.enqueue()`
 - Async variants are prefixed with `a` (e.g., `aenqueue()`, `aget_result()`)
 
-## Common Patterns
+## Common patterns
 
-### Email Processing
+### Email processing
 
 ```python
 @task(queue_name="emails", priority=5)
@@ -284,7 +296,7 @@ def send_welcome_email(user_id):
     )
 ```
 
-### Data Processing Pipeline
+### Data processing pipeline
 
 ```python
 @task
@@ -296,7 +308,7 @@ def process_upload(upload_id):
     upload.save()
 ```
 
-### Safe Enqueueing After Object Creation
+### Safe enqueueing after object creation
 
 ```python
 from functools import partial
@@ -326,7 +338,7 @@ def create_order(request):
 | Retry | Via `context.attempt` | Built-in retry with backoff |
 | Chaining/Groups | Not built-in | Canvas (chain, group, chord) |
 
-## Best Practices
+## Best practices
 
 - Define tasks in `tasks.py` by convention for discoverability
 - Keep task arguments JSON-serializable (pass IDs, not model instances)

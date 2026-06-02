@@ -1,12 +1,28 @@
 # Django Security
 
+## Contents
+
+- [Overview](#overview)
+- [CSRF protection](#csrf-protection)
+- [XSS prevention](#xss-prevention)
+- [SQL injection prevention](#sql-injection-prevention)
+- [Clickjacking protection](#clickjacking-protection)
+- [SSL/HTTPS enforcement](#sslhttps-enforcement)
+- [Host header validation](#host-header-validation)
+- [Content Security Policy (Django 6.0+)](#content-security-policy-django-60)
+- [Cryptographic signing](#cryptographic-signing)
+- [Referrer policy](#referrer-policy)
+- [Configuration](#configuration)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django provides built-in protection against most common web security vulnerabilities including CSRF, XSS, SQL injection, and clickjacking. The framework follows a secure-by-default philosophy where protections are enabled automatically, requiring explicit opt-out rather than opt-in. Django 6.0 also introduces Content Security Policy (CSP) support.
+Django provides built-in protection against most common web security vulnerabilities including CSRF, XSS, SQL injection, and clickjacking. The framework follows a secure-by-default philosophy where protections are enabled automatically, requiring explicit opt-out rather than opt-in. Django 6.0 adds Content Security Policy (CSP) support.
 
-## CSRF Protection
+## CSRF protection
 
-### How It Works
+### How it works
 
 Django's `CsrfViewMiddleware` protects against Cross-Site Request Forgery attacks:
 
@@ -16,7 +32,7 @@ Django's `CsrfViewMiddleware` protects against Cross-Site Request Forgery attack
 4. Validates the `Origin` header against current host and `CSRF_TRUSTED_ORIGINS`
 5. For HTTPS, validates the `Referer` header if `Origin` is absent
 
-### Template Usage
+### Template usage
 
 ```html
 <form method="post">
@@ -26,7 +42,7 @@ Django's `CsrfViewMiddleware` protects against Cross-Site Request Forgery attack
 </form>
 ```
 
-### AJAX Requests
+### AJAX requests
 
 Include the CSRF token in the `X-CSRFToken` header:
 
@@ -56,7 +72,7 @@ fetch('/api/endpoint/', {
 });
 ```
 
-### CSRF Decorators
+### CSRF decorators
 
 ```python
 from django.views.decorators.csrf import (
@@ -83,7 +99,7 @@ def api_view(request):
     ...
 ```
 
-### CSRF Settings
+### CSRF settings
 
 | Setting | Default | Purpose |
 |---------|---------|---------|
@@ -99,7 +115,7 @@ def api_view(request):
 | `CSRF_TRUSTED_ORIGINS` | `[]` | Trusted cross-origin hosts |
 | `CSRF_USE_SESSIONS` | `False` | Store token in session |
 
-## XSS Prevention
+## XSS prevention
 
 Django templates auto-escape dangerous HTML characters by default:
 
@@ -112,7 +128,7 @@ Django templates auto-escape dangerous HTML characters by default:
 # & is converted to &amp;
 ```
 
-### Potential Vulnerabilities
+### Potential vulnerabilities
 
 ```html
 <!-- VULNERABLE: Unquoted attribute -->
@@ -122,7 +138,7 @@ Django templates auto-escape dangerous HTML characters by default:
 <style class="{{ var }}">...</style>
 ```
 
-### Caution Points
+### Caution points
 
 - Avoid `mark_safe()` on user-controlled data
 - Be careful with the `safe` template filter
@@ -130,7 +146,7 @@ Django templates auto-escape dangerous HTML characters by default:
 - Validate HTML stored in the database before rendering
 - Do not use `is_safe` on custom template tags unnecessarily
 
-## SQL Injection Prevention
+## SQL injection prevention
 
 Django's ORM uses parameterized queries by default:
 
@@ -149,7 +165,7 @@ cursor.execute("SELECT * FROM users WHERE id = %s", [user_id])
 # cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")  # DO NOT
 ```
 
-### Methods Requiring Care
+### Methods requiring care
 
 ```python
 # These accept raw SQL - always use parameterized queries
@@ -158,9 +174,9 @@ queryset.annotate(field=RawSQL("raw_sql", [params]))
 queryset.raw("SELECT * FROM table WHERE id = %s", [param])
 ```
 
-## Clickjacking Protection
+## Clickjacking protection
 
-### X-Frame-Options Middleware
+### X-Frame-Options middleware
 
 ```python
 # settings.py
@@ -175,7 +191,7 @@ X_FRAME_OPTIONS = "DENY"
 X_FRAME_OPTIONS = "SAMEORIGIN"
 ```
 
-### Per-View Control
+### Per-view control
 
 ```python
 from django.views.decorators.clickjacking import (
@@ -197,9 +213,9 @@ def embeddable_view(request):
     ...
 ```
 
-## SSL/HTTPS Enforcement
+## SSL/HTTPS enforcement
 
-### Security Middleware Settings
+### Security middleware settings
 
 ```python
 # settings.py
@@ -224,7 +240,7 @@ CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ```
 
-### All SecurityMiddleware Settings
+### All SecurityMiddleware settings
 
 | Setting | Default | Purpose |
 |---------|---------|---------|
@@ -238,7 +254,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 | `SECURE_CROSS_ORIGIN_OPENER_POLICY` | `"same-origin"` | COOP header |
 | `SECURE_REFERRER_POLICY` | `"same-origin"` | Referrer-Policy header |
 
-## Host Header Validation
+## Host header validation
 
 ```python
 # settings.py
@@ -259,9 +275,9 @@ CSP mitigates XSS and content injection by controlling which resources browsers 
 - Prevents unwanted framing
 - Reports violations for monitoring
 
-## Cryptographic Signing
+## Cryptographic signing
 
-### Basic Signing
+### Basic signing
 
 ```python
 from django.core.signing import Signer
@@ -274,7 +290,7 @@ original = signer.unsign(signed)
 # 'My string'
 ```
 
-### Timed Signatures
+### Timed signatures
 
 ```python
 from django.core.signing import TimestampSigner
@@ -289,7 +305,7 @@ signer.unsign(signed, max_age=timedelta(hours=1))
 # Raises SignatureExpired if too old
 ```
 
-### Signing Complex Data
+### Signing complex data
 
 ```python
 from django.core import signing
@@ -301,7 +317,7 @@ token = signing.dumps({"user_id": 42, "action": "confirm_email"})
 data = signing.loads(token, max_age=86400)  # Valid for 24 hours
 ```
 
-### Salts for Context Separation
+### Salts for context separation
 
 ```python
 signer = Signer(salt="email-confirmation")
@@ -312,7 +328,7 @@ signer2 = Signer(salt="password-reset")
 signer2.unsign(signed)  # Raises BadSignature
 ```
 
-### Error Handling
+### Error handling
 
 ```python
 from django.core.signing import BadSignature, SignatureExpired
@@ -327,7 +343,7 @@ except BadSignature:
     pass
 ```
 
-## Referrer Policy
+## Referrer policy
 
 ```python
 # Controls how much referrer information browsers send
@@ -346,7 +362,7 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 ## Configuration
 
-### Production Security Checklist
+### Production security checklist
 
 ```python
 # settings.py - Production
@@ -372,7 +388,7 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 X_FRAME_OPTIONS = "DENY"
 ```
 
-### Django Security Check Command
+### Django security check command
 
 ```bash
 python manage.py check --deploy
@@ -380,9 +396,9 @@ python manage.py check --deploy
 
 This command audits your settings and warns about common security misconfigurations.
 
-## Common Patterns
+## Common patterns
 
-### Serving User-Uploaded Content Safely
+### Serving user-uploaded content safely
 
 ```python
 # Use a completely separate domain (not a subdomain)
@@ -393,7 +409,7 @@ MEDIA_URL = "https://usercontent-example.com/"
 # Consider serving from CDN or cloud storage
 ```
 
-### Protecting Secret Key
+### Protecting secret key
 
 ```python
 # Never commit SECRET_KEY to version control
@@ -403,7 +419,7 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 SECRET_KEY_FALLBACKS = ["old-secret-key"]
 ```
 
-## Best Practices
+## Best practices
 
 - Never disable CSRF protection globally; use `@csrf_exempt` sparingly on specific views
 - Always use `{% csrf_token %}` in POST forms

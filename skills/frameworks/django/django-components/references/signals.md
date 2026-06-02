@@ -1,16 +1,28 @@
 # Django Signals
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Connecting receivers](#connecting-receivers)
+- [Defining custom signals](#defining-custom-signals)
+- [Sending signals](#sending-signals)
+- [Disconnecting signals](#disconnecting-signals)
+- [Built-in signals](#built-in-signals)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django's signal dispatcher enables decoupled applications to notify each other when actions occur. Signals allow senders to notify a set of receivers that some action has taken place, without requiring direct coupling between the two. Django provides a set of built-in signals for model lifecycle events, HTTP requests, migrations, and testing.
+Django's signal dispatcher lets decoupled applications notify each other when actions occur: a sender notifies a set of receivers that something happened, without the two being coupled directly. Django provides a set of built-in signals for model lifecycle events, HTTP requests, migrations, and testing.
 
-## Core Concepts
+## Core concepts
 
-### Signal Dispatcher
+### Signal dispatcher
 
 The signal system consists of three parts: the signal itself, senders that emit the signal, and receivers that listen for it. Receivers are callback functions connected to a signal.
 
-### Receiver Functions
+### Receiver functions
 
 A receiver is any Python function or method that accepts `sender` and `**kwargs`:
 
@@ -27,9 +39,9 @@ async def my_callback(sender, **kwargs):
     print("Async signal received!")
 ```
 
-## Connecting Receivers
+## Connecting receivers
 
-### Using the @receiver Decorator
+### Using the @receiver decorator
 
 ```python
 from django.dispatch import receiver
@@ -67,7 +79,7 @@ Parameters:
 - `weak` - store as weak reference (default: `True`); set to `False` for local functions
 - `dispatch_uid` - unique identifier to prevent duplicate registration
 
-### Where to Connect Signals
+### Where to connect signals
 
 Define handlers in a `signals` submodule and connect them in `AppConfig.ready()`:
 
@@ -89,7 +101,7 @@ class MyAppConfig(AppConfig):
         from . import signals  # noqa: F401
 ```
 
-### Connecting to Specific Senders
+### Connecting to specific senders
 
 ```python
 @receiver(pre_save, sender=MyModel)
@@ -98,13 +110,13 @@ def my_handler(sender, **kwargs):
     ...
 ```
 
-### Preventing Duplicate Signals
+### Preventing duplicate signals
 
 ```python
 request_finished.connect(my_callback, dispatch_uid="my_unique_identifier")
 ```
 
-## Defining Custom Signals
+## Defining custom signals
 
 ```python
 import django.dispatch
@@ -112,7 +124,7 @@ import django.dispatch
 pizza_done = django.dispatch.Signal()
 ```
 
-## Sending Signals
+## Sending signals
 
 ### Signal.send()
 
@@ -138,7 +150,7 @@ for receiver, response in responses:
         pass
 ```
 
-### Async Variants
+### Async variants
 
 ```python
 await pizza_done.asend(sender=self.__class__, toppings=toppings, size=size)
@@ -147,7 +159,7 @@ await pizza_done.asend_robust(sender=self.__class__, toppings=toppings, size=siz
 
 Sync receivers called via `asend()` are automatically wrapped with `sync_to_async()`. Async receivers called via `send()` are wrapped with `async_to_sync()`.
 
-## Disconnecting Signals
+## Disconnecting signals
 
 ```python
 Signal.disconnect(receiver=None, sender=None, dispatch_uid=None)
@@ -155,9 +167,9 @@ Signal.disconnect(receiver=None, sender=None, dispatch_uid=None)
 
 Returns `True` if a receiver was disconnected, `False` otherwise.
 
-## Built-in Signals
+## Built-in signals
 
-### Model Signals
+### Model signals
 
 #### pre_init / post_init
 
@@ -240,7 +252,7 @@ Arguments:
 
 Sent when a model class is fully defined and registered. Cannot be connected in `AppConfig.ready()` - use `AppConfig.__init__()` instead.
 
-### Management Signals
+### Management signals
 
 #### pre_migrate / post_migrate
 
@@ -256,7 +268,7 @@ class MyAppConfig(AppConfig):
 
 Arguments: `sender` (AppConfig), `app_config`, `verbosity`, `interactive`, `stdout`, `using`, `plan`, `apps`
 
-### Request/Response Signals
+### Request/response signals
 
 #### request_started
 
@@ -276,7 +288,7 @@ Sent when Django encounters an exception during request processing.
 
 Arguments: `sender` (`None`), `request` (HttpRequest)
 
-### Test Signals
+### Test signals
 
 #### setting_changed
 
@@ -300,7 +312,7 @@ Sent when the test system renders a template (not during normal operation).
 
 Arguments: `sender` (Template), `template`, `context`
 
-### Database Signals
+### Database signals
 
 #### connection_created
 
@@ -308,7 +320,7 @@ Sent when a database connection is first established.
 
 Arguments: `sender` (database wrapper class), `connection`
 
-### Task Signals (Django 6.0)
+### Task signals (Django 6.0)
 
 #### task_enqueued / task_started / task_finished
 
@@ -316,9 +328,9 @@ Sent during task lifecycle when using Django's task framework.
 
 Arguments: `sender` (backend class), `task_result` (TaskResult instance)
 
-## Common Patterns
+## Common patterns
 
-### Create Profile on User Registration
+### Create profile on user registration
 
 ```python
 from django.db.models.signals import post_save
@@ -332,7 +344,7 @@ def create_profile(sender, instance, created, **kwargs):
         Profile.objects.create(user=instance)
 ```
 
-### Audit Logging
+### Audit logging
 
 ```python
 @receiver(post_save)
@@ -345,7 +357,7 @@ def log_save(sender, instance, created, **kwargs):
     )
 ```
 
-## Best Practices
+## Best practices
 
 - Always include `**kwargs` in receiver signatures for forward compatibility
 - Use `dispatch_uid` when receiver registration code may run multiple times (e.g., in tests)

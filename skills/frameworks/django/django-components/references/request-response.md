@@ -1,12 +1,25 @@
 # Django Request and Response Objects
 
+## Contents
+
+- [Overview](#overview)
+- [HttpRequest](#httprequest)
+- [QueryDict](#querydict)
+- [HttpResponse](#httpresponse)
+- [HttpResponse subclasses](#httpresponse-subclasses)
+- [JsonResponse](#jsonresponse)
+- [StreamingHttpResponse](#streaminghttpresponse)
+- [FileResponse](#fileresponse)
+- [TemplateResponse](#templateresponse)
+- [Best practices](#best-practices)
+
 ## Overview
 
 Django uses `HttpRequest` and `HttpResponse` objects to pass state through the system. When a request comes in, Django creates an `HttpRequest` object containing metadata about the request and passes it as the first argument to the view. Each view is responsible for returning an `HttpResponse` object.
 
 ## HttpRequest
 
-### Request Data Attributes
+### Request data attributes
 
 | Attribute | Type | Description |
 |-----------|------|-------------|
@@ -16,7 +29,7 @@ Django uses `HttpRequest` and `HttpResponse` objects to pass state through the s
 | `COOKIES` | `dict` | All cookies as strings |
 | `body` | `bytes` | Raw request body as bytestring |
 
-### Request Information Attributes
+### Request information attributes
 
 | Attribute | Type | Description |
 |-----------|------|-------------|
@@ -28,7 +41,7 @@ Django uses `HttpRequest` and `HttpResponse` objects to pass state through the s
 | `content_params` | `dict` | Parameters from Content-Type header |
 | `encoding` | `str` | Encoding for form data (or `None`) |
 
-### Headers and Metadata
+### Headers and metadata
 
 **`META`** - dictionary of all HTTP headers and server variables:
 
@@ -58,7 +71,7 @@ request.headers.get("User-Agent")
 # {{ request.headers.user_agent }}
 ```
 
-### Middleware-Set Attributes
+### Middleware-set attributes
 
 | Attribute | Set By | Description |
 |-----------|--------|-------------|
@@ -66,9 +79,9 @@ request.headers.get("User-Agent")
 | `session` | `SessionMiddleware` | Dictionary-like session object |
 | `site` | `CurrentSiteMiddleware` | Current site instance |
 
-### HttpRequest Methods
+### HttpRequest methods
 
-#### URL and Host Information
+#### URL and host information
 
 ```python
 request.get_host()
@@ -89,7 +102,7 @@ request.build_absolute_uri("/bands/")
 # "https://example.com/bands/"
 ```
 
-#### Content Negotiation
+#### Content negotiation
 
 ```python
 request.accepts("text/html")
@@ -109,7 +122,7 @@ request.get_signed_cookie("name", default=RAISE_ERROR, salt="", max_age=None)
 # Returns signed cookie value or raises BadSignature/SignatureExpired
 ```
 
-#### File-Like Interface
+#### File-like interface
 
 ```python
 request.read(size=None)
@@ -140,7 +153,7 @@ QueryDict.fromkeys(["a", "a", "b"], value="val")
 # <QueryDict: {'a': ['val', 'val'], 'b': ['val']}>
 ```
 
-### Key Methods
+### Key methods
 
 ```python
 q = QueryDict("a=1&a=2&a=3")
@@ -171,7 +184,7 @@ q.dict()                  # {"a": "3"} - last values only
 
 ## HttpResponse
 
-### Creating Responses
+### Creating responses
 
 ```python
 from django.http import HttpResponse
@@ -187,7 +200,7 @@ response.write("<p>First paragraph.</p>")
 response.write("<p>Second paragraph.</p>")
 ```
 
-### Setting Headers
+### Setting headers
 
 ```python
 response.headers["Age"] = 120
@@ -203,7 +216,7 @@ response = HttpResponse(
 )
 ```
 
-### Key Attributes
+### Key attributes
 
 | Attribute | Description |
 |-----------|-------------|
@@ -217,7 +230,7 @@ response = HttpResponse(
 | `streaming` | Always `False` for HttpResponse |
 | `closed` | `True` if response has been closed |
 
-### Cookie Methods
+### Cookie methods
 
 ```python
 response.set_cookie(
@@ -236,7 +249,7 @@ response.set_signed_cookie(key, value, salt="", max_age=None, ...)
 response.delete_cookie(key, path="/", domain=None, samesite=None)
 ```
 
-## HttpResponse Subclasses
+## HttpResponse subclasses
 
 | Class | Status | Notes |
 |-------|--------|-------|
@@ -257,7 +270,7 @@ HttpResponseRedirect("/path/", preserve_request=True)   # 307
 HttpResponsePermanentRedirect("/path/", preserve_request=True)  # 308
 ```
 
-### Custom Response Classes
+### Custom response classes
 
 ```python
 from http import HTTPStatus
@@ -301,7 +314,7 @@ response = StreamingHttpResponse(file_iterator())
 response.headers["Content-Type"] = "text/plain"
 ```
 
-### Key Differences from HttpResponse
+### Key differences from HttpResponse
 
 - Takes an iterator yielding bytestrings
 - No `content` or `text` attributes - use `streaming_content`
@@ -309,7 +322,7 @@ response.headers["Content-Type"] = "text/plain"
 - `streaming` is always `True`
 - Supports async iterators under ASGI
 
-### Handling Client Disconnects (ASGI)
+### Handling client disconnects (ASGI)
 
 ```python
 import asyncio
@@ -373,7 +386,7 @@ from django.template.response import SimpleTemplateResponse
 response = SimpleTemplateResponse("template.html", {"key": "value"})
 ```
 
-### Key Attributes and Methods
+### Key attributes and methods
 
 | Attribute/Method | Description |
 |------------------|-------------|
@@ -384,7 +397,7 @@ response = SimpleTemplateResponse("template.html", {"key": "value"})
 | `render()` | Renders the template (effective only on first call) |
 | `add_post_render_callback(callback)` | Register post-render callback |
 
-### Post-Render Callbacks
+### Post-render callbacks
 
 ```python
 def my_render_callback(response):
@@ -396,7 +409,7 @@ def my_view(request):
     return response
 ```
 
-### Rendering Behavior
+### Rendering behavior
 
 A `TemplateResponse` renders in three circumstances:
 1. Explicit `render()` call
@@ -412,7 +425,7 @@ t.template_name = "new.html"
 t.content = t.rendered_content  # Force re-render
 ```
 
-## Best Practices
+## Best practices
 
 - Use `request.headers` instead of `request.META` for HTTP headers
 - Use `JsonResponse` instead of manually serializing JSON with `HttpResponse`

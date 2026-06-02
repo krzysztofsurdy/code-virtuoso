@@ -1,12 +1,27 @@
 # Django Sessions
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Session backends](#session-backends)
+- [Key classes and methods](#key-classes-and-methods)
+- [Common patterns](#common-patterns)
+- [Session save behavior](#session-save-behavior)
+- [Session serialization](#session-serialization)
+- [Configuration](#configuration)
+- [Session security](#session-security)
+- [Clearing expired sessions](#clearing-expired-sessions)
+- [Extending sessions](#extending-sessions)
+- [Best practices](#best-practices)
+
 ## Overview
 
 Django's session framework provides full support for anonymous sessions, storing arbitrary data on a per-site-visitor basis. Sessions are implemented via middleware and support multiple storage backends including database, cache, file-based, and cookie-based storage. Session data is stored server-side by default, with only a session ID cookie sent to the browser.
 
-## Core Concepts
+## Core concepts
 
-### Enabling Sessions
+### Enabling sessions
 
 ```python
 # settings.py (enabled by default in new projects)
@@ -21,13 +36,13 @@ MIDDLEWARE = [
 
 Run `python manage.py migrate` to create the session database table.
 
-### Disabling Sessions
+### Disabling sessions
 
 Remove `SessionMiddleware` from `MIDDLEWARE` and `django.contrib.sessions` from `INSTALLED_APPS`.
 
-## Session Backends
+## Session backends
 
-### Database-Backed (Default)
+### Database-backed (default)
 
 ```python
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
@@ -37,7 +52,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.db"
 - Requires `django.contrib.sessions` in `INSTALLED_APPS`
 - Most reliable, works with any database
 
-### Cache-Backed
+### Cache-backed
 
 ```python
 # Cache-only (fastest, but data can be lost on eviction)
@@ -56,7 +71,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "sessions"
 ```
 
-### File-Based
+### File-based
 
 ```python
 SESSION_ENGINE = "django.contrib.sessions.backends.file"
@@ -65,7 +80,7 @@ SESSION_FILE_PATH = "/var/lib/django/sessions"  # Defaults to tempfile.gettempdi
 
 Ensure the web server has read/write permissions on the directory.
 
-### Cookie-Based
+### Cookie-based
 
 ```python
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -77,9 +92,9 @@ SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 - Not invalidated server-side on logout
 - Vulnerable to replay attacks
 
-## Key Classes and Methods
+## Key classes and methods
 
-### Using Sessions in Views
+### Using sessions in views
 
 ```python
 def my_view(request):
@@ -110,7 +125,7 @@ def my_view(request):
     request.session.is_empty()
 ```
 
-### Expiration Control
+### Expiration control
 
 ```python
 # Expire in 5 minutes
@@ -131,7 +146,7 @@ request.session.get_expiry_date()              # Expiration datetime
 request.session.get_expire_at_browser_close()  # Boolean
 ```
 
-### Session Key Management
+### Session key management
 
 ```python
 # Get current session key
@@ -141,7 +156,7 @@ key = request.session.session_key
 request.session.cycle_key()
 ```
 
-### Async Methods
+### Async methods
 
 All session methods have async variants prefixed with `a`:
 
@@ -152,9 +167,9 @@ await request.session.apop('key', 'default')
 await request.session.aflush()
 ```
 
-## Common Patterns
+## Common patterns
 
-### Login/Logout with Sessions
+### Login/logout with sessions
 
 ```python
 def login(request):
@@ -172,7 +187,7 @@ def logout(request):
     return HttpResponse("Logged out.")
 ```
 
-### Preventing Duplicate Actions
+### Preventing duplicate actions
 
 ```python
 def post_comment(request, new_comment):
@@ -184,7 +199,7 @@ def post_comment(request, new_comment):
     return HttpResponse("Thanks for your comment!")
 ```
 
-### Test Cookie Support
+### Test cookie support
 
 ```python
 def login(request):
@@ -198,7 +213,7 @@ def login(request):
     return render(request, "login.html")
 ```
 
-### Sessions Outside Views
+### Sessions outside views
 
 ```python
 from importlib import import_module
@@ -217,7 +232,7 @@ s = SessionStore(session_key=key)
 print(s["last_login"])
 ```
 
-### Database Session Model Access
+### Database session model access
 
 ```python
 from django.contrib.sessions.models import Session
@@ -227,7 +242,7 @@ print(s.expire_date)
 decoded = s.get_decoded()  # {'user_id': 42}
 ```
 
-## Session Save Behavior
+## Session save behavior
 
 By default, Django saves sessions only when modified:
 
@@ -252,7 +267,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 Session is not saved if the response status code is 500.
 
-## Session Serialization
+## Session serialization
 
 ```python
 # Default: JSON serializer
@@ -281,7 +296,7 @@ Never use `pickle` for session serialization with the cookie backend.
 
 ## Configuration
 
-### All Session Settings
+### All session settings
 
 | Setting | Default | Purpose |
 |---------|---------|---------|
@@ -299,7 +314,7 @@ Never use `pickle` for session serialization with the cookie backend.
 | `SESSION_SAVE_EVERY_REQUEST` | `False` | Save on every request |
 | `SESSION_SERIALIZER` | `"JSONSerializer"` | Data serializer class |
 
-### Browser-Length vs Persistent Sessions
+### Browser-length vs persistent sessions
 
 ```python
 # Persistent sessions (default) - survives browser close
@@ -312,15 +327,15 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 request.session.set_expiry(0)  # Expire at browser close
 ```
 
-## Session Security
+## Session security
 
-### Session Fixation Protection
+### Session fixation protection
 
 - `django.contrib.auth.login()` calls `cycle_key()` automatically
 - Do not set `SESSION_COOKIE_DOMAIN` too broadly
 - Ensure untrusted subdomains cannot set cookies on parent domain
 
-### Secure Cookie Settings
+### Secure cookie settings
 
 ```python
 # Production settings
@@ -329,14 +344,14 @@ SESSION_COOKIE_HTTPONLY = True      # No JavaScript access
 SESSION_COOKIE_SAMESITE = "Lax"    # CSRF protection
 ```
 
-### Cookie Backend Risks
+### Cookie backend risks
 
 - Data readable by the client (signed, not encrypted)
 - Subject to replay attacks
 - Sessions not invalidated on server-side logout
 - 4096-byte size limit per cookie
 
-## Clearing Expired Sessions
+## Clearing expired sessions
 
 Database and file backends accumulate stale sessions. Clean them with:
 
@@ -346,9 +361,9 @@ python manage.py clearsessions
 
 Run as a daily cron job. Cache backend handles expiration automatically; cookie backend stores data client-side.
 
-## Extending Sessions
+## Extending sessions
 
-### Custom Database Session
+### Custom database session
 
 ```python
 from django.contrib.sessions.backends.db import SessionStore as DBStore
@@ -377,7 +392,7 @@ class SessionStore(DBStore):
         return obj
 ```
 
-## Best Practices
+## Best practices
 
 - Use `cached_db` backend for production (performance + reliability)
 - Set `SESSION_COOKIE_SECURE = True` and `SESSION_COOKIE_HTTPONLY = True` in production

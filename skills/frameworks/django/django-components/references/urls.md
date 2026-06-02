@@ -1,10 +1,25 @@
 # Django URL Configuration
 
+## Contents
+
+- [Overview](#overview)
+- [How Django processes requests](#how-django-processes-requests)
+- [Core functions](#core-functions)
+- [Path converters](#path-converters)
+- [Default view arguments](#default-view-arguments)
+- [Passing extra options to views](#passing-extra-options-to-views)
+- [Captured parameters with include()](#captured-parameters-with-include)
+- [Reverse URL resolution](#reverse-url-resolution)
+- [URL namespaces](#url-namespaces)
+- [Error handlers](#error-handlers)
+- [Important notes](#important-notes)
+- [Best practices](#best-practices)
+
 ## Overview
 
 Django's URL dispatcher maps URL patterns to view functions using a URLconf (URL configuration) module. A URLconf is a Python module containing a `urlpatterns` list that maps URL patterns to views. Django processes URL patterns in order, calling the first matching view with the captured parameters.
 
-## How Django Processes Requests
+## How Django processes requests
 
 1. Django determines the root URLconf from `ROOT_URLCONF` setting (or `HttpRequest.urlconf`)
 2. Loads the module and finds the `urlpatterns` variable
@@ -12,7 +27,7 @@ Django's URL dispatcher maps URL patterns to view functions using a URLconf (URL
 4. Calls the matched view with an `HttpRequest` instance plus captured arguments
 5. If no match is found, invokes the error-handling view
 
-## Core Functions
+## Core functions
 
 ### path()
 
@@ -132,7 +147,7 @@ urlpatterns = [
 ]
 ```
 
-## Path Converters
+## Path converters
 
 Built-in converters for use with `path()`:
 
@@ -144,7 +159,7 @@ Built-in converters for use with `path()`:
 | `uuid` | Formatted UUID (lowercase with dashes) | `<uuid:pk>` |
 | `path` | Any non-empty string including `/` | `<path:file_path>` |
 
-## Default View Arguments
+## Default view arguments
 
 Specify defaults for URL parameters to handle multiple patterns with one view:
 
@@ -158,7 +173,7 @@ def page(request, num=1):
     ...
 ```
 
-## Passing Extra Options to Views
+## Passing extra options to views
 
 ```python
 urlpatterns = [
@@ -176,7 +191,7 @@ urlpatterns = [
 ]
 ```
 
-## Captured Parameters with include()
+## Captured parameters with include()
 
 Captured parameters from the parent URLconf are passed to all views in the included URLconf:
 
@@ -193,9 +208,9 @@ urlpatterns = [
 ]
 ```
 
-## Reverse URL Resolution
+## Reverse URL resolution
 
-### Naming URL Patterns
+### Naming URL patterns
 
 ```python
 urlpatterns = [
@@ -203,7 +218,7 @@ urlpatterns = [
 ]
 ```
 
-### Using reverse() in Python Code
+### Using reverse() in Python code
 
 ```python
 from django.http import HttpResponseRedirect
@@ -214,7 +229,7 @@ def redirect_to_year(request):
     return HttpResponseRedirect(reverse("news-year-archive", args=(year,)))
 ```
 
-### Using {% url %} in Templates
+### Using {% url %} in templates
 
 ```html
 <a href="{% url 'news-year-archive' 2012 %}">2012 Archive</a>
@@ -226,16 +241,16 @@ def redirect_to_year(request):
 </ul>
 ```
 
-## URL Namespaces
+## URL namespaces
 
 Namespaces allow unique reverse resolution when multiple apps use the same URL names.
 
-### Application vs Instance Namespaces
+### Application vs instance namespaces
 
 - **Application namespace**: Identifies the app (e.g., `polls`)
 - **Instance namespace**: Identifies a specific deployment (e.g., `author-polls`)
 
-### Setting Up Namespaces
+### Setting up namespaces
 
 Using `app_name` in the included URLconf:
 
@@ -263,7 +278,7 @@ urlpatterns = [
 ]
 ```
 
-### Reversing Namespaced URLs
+### Reversing namespaced URLs
 
 ```python
 # Explicit namespace
@@ -280,7 +295,7 @@ In templates:
 {% url 'polls:index' %}
 ```
 
-### Using Tuples with include()
+### Using tuples with include()
 
 Alternative to `app_name`:
 
@@ -298,7 +313,7 @@ urlpatterns = [
 ]
 ```
 
-## Error Handlers
+## Error handlers
 
 Set custom error handlers in the root URLconf:
 
@@ -309,7 +324,7 @@ handler404 = "myapp.views.page_not_found"
 handler500 = "myapp.views.server_error"
 ```
 
-## Important Notes
+## Important notes
 
 - URL patterns do not match GET/POST parameters or domain names
 - Request method does not affect routing - all methods route to the same view
@@ -317,7 +332,7 @@ handler500 = "myapp.views.server_error"
 - Regular expressions are compiled on first access and cached
 - Extra option kwargs override captured URL parameters with the same name
 
-## Best Practices
+## Best practices
 
 - Use `path()` by default; use `re_path()` only when path converters are insufficient
 - Name all URL patterns for reverse resolution
