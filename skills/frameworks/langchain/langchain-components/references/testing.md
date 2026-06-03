@@ -1,8 +1,19 @@
-# Testing, Deployment, and Observability
+# Testing, deployment, and observability
+
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Unit testing](#unit-testing)
+- [Integration testing](#integration-testing)
+- [Deployment with LangSmith](#deployment-with-langsmith)
+- [Observability with LangSmith](#observability-with-langsmith)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
 
 ## Overview
 
-LangChain provides a comprehensive approach to testing, deploying, and monitoring agentic applications. Testing combines unit tests with deterministic fakes and integration tests using real models. Deployment is streamlined through LangSmith's managed platform. Observability is built into the framework via LangSmith tracing.
+This reference covers testing, deploying, and monitoring agentic applications. Testing combines unit tests built on deterministic fakes with integration tests against real models. LangSmith provides a managed deployment platform and tracing for observability.
 
 ## Installation
 
@@ -11,7 +22,7 @@ pip install langchain langgraph agentevals langsmith
 pip install vcrpy pytest-recording  # For HTTP recording in tests
 ```
 
-## Unit Testing
+## Unit testing
 
 Unit tests use small, deterministic pieces in isolation with in-memory fakes.
 
@@ -42,7 +53,7 @@ result = agent.invoke({
 
 Supports both regular and streaming modes.
 
-### InMemorySaver for State Testing
+### InMemorySaver for state testing
 
 Test state-dependent behaviors by maintaining conversation history across invocations.
 
@@ -72,11 +83,11 @@ result = agent.invoke(
 )
 ```
 
-## Integration Testing
+## Integration testing
 
-Integration tests validate real network interactions, confirming component compatibility, credential alignment, and acceptable latency. Agentic systems tend to lean more on integration testing because they chain multiple components together.
+Integration tests exercise real network calls to confirm that components work together, credentials are valid, and latency is acceptable. Agentic systems rely on them more heavily because they chain many components.
 
-### AgentEvals: Trajectory Match
+### AgentEvals: trajectory match
 
 The `agentevals` package evaluates agent execution trajectories.
 
@@ -98,7 +109,7 @@ result = trajectory_match(
 | `subset` | Agent calls only reference tools (no extras allowed) |
 | `superset` | Agent calls at least reference tools (extras permitted) |
 
-### AgentEvals: LLM-as-Judge
+### AgentEvals: LLM-as-judge
 
 Uses language models to qualitatively assess execution trajectories.
 
@@ -112,7 +123,7 @@ result = llm_as_judge(
 )
 ```
 
-### HTTP Recording with vcrpy
+### HTTP recording with vcrpy
 
 Record and replay HTTP interactions to reduce API costs during repeated test runs.
 
@@ -139,7 +150,7 @@ def vcr_config():
     }
 ```
 
-### LangSmith Experiment Tracking
+### LangSmith experiment tracking
 
 Log test inputs, outputs, and reference trajectories to LangSmith.
 
@@ -157,7 +168,7 @@ os.environ["LANGSMITH_TRACING"] = "true"
 
 LangSmith provides a managed platform for deploying stateful, long-running agents.
 
-### Deployment Steps
+### Deployment steps
 
 1. Push your LangGraph-compatible application code to a GitHub repository
 2. Navigate to Deployments in LangSmith and create a new deployment
@@ -165,7 +176,7 @@ LangSmith provides a managed platform for deploying stateful, long-running agent
 4. Submit for deployment (approximately 15 minutes)
 5. Access the Studio interface for graph visualization and testing
 
-### API Access
+### API access
 
 **Python SDK:**
 
@@ -197,7 +208,7 @@ curl -X POST https://your-deployment.us.langgraph.app/runs \
   }'
 ```
 
-### Key Features
+### Key features
 
 - Purpose-built infrastructure for agent workloads
 - Automatic scaling and operational management
@@ -207,9 +218,9 @@ curl -X POST https://your-deployment.us.langgraph.app/runs \
 
 ## Observability with LangSmith
 
-LangSmith provides observability for LangChain agents, enabling developers to track tool calls, prompts, and decision-making processes through execution traces.
+LangSmith traces LangChain agents, recording tool calls, prompts, and decision steps.
 
-### Enabling Tracing
+### Enabling tracing
 
 ```bash
 export LANGSMITH_TRACING=true
@@ -218,7 +229,7 @@ export LANGSMITH_API_KEY=<your-api-key>
 
 Agents created with `create_agent` automatically support tracing without additional code.
 
-### Basic Usage
+### Basic usage
 
 ```python
 from langchain.agents import create_agent
@@ -235,7 +246,7 @@ response = agent.invoke({
 })
 ```
 
-### Selective Tracing
+### Selective tracing
 
 Control which operations get traced using `tracing_context`.
 
@@ -248,7 +259,7 @@ with ls.tracing_context(enabled=True):
 # Outside context: not traced (unless env var is set)
 ```
 
-### Project Configuration
+### Project configuration
 
 ```python
 # Static: set environment variable
@@ -259,7 +270,7 @@ with ls.tracing_context(project_name="my-project", enabled=True):
     agent.invoke({"messages": [...]})
 ```
 
-### Adding Metadata and Tags
+### Adding metadata and tags
 
 ```python
 # Via config
@@ -290,15 +301,15 @@ with ls.tracing_context(
 | `get_sync_client()` | Connect to deployed LangSmith agent |
 | `ls.tracing_context()` | Control tracing scope and metadata |
 
-## Best Practices
+## Best practices
 
 - Use `GenericFakeChatModel` for deterministic unit tests that run fast without API calls
 - Use `InMemorySaver` to test multi-turn conversations and state persistence
-- Lean toward integration tests for agentic systems since they chain multiple components
+- Favor integration tests for agentic systems, since they chain multiple components
 - Use trajectory matching with appropriate mode (`strict` for critical paths, `unordered` for flexible workflows)
 - Record HTTP interactions with vcrpy to reduce API costs in CI/CD pipelines
 - Mask sensitive data (API keys, tokens) in cassette recordings
-- Enable LangSmith tracing in all environments for full observability
+- Enable LangSmith tracing in all environments
 - Use tags and metadata to organize traces by environment, version, and user
 - Use selective tracing in development to avoid noise from unrelated operations
 - Deploy via LangSmith for stateful agents - it handles scaling and state management

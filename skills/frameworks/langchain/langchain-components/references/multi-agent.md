@@ -1,10 +1,26 @@
-# Multi-Agent Systems
+# Multi-agent systems
+
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Five primary patterns](#five-primary-patterns)
+- [Performance comparison](#performance-comparison)
+- [Pattern selection framework](#pattern-selection-framework)
+- [Subagents pattern](#subagents-pattern)
+- [Handoffs pattern](#handoffs-pattern)
+- [Skills pattern](#skills-pattern)
+- [Router pattern](#router-pattern)
+- [Custom Workflow pattern](#custom-workflow-pattern)
+- [Mixing patterns](#mixing-patterns)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
 
 ## Overview
 
-Multi-agent systems coordinate specialized components to handle complex workflows. Not every complex task requires this approach - a single well-designed agent with the right tools and prompt can often achieve similar results. Multi-agent patterns become valuable when a single agent has too many tools, tasks require specialized knowledge with extensive context, or sequential constraints unlock capabilities only after certain conditions are met.
+Multi-agent systems coordinate specialized components for complex workflows. Many complex tasks do not need them: a single agent with the right tools and prompt can often do the same job. Multi-agent patterns pay off when a single agent has too many tools, tasks need specialized knowledge with extensive context, or sequential constraints unlock capabilities only after certain conditions are met.
 
-At the center of multi-agent design is context engineering - deciding what information each agent sees.
+Multi-agent design is mostly context engineering: deciding what information each agent sees.
 
 ## Installation
 
@@ -12,7 +28,7 @@ At the center of multi-agent design is context engineering - deciding what infor
 pip install langchain langgraph
 ```
 
-## Five Primary Patterns
+## Five primary patterns
 
 | Pattern | Description | Best For |
 |---------|-------------|----------|
@@ -20,11 +36,11 @@ pip install langchain langgraph
 | Handoffs | State-driven behavior changes via tool calls | Direct user interaction, sequential workflows |
 | Skills | Specialized prompts loaded on-demand | Single agent with many specializations |
 | Router | Classification-based dispatch to specialized agents | Parallel multi-domain queries |
-| Custom Workflow | Bespoke LangGraph execution flows | Complex routing, mixed deterministic/agentic |
+| Custom Workflow | Custom LangGraph execution flows | Complex routing, mixed deterministic/agentic |
 
-## Performance Comparison
+## Performance comparison
 
-### One-Shot Request ("Buy coffee")
+### One-shot request ("Buy coffee")
 
 | Pattern | Model Calls | Notes |
 |---------|-------------|-------|
@@ -33,7 +49,7 @@ pip install langchain langgraph
 | Skills | 3 | Optimal |
 | Router | 3 | Optimal |
 
-### Repeat Request (Two Turns)
+### Repeat request (two turns)
 
 | Pattern | Total Calls | Notes |
 |---------|-------------|-------|
@@ -44,7 +60,7 @@ pip install langchain langgraph
 
 Stateful patterns (Handoffs, Skills) save 40-50% of calls on repeat requests.
 
-### Multi-Domain ("Compare Python, JavaScript, and Rust")
+### Multi-domain ("Compare Python, JavaScript, and Rust")
 
 | Pattern | Model Calls | Total Tokens | Notes |
 |---------|-------------|--------------|-------|
@@ -53,7 +69,7 @@ Stateful patterns (Handoffs, Skills) save 40-50% of calls on repeat requests.
 | Skills | 3 | ~15K | High token usage - loads all docs |
 | Router | 5 | ~9K | Optimal - parallel execution |
 
-## Pattern Selection Framework
+## Pattern selection framework
 
 | Requirement | Subagents | Handoffs | Skills | Router |
 |-------------|-----------|----------|--------|--------|
@@ -64,11 +80,11 @@ Stateful patterns (Handoffs, Skills) save 40-50% of calls on repeat requests.
 
 ---
 
-## Subagents Pattern
+## Subagents pattern
 
 A central supervisor agent coordinates specialized subagents by invoking them as tools. Subagents operate statelessly with context isolation.
 
-### Basic Setup (Tool Per Agent)
+### Basic setup (tool per agent)
 
 ```python
 from langchain.tools import tool
@@ -89,7 +105,7 @@ main_agent = create_agent(
 )
 ```
 
-### Single Dispatch Registry
+### Single dispatch registry
 
 ```python
 research_agent = create_agent(model="gpt-4.1", prompt="Research specialist...")
@@ -121,14 +137,14 @@ main_agent = create_agent(
 )
 ```
 
-### Sync vs Async Execution
+### Sync vs async execution
 
 | Mode | When to Use |
 |------|-------------|
 | Synchronous (default) | Supervisor needs subagent output to formulate response. Dependent tasks. |
 | Asynchronous | Independent work where users should not wait. Requires start/check/get tools. |
 
-### Subagent Discovery Methods
+### Subagent discovery methods
 
 | Method | Best For |
 |--------|----------|
@@ -136,7 +152,7 @@ main_agent = create_agent(
 | Enum Constraint on Dispatch Tool | Fixed agent sets with type safety |
 | Tool-Based Discovery (`list_agents`, `search_agents`) | Large, frequently-changing registries |
 
-### Context Engineering for Subagents
+### Context engineering for subagents
 
 **Controlling inputs** - pull from agent state:
 
@@ -185,24 +201,24 @@ def call_subagent1(
 
 ---
 
-## Handoffs Pattern
+## Handoffs pattern
 
 Behavior changes dynamically based on state. Tool calls update a state variable that triggers routing or configuration changes.
 
-### Key Characteristics
+### Key characteristics
 
 - State-driven behavior modification
 - Tool-based state transitions
 - Direct user interaction across different states
 - Persistent state surviving across turns
 
-### Implementation Approaches
+### Implementation approaches
 
 **Single Agent with Middleware:** A single agent dynamically adjusts its system prompt and available tools based on current state. Middleware intercepts model calls and applies configuration changes. Tools return `Command` objects to update state.
 
 **Multiple Agent Subgraphs:** Distinct agents exist as separate graph nodes. Handoff tools navigate between nodes using `Command.PARENT`.
 
-### Critical Implementation Detail
+### Critical implementation detail
 
 When tools update messages, they must include a `ToolMessage` with a matching `tool_call_id`. Without it, the conversation history becomes malformed.
 
@@ -210,17 +226,17 @@ For multi-agent systems, include both the triggering `AIMessage` and a `ToolMess
 
 ---
 
-## Skills Pattern
+## Skills pattern
 
 Specialized prompts and knowledge loaded on-demand. A single agent stays in control while loading context from skills as needed.
 
-### When to Use
+### When to use
 
 - Single agent with many possible specializations
 - No constraints between skills
 - Coding assistants, domain-organized knowledge bases, format-specific creative tools
 
-### Basic Implementation
+### Basic implementation
 
 ```python
 from langchain.tools import tool
@@ -239,7 +255,7 @@ agent = create_agent(
 )
 ```
 
-### Extension Approaches
+### Extension approaches
 
 - **Dynamic tool registration** - register tools as skills load
 - **Hierarchical skills** - nested specializations in tree structures
@@ -247,15 +263,15 @@ agent = create_agent(
 
 ---
 
-## Router Pattern
+## Router pattern
 
 A routing step classifies input and directs it to specialized agents. Results are synthesized into a unified response.
 
-### Single Agent Routing
+### Single agent routing
 
 Uses the `Command` class to direct queries to one appropriate agent after LLM-based classification.
 
-### Parallel Multi-Agent Routing
+### Parallel multi-agent routing
 
 Uses the `Send` mechanism to fan out across multiple agents simultaneously:
 
@@ -264,7 +280,7 @@ Uses the `Send` mechanism to fan out across multiple agents simultaneously:
 sends = [Send("agent_node", {"query": sub_query}) for sub_query in classified_queries]
 ```
 
-### Stateless vs Stateful
+### Stateless vs stateful
 
 | Approach | Description |
 |----------|-------------|
@@ -278,17 +294,17 @@ Routers use lightweight classification for dispatch. Subagents involve dynamic s
 
 ---
 
-## Custom Workflow Pattern
+## Custom Workflow pattern
 
-Build bespoke execution flows with LangGraph, mixing deterministic logic and agentic behavior. Allows embedding other patterns as nodes.
+Build custom execution flows with LangGraph, mixing deterministic logic and agentic behavior. Other patterns can be embedded as nodes.
 
-### When to Use
+### When to use
 
 - Standard patterns do not apply
 - Need to combine deterministic logic with agentic behavior
 - Complex routing and multi-stage processing required
 
-### Node Types
+### Node types
 
 | Type | Description | Example |
 |------|-------------|---------|
@@ -296,7 +312,7 @@ Build bespoke execution flows with LangGraph, mixing deterministic logic and age
 | Deterministic node | Performs operations without LLM calls | Vector similarity search |
 | Agent node | Reasons over context with tool access | Research with live data |
 
-### State Management
+### State management
 
 Uses LangGraph TypedDict-based state to pass information between workflow steps:
 
@@ -311,7 +327,7 @@ class WorkflowState(TypedDict):
 
 ---
 
-## Mixing Patterns
+## Mixing patterns
 
 Patterns can be combined. A subagents architecture can invoke tools that invoke custom workflows or router agents. Subagents can use the skills pattern to load context on-demand.
 
@@ -329,7 +345,7 @@ Patterns can be combined. A subagents architecture can invoke tools that invoke 
 | `@wrap_model_call` | Middleware decorator for model call interception |
 | `@wrap_tool_call` | Middleware decorator for tool call interception |
 
-## Best Practices
+## Best practices
 
 - Start with a single agent; add multi-agent patterns only when justified
 - Choose patterns based on your optimization goal (latency, tokens, parallelism)

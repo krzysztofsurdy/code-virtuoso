@@ -1,8 +1,27 @@
 # Streaming
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Stream modes](#stream-modes)
+- [Agent progress streaming](#agent-progress-streaming)
+- [LLM token streaming](#llm-token-streaming)
+- [Custom updates streaming](#custom-updates-streaming)
+- [Multiple stream modes](#multiple-stream-modes)
+- [Streaming reasoning tokens](#streaming-reasoning-tokens)
+- [Streaming tool calls](#streaming-tool-calls)
+- [Aggregating completed messages](#aggregating-completed-messages)
+- [Human-in-the-loop streaming](#human-in-the-loop-streaming)
+- [Sub-agent streaming](#sub-agent-streaming)
+- [Disabling streaming](#disabling-streaming)
+- [Frontend: useStream React hook](#frontend-usestream-react-hook)
+- [Event callbacks](#event-callbacks)
+- [Best practices](#best-practices)
+
 ## Overview
 
-LangChain implements a streaming system that surfaces real-time updates from agent operations. The framework enables progressive output display before complete responses are ready, significantly improving user experience when dealing with LLM latency. Streaming works across agent progress, LLM tokens, reasoning tokens, and custom updates.
+LangChain streams real-time updates from agent runs, so output can be shown progressively before the full response is ready. This hides LLM latency from users. Streaming covers agent progress, LLM tokens, reasoning tokens, and custom updates.
 
 ## Installation
 
@@ -12,7 +31,7 @@ pip install langchain langgraph
 npm install @langchain/langgraph-sdk
 ```
 
-## Stream Modes
+## Stream modes
 
 | Mode | Description | Use Case |
 |------|-------------|----------|
@@ -20,7 +39,7 @@ npm install @langchain/langgraph-sdk
 | `messages` | Tuples of `(token, metadata)` from LLM nodes | Real-time token display |
 | `custom` | User-defined data via stream writer | Progress bars, status updates |
 
-## Agent Progress Streaming
+## Agent progress streaming
 
 Use `stream()` or `astream()` with `stream_mode="updates"` to emit events after every agent step.
 
@@ -34,7 +53,7 @@ for chunk in agent.stream(
         print(f"content: {data['messages'][-1].content_blocks}")
 ```
 
-## LLM Token Streaming
+## LLM token streaming
 
 Access tokens as they are produced using `stream_mode="messages"`.
 
@@ -47,7 +66,7 @@ for token, metadata in agent.stream(
     print(f"content: {token.content_blocks}")
 ```
 
-## Custom Updates Streaming
+## Custom updates streaming
 
 Emit user-defined signals from tools using `get_stream_writer`.
 
@@ -67,9 +86,9 @@ for chunk in agent.stream(
     print(chunk)
 ```
 
-**Important:** Adding `get_stream_writer` inside tools prevents tool invocation outside LangGraph execution contexts.
+Note: a tool that calls `get_stream_writer` can no longer be invoked outside a LangGraph execution context.
 
-## Multiple Stream Modes
+## Multiple stream modes
 
 Combine modes by passing a list. Returns tuples of `(mode, chunk)`.
 
@@ -82,7 +101,7 @@ for stream_mode, chunk in agent.stream(
     print(f"content: {chunk}")
 ```
 
-## Streaming Reasoning Tokens
+## Streaming reasoning tokens
 
 Filter for reasoning content blocks when using `stream_mode="messages"`.
 
@@ -105,7 +124,7 @@ for token, metadata in agent.stream(
 
 LangChain normalizes provider-specific formats (Anthropic thinking blocks, OpenAI reasoning summaries) into standard `"reasoning"` content block type via `content_blocks`.
 
-## Streaming Tool Calls
+## Streaming tool calls
 
 Access both partial JSON as tool calls generate and completed parsed calls.
 
@@ -124,7 +143,7 @@ for stream_mode, data in agent.stream(
                 _render_completed_message(update["messages"][-1])
 ```
 
-## Aggregating Completed Messages
+## Aggregating completed messages
 
 When completed messages are not reflected in state updates, aggregate chunks during streaming.
 
@@ -145,7 +164,7 @@ for stream_mode, data in agent.stream(
                 full_message = None
 ```
 
-## Human-in-the-Loop Streaming
+## Human-in-the-loop streaming
 
 Configure agents with human-in-the-loop middleware and collect interrupts during updates stream.
 
@@ -203,7 +222,7 @@ for stream_mode, data in agent.stream(
     pass  # Continue streaming with modified decisions
 ```
 
-## Sub-Agent Streaming
+## Sub-agent streaming
 
 Assign names to agents to disambiguate message sources.
 
@@ -234,7 +253,7 @@ for _, stream_mode, data in agent.stream(
                 current_agent = agent_name
 ```
 
-## Disabling Streaming
+## Disabling streaming
 
 ```python
 from langchain_openai import ChatOpenAI
@@ -245,11 +264,11 @@ model = ChatOpenAI(model="gpt-4.1", streaming=False)
 model = ChatOpenAI(model="gpt-4.1", disable_streaming=True)
 ```
 
-## Frontend: useStream React Hook
+## Frontend: useStream React hook
 
 The `useStream` hook from `@langchain/langgraph-sdk/react` enables React integration with LangGraph streaming.
 
-### Basic Setup
+### Basic setup
 
 ```typescript
 import { useStream } from "@langchain/langgraph-sdk/react";
@@ -279,7 +298,7 @@ stream.submit({
 | `throttle` | boolean | Batch updates for performance |
 | `initialValues` | StateType | Display cached data while loading |
 
-### Return Values
+### Return values
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -294,7 +313,7 @@ stream.submit({
 | `getToolCalls()` | function | Extract tool calls from message |
 | `getMessagesMetadata()` | function | Access checkpoint/streaming info |
 
-### Thread Persistence
+### Thread persistence
 
 ```typescript
 const [threadId, setThreadId] = useState<string | null>(null);
@@ -304,7 +323,7 @@ const stream = useStream({
 });
 ```
 
-### Page Refresh Recovery
+### Page refresh recovery
 
 ```typescript
 // Automatic
@@ -314,7 +333,7 @@ reconnectOnMount: true
 reconnectOnMount: () => window.localStorage
 ```
 
-### Optimistic Updates
+### Optimistic updates
 
 ```typescript
 stream.submit(
@@ -349,7 +368,7 @@ const meta = stream.getMessagesMetadata(message);
 stream.setBranch(meta.branch);
 ```
 
-### Tool Call Rendering
+### Tool call rendering
 
 ```typescript
 const toolCalls = stream.getToolCalls(message);
@@ -360,7 +379,7 @@ toolCalls.map(toolCall => {
 });
 ```
 
-### Custom Events from Agent
+### Custom events from agent
 
 Python side:
 ```python
@@ -380,7 +399,7 @@ onCustomEvent: (data) => {
 }
 ```
 
-### Human-in-the-Loop in UI
+### Human-in-the-loop in UI
 
 ```typescript
 const hitlRequest = stream.interrupt?.value;
@@ -393,7 +412,7 @@ if (hitlRequest) {
 }
 ```
 
-### Multi-Agent Message Sources
+### Multi-agent message sources
 
 ```typescript
 const metadata = stream.getMessagesMetadata(message);
@@ -401,7 +420,7 @@ const nodeName = metadata?.streamMetadata?.langgraph_node;
 // Render with distinct styling based on source agent
 ```
 
-## Event Callbacks
+## Event callbacks
 
 | Callback | Trigger | Stream Mode |
 |----------|---------|-------------|
@@ -411,7 +430,7 @@ const nodeName = metadata?.streamMetadata?.langgraph_node;
 | `onError` | Streaming error | - |
 | `onFinish` | Stream completion | - |
 
-## Best Practices
+## Best practices
 
 - Use `stream_mode="updates"` for progress tracking, `"messages"` for token-by-token display
 - Combine multiple stream modes when you need both progress and tokens

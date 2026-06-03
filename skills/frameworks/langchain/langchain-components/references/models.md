@@ -1,8 +1,22 @@
 # Models
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Model initialization](#model-initialization)
+- [Key parameters](#key-parameters)
+- [Invocation methods](#invocation-methods)
+- [Tool calling](#tool-calling)
+- [Structured output](#structured-output)
+- [Structured output in agents](#structured-output-in-agents)
+- [Advanced features](#advanced-features)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
+
 ## Overview
 
-LangChain provides a unified interface for interacting with Large Language Models (LLMs) across multiple providers. Models support tool calling, structured output, multimodality (images, audio, video), and reasoning capabilities. The recommended approach uses `init_chat_model` for a provider-agnostic interface, though provider-specific classes are also available.
+LangChain gives one interface to large language models (LLMs) across providers. Models support tool calling, structured output, multimodal input and output (images, audio, video), and reasoning. `init_chat_model` is the recommended entry point because it is provider-agnostic; provider-specific classes are also available.
 
 ## Installation
 
@@ -16,9 +30,9 @@ pip install langchain-aws
 pip install langchain-huggingface
 ```
 
-## Model Initialization
+## Model initialization
 
-### Using `init_chat_model` (Recommended)
+### Using `init_chat_model` (recommended)
 
 ```python
 from langchain.chat_models import init_chat_model
@@ -26,7 +40,7 @@ model = init_chat_model("model-name")
 response = model.invoke("Your question here")
 ```
 
-### Provider-Specific Initialization
+### Provider-specific initialization
 
 ```python
 # OpenAI
@@ -51,7 +65,7 @@ llm = HuggingFaceEndpoint(repo_id="microsoft/Phi-3-mini-4k-instruct")
 model = ChatHuggingFace(llm=llm)
 ```
 
-## Key Parameters
+## Key parameters
 
 | Parameter | Description |
 |-----------|-------------|
@@ -72,9 +86,9 @@ model = init_chat_model(
 )
 ```
 
-## Invocation Methods
+## Invocation methods
 
-### Invoke (Synchronous)
+### Invoke (synchronous)
 
 ```python
 response = model.invoke("Why do parrots talk?")
@@ -90,7 +104,7 @@ conversation = [
 response = model.invoke(conversation)
 ```
 
-### Stream (Real-time Output)
+### Stream (real-time output)
 
 ```python
 for chunk in model.stream("Your question"):
@@ -105,7 +119,7 @@ async for event in model.astream_events("Hello"):
         print(f"Token: {event['data']['chunk'].text}")
 ```
 
-### Batch (Parallel Processing)
+### Batch (parallel processing)
 
 ```python
 responses = model.batch([
@@ -127,9 +141,9 @@ for response in model.batch_as_completed(inputs):
     print(response)
 ```
 
-## Tool Calling
+## Tool calling
 
-### Binding Tools
+### Binding tools
 
 ```python
 from langchain.tools import tool
@@ -147,7 +161,7 @@ for tool_call in response.tool_calls:
     print(f"Args: {tool_call['args']}")
 ```
 
-### Tool Execution Loop
+### Tool execution loop
 
 ```python
 messages = [{"role": "user", "content": "Weather in Boston?"}]
@@ -161,14 +175,14 @@ for tool_call in ai_msg.tool_calls:
 final_response = model_with_tools.invoke(messages)
 ```
 
-### Forcing Tool Calls
+### Forcing tool calls
 
 ```python
 model.bind_tools([tool_1], tool_choice="any")
 model.bind_tools([tool_1], tool_choice="tool_1")
 ```
 
-### Parallel Tool Calls
+### Parallel tool calls
 
 ```python
 response = model_with_tools.invoke("Weather in Boston and Tokyo?")
@@ -178,7 +192,7 @@ response = model_with_tools.invoke("Weather in Boston and Tokyo?")
 model.bind_tools([get_weather], parallel_tool_calls=False)
 ```
 
-### Streaming Tool Calls
+### Streaming tool calls
 
 ```python
 for chunk in model_with_tools.stream("Weather in Boston?"):
@@ -187,9 +201,9 @@ for chunk in model_with_tools.stream("Weather in Boston?"):
             print(f"Tool: {name}")
 ```
 
-## Structured Output
+## Structured output
 
-### Using Pydantic Models
+### Using Pydantic models
 
 ```python
 from pydantic import BaseModel, Field
@@ -216,7 +230,7 @@ class MovieDict(TypedDict):
 model_with_structure = model.with_structured_output(MovieDict)
 ```
 
-### Using JSON Schema
+### Using JSON schema
 
 ```python
 json_schema = {
@@ -235,7 +249,7 @@ model_with_structure = model.with_structured_output(
 )
 ```
 
-### Include Raw Output
+### Include raw output
 
 ```python
 model_with_structure = model.with_structured_output(Movie, include_raw=True)
@@ -243,7 +257,7 @@ response = model_with_structure.invoke("Details...")
 # Returns {'raw': AIMessage(...), 'parsed': Movie(...), 'parsing_error': None}
 ```
 
-### Nested Structures
+### Nested structures
 
 ```python
 class Actor(BaseModel):
@@ -256,9 +270,9 @@ class MovieDetails(BaseModel):
     genres: list[str]
 ```
 
-## Structured Output in Agents
+## Structured output in agents
 
-### Response Format Configuration
+### Response format configuration
 
 The `response_format` parameter in `create_agent` accepts:
 
@@ -267,7 +281,7 @@ The `response_format` parameter in `create_agent` accepts:
 - Schema type directly - auto-selects appropriate strategy
 - `None` - no structured output
 
-### Provider Strategy
+### Provider strategy
 
 ```python
 from pydantic import BaseModel, Field
@@ -283,7 +297,7 @@ result = agent.invoke({"messages": [{"role": "user", "content": "..."}]})
 print(result["structured_response"])
 ```
 
-### Tool Calling Strategy
+### Tool calling strategy
 
 For models lacking native structured output support:
 
@@ -302,7 +316,7 @@ Supports Union types for multiple response schemas:
 response_format = ToolStrategy(Union[ProductReview, CustomerComplaint])
 ```
 
-### Error Handling Options
+### Error handling options
 
 | Option | Behavior |
 |--------|----------|
@@ -317,9 +331,9 @@ Available exception classes:
 - `StructuredOutputValidationError` - schema validation failures
 - `MultipleStructuredOutputsError` - multiple tools incorrectly called
 
-## Advanced Features
+## Advanced features
 
-### Model Profiles
+### Model profiles
 
 ```python
 model.profile
@@ -329,7 +343,7 @@ custom_profile = {"max_input_tokens": 100_000, "tool_calling": True}
 model = init_chat_model("...", profile=custom_profile)
 ```
 
-### Multimodal Output
+### Multimodal output
 
 ```python
 response = model.invoke("Create a picture of a cat")
@@ -345,7 +359,7 @@ for chunk in model.stream("Why colorful feathers?"):
     print(reasoning if reasoning else chunk.text)
 ```
 
-### Rate Limiting
+### Rate limiting
 
 ```python
 from langchain_core.rate_limiters import InMemoryRateLimiter
@@ -359,7 +373,7 @@ rate_limiter = InMemoryRateLimiter(
 model = init_chat_model("gpt-5", rate_limiter=rate_limiter)
 ```
 
-### Custom Base URL
+### Custom base URL
 
 ```python
 model = init_chat_model(
@@ -370,7 +384,7 @@ model = init_chat_model(
 )
 ```
 
-### Token Usage Tracking
+### Token usage tracking
 
 ```python
 from langchain_core.callbacks import get_usage_metadata_callback
@@ -380,7 +394,7 @@ with get_usage_metadata_callback() as cb:
     print(cb.usage_metadata)
 ```
 
-### Configurable Models
+### Configurable models
 
 ```python
 configurable_model = init_chat_model(temperature=0)
@@ -413,7 +427,7 @@ model.invoke(
 )
 ```
 
-### Invocation Configuration
+### Invocation configuration
 
 ```python
 response = model.invoke(
@@ -429,7 +443,7 @@ response = model.invoke(
 )
 ```
 
-### Log Probabilities
+### Log probabilities
 
 ```python
 model = init_chat_model("gpt-4.1", model_provider="openai").bind(logprobs=True)
@@ -437,7 +451,7 @@ response = model.invoke("Question?")
 print(response.response_metadata["logprobs"])
 ```
 
-### Server-Side Tool Use
+### Server-side tool use
 
 ```python
 model = init_chat_model("gpt-4.1-mini")
@@ -463,12 +477,12 @@ print(response.content_blocks)
 | `model.profile` | Access model capabilities |
 | `InMemoryRateLimiter` | Client-side rate limiting |
 
-## Best Practices
+## Best practices
 
 - Use `init_chat_model` for provider-agnostic code that can switch models easily
 - Set `temperature=0` for deterministic, reproducible outputs
-- Use `max_retries=6` (default) for production reliability
-- Leverage `batch()` with `max_concurrency` for throughput-sensitive workloads
+- Keep `max_retries` at its default of 6 in production
+- Use `batch()` with `max_concurrency` for throughput-sensitive workloads
 - Use `with_structured_output()` with Pydantic models for type-safe responses
 - Prefer `ProviderStrategy` for structured output when the model supports it
 - Use `configurable_fields` to make model selection dynamic at runtime

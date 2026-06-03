@@ -1,8 +1,19 @@
 # Tools
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Creating tools](#creating-tools)
+- [Accessing runtime context](#accessing-runtime-context)
+- [ToolNode](#toolnode)
+- [Model Context Protocol (MCP)](#model-context-protocol-mcp)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Tools extend agent capabilities by enabling real-time data fetching, code execution, database queries, and external actions. They are callable functions with defined inputs and outputs that are passed to chat models, which decide when and how to invoke them based on conversation context. LangChain also supports the Model Context Protocol (MCP) for standardized tool integration across applications.
+Tools let agents fetch real-time data, run code, query databases, and take external actions. A tool is a callable function with defined inputs and outputs; the chat model decides when and how to call it based on the conversation. LangChain also supports the Model Context Protocol (MCP) for sharing tools across applications.
 
 ## Installation
 
@@ -12,11 +23,11 @@ pip install langchain
 pip install langchain-mcp-adapters
 ```
 
-## Creating Tools
+## Creating tools
 
-### Basic Definition
+### Basic definition
 
-The `@tool` decorator creates tools with docstrings serving as descriptions. Type hints define the input schema:
+The `@tool` decorator creates a tool and uses the docstring as its description. Type hints define the input schema:
 
 ```python
 from langchain.tools import tool
@@ -34,7 +45,7 @@ def search_database(query: str, limit: int = 10) -> str:
 
 Prefer `snake_case` for tool names to avoid compatibility issues across model providers.
 
-### Custom Names and Descriptions
+### Custom names and descriptions
 
 ```python
 @tool("web_search")
@@ -48,7 +59,7 @@ def calc(expression: str) -> str:
     return str(eval(expression))
 ```
 
-### Advanced Schema with Pydantic
+### Advanced schema with Pydantic
 
 ```python
 from pydantic import BaseModel, Field
@@ -70,13 +81,13 @@ def get_weather(location: str, units: str = "celsius",
     return result
 ```
 
-### Reserved Parameter Names
+### Reserved parameter names
 
 Two parameter names cannot be used as tool arguments:
 - `config` - reserved for `RunnableConfig`
 - `runtime` - reserved for `ToolRuntime`
 
-## Accessing Runtime Context
+## Accessing runtime context
 
 Tools use `ToolRuntime` to access conversation state, configuration, persistent storage, and streaming capabilities.
 
@@ -88,7 +99,7 @@ Tools use `ToolRuntime` to access conversation state, configuration, persistent 
 | `runtime.stream_writer` | Real-time updates during execution |
 | `runtime.tool_call_id` | Unique identifier for current invocation |
 
-### State Access (Short-term Memory)
+### State access (short-term memory)
 
 ```python
 @tool
@@ -112,7 +123,7 @@ def set_user_name(new_name: str) -> Command:
     return Command(update={"user_name": new_name})
 ```
 
-### Context (Immutable Configuration)
+### Context (immutable configuration)
 
 ```python
 from dataclasses import dataclass
@@ -144,7 +155,7 @@ result = agent.invoke(
 )
 ```
 
-### Store (Long-term Memory)
+### Store (long-term memory)
 
 ```python
 @tool
@@ -165,7 +176,7 @@ def save_user_info(user_id: str, user_info: dict[str, Any],
 
 For production, use `PostgresStore` instead of `InMemoryStore`.
 
-### Stream Writer
+### Stream writer
 
 ```python
 @tool
@@ -190,7 +201,7 @@ builder = StateGraph(MessagesState)
 builder.add_node("tools", tool_node)
 ```
 
-### Tool Return Value Patterns
+### Tool return value patterns
 
 **String returns** (human-readable):
 
@@ -229,7 +240,7 @@ def set_language(language: str, runtime: ToolRuntime) -> Command:
     )
 ```
 
-### Error Handling
+### Error handling
 
 ```python
 # Default: catch all errors
@@ -247,7 +258,7 @@ tool_node = ToolNode(tools, handle_tool_errors=handle_error)
 tool_node = ToolNode(tools, handle_tool_errors=(ValueError, TypeError))
 ```
 
-### Conditional Routing
+### Conditional routing
 
 ```python
 from langgraph.prebuilt import tools_condition
@@ -261,18 +272,18 @@ builder.add_edge("tools", "llm")
 
 MCP is an open protocol that standardizes how applications provide tools and context to LLMs.
 
-### Core Components
+### Core components
 
-**MultiServerMCPClient** - primary interface for connecting to MCP servers. Stateless by default; each tool invocation creates a fresh session. Supports multiple simultaneous server connections.
+`MultiServerMCPClient` is the primary interface for connecting to MCP servers. Stateless by default; each tool invocation creates a fresh session. Supports multiple simultaneous server connections.
 
-### Supported Transports
+### Supported transports
 
 | Transport | Use Case |
 |-----------|----------|
 | `stdio` | Local subprocess communication |
 | `HTTP/streamable-http` | Remote server communication with optional headers and auth |
 
-### Basic Usage
+### Basic usage
 
 ```python
 from langchain_mcp_adapters import MultiServerMCPClient
@@ -283,7 +294,7 @@ async with MultiServerMCPClient() as client:
     prompt = await client.get_prompt("prompt_name")
 ```
 
-### Stateful Sessions
+### Stateful sessions
 
 For persistent connections maintaining context across tool calls:
 
@@ -292,7 +303,7 @@ async with client.session("server_name") as session:
     tools = await load_mcp_tools(session)
 ```
 
-### MCP Features
+### MCP features
 
 | Feature | Description |
 |---------|-------------|
@@ -311,7 +322,7 @@ Middleware functions for modifying requests/responses at runtime:
 - Dynamic header modification
 - State updates via `Command` objects
 
-### Building MCP Servers
+### Building MCP servers
 
 Use FastMCP to build custom servers:
 
@@ -340,7 +351,7 @@ Supports both stdio and HTTP transports.
 | `MultiServerMCPClient` | Connect to MCP servers |
 | `load_mcp_tools()` | Load tools from an MCP session |
 
-## Best Practices
+## Best practices
 
 - Use `snake_case` for tool names across all providers
 - Write clear docstrings - they serve as the tool description for the model
@@ -348,6 +359,6 @@ Supports both stdio and HTTP transports.
 - Avoid reserved parameter names (`config`, `runtime`)
 - Use `ToolRuntime` for accessing conversation state rather than global variables
 - Use `PostgresStore` instead of `InMemoryStore` in production
-- Configure `handle_tool_errors=True` on `ToolNode` for graceful failure handling
+- Set `handle_tool_errors=True` on `ToolNode` to catch tool errors
 - Use MCP for standardized tool integration across multiple applications
 - Prefer stateless MCP connections unless persistent context is required

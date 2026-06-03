@@ -1,10 +1,27 @@
 # Retrieval and RAG
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Retrieval pipeline components](#retrieval-pipeline-components)
+- [RAG architecture types](#rag-architecture-types)
+- [Indexing: document loading](#indexing-document-loading)
+- [Indexing: text splitting](#indexing-text-splitting)
+- [Indexing: embeddings](#indexing-embeddings)
+- [Indexing: vector stores](#indexing-vector-stores)
+- [Retrieval: agentic RAG (tool-based)](#retrieval-agentic-rag-tool-based)
+- [Retrieval: two-step RAG chain](#retrieval-two-step-rag-chain)
+- [Retriever search types](#retriever-search-types)
+- [Complete example](#complete-example)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Retrieval mechanisms address two fundamental LLM limitations: finite context windows and static training knowledge. LangChain provides a complete retrieval pipeline through Retrieval-Augmented Generation (RAG), enabling systems to fetch relevant external knowledge at query time and pass it to the LLM for answer generation.
+Retrieval addresses two LLM limitations: finite context windows and static training knowledge. LangChain's Retrieval-Augmented Generation (RAG) pipeline fetches relevant external knowledge at query time and passes it to the LLM to generate an answer.
 
-The retrieval pipeline consists of two phases: **indexing** (loading, splitting, embedding, and storing documents) and **retrieval & generation** (fetching relevant context and generating answers). LangChain supports both agentic RAG (LLM decides when to retrieve) and two-step RAG chains (always retrieve then generate).
+The pipeline has two phases: indexing (loading, splitting, embedding, and storing documents) and retrieval and generation (fetching relevant context and generating answers). LangChain supports both agentic RAG (LLM decides when to retrieve) and two-step RAG chains (always retrieve then generate).
 
 ## Installation
 
@@ -14,7 +31,7 @@ pip install langchain langchain-text-splitters langchain-community bs4
 
 Additional packages depend on your chosen LLM, embeddings provider, and vector store.
 
-## Retrieval Pipeline Components
+## Retrieval pipeline components
 
 | Component | Purpose | Key Class |
 |---|---|---|
@@ -24,7 +41,7 @@ Additional packages depend on your chosen LLM, embeddings provider, and vector s
 | Vector Stores | Store and retrieve embeddings | `InMemoryVectorStore`, `Chroma`, `FAISS`, `Pinecone` |
 | Retrievers | Interface returning documents for queries | `VectorStoreRetriever` |
 
-## RAG Architecture Types
+## RAG architecture types
 
 | Type | Characteristics | Control | Flexibility | Latency |
 |---|---|---|---|---|
@@ -32,9 +49,9 @@ Additional packages depend on your chosen LLM, embeddings provider, and vector s
 | Agentic RAG | LLM decides when/how to retrieve | Low | High | Variable |
 | Hybrid RAG | Combines both with validation steps | Medium | Medium | Medium |
 
-## Indexing: Document Loading
+## Indexing: document loading
 
-### Web Content
+### Web content
 
 ```python
 import bs4
@@ -48,7 +65,7 @@ loader = WebBaseLoader(
 docs = loader.load()
 ```
 
-### PDF Content
+### PDF content
 
 ```python
 from langchain_community.document_loaders import PyPDFLoader
@@ -59,7 +76,7 @@ docs = loader.load()
 
 Documents have three attributes: `page_content` (text), `metadata` (contextual info), and optional `id`.
 
-## Indexing: Text Splitting
+## Indexing: text splitting
 
 ```python
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -78,7 +95,7 @@ all_splits = text_splitter.split_documents(docs)
 | `chunk_overlap` | Characters repeated between consecutive chunks |
 | `add_start_index` | Tracks position in original document |
 
-## Indexing: Embeddings
+## Indexing: embeddings
 
 ```python
 # OpenAI
@@ -98,7 +115,7 @@ from langchain_aws import BedrockEmbeddings
 embeddings = BedrockEmbeddings(model_id="amazon.titan-embed-text-v2:0")
 ```
 
-## Indexing: Vector Stores
+## Indexing: vector stores
 
 ```python
 # Store documents
@@ -107,7 +124,7 @@ document_ids = vector_store.add_documents(documents=all_splits)
 
 Supported vector stores: InMemoryVectorStore, Chroma, FAISS, Milvus, MongoDB Atlas, PGVector, Pinecone, Qdrant, AstraDB, Amazon OpenSearch, Cohere, Weaviate.
 
-## Retrieval: Agentic RAG (Tool-Based)
+## Retrieval: agentic RAG (tool-based)
 
 The LLM decides when and how to retrieve. Supports multiple sequential searches and skips retrieval for simple queries.
 
@@ -141,11 +158,11 @@ for event in agent.stream(
     event["messages"][-1].pretty_print()
 ```
 
-The `response_format="content_and_artifact"` decorator attaches raw documents as artifacts separate from the stringified text sent to the model.
+The `response_format="content_and_artifact"` argument attaches raw documents as artifacts, separate from the stringified text sent to the model.
 
-**Trade-offs:** Two inference calls when searching (one for query generation, one for response), but less unnecessary retrieval.
+Trade-offs: two inference calls when searching (one for query generation, one for response), but less unnecessary retrieval.
 
-## Retrieval: Two-Step RAG Chain
+## Retrieval: two-step RAG chain
 
 Always performs retrieval with a single LLM call. Lower latency, guaranteed context injection.
 
@@ -169,7 +186,7 @@ def prompt_with_context(request: ModelRequest) -> str:
 agent = create_agent(model, tools=[], middleware=[prompt_with_context])
 ```
 
-### Including Source Documents in Two-Step Chains
+### Including source documents in two-step chains
 
 ```python
 from typing import Any
@@ -201,7 +218,7 @@ agent = create_agent(
 )
 ```
 
-## Retriever Search Types
+## Retriever search types
 
 | Search Type | Description |
 |---|---|
@@ -209,7 +226,7 @@ agent = create_agent(
 | `mmr` | Maximum marginal relevance - balances relevance with diversity |
 | `similarity_score_threshold` | Returns only results above a score threshold |
 
-## Complete Example
+## Complete example
 
 ```python
 import bs4
@@ -270,7 +287,7 @@ for step in agent.stream(
 | `create_agent` | `langchain.agents` | Create RAG agent |
 | `@dynamic_prompt` | `langchain.agents.middleware` | Inject retrieval context into prompts |
 
-## Best Practices
+## Best practices
 
 - Choose agentic RAG for complex, multi-step queries requiring contextual decision-making
 - Choose two-step chains for straightforward questions with guaranteed retrieval needs

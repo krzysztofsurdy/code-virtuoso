@@ -1,8 +1,19 @@
-# LangChain Providers
+# LangChain providers
+
+## Contents
+
+- [Overview](#overview)
+- [OpenAI](#openai)
+- [Anthropic](#anthropic)
+- [Google](#google)
+- [AWS](#aws)
+- [Ollama](#ollama)
+- [Provider comparison](#provider-comparison)
+- [Best practices](#best-practices)
 
 ## Overview
 
-LangChain integrates with major AI/cloud providers through dedicated packages. Each provider offers different combinations of chat models, embedding models, tools, document loaders, vector stores, and retrievers. This reference covers the five most popular providers: OpenAI, Anthropic, Google, AWS, and Ollama.
+LangChain integrates with AI and cloud providers through dedicated packages. Each provider offers a different mix of chat models, embedding models, tools, document loaders, vector stores, and retrievers. This reference covers five providers: OpenAI, Anthropic, Google, AWS, and Ollama.
 
 ## OpenAI
 
@@ -12,7 +23,7 @@ LangChain integrates with major AI/cloud providers through dedicated packages. E
 pip install langchain-openai
 ```
 
-### Chat Models
+### Chat models
 
 ```python
 from langchain_openai import ChatOpenAI
@@ -25,7 +36,7 @@ from langchain_openai import AzureChatOpenAI
 llm = AzureChatOpenAI(deployment_name="gpt-4o")
 ```
 
-### Embedding Models
+### Embedding models
 
 ```python
 from langchain_openai import OpenAIEmbeddings
@@ -37,7 +48,7 @@ from langchain_openai import AzureOpenAIEmbeddings
 embeddings = AzureOpenAIEmbeddings()
 ```
 
-### Available Integrations
+### Available integrations
 
 | Component | Class | Description |
 |---|---|---|
@@ -58,7 +69,7 @@ embeddings = AzureOpenAIEmbeddings()
 pip install langchain-anthropic
 ```
 
-### Chat Models
+### Chat models
 
 ```python
 from langchain_anthropic import ChatAnthropic
@@ -72,7 +83,7 @@ llm = ChatAnthropic(
 )
 ```
 
-### Available Integrations
+### Available integrations
 
 | Component | Class | Description |
 |---|---|---|
@@ -80,7 +91,7 @@ llm = ChatAnthropic(
 | Middleware | `AnthropicMiddleware` | Anthropic-specific middleware for Claude |
 | LLM (Legacy) | `AnthropicLLM` | Legacy text completion models |
 
-### Vertex AI Access
+### Vertex AI access
 
 Anthropic models are also available through Google's Vertex AI:
 
@@ -105,7 +116,7 @@ pip install langchain-google-vertexai
 pip install langchain-google-community
 ```
 
-### Chat Models
+### Chat models
 
 ```python
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -121,9 +132,9 @@ llm = ChatGoogleGenerativeAI(
 )
 ```
 
-As of `langchain-google-genai` v4.0.0, the unified `google-genai` SDK supports both Gemini Developer API and Vertex AI backends.
+Since `langchain-google-genai` v4.0.0, the unified `google-genai` SDK supports both the Gemini Developer API and Vertex AI backends.
 
-### Embedding Models
+### Embedding models
 
 ```python
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -131,7 +142,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 ```
 
-### Available Integrations
+### Available integrations
 
 | Category | Components |
 |---|---|
@@ -159,7 +170,7 @@ embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 pip install langchain-aws
 ```
 
-### Chat Models
+### Chat models
 
 ```python
 # Amazon Bedrock
@@ -173,14 +184,14 @@ llm = ChatBedrockConverse(model_id="anthropic.claude-v2")
 
 Bedrock provides managed access to foundation models from AI21 Labs, Anthropic, Cohere, Meta, and Stability AI.
 
-### Embedding Models
+### Embedding models
 
 ```python
 from langchain_aws import BedrockEmbeddings
 embeddings = BedrockEmbeddings()
 ```
 
-### Available Integrations
+### Available integrations
 
 | Category | Components |
 |---|---|
@@ -195,14 +206,14 @@ embeddings = BedrockEmbeddings()
 | Memory | AgentCoreMemorySaver, AgentCoreMemoryStore |
 | Runtime | AgentCore Runtime (serverless LangGraph execution) |
 
-### Key AWS Services
+### Key AWS services
 
 | Service | Purpose |
 |---|---|
 | Bedrock | Managed foundation model access |
 | Bedrock Converse | Unified conversational API (recommended) |
 | SageMaker | Custom model hosting and inference |
-| Kendra | Intelligent enterprise search with NLP |
+| Kendra | Enterprise search with NLP |
 | Textract | Text/data extraction from scanned documents |
 | Lambda | Serverless compute for tool execution |
 | AgentCore | Managed agent runtime with observability |
@@ -217,7 +228,7 @@ pip install langchain-ollama
 
 Requires Ollama installed locally. See the Ollama model library for supported models.
 
-### Chat Models
+### Chat models
 
 ```python
 from langchain_ollama import ChatOllama
@@ -225,7 +236,7 @@ from langchain_ollama import ChatOllama
 llm = ChatOllama(model="llama3.1")
 ```
 
-### Embedding Models
+### Embedding models
 
 ```python
 from langchain_ollama import OllamaEmbeddings
@@ -233,7 +244,7 @@ from langchain_ollama import OllamaEmbeddings
 embeddings = OllamaEmbeddings(model="llama3.1")
 ```
 
-### Available Integrations
+### Available integrations
 
 | Component | Class | Description |
 |---|---|---|
@@ -241,14 +252,14 @@ embeddings = OllamaEmbeddings(model="llama3.1")
 | Embeddings | `OllamaEmbeddings` | Local text embeddings |
 | LLM (Legacy) | `OllamaLLM` | Legacy text completion (deprecated) |
 
-### Use Cases
+### Use cases
 
 - Local development and testing without API costs
 - Privacy-sensitive applications (data stays on-device)
 - Offline usage scenarios
 - Running open-source models (Llama, Mistral, Gemma, etc.)
 
-## Provider Comparison
+## Provider comparison
 
 | Feature | OpenAI | Anthropic | Google | AWS | Ollama |
 |---|---|---|---|---|---|
@@ -261,7 +272,7 @@ embeddings = OllamaEmbeddings(model="llama3.1")
 | Local Execution | No | No | No | No | Yes |
 | Cloud-Native | Yes | Yes | Yes | Yes | No |
 
-## Best Practices
+## Best practices
 
 - Use `ChatBedrockConverse` over `ChatBedrock` for standard AWS use cases
 - For Google, use `langchain-google-genai` v4+ for unified Gemini/Vertex AI support

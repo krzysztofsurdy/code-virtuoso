@@ -1,10 +1,19 @@
-# Runtime and Component Architecture
+# Runtime and component architecture
+
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Runtime dependency injection](#runtime-dependency-injection)
+- [Component architecture](#component-architecture)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
 
 ## Overview
 
-LangChain's `create_agent` uses LangGraph's runtime, which provides dependency injection for tools and middleware. The runtime manages context, persistent storage, and streaming capabilities, making tools more testable, reusable, and flexible by eliminating hardcoded values and global state dependencies.
+LangChain's `create_agent` uses LangGraph's runtime, which provides dependency injection for tools and middleware. The runtime manages context, persistent storage, and streaming, so tools can avoid hardcoded values and global state and are easier to test and reuse.
 
-LangChain organizes AI application development around interconnected components that work together through five main layers: input processing, embedding and storage, retrieval, generation, and orchestration.
+A LangChain application is built from components arranged in five layers: input processing, embedding and storage, retrieval, generation, and orchestration.
 
 ## Installation
 
@@ -12,7 +21,7 @@ LangChain organizes AI application development around interconnected components 
 pip install langchain langgraph
 ```
 
-## Runtime Dependency Injection
+## Runtime dependency injection
 
 ### Defining Context
 
@@ -45,7 +54,7 @@ response = agent.invoke(
 )
 ```
 
-### Accessing Runtime in Tools
+### Accessing runtime in tools
 
 Import `ToolRuntime` to access runtime values within tool functions.
 
@@ -63,7 +72,7 @@ def search_docs(query: str) -> str:
     return str(results)
 ```
 
-### Accessing Runtime in Middleware
+### Accessing runtime in middleware
 
 Node-style hooks receive a `Runtime` parameter. Wrap-style hooks access it through `ModelRequest`.
 
@@ -78,7 +87,7 @@ class UserAwareMiddleware(AgentMiddleware):
         return {}
 ```
 
-### Store for Long-Term Memory
+### Store for long-term memory
 
 The runtime store provides persistent key-value storage accessible across invocations.
 
@@ -102,7 +111,7 @@ def get_preferences() -> str:
     return str(items)
 ```
 
-### Stream Writer
+### Stream writer
 
 The runtime provides a stream writer for custom streaming updates.
 
@@ -117,9 +126,9 @@ def process_data(data: list) -> str:
     return "Done"
 ```
 
-## Component Architecture
+## Component architecture
 
-### Five Layers
+### Five layers
 
 | Layer | Purpose | Key Components |
 |-------|---------|----------------|
@@ -129,7 +138,7 @@ def process_data(data: list) -> str:
 | Generation | Create AI responses | Chat models, LLMs |
 | Orchestration | Coordinate components | Agents, memory systems |
 
-### Component Categories
+### Component categories
 
 | Category | Purpose | Examples |
 |----------|---------|----------|
@@ -141,7 +150,7 @@ def process_data(data: list) -> str:
 | Document Processing | Data ingestion | Loaders, splitters, transformers |
 | Vector Stores | Semantic search | Chroma, Pinecone, FAISS |
 
-### Common Architectural Patterns
+### Common architectural patterns
 
 **RAG (Retrieval-Augmented Generation):**
 Retrieves relevant documents to augment LLM responses with current information.
@@ -202,7 +211,7 @@ supervisor = create_agent(
 | `get_stream_writer()` | Get stream writer for custom updates |
 | `BaseStore` | Base class for store implementations |
 
-## Best Practices
+## Best practices
 
 - Define context schemas as dataclasses for type safety
 - Use runtime dependency injection instead of global state or hardcoded values
