@@ -1,12 +1,26 @@
 # Django Async Support
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Key classes and methods](#key-classes-and-methods)
+- [Async ORM operations](#async-orm-operations)
+- [Async safety](#async-safety)
+- [Supported decorators](#supported-decorators)
+- [Async middleware](#async-middleware)
+- [Common patterns](#common-patterns)
+- [Configuration](#configuration)
+- [Performance considerations](#performance-considerations)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django provides native support for asynchronous views, middleware, and ORM operations. Async views run efficiently under ASGI servers, enabling hundreds of concurrent connections without threads. Django also provides adapter functions (`sync_to_async` and `async_to_sync`) for bridging synchronous and asynchronous code, along with safety mechanisms to prevent mixing them incorrectly.
+Django supports asynchronous views, middleware, and ORM operations. Under an ASGI server, async views handle hundreds of concurrent connections without threads. The adapter functions `sync_to_async` and `async_to_sync` bridge synchronous and asynchronous code, and safety checks stop you from mixing the two incorrectly.
 
-## Core Concepts
+## Core concepts
 
-### Async Views
+### Async views
 
 Function-based async views use `async def`:
 
@@ -31,16 +45,16 @@ class MyView(View):
         return HttpResponse(status=201)
 ```
 
-### WSGI vs ASGI Behavior
+### WSGI vs ASGI behavior
 
-| Server | Async View Behavior |
+| Server | Async view behavior |
 |--------|-------------------|
 | ASGI | Full async stack, hundreds of concurrent connections |
 | WSGI | Creates one-off event loop per request, performance penalty |
 
-For full async benefits, use an ASGI server (e.g., Daphne, Uvicorn, Hypercorn).
+To get the full benefit of async views, run an ASGI server such as Daphne, Uvicorn, or Hypercorn.
 
-## Key Classes and Methods
+## Key classes and methods
 
 ### sync_to_async()
 
@@ -63,10 +77,10 @@ Parameters:
 - `thread_sensitive=False`: runs in a new thread.
 
 ```python
-# WRONG - passes database connection across threads
+# WRONG: passes database connection across threads
 await sync_to_async(connection.cursor)()
 
-# CORRECT - encapsulate database access in a single function
+# CORRECT: encapsulate database access in a single function
 @sync_to_async
 def get_user(user_id):
     return User.objects.get(id=user_id)
@@ -95,7 +109,7 @@ async def get_other_data():
 result = get_other_data()  # Called synchronously
 ```
 
-## Async ORM Operations
+## Async ORM operations
 
 Django provides `a`-prefixed async versions of QuerySet methods:
 
@@ -117,10 +131,10 @@ async def make_book_with_tags(tags, *args, **kwargs):
 
 ### Limitations
 
-- Transactions do not yet work in async mode - wrap transaction code with `sync_to_async()`
-- Disable `CONN_MAX_AGE` setting when using async; use database backend connection pooling instead
+- Transactions do not work in async mode. Wrap transaction code with `sync_to_async()`.
+- Disable the `CONN_MAX_AGE` setting when using async, and use database backend connection pooling instead.
 
-## Async Safety
+## Async safety
 
 Django raises `SynchronousOnlyOperation` when async-unsafe operations are called from an async context:
 
@@ -132,7 +146,7 @@ except SynchronousOnlyOperation:
     cursor = await sync_to_async(connection.cursor)()
 ```
 
-### Override for Development
+### Override for development
 
 ```python
 import os
@@ -145,11 +159,11 @@ For IPython/Jupyter notebooks:
 %autoawait off
 ```
 
-Never enable this in production with concurrent access - it risks data corruption.
+Never enable this in production with concurrent access. It risks data corruption.
 
-## Supported Decorators
+## Supported decorators
 
-All these decorators work with both sync and async views:
+These decorators work with both sync and async views:
 
 ```python
 from django.views.decorators.cache import never_cache
@@ -169,7 +183,7 @@ async def my_read_view(request):
     ...
 ```
 
-Full list of async-compatible decorators:
+All async-compatible decorators:
 - Cache: `cache_control()`, `never_cache()`
 - CSRF: `csrf_exempt()`, `csrf_protect()`, `ensure_csrf_cookie()`, `requires_csrf_token()`
 - Conditional: `condition()`, `etag()`, `last_modified()`
@@ -178,9 +192,9 @@ Full list of async-compatible decorators:
 - Other: `gzip_page()`, `sensitive_variables()`, `sensitive_post_parameters()`
 - CSP: `csp_override()`, `csp_report_only_override()`
 
-## Async Middleware
+## Async middleware
 
-Middleware can support both sync and async contexts. Django's built-in middleware partially supports this. Check for adaptation messages in the `django.request` logger:
+Middleware can support both sync and async contexts, and Django's built-in middleware does so in part. Adaptation messages show up in the `django.request` logger:
 
 ```
 Asynchronous handler adapted for middleware ...
@@ -188,9 +202,9 @@ Asynchronous handler adapted for middleware ...
 
 Synchronous middleware between an ASGI server and an async view causes context switches that degrade async performance.
 
-## Common Patterns
+## Common patterns
 
-### Handling Client Disconnects
+### Handling client disconnects
 
 ```python
 import asyncio
@@ -200,12 +214,12 @@ async def long_running_view(request):
         result = await expensive_async_operation()
         return JsonResponse(result)
     except asyncio.CancelledError:
-        # Client disconnected - clean up resources
+        # Client disconnected, clean up resources
         await cleanup()
         raise
 ```
 
-### Mixing Sync and Async Code
+### Mixing sync and async code
 
 ```python
 from asgiref.sync import sync_to_async
@@ -220,7 +234,7 @@ async def my_view(request):
     return JsonResponse({"users": len(users), "result": result})
 ```
 
-### Parallel Async Operations
+### Parallel async operations
 
 ```python
 import asyncio
@@ -241,7 +255,7 @@ async def dashboard_view(request):
 
 ## Configuration
 
-### ASGI Setup
+### ASGI setup
 
 ```python
 # asgi.py
@@ -252,7 +266,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myproject.settings")
 application = get_asgi_application()
 ```
 
-### Database Connection Settings
+### Database connection settings
 
 ```python
 # Disable persistent connections for async
@@ -265,7 +279,7 @@ DATABASES = {
 }
 ```
 
-## Performance Considerations
+## Performance considerations
 
 | Scenario | Performance |
 |----------|------------|
@@ -276,17 +290,16 @@ DATABASES = {
 
 - Each sync-to-async or async-to-sync transition costs approximately 1ms
 - Synchronous middleware in the ASGI stack forces context switches on every request
-- For I/O-bound workloads, async provides significant throughput gains
-- For CPU-bound workloads, async provides minimal benefit
+- I/O-bound workloads gain throughput from async. CPU-bound workloads gain little.
 
-## Best Practices
+## Best practices
 
-- Use ASGI servers for production async deployments (Daphne, Uvicorn, Hypercorn)
-- Keep the entire middleware stack async to avoid context-switch penalties
+- Use an ASGI server (Daphne, Uvicorn, Hypercorn) for production async deployments.
+- Keep the whole middleware stack async to avoid context-switch penalties.
 - Use `thread_sensitive=True` (the default) when calling Django ORM from async code
 - Never pass database connections across thread boundaries
 - Disable `CONN_MAX_AGE` when using async views; use database-level connection pooling
-- Wrap transaction blocks with `sync_to_async()` until native async transaction support lands
+- Wrap transaction blocks with `sync_to_async()` until Django supports transactions natively in async mode
 - Handle `asyncio.CancelledError` for long-running async views to clean up on client disconnect
 - Avoid `DJANGO_ALLOW_ASYNC_UNSAFE` in production
 - Use `asyncio.gather()` for concurrent I/O operations within a single view

@@ -1,18 +1,31 @@
 # Django Cache Framework
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Configuration](#configuration)
+- [Per-site cache](#per-site-cache)
+- [Per-view cache](#per-view-cache)
+- [Template fragment caching](#template-fragment-caching)
+- [Low-level cache API](#low-level-cache-api)
+- [Downstream caches (HTTP caching)](#downstream-caches-http-caching)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django's cache framework provides a flexible caching system that supports multiple backends and various levels of granularity - from caching an entire site to caching individual values. It eliminates redundant computation by storing expensive calculations and serving them on subsequent requests.
+Django's cache framework supports multiple backends and several levels of granularity, from caching an entire site down to individual values. Expensive results are stored once and served on later requests.
 
-## Core Concepts
+## Core concepts
 
-### Cache Backends
+### Cache backends
 
-Django supports several cache backends out of the box. Configure them via the `CACHES` setting in `settings.py`.
+Django ships with several cache backends. Configure them with the `CACHES` setting in `settings.py`.
 
 ### Memcached
 
-Production-ready, memory-based cache daemon. Supports `pymemcache` and `pylibmc` bindings.
+Memory-based cache daemon suited to production. Supports the `pymemcache` and `pylibmc` bindings.
 
 ```python
 # PyMemcache (recommended)
@@ -116,7 +129,7 @@ CACHES = {
 }
 ```
 
-### Database Caching
+### Database caching
 
 ```python
 CACHES = {
@@ -133,7 +146,7 @@ Create the cache table:
 python manage.py createcachetable
 ```
 
-### Filesystem Caching
+### Filesystem caching
 
 ```python
 CACHES = {
@@ -144,7 +157,7 @@ CACHES = {
 }
 ```
 
-### Local-Memory Caching
+### Local-memory caching
 
 Per-process, thread-safe, uses LRU culling. Not suitable for production.
 
@@ -157,7 +170,7 @@ CACHES = {
 }
 ```
 
-### Dummy Cache (Development)
+### Dummy cache (development)
 
 Implements the cache interface without caching anything.
 
@@ -171,7 +184,7 @@ CACHES = {
 
 ## Configuration
 
-### Common Cache Arguments
+### Common cache arguments
 
 ```python
 CACHES = {
@@ -190,7 +203,7 @@ CACHES = {
 }
 ```
 
-### Cache Key Transformation
+### Cache key transformation
 
 Default key function produces keys in the format `prefix:version:key`:
 
@@ -210,7 +223,7 @@ CACHES = {
 }
 ```
 
-## Per-Site Cache
+## Per-site cache
 
 Cache the entire site using middleware:
 
@@ -228,9 +241,9 @@ CACHE_MIDDLEWARE_KEY_PREFIX = "site1"
 
 Caches GET and HEAD responses with status 200. Sets `Expires` and `Cache-Control` headers.
 
-## Per-View Cache
+## Per-view cache
 
-### Using the Decorator
+### Using the decorator
 
 ```python
 from django.views.decorators.cache import cache_page
@@ -260,7 +273,7 @@ urlpatterns = [
 ]
 ```
 
-## Template Fragment Caching
+## Template fragment caching
 
 ```django
 {% load cache %}
@@ -281,7 +294,7 @@ urlpatterns = [
 {% endcache %}
 ```
 
-### Invalidating Cached Fragments
+### Invalidating cached fragments
 
 ```python
 from django.core.cache import cache
@@ -291,9 +304,9 @@ key = make_template_fragment_key("sidebar", [username])
 cache.delete(key)
 ```
 
-## Low-Level Cache API
+## Low-level cache API
 
-### Accessing the Cache
+### Accessing the cache
 
 ```python
 from django.core.cache import cache          # default cache
@@ -302,7 +315,7 @@ from django.core.cache import caches
 specific_cache = caches["myalias"]
 ```
 
-### Basic Operations
+### Basic operations
 
 ```python
 # Set / Get
@@ -340,7 +353,7 @@ cache.decr("num", 5)                      # returns 6
 cache.close()
 ```
 
-### Cache Versioning
+### Cache versioning
 
 ```python
 cache.set("my_key", "value", version=2)
@@ -349,7 +362,7 @@ cache.get("my_key", version=2)            # "value"
 cache.incr_version("my_key")              # bumps version 2 -> 3
 ```
 
-### Async Support
+### Async support
 
 All cache methods have async variants prefixed with `a`:
 
@@ -361,9 +374,9 @@ await cache.adelete("key")
 await cache.adelete_many(["a", "b"])
 ```
 
-## Downstream Caches (HTTP Caching)
+## Downstream caches (HTTP caching)
 
-### Vary Headers
+### Vary headers
 
 ```python
 from django.views.decorators.vary import vary_on_headers, vary_on_cookie
@@ -377,7 +390,7 @@ def my_view(request):
     ...
 ```
 
-### Cache-Control Headers
+### Cache-Control headers
 
 ```python
 from django.views.decorators.cache import cache_control, never_cache
@@ -407,9 +420,9 @@ def my_view(request):
     return response
 ```
 
-## Common Patterns
+## Common patterns
 
-### Database Cache Router
+### Database cache router
 
 ```python
 class CacheRouter:
@@ -429,7 +442,7 @@ class CacheRouter:
         return None
 ```
 
-### Public/Private Cache Based on User
+### Public/Private cache based on user
 
 ```python
 from django.views.decorators.cache import patch_cache_control
@@ -446,13 +459,13 @@ def list_entries(request):
     return response
 ```
 
-## Best Practices
+## Best practices
 
-- Use Redis or Memcached in production; local-memory cache is per-process only
-- Set `KEY_PREFIX` when sharing a cache instance across environments
-- Use cache versioning to invalidate stale data without flushing the entire cache
-- Place `UpdateCacheMiddleware` first and `FetchFromCacheMiddleware` last in middleware
-- Use `@never_cache` for views that must always return fresh data
-- Use `get_or_set()` to avoid race conditions in cache population
-- Memcached keys must be under 250 characters and cannot contain whitespace
-- Cache only picklable Python objects (the default serializer uses pickle)
+- Use Redis or Memcached in production. The local-memory cache is per-process only.
+- Set `KEY_PREFIX` when sharing a cache instance across environments.
+- Use cache versioning to invalidate stale data without flushing the whole cache.
+- Place `UpdateCacheMiddleware` first and `FetchFromCacheMiddleware` last in `MIDDLEWARE`.
+- Use `@never_cache` for views that must always return fresh data.
+- Use `get_or_set()` to avoid race conditions when populating the cache.
+- Memcached keys must be under 250 characters and cannot contain whitespace.
+- Cache only picklable Python objects (the default serializer uses pickle).

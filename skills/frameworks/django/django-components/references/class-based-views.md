@@ -1,14 +1,27 @@
 # Django Class-Based Views
 
+## Contents
+
+- [Overview](#overview)
+- [Base views](#base-views)
+- [Generic display views](#generic-display-views)
+- [Generic editing views](#generic-editing-views)
+- [URL configuration for editing views](#url-configuration-for-editing-views)
+- [Mixins](#mixins)
+- [Async class-based views](#async-class-based-views)
+- [Method flowchart](#method-flowchart)
+- [Complete CBV reference](#complete-cbv-reference)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Class-based views (CBVs) allow you to structure views as Python classes, enabling code reuse through inheritance and mixins. All CBVs inherit from the `View` base class, which handles URL linking, HTTP method dispatching, and other common features. Django provides a rich set of generic views for common patterns like displaying object lists, detail pages, and form handling.
+Class-based views (CBVs) structure views as Python classes, so you can reuse code through inheritance and mixins. All CBVs inherit from the `View` base class, which handles URL linking and HTTP method dispatching. Django also ships generic views for common patterns: object lists, detail pages, and form handling.
 
-## Base Views
+## Base views
 
 ### View
 
-The foundational class for all CBVs. Dispatches requests to the appropriate method handler (`get()`, `post()`, etc.):
+The base class for all CBVs. Dispatches requests to the appropriate method handler (`get()`, `post()`, etc.):
 
 ```python
 from django.http import HttpResponse
@@ -61,7 +74,7 @@ urlpatterns = [
 ]
 ```
 
-## Generic Display Views
+## Generic display views
 
 ### ListView
 
@@ -85,7 +98,7 @@ class PublisherListView(ListView):
     context_object_name = "publishers"
 ```
 
-#### Filtering and Ordering
+#### Filtering and ordering
 
 ```python
 class BookListView(ListView):
@@ -98,7 +111,7 @@ class AcmeBookListView(ListView):
     template_name = "books/acme_list.html"
 ```
 
-#### Dynamic Filtering from URL Parameters
+#### Dynamic filtering from URL parameters
 
 ```python
 # urls.py
@@ -135,7 +148,7 @@ path("books/<int:pk>/", BookDetailView.as_view(), name="book-detail"),
 
 Template resolves to `books/book_detail.html`. Context variable is `object` (plus lowercased model name).
 
-#### Adding Extra Context
+#### Adding extra context
 
 ```python
 class PublisherDetailView(DetailView):
@@ -147,7 +160,7 @@ class PublisherDetailView(DetailView):
         return context
 ```
 
-#### Performing Extra Work
+#### Performing extra work
 
 ```python
 class AuthorDetailView(DetailView):
@@ -160,7 +173,7 @@ class AuthorDetailView(DetailView):
         return obj
 ```
 
-## Generic Editing Views
+## Generic editing views
 
 ### FormView
 
@@ -226,7 +239,7 @@ class AuthorDeleteView(DeleteView):
 
 Template resolves to `myapp/author_confirm_delete.html`. Use `reverse_lazy()` instead of `reverse()` because URLs are not loaded at import time.
 
-### Tracking the Creating User
+### Tracking the creating user
 
 ```python
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -242,7 +255,7 @@ class AuthorCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 ```
 
-### AJAX / Content Negotiation
+### AJAX / content negotiation
 
 ```python
 from django.http import JsonResponse
@@ -268,7 +281,7 @@ class AuthorCreateView(JsonableResponseMixin, CreateView):
     fields = ["name"]
 ```
 
-## URL Configuration for Editing Views
+## URL configuration for editing views
 
 ```python
 from django.urls import path
@@ -283,28 +296,28 @@ urlpatterns = [
 
 ## Mixins
 
-### Core Mixins
+### Core mixins
 
 | Mixin | Purpose |
 |-------|---------|
 | `ContextMixin` | Provides `get_context_data()` and `extra_context` |
 | `TemplateResponseMixin` | Provides `render_to_response()` and `get_template_names()` |
 
-### Single Object Mixins
+### Single object mixins
 
 | Mixin | Purpose |
 |-------|---------|
 | `SingleObjectMixin` | Provides `get_object()` to fetch by `pk` or `slug` |
 | `SingleObjectTemplateResponseMixin` | Auto-generates template name from model |
 
-### Multiple Object Mixins
+### Multiple object mixins
 
 | Mixin | Purpose |
 |-------|---------|
 | `MultipleObjectMixin` | Provides `get_queryset()` and `paginate_queryset()` |
 | `MultipleObjectTemplateResponseMixin` | Auto-generates list template name |
 
-### Editing Mixins
+### Editing mixins
 
 | Mixin | Purpose |
 |-------|---------|
@@ -333,7 +346,7 @@ class RecordInterestView(SingleObjectMixin, View):
         )
 ```
 
-### Paginating Related Objects with SingleObjectMixin + ListView
+### Paginating related objects with SingleObjectMixin + ListView
 
 ```python
 class PublisherDetailView(SingleObjectMixin, ListView):
@@ -353,7 +366,7 @@ class PublisherDetailView(SingleObjectMixin, ListView):
         return self.object.book_set.all()
 ```
 
-### Custom JSON Response Mixin
+### Custom JSON response mixin
 
 ```python
 from django.http import JsonResponse
@@ -366,7 +379,7 @@ class JSONResponseMixin:
         return context
 ```
 
-## Async Class-Based Views
+## Async class-based views
 
 All method handlers within a single view class must be either all sync or all async:
 
@@ -383,21 +396,21 @@ class AsyncView(View):
 
 Mixing sync and async handlers raises `ImproperlyConfigured`.
 
-## Method Flowchart
+## Method flowchart
 
-### Request Processing Order
+### Request processing order
 
-1. `dispatch()` - routes to `get()`, `post()`, etc.
-2. `http_method_not_allowed()` - called if method not supported
+1. `dispatch()` routes to `get()`, `post()`, etc.
+2. `http_method_not_allowed()` is called if the method is not supported
 
-### Display Views (GET)
+### Display views (GET)
 
 1. `dispatch()` -> `get()`
 2. `get_queryset()` / `get_object()`
 3. `get_context_data()`
 4. `render_to_response()`
 
-### Editing Views (POST)
+### Editing views (POST)
 
 1. `dispatch()` -> `post()`
 2. `get_form()`
@@ -405,7 +418,7 @@ Mixing sync and async handlers raises `ImproperlyConfigured`.
 4. On valid: save and redirect
 5. On invalid: re-render with errors
 
-## Complete CBV Reference
+## Complete CBV reference
 
 | Category | Views |
 |----------|-------|
@@ -414,12 +427,12 @@ Mixing sync and async handlers raises `ImproperlyConfigured`.
 | Editing | `FormView`, `CreateView`, `UpdateView`, `DeleteView` |
 | Date-based | `ArchiveIndexView`, `YearArchiveView`, `MonthArchiveView`, `WeekArchiveView`, `DayArchiveView`, `TodayArchiveView`, `DateDetailView` |
 
-## Best Practices
+## Best practices
 
-- Use `as_view()` for all URL configuration - never instantiate views directly
-- Prefer subclassing over passing many arguments to `as_view()`
-- Only use mixins from the same group (detail, list, editing, date) in a single view
-- Use `LoginRequiredMixin` as the leftmost parent for protected views
-- Override `get_queryset()` for dynamic filtering rather than setting `queryset` as a class attribute
-- Use `reverse_lazy()` for `success_url` in editing views
-- Each request gets an independent view instance - `self` attributes are thread-safe
+- Use `as_view()` for all URL configuration. Never instantiate views directly.
+- Prefer subclassing over passing many arguments to `as_view()`.
+- Only combine mixins from the same group (detail, list, editing, date) in a single view.
+- Put `LoginRequiredMixin` first in the parent list for protected views.
+- Override `get_queryset()` for dynamic filtering instead of setting `queryset` as a class attribute.
+- Use `reverse_lazy()` for `success_url` in editing views.
+- Each request gets its own view instance, so `self` attributes are thread-safe.

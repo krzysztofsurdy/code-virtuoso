@@ -1,12 +1,25 @@
 # Django Deployment
 
+## Contents
+
+- [Overview](#overview)
+- [WSGI deployment](#wsgi-deployment)
+- [ASGI deployment](#asgi-deployment)
+- [Deployment checklist](#deployment-checklist)
+- [Static files in production](#static-files-in-production)
+- [Media files](#media-files)
+- [Error reporting](#error-reporting)
+- [Nginx reject unknown hosts](#nginx-reject-unknown-hosts)
+- [Production settings template](#production-settings-template)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django supports two deployment standards: WSGI (synchronous) and ASGI (asynchronous). Production deployment requires a proper application server, a reverse proxy, static file serving, and security hardening. The development server (`runserver`) is not suitable for production.
+Django deploys under two standards: WSGI (synchronous) and ASGI (asynchronous). A production deployment needs an application server, a reverse proxy, static file serving, and hardened security settings. Never use the development server (`runserver`) in production.
 
-## WSGI Deployment
+## WSGI deployment
 
-### wsgi.py Configuration
+### wsgi.py configuration
 
 Generated automatically by `startproject`:
 
@@ -77,7 +90,7 @@ WSGIDaemonProcess myproject python-home=/path/to/venv python-path=/path/to/mypro
 WSGIProcessGroup myproject
 ```
 
-### Adding WSGI Middleware
+### Adding WSGI middleware
 
 ```python
 # wsgi.py
@@ -92,9 +105,9 @@ from some_wsgi_library import SomeMiddleware
 application = SomeMiddleware(application)
 ```
 
-## ASGI Deployment
+## ASGI deployment
 
-### asgi.py Configuration
+### asgi.py configuration
 
 ```python
 import os
@@ -138,7 +151,7 @@ hypercorn myproject.asgi:application
 hypercorn myproject.asgi:application --bind 0.0.0.0:8000 --workers 4
 ```
 
-### Adding ASGI Middleware
+### Adding ASGI middleware
 
 ```python
 # asgi.py
@@ -152,7 +165,7 @@ from some_asgi_library import AmazingMiddleware
 application = AmazingMiddleware(application)
 ```
 
-## Deployment Checklist
+## Deployment checklist
 
 Run Django's built-in deployment validator:
 
@@ -161,7 +174,7 @@ Run Django's built-in deployment validator:
 ./manage.py check --deploy --settings=myproject.settings.production
 ```
 
-### Critical Settings
+### Critical settings
 
 #### SECRET_KEY
 
@@ -184,7 +197,7 @@ SECRET_KEY_FALLBACKS = [
 #### DEBUG
 
 ```python
-DEBUG = False  # Always False in production
+DEBUG = False  # Must be False in production
 ```
 
 #### ALLOWED_HOSTS
@@ -193,7 +206,7 @@ DEBUG = False  # Always False in production
 ALLOWED_HOSTS = ["example.com", "www.example.com"]
 ```
 
-### HTTPS Settings
+### HTTPS settings
 
 ```python
 # Redirect HTTP to HTTPS
@@ -212,7 +225,7 @@ SECURE_HSTS_PRELOAD = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 ```
 
-### Security Headers
+### Security headers
 
 ```python
 SECURE_CONTENT_TYPE_NOSNIFF = True    # X-Content-Type-Options: nosniff
@@ -220,7 +233,7 @@ SECURE_REFERRER_POLICY = "same-origin"
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
 ```
 
-### Database Security
+### Database security
 
 ```python
 DATABASES = {
@@ -236,7 +249,7 @@ DATABASES = {
 }
 ```
 
-### Performance Settings
+### Performance settings
 
 ```python
 # Persistent database connections
@@ -249,7 +262,7 @@ DATABASES["default"]["CONN_MAX_AGE"] = 600
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 ```
 
-## Static Files in Production
+## Static files in production
 
 ### collectstatic
 
@@ -258,7 +271,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 ./manage.py collectstatic --noinput  # For CI/CD
 ```
 
-### Nginx Configuration
+### Nginx configuration
 
 ```nginx
 server {
@@ -285,7 +298,7 @@ server {
 }
 ```
 
-### WhiteNoise (Serve Static from App Server)
+### WhiteNoise (serve static from app server)
 
 ```bash
 pip install whitenoise
@@ -318,7 +331,7 @@ STORAGES = {
 }
 ```
 
-### CDN / Cloud Storage
+### CDN / cloud storage
 
 ```python
 # Custom storage backend for S3, GCS, etc.
@@ -331,20 +344,20 @@ STORAGES = {
 
 Third-party packages: `django-storages` for S3, GCS, Azure Blob, etc.
 
-## Media Files
+## Media files
 
 ```python
 MEDIA_URL = "/media/"
 MEDIA_ROOT = "/var/www/example.com/media/"
 ```
 
-- Configure web server to never execute uploaded files
-- Implement backup strategy for uploads
-- Consider cloud storage for scalability
+- Configure the web server to never execute uploaded files.
+- Back up uploads.
+- Consider cloud storage if you need to scale.
 
-## Error Reporting
+## Error reporting
 
-### Admin Email Notifications
+### Admin email notifications
 
 ```python
 ADMINS = [("Admin", "admin@example.com")]
@@ -376,9 +389,9 @@ LOGGING = {
 }
 ```
 
-Consider dedicated error tracking services (Sentry) for production.
+In production, consider a dedicated error tracking service such as Sentry.
 
-### Custom Error Templates
+### Custom error templates
 
 Create in the root template directory:
 
@@ -387,7 +400,7 @@ Create in the root template directory:
 - `403.html` - Permission denied
 - `400.html` - Bad request
 
-## Nginx Reject Unknown Hosts
+## Nginx reject unknown hosts
 
 ```nginx
 # Default server to reject unrecognized hosts
@@ -397,7 +410,7 @@ server {
 }
 ```
 
-## Production Settings Template
+## Production settings template
 
 ```python
 import os
@@ -454,17 +467,17 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 ```
 
-## Best Practices
+## Best practices
 
-- Always run `manage.py check --deploy` before deploying
-- Never use `runserver` in production
-- Keep `SECRET_KEY` out of source control
-- Use environment variables for all sensitive configuration
-- Set `CONN_MAX_AGE` for persistent database connections
-- Use WhiteNoise or a dedicated server for static files
-- Configure HTTPS with HSTS headers
-- Set up proper logging and error reporting
-- Create custom error templates (404, 500, 403, 400)
-- Configure your reverse proxy to reject unknown hosts
-- Back up your database and media files regularly
-- Use `collectstatic --noinput` in CI/CD pipelines
+- Run `manage.py check --deploy` before every deployment.
+- Never use `runserver` in production.
+- Keep `SECRET_KEY` out of source control.
+- Use environment variables for all sensitive configuration.
+- Set `CONN_MAX_AGE` for persistent database connections.
+- Use WhiteNoise or a dedicated server for static files.
+- Enable HTTPS with HSTS headers.
+- Configure logging and error reporting.
+- Create custom error templates (404, 500, 403, 400).
+- Configure the reverse proxy to reject unknown hosts.
+- Back up the database and media files regularly.
+- Use `collectstatic --noinput` in CI/CD pipelines.

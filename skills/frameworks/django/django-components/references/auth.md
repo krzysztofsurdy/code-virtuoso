@@ -1,10 +1,26 @@
 # Django Authentication
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Key classes and methods](#key-classes-and-methods)
+- [Permissions and authorization](#permissions-and-authorization)
+- [Login/Logout views](#loginlogout-views)
+- [Decorators and mixins](#decorators-and-mixins)
+- [Password management](#password-management)
+- [Custom user models](#custom-user-models)
+- [Authentication backends](#authentication-backends)
+- [Auth signals](#auth-signals)
+- [Common patterns](#common-patterns)
+- [Built-in forms](#built-in-forms)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django's authentication system handles both authentication (verifying user identity) and authorization (determining what users can do). It provides user accounts, groups, permissions, cookie-based sessions, and a pluggable backend system. The system ships in `django.contrib.auth` and `django.contrib.contenttypes`.
+Django's authentication system covers authentication (verifying who a user is) and authorization (what a user may do). It has user accounts, groups, permissions, cookie-based sessions, and pluggable backends, and lives in `django.contrib.auth` and `django.contrib.contenttypes`.
 
-## Core Concepts
+## Core concepts
 
 ### Installation
 
@@ -23,7 +39,7 @@ MIDDLEWARE = [
 
 Run `python manage.py migrate` to create auth database tables.
 
-### The User Model
+### The user model
 
 The default `User` model provides these fields:
 
@@ -42,9 +58,9 @@ The default `User` model provides these fields:
 | `groups` | ManyToMany | Related groups |
 | `user_permissions` | ManyToMany | Direct permissions |
 
-## Key Classes and Methods
+## Key classes and methods
 
-### Creating Users
+### Creating users
 
 ```python
 from django.contrib.auth.models import User
@@ -57,11 +73,11 @@ user.save()
 # Superuser
 admin = User.objects.create_superuser("admin", "admin@example.com", "adminpass")
 
-# Command line
+# Command line:
 # python manage.py createsuperuser --username=admin --email=admin@example.com
 ```
 
-### Password Management
+### Password management
 
 ```python
 user.set_password("new_password")
@@ -72,7 +88,7 @@ user.set_unusable_password()               # Mark as unusable
 user.has_usable_password()                 # Returns bool
 ```
 
-### Authenticating Users
+### Authenticating users
 
 ```python
 from django.contrib.auth import authenticate, login, logout
@@ -89,7 +105,7 @@ else:
 logout(request)
 ```
 
-### User Methods
+### User methods
 
 ```python
 user.get_username()
@@ -115,9 +131,9 @@ anon.is_staff            # False
 anon.is_superuser        # False
 ```
 
-## Permissions and Authorization
+## Permissions and authorization
 
-### Default Permissions
+### Default permissions
 
 Django creates four permissions per model automatically:
 - `app_label.add_modelname`
@@ -125,7 +141,7 @@ Django creates four permissions per model automatically:
 - `app_label.delete_modelname`
 - `app_label.view_modelname`
 
-### Checking Permissions
+### Checking permissions
 
 ```python
 user.has_perm('myapp.add_article')                      # Single
@@ -138,7 +154,7 @@ user.get_group_permissions()    # From groups
 user.get_all_permissions()      # Combined
 ```
 
-### Custom Permissions
+### Custom permissions
 
 ```python
 class Task(models.Model):
@@ -151,7 +167,7 @@ class Task(models.Model):
         ]
 ```
 
-### Programmatic Permission Creation
+### Programmatic permission creation
 
 ```python
 from django.contrib.auth.models import Permission
@@ -179,7 +195,7 @@ user.groups.set([editors])
 user.groups.clear()
 ```
 
-### Permission Caching
+### Permission caching
 
 ```python
 # Permissions are cached on the user object
@@ -190,9 +206,9 @@ user = User.objects.get(pk=user.pk)
 user.has_perm("myapp.change_post")  # Fresh lookup
 ```
 
-## Login/Logout Views
+## Login/Logout views
 
-### URL Configuration
+### URL configuration
 
 ```python
 from django.urls import path, include
@@ -232,7 +248,7 @@ path("logout/", LogoutView.as_view())
 # Attributes: next_page, template_name, redirect_field_name
 ```
 
-### Session Invalidation on Password Change
+### Session invalidation on password change
 
 ```python
 from django.contrib.auth import update_session_auth_hash
@@ -245,7 +261,7 @@ def password_change(request):
             update_session_auth_hash(request, form.user)
 ```
 
-## Decorators and Mixins
+## Decorators and mixins
 
 ### login_required
 
@@ -334,9 +350,9 @@ def public_view(request):
     ...
 ```
 
-## Password Management
+## Password management
 
-### Password Hashers
+### Password hashers
 
 ```python
 PASSWORD_HASHERS = [
@@ -348,7 +364,7 @@ PASSWORD_HASHERS = [
 ]
 ```
 
-### Custom Hasher (Increase Work Factor)
+### Custom hasher (increase work factor)
 
 ```python
 from django.contrib.auth.hashers import PBKDF2PasswordHasher
@@ -357,7 +373,7 @@ class MyPBKDF2PasswordHasher(PBKDF2PasswordHasher):
     iterations = PBKDF2PasswordHasher.iterations * 100
 ```
 
-### Password Validation
+### Password validation
 
 ```python
 AUTH_PASSWORD_VALIDATORS = [
@@ -369,7 +385,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 ```
 
-### Manual Password Functions
+### Manual password functions
 
 ```python
 from django.contrib.auth.hashers import make_password, check_password, is_password_usable
@@ -379,7 +395,7 @@ check_password("my_password", hashed)    # True
 is_password_usable(hashed)               # True
 ```
 
-### Custom Validator
+### Custom validator
 
 ```python
 from django.core.exceptions import ValidationError
@@ -400,9 +416,9 @@ class MinimumLengthValidator:
         return f"Your password must contain at least {self.min_length} characters."
 ```
 
-## Custom User Models
+## Custom user models
 
-### AbstractUser (Recommended)
+### AbstractUser (recommended)
 
 ```python
 # models.py
@@ -415,7 +431,7 @@ class CustomUser(AbstractUser):
 AUTH_USER_MODEL = "myapp.CustomUser"
 ```
 
-### AbstractBaseUser (Full Control)
+### AbstractBaseUser (full control)
 
 ```python
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
@@ -450,7 +466,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         return self.is_admin
 ```
 
-### Referencing the User Model
+### Referencing the user model
 
 ```python
 from django.conf import settings
@@ -464,9 +480,9 @@ class Article(models.Model):
 User = get_user_model()
 ```
 
-## Authentication Backends
+## Authentication backends
 
-### Custom Backend
+### Custom backend
 
 ```python
 from django.contrib.auth.backends import BaseBackend
@@ -495,7 +511,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 ```
 
-## Auth Signals
+## Auth signals
 
 ```python
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
@@ -509,9 +525,9 @@ def on_login_failed(sender, credentials, request, **kwargs):
     print(f"Login failed for {credentials.get('username')}")
 ```
 
-## Common Patterns
+## Common patterns
 
-### Authentication in Templates
+### Authentication in templates
 
 ```html
 {% if user.is_authenticated %}
@@ -525,7 +541,7 @@ def on_login_failed(sender, credentials, request, **kwargs):
 {% endif %}
 ```
 
-### Profile Model (Extending User)
+### Profile model (extending user)
 
 ```python
 class Profile(models.Model):
@@ -534,7 +550,7 @@ class Profile(models.Model):
     avatar = models.ImageField(upload_to="avatars/", blank=True)
 ```
 
-## Built-in Forms
+## Built-in forms
 
 | Form | Purpose |
 |------|---------|
@@ -546,13 +562,13 @@ class Profile(models.Model):
 | `PasswordResetForm` | Request password reset email |
 | `AdminPasswordChangeForm` | Admin password change |
 
-## Best Practices
+## Best practices
 
-- Always use `AUTH_USER_MODEL` setting and `get_user_model()` in reusable apps
+- Use the `AUTH_USER_MODEL` setting and `get_user_model()` in reusable apps
 - Set `AUTH_USER_MODEL` before running the first migration
 - Use `AbstractUser` for simple customizations, `AbstractBaseUser` for full control
 - Never store raw passwords; use `set_password()` and `check_password()`
-- Use Argon2 or bcrypt for stronger password hashing in production
+- Use Argon2 or bcrypt for password hashing in production
 - Call `update_session_auth_hash()` after programmatic password changes
 - Combine `@login_required` with `@permission_required(raise_exception=True)` to avoid redirect loops
 - Use `PermissionsMixin` with `AbstractBaseUser` for Django's permission framework

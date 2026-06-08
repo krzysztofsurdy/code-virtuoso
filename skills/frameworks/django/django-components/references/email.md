@@ -1,16 +1,26 @@
 # Django Email
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Key classes and methods](#key-classes-and-methods)
+- [Email backends](#email-backends)
+- [Common patterns](#common-patterns)
+- [Configuration](#configuration)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django provides a comprehensive email framework built on Python's `smtplib` module. It offers simple functions for common use cases, a full-featured `EmailMessage` class for advanced emails, and pluggable backends for different delivery mechanisms. The framework includes built-in protection against header injection attacks.
+Django's email framework is built on Python's `smtplib`. It has simple functions for common cases, an `EmailMessage` class for anything more involved, and pluggable backends for different delivery mechanisms. It rejects header injection attempts.
 
-## Core Concepts
+## Core concepts
 
-### Quick Sending Functions
+### Quick sending functions
 
 #### send_mail()
 
-The most common way to send a single email:
+Sends a single email:
 
 ```python
 from django.core.mail import send_mail
@@ -67,11 +77,11 @@ Prefixes subject with `EMAIL_SUBJECT_PREFIX` (default: `"[Django] "`). Uses `SER
 
 Same as `mail_admins()` but sends to `MANAGERS` setting.
 
-## Key Classes and Methods
+## Key classes and methods
 
 ### EmailMessage
 
-Full-featured email class with support for attachments, CC, BCC, and custom headers:
+Email class with support for attachments, CC, BCC, and custom headers:
 
 ```python
 from django.core.mail import EmailMessage
@@ -160,7 +170,7 @@ msg.attach(inline_image)
 msg.attach_alternative(f'<img src="cid:{cid[1:-1]}">', "text/html")
 ```
 
-### Changing Default Content Type
+### Changing default content type
 
 ```python
 msg = EmailMessage(subject, html_content, from_email, [to])
@@ -168,23 +178,23 @@ msg.content_subtype = "html"  # body is now text/html instead of text/plain
 msg.send()
 ```
 
-## Email Backends
+## Email backends
 
-### SMTP Backend (Default)
+### SMTP backend (default)
 
 ```python
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 ```
 
-### Console Backend
+### Console backend
 
-Writes emails to stdout. Useful for development.
+Writes emails to stdout. Useful in development.
 
 ```python
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 ```
 
-### File Backend
+### File backend
 
 Writes each email to a separate file.
 
@@ -193,7 +203,7 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = "/tmp/app-messages"
 ```
 
-### In-Memory Backend
+### In-memory backend
 
 Stores messages in `django.core.mail.outbox`. Used by the test runner.
 
@@ -210,7 +220,7 @@ self.assertEqual(len(mail.outbox), 1)
 self.assertEqual(mail.outbox[0].subject, "Expected Subject")
 ```
 
-### Dummy Backend
+### Dummy backend
 
 Silently discards all emails.
 
@@ -218,7 +228,7 @@ Silently discards all emails.
 EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
 ```
 
-### Custom Backend
+### Custom backend
 
 ```python
 from django.core.mail.backends.base import BaseEmailBackend
@@ -238,9 +248,9 @@ class CustomEmailBackend(BaseEmailBackend):
         return num_sent
 ```
 
-## Common Patterns
+## Common patterns
 
-### Sending Multiple Emails Efficiently
+### Sending multiple emails efficiently
 
 ```python
 from django.core import mail
@@ -261,7 +271,7 @@ messages = [
 connection.send_messages(messages)
 ```
 
-### Using a Different Backend Per Connection
+### Using a different backend per connection
 
 ```python
 from django.core.mail import get_connection
@@ -272,7 +282,7 @@ connection = get_connection(
 )
 ```
 
-### Safe User-Submitted Email
+### Safe user-submitted email
 
 ```python
 from django.core.mail import send_mail
@@ -312,7 +322,7 @@ def contact(request):
 | `EMAIL_FILE_PATH` | File backend directory | `None` |
 | `EMAIL_SUBJECT_PREFIX` | Prefix for admin emails | `[Django]` |
 
-### Development Configuration
+### Development configuration
 
 ```python
 # Using aiosmtpd for local testing
@@ -323,14 +333,14 @@ EMAIL_HOST = "localhost"
 EMAIL_PORT = 8025
 ```
 
-## Best Practices
+## Best practices
 
-- Use `send_mass_mail()` or connection reuse when sending multiple emails
-- Set `DEFAULT_FROM_EMAIL` in settings rather than hardcoding sender addresses
-- Use `EmailMultiAlternatives` for HTML emails - always include a plain text fallback
-- Use the in-memory backend (`locmem`) in tests via `django.core.mail.outbox`
-- Never set `EMAIL_USE_TLS` and `EMAIL_USE_SSL` both to `True` - they are mutually exclusive
-- Use templates (`render_to_string`) for email content rather than inline strings
-- Django automatically prevents header injection by rejecting newlines in subject, from, and recipients
-- Use `fail_silently=True` only when email delivery is non-critical
-- Consider async email sending via task queues (Celery, Django tasks) for production workloads
+- Use `send_mass_mail()` or connection reuse when sending multiple emails.
+- Set `DEFAULT_FROM_EMAIL` in settings instead of hardcoding sender addresses.
+- Use `EmailMultiAlternatives` for HTML emails and always include a plain text fallback.
+- Use the in-memory backend (`locmem`) in tests and read `django.core.mail.outbox`.
+- Never set both `EMAIL_USE_TLS` and `EMAIL_USE_SSL` to `True`. They are mutually exclusive.
+- Use templates (`render_to_string`) for email content instead of inline strings.
+- Django prevents header injection by rejecting newlines in the subject, sender, and recipients.
+- Use `fail_silently=True` only when email delivery is non-critical.
+- For production workloads, consider sending email through a task queue (Celery, Django tasks).

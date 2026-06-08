@@ -1,23 +1,23 @@
 ---
 name: django-components
-description: Comprehensive reference for all 33 Django framework components with Python 3.10+ and Django 6.0 patterns. Use when the user asks to implement, configure, or troubleshoot any Django component including Models, QuerySets, Views, Templates, Forms, Admin, Authentication, Caching, Testing, Middleware, Signals, or Deployment. Covers ORM patterns, class-based views, template tags, form validation, admin customization, async support, and Django best practices.
+description: Reference for 33 Django framework components with Python 3.10+ and Django 6.0 patterns. Use when the user asks to implement, configure, or troubleshoot any Django component including Models, QuerySets, Views, Templates, Forms, Admin, Authentication, Caching, Testing, Middleware, Signals, or Deployment. Covers ORM patterns, class-based views, template tags, form validation, admin customization, async support, and Django best practices.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---
 
 # Django Components
 
-Complete reference for all 33 Django components - patterns, APIs, configuration, and best practices for Python 3.10+ and Django 6.0.
+Reference for 33 Django components: patterns, APIs, configuration, and best practices for Python 3.10+ and Django 6.0.
 
-## Component Index
+## Component index
 
-### Models & Database
+### Models and database
 - **Models** - Model definition, field types, Meta options, inheritance, managers -> [reference](references/models.md)
 - **QuerySets** - QuerySet API, field lookups, Q objects, F expressions, aggregation -> [reference](references/querysets.md)
 - **Migrations** - Migration workflow, operations, data migrations, squashing -> [reference](references/migrations.md)
 - **Database Functions** - Database functions, conditional expressions, full-text search -> [reference](references/database-functions.md)
 
-### Views & HTTP
+### Views and HTTP
 - **Views** - Function-based views, shortcuts (render, redirect, get_object_or_404) -> [reference](references/views.md)
 - **Class-Based Views** - ListView, DetailView, CreateView, UpdateView, DeleteView, mixins -> [reference](references/class-based-views.md)
 - **URL Routing** - URL configuration, path(), re_path(), namespaces, reverse() -> [reference](references/urls.md)
@@ -33,7 +33,7 @@ Complete reference for all 33 Django components - patterns, APIs, configuration,
 ### Admin
 - **Admin** - ModelAdmin, list_display, fieldsets, inlines, actions, customization -> [reference](references/admin.md)
 
-### Authentication & Security
+### Authentication and security
 - **Authentication** - User model, login/logout, permissions, groups, custom user models -> [reference](references/auth.md)
 - **Security** - CSRF, XSS, clickjacking, SSL, CSP, cryptographic signing -> [reference](references/security.md)
 - **Sessions** - Session framework, backends, configuration -> [reference](references/sessions.md)
@@ -51,24 +51,24 @@ Complete reference for all 33 Django components - patterns, APIs, configuration,
 ### Testing
 - **Testing** - TestCase, Client, assertions, RequestFactory, fixtures -> [reference](references/testing.md)
 
-### Files & Static Assets
+### Files and static assets
 - **Files** - File objects, storage API, file uploads, custom storage -> [reference](references/files.md)
 - **Static Files** - Static file configuration, collectstatic, ManifestStaticFilesStorage -> [reference](references/static-files.md)
 
 ### Internationalization
 - **I18n** - Translation, localization, timezones, message files -> [reference](references/i18n.md)
 
-### Serialization & Data
+### Serialization and data
 - **Serialization** - Serializers, JSON/XML formats, natural keys, fixtures -> [reference](references/serialization.md)
 - **Content Types** - ContentType model, generic relations -> [reference](references/content-types.md)
 - **Validators** - Built-in validators, custom validators -> [reference](references/validators.md)
 - **Pagination** - Paginator, Page objects, template integration -> [reference](references/pagination.md)
 
-### Async & Tasks
+### Async and tasks
 - **Async** - Async views, async ORM, sync_to_async, ASGI -> [reference](references/async.md)
 - **Tasks** - Tasks framework, task backends, scheduling -> [reference](references/tasks.md)
 
-### Configuration & CLI
+### Configuration and CLI
 - **Settings** - Settings reference by category, splitting settings -> [reference](references/settings.md)
 - **Management Commands** - Built-in commands, custom commands, call_command -> [reference](references/management-commands.md)
 - **Logging** - Logging configuration, handlers, Django loggers -> [reference](references/logging.md)
@@ -76,9 +76,9 @@ Complete reference for all 33 Django components - patterns, APIs, configuration,
 ### Deployment
 - **Deployment** - WSGI, ASGI, Gunicorn, Uvicorn, static files, checklist -> [reference](references/deployment.md)
 
-## Quick Patterns
+## Quick patterns
 
-### Define a Model
+### Define a model
 
 ```python
 from django.db import models
@@ -98,7 +98,7 @@ class Article(models.Model):
         return self.title
 ```
 
-### Define a URL + View
+### Define a URL and view
 
 ```python
 # urls.py
@@ -117,7 +117,7 @@ def article_detail(request, pk):
     return render(request, 'articles/detail.html', {'article': article})
 ```
 
-### Class-Based View
+### Class-based view
 
 ```python
 from django.views.generic import ListView, DetailView
@@ -132,7 +132,7 @@ class ArticleDetailView(DetailView):
     slug_field = 'slug'
 ```
 
-### QuerySet Filtering
+### QuerySet filtering
 
 ```python
 from django.db.models import Q, F, Count
@@ -148,7 +148,7 @@ articles = Article.objects.filter(
 ).order_by('-created_at')
 ```
 
-### Form with Validation
+### Form with validation
 
 ```python
 from django import forms
@@ -165,7 +165,7 @@ class ArticleForm(forms.ModelForm):
         return title
 ```
 
-### Cache a View
+### Cache a view
 
 ```python
 from django.views.decorators.cache import cache_page
@@ -176,7 +176,7 @@ def article_list(request):
     return render(request, 'articles/list.html', {'articles': articles})
 ```
 
-### Signal Receiver
+### Signal receiver
 
 ```python
 from django.db.models.signals import post_save
@@ -188,7 +188,7 @@ def notify_on_publish(sender, instance, created, **kwargs):
         send_notification(instance)
 ```
 
-### Management Command
+### Management command
 
 ```python
 from django.core.management.base import BaseCommand
@@ -204,7 +204,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f'Processed {count} articles'))
 ```
 
-### Test Case
+### Test case
 
 ```python
 from django.test import TestCase
@@ -224,17 +224,17 @@ class ArticleTests(TestCase):
         self.assertContains(response, 'Test Article')
 ```
 
-## Best Practices
+## Best practices
 
-- Target **Python 3.10+** and **Django 6.0** with type hints where helpful
-- Use **class-based views** for CRUD; function-based views for custom logic
-- Prefer **select_related/prefetch_related** to avoid N+1 queries
-- Use **F expressions** for database-level operations instead of Python
-- Apply **migrations** atomically - one logical change per migration
-- Use **Django's cache framework** with Redis or Memcached in production
-- Write **TestCase** tests with assertions specific to Django (assertContains, assertRedirects)
-- Use **custom user models** from the start (AUTH_USER_MODEL)
-- Enable **CSRF protection** everywhere - never use @csrf_exempt without good reason
-- Use **environment variables** for secrets - never commit SECRET_KEY or database credentials
-- Deploy with **Gunicorn/Uvicorn** behind a reverse proxy (nginx)
-- Run **manage.py check --deploy** before every production deployment
+- Target Python 3.10+ and Django 6.0, with type hints where they help.
+- Use class-based views for CRUD and function-based views for custom logic.
+- Use `select_related` and `prefetch_related` to avoid N+1 queries.
+- Use F expressions for database-level operations instead of doing the work in Python.
+- Keep migrations atomic: one logical change per migration.
+- Use Django's cache framework with Redis or Memcached in production.
+- Write `TestCase` tests with Django-specific assertions (`assertContains`, `assertRedirects`).
+- Start with a custom user model (`AUTH_USER_MODEL`).
+- Keep CSRF protection on everywhere. Do not use `@csrf_exempt` without a good reason.
+- Read secrets from environment variables. Never commit `SECRET_KEY` or database credentials.
+- Deploy with Gunicorn or Uvicorn behind a reverse proxy such as nginx.
+- Run `manage.py check --deploy` before every production deployment.

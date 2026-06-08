@@ -1,12 +1,26 @@
 # Django Database Functions
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Comparison and conversion functions](#comparison-and-conversion-functions)
+- [Date and time functions](#date-and-time-functions)
+- [Text functions](#text-functions)
+- [Math functions](#math-functions)
+- [JSON functions](#json-functions)
+- [Conditional expressions](#conditional-expressions)
+- [Full-text search (PostgreSQL)](#full-text-search-postgresql)
+- [Window functions](#window-functions)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django provides a rich set of database functions for use in annotations, aggregations, filters, and updates. These functions execute at the database level for optimal performance. All functions are expressions that can be combined with other expressions, F() objects, and values.
+Django ships database functions for use in annotations, aggregations, filters, and updates. They run in the database, not in Python. Every function is an expression, so it can be combined with other expressions, `F()` objects, and values.
 
-## Core Concepts
+## Core concepts
 
-### Using Database Functions
+### Using database functions
 
 All functions can be used in `annotate()`, `aggregate()`, `filter()`, and `update()`:
 
@@ -27,7 +41,7 @@ Author.objects.order_by(Lower("name"))
 Author.objects.update(name=Lower("name"))
 ```
 
-## Comparison and Conversion Functions
+## Comparison and conversion functions
 
 ### Cast
 
@@ -58,7 +72,7 @@ Author.objects.annotate(
 )
 ```
 
-### Greatest and Least
+### Greatest and least
 
 Return the greatest or least value from multiple expressions:
 
@@ -90,7 +104,7 @@ from django.db.models import Value
 Author.objects.filter(name=Collate(Value("john"), "nocase"))
 ```
 
-## Date and Time Functions
+## Date and time functions
 
 ### Now
 
@@ -170,9 +184,9 @@ Available Trunc subclasses:
 | `TruncDate` | Date part of datetime |
 | `TruncTime` | Time part of datetime |
 
-## Text Functions
+## Text functions
 
-### Case Conversion
+### Case conversion
 
 ```python
 from django.db.models.functions import Upper, Lower
@@ -194,7 +208,7 @@ Author.objects.annotate(
 )
 ```
 
-### Substring Operations
+### Substring operations
 
 ```python
 from django.db.models.functions import Left, Right, Substr, Length
@@ -207,7 +221,7 @@ Author.objects.annotate(
 )
 ```
 
-### Trim, Pad, and Replace
+### Trim, pad, and replace
 
 ```python
 from django.db.models.functions import Trim, LTrim, RTrim, LPad, RPad, Replace
@@ -220,7 +234,7 @@ Author.objects.annotate(
 )
 ```
 
-### Other Text Functions
+### Other text functions
 
 ```python
 from django.db.models.functions import (
@@ -236,9 +250,9 @@ Author.objects.annotate(
 )
 ```
 
-## Math Functions
+## Math functions
 
-### Basic Math
+### Basic math
 
 ```python
 from django.db.models.functions import Abs, Ceil, Floor, Round, Sign, Sqrt, Power, Mod
@@ -255,7 +269,7 @@ Vector.objects.annotate(
 )
 ```
 
-### Trigonometric Functions
+### Trigonometric functions
 
 ```python
 from django.db.models.functions import (
@@ -273,7 +287,7 @@ Point.objects.annotate(
 )
 ```
 
-### Logarithmic Functions
+### Logarithmic functions
 
 ```python
 from django.db.models.functions import Exp, Ln, Log
@@ -294,7 +308,7 @@ from django.db.models.functions import Random
 Entry.objects.order_by(Random())
 ```
 
-## JSON Functions
+## JSON functions
 
 ### JSONObject
 
@@ -327,7 +341,7 @@ Author.objects.annotate(
 # Result: ['margaret smith', 'msmith', 25]
 ```
 
-## Conditional Expressions
+## Conditional expressions
 
 ### Case / When
 
@@ -346,7 +360,7 @@ Client.objects.annotate(
 )
 ```
 
-### With Field Lookups
+### With field lookups
 
 ```python
 from datetime import timedelta, date
@@ -361,7 +375,7 @@ Client.objects.annotate(
 )
 ```
 
-### With Q Objects
+### With Q objects
 
 ```python
 from django.db.models import Q
@@ -374,7 +388,7 @@ Client.objects.annotate(
 )
 ```
 
-### Conditional Update
+### Conditional update
 
 ```python
 Client.objects.update(
@@ -386,7 +400,7 @@ Client.objects.update(
 )
 ```
 
-### Conditional Aggregation
+### Conditional aggregation
 
 ```python
 from django.db.models import Count, Q
@@ -399,9 +413,9 @@ Client.objects.aggregate(
 # {'regular': 2, 'gold': 1, 'platinum': 3}
 ```
 
-## Full-Text Search (PostgreSQL)
+## Full-text search (PostgreSQL)
 
-### Basic Search
+### Basic search
 
 ```python
 # Simple search lookup
@@ -433,7 +447,7 @@ Entry.objects.annotate(
 ).filter(rank__gte=0.3).order_by("-rank")
 ```
 
-### Trigram Similarity
+### Trigram similarity
 
 Fuzzy matching using trigram comparison:
 
@@ -442,7 +456,7 @@ Author.objects.filter(name__trigram_similar="Helen")
 Author.objects.filter(name__unaccent__lower__trigram_similar="Helene")
 ```
 
-## Window Functions
+## Window functions
 
 ```python
 from django.db.models import Window, F
@@ -460,14 +474,14 @@ Employee.objects.annotate(
 
 Additional window functions: `FirstValue`, `LastValue`, `NthValue`, `CumeDist`, `PercentRank`.
 
-## Best Practices
+## Best practices
 
-- Use database functions instead of Python-level processing for better performance
-- Combine functions with `annotate()` for per-row computed values
-- Use `Coalesce` to handle NULL values gracefully
-- Use `Case`/`When` for conditional logic instead of multiple queries
-- Use `Exists` subqueries instead of `Count` for boolean checks (more efficient)
+- Use database functions instead of Python-level processing.
+- Combine functions with `annotate()` for per-row computed values.
+- Use `Coalesce` to handle NULL values.
+- Use `Case`/`When` for conditional logic instead of multiple queries.
+- Use `Exists` subqueries instead of `Count` for boolean checks. They are cheaper.
 - Use `TruncMonth`/`TruncDay` with `values().annotate()` for time-series grouping
-- Use conditional aggregation (`filter=Q(...)`) instead of multiple queries
-- PostgreSQL full-text search is suitable for moderate search needs; use Elasticsearch/Solr for large-scale search
-- Use `distinct=True` in `Count` when combining multiple aggregations to avoid inflated counts
+- Use conditional aggregation (`filter=Q(...)`) instead of multiple queries.
+- PostgreSQL full-text search covers moderate search needs. Use Elasticsearch or Solr for large-scale search.
+- Use `distinct=True` in `Count` when combining multiple aggregations, to avoid inflated counts.

@@ -1,12 +1,26 @@
 # Django Admin
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [ModelAdmin options](#modeladmin-options)
+- [Admin decorators](#admin-decorators)
+- [Admin actions](#admin-actions)
+- [InlineModelAdmin](#inlinemodeladmin)
+- [Key ModelAdmin methods](#key-modeladmin-methods)
+- [AdminSite customization](#adminsite-customization)
+- [Custom templates](#custom-templates)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django's admin interface automatically generates a model-centric management UI by reading model metadata. It is designed for trusted internal users and provides CRUD operations, filtering, searching, bulk actions, and inline editing out of the box. The admin is highly customizable through `ModelAdmin` classes, decorators, and site configuration.
+Django's admin generates a model-centric management UI from model metadata. It is meant for trusted internal users and comes with CRUD operations, filtering, searching, bulk actions, and inline editing. Customize it through `ModelAdmin` classes, decorators, and site configuration.
 
-## Core Concepts
+## Core concepts
 
-### Setup Requirements
+### Setup requirements
 
 ```python
 # settings.py
@@ -28,7 +42,7 @@ urlpatterns = [
 
 Create a superuser: `python manage.py createsuperuser`.
 
-### Basic Registration
+### Basic registration
 
 ```python
 from django.contrib import admin
@@ -49,9 +63,9 @@ class AuthorAdmin(admin.ModelAdmin):
     list_display = ["name", "email"]
 ```
 
-## ModelAdmin Options
+## ModelAdmin options
 
-### List Display and Navigation
+### List display and navigation
 
 ```python
 @admin.register(Article)
@@ -93,7 +107,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
 Search field prefixes: `^` (istartswith), `=` (iexact), `@` (search/PostgreSQL), no prefix (icontains).
 
-### Form Layout
+### Form layout
 
 ```python
 @admin.register(Article)
@@ -126,7 +140,7 @@ class ArticleAdmin(admin.ModelAdmin):
     form = ArticleAdminForm
 ```
 
-### Relation Field Widgets
+### Relation field widgets
 
 ```python
 @admin.register(Article)
@@ -149,7 +163,7 @@ class ArticleAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ["title"]}
 ```
 
-### Other Options
+### Other options
 
 ```python
 @admin.register(Article)
@@ -182,7 +196,7 @@ class ArticleAdmin(admin.ModelAdmin):
     show_facets = admin.ShowFacets.ALWAYS
 ```
 
-## Admin Decorators
+## Admin decorators
 
 ### @admin.register
 
@@ -260,9 +274,9 @@ class ArticleAdmin(admin.ModelAdmin):
         return response
 ```
 
-## Admin Actions
+## Admin actions
 
-### Writing Actions
+### Writing actions
 
 ```python
 # As a standalone function
@@ -282,7 +296,7 @@ class ArticleAdmin(admin.ModelAdmin):
         queryset.update(status="p")
 ```
 
-### User Feedback
+### User feedback
 
 ```python
 from django.contrib import messages
@@ -302,7 +316,7 @@ def make_published(self, request, queryset):
     )
 ```
 
-### Action Permissions
+### Action permissions
 
 ```python
 @admin.action(permissions=["change"])
@@ -318,7 +332,7 @@ def has_publish_permission(self, request):
     return request.user.has_perm("myapp.publish_article")
 ```
 
-### Intermediate Pages
+### Intermediate pages
 
 Return an `HttpResponse` to show a confirmation page:
 
@@ -331,7 +345,7 @@ def export_selected(self, request, queryset):
     )
 ```
 
-### Site-Wide Actions
+### Site-wide actions
 
 ```python
 # Add globally
@@ -345,7 +359,7 @@ class MyAdmin(admin.ModelAdmin):
     actions = ["delete_selected", "my_action"]
 ```
 
-### Conditionally Disabling Actions
+### Conditionally disabling actions
 
 ```python
 class ArticleAdmin(admin.ModelAdmin):
@@ -387,7 +401,7 @@ class ReviewInline(admin.StackedInline):
     classes = ["collapse"]  # Make collapsible
 ```
 
-### Using Inlines
+### Using inlines
 
 ```python
 @admin.register(Author)
@@ -395,7 +409,7 @@ class AuthorAdmin(admin.ModelAdmin):
     inlines = [BookInline, ReviewInline]
 ```
 
-### Common Inline Options
+### Common inline options
 
 | Option | Default | Description |
 |--------|---------|-------------|
@@ -410,9 +424,9 @@ class AuthorAdmin(admin.ModelAdmin):
 | `formset` | `BaseInlineFormSet` | Custom formset class |
 | `show_change_link` | `False` | Link to full edit page |
 
-## Key ModelAdmin Methods
+## Key ModelAdmin methods
 
-### Data Access and Filtering
+### Data access and filtering
 
 ```python
 @admin.register(Article)
@@ -434,7 +448,7 @@ class ArticleAdmin(admin.ModelAdmin):
         return queryset, may_have_duplicates
 ```
 
-### Save and Delete Hooks
+### Save and delete hooks
 
 ```python
     def save_model(self, request, obj, form, change):
@@ -457,7 +471,7 @@ class ArticleAdmin(admin.ModelAdmin):
         formset.save_m2m()
 ```
 
-### Dynamic Configuration
+### Dynamic configuration
 
 ```python
     def get_readonly_fields(self, request, obj=None):
@@ -484,7 +498,7 @@ class ArticleAdmin(admin.ModelAdmin):
         return super().get_form(request, obj, **kwargs)
 ```
 
-### Permission Methods
+### Permission methods
 
 ```python
     def has_add_permission(self, request):
@@ -505,7 +519,7 @@ class ArticleAdmin(admin.ModelAdmin):
         return True
 ```
 
-### Custom Admin URLs
+### Custom admin URLs
 
 ```python
     def get_urls(self):
@@ -525,7 +539,7 @@ class ArticleAdmin(admin.ModelAdmin):
         pass
 ```
 
-## AdminSite Customization
+## AdminSite customization
 
 ```python
 from django.contrib.admin import AdminSite
@@ -553,9 +567,9 @@ admin.site.site_title = "My Project"
 admin.site.index_title = "Dashboard"
 ```
 
-## Custom Templates
+## Custom templates
 
-Override admin templates per-model or globally:
+Override admin templates per model or globally:
 
 ```python
 @admin.register(Article)
@@ -566,9 +580,9 @@ class ArticleAdmin(admin.ModelAdmin):
     object_history_template = "admin/article/object_history.html"
 ```
 
-## Common Patterns
+## Common patterns
 
-### Complete ModelAdmin Example
+### Complete ModelAdmin example
 
 ```python
 from django.contrib import admin
@@ -629,15 +643,15 @@ class AuthorAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 ```
 
-## Best Practices
+## Best practices
 
-- Use `@admin.register` decorator over `admin.site.register()` for cleaner code
-- Always set `list_display` to show relevant columns
-- Use `search_fields` with lookup prefixes (`^`, `=`) for performance
-- Use `list_select_related` to avoid N+1 queries in list views
-- Override `get_queryset()` to filter by user permissions
-- Use `readonly_fields` for computed or non-editable data
-- Use `fieldsets` with `collapse` class for advanced/optional sections
-- Use `autocomplete_fields` instead of default select for large relation sets
-- Set `show_full_result_count = False` for tables with millions of rows
-- Use `@admin.display(ordering=...)` to make computed columns sortable
+- Prefer the `@admin.register` decorator over `admin.site.register()`.
+- Set `list_display` so the change list shows relevant columns.
+- Use `search_fields` with lookup prefixes (`^`, `=`) for performance.
+- Use `list_select_related` to avoid N+1 queries in list views.
+- Override `get_queryset()` to filter by user permissions.
+- Use `readonly_fields` for computed or non-editable data.
+- Use `fieldsets` with the `collapse` class for advanced or optional sections.
+- Use `autocomplete_fields` instead of the default select for large relation sets.
+- Set `show_full_result_count = False` for tables with millions of rows.
+- Use `@admin.display(ordering=...)` to make computed columns sortable.

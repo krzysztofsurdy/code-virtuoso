@@ -1,12 +1,24 @@
 # Django Content Types Framework
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Key classes and methods](#key-classes-and-methods)
+- [Generic relations](#generic-relations)
+- [Common patterns](#common-patterns)
+- [Generic relations in admin](#generic-relations-in-admin)
+- [Generic relations in forms](#generic-relations-in-forms)
+- [Configuration](#configuration)
+- [Best practices](#best-practices)
+
 ## Overview
 
-The contenttypes framework tracks all models installed in a Django project, providing a high-level generic interface for working with models. It enables polymorphic relationships through generic foreign keys, allowing a model to relate to any other model without hard-coding a specific ForeignKey. The framework is included in the default `INSTALLED_APPS` and is required by Django's admin and authentication systems.
+The contenttypes framework tracks every model installed in a Django project and gives you a generic interface for working with them. Generic foreign keys let a model relate to any other model without hard-coding a specific ForeignKey. The framework is in the default `INSTALLED_APPS`, and Django's admin and authentication systems depend on it.
 
-## Core Concepts
+## Core concepts
 
-### The ContentType Model
+### The ContentType model
 
 `ContentType` (`django.contrib.contenttypes.models.ContentType`) uniquely identifies each installed model with two fields:
 
@@ -23,7 +35,7 @@ from django.contrib.contenttypes.models import ContentType
 user_type = ContentType.objects.get(app_label="auth", model="user")
 ```
 
-### Methods on ContentType Instances
+### Methods on ContentType instances
 
 ```python
 # Get the model class
@@ -35,7 +47,7 @@ user_type.get_object_for_this_type(username="Guido")
 # <User: Guido>
 ```
 
-## Key Classes and Methods
+## Key classes and methods
 
 ### ContentTypeManager
 
@@ -64,7 +76,7 @@ content_type = ContentType.objects.get_by_natural_key("auth", "user")
 ContentType.objects.clear_cache()
 ```
 
-### Proxy Model Support
+### Proxy model support
 
 Use `for_concrete_model=False` to get the ContentType of a proxy model instead of its concrete parent:
 
@@ -72,11 +84,11 @@ Use `for_concrete_model=False` to get the ContentType of a proxy model instead o
 ContentType.objects.get_for_model(MyProxyModel, for_concrete_model=False)
 ```
 
-## Generic Relations
+## Generic relations
 
 ### GenericForeignKey
 
-Creates a polymorphic relationship that can point to any model. Requires three components on the model:
+A polymorphic relationship that can point to any model. It needs three components on the model:
 
 ```python
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -110,12 +122,13 @@ t.save()
 t.content_object  # <User: Guido>
 ```
 
-**Limitations:**
+Limitations:
+
 - Cannot be used in QuerySet filters (`TaggedItem.objects.filter(content_object=guido)` will fail)
 - Does not appear in `ModelForm`s
 - If the related object is deleted, `content_object` returns `None`
 
-### GenericRelation (Reverse Generic Relations)
+### GenericRelation (Reverse generic relations)
 
 Enables reverse access from a related model back to objects with GenericForeignKeys:
 
@@ -175,7 +188,7 @@ TaggedItem.objects.filter(
 )
 ```
 
-### Custom Field Names
+### Custom field names
 
 When using non-default field names for content_type and object_id:
 
@@ -193,9 +206,9 @@ class Bookmark(models.Model):
     )
 ```
 
-## Common Patterns
+## Common patterns
 
-### Flexible Primary Key Types
+### Flexible primary key types
 
 The `object_id` field type does not need to match all related models' PK types:
 
@@ -203,11 +216,11 @@ The `object_id` field type does not need to match all related models' PK types:
 # CharField for flexibility with both IntegerField and CharField PKs
 object_id = models.CharField(max_length=255)
 
-# TextField for maximum flexibility (performance trade-off)
+# TextField for the most flexibility, at a performance cost
 object_id = models.TextField()
 ```
 
-### Aggregation with Generic Relations
+### Aggregation with generic relations
 
 ```python
 from django.db.models import Count
@@ -216,9 +229,9 @@ Bookmark.objects.aggregate(Count("tags"))
 # {'tags__count': 3}
 ```
 
-### GenericPrefetch for Optimized Queries
+### GenericPrefetch for optimized queries
 
-Optimize queries for GenericForeignKey with heterogeneous related objects:
+Prefetch efficiently when a GenericForeignKey points at objects of different models:
 
 ```python
 from django.contrib.contenttypes.prefetch import GenericPrefetch
@@ -231,13 +244,13 @@ prefetch = GenericPrefetch(
 TaggedItem.objects.prefetch_related(prefetch).all()
 ```
 
-### Cascade Deletion
+### Cascade deletion
 
-Deleting an object with `GenericRelation` automatically deletes related objects (CASCADE behavior). Customize with `pre_delete` signal if needed.
+Deleting an object that has a `GenericRelation` also deletes the related objects (CASCADE behavior). Use a `pre_delete` signal to change that.
 
-## Generic Relations in Admin
+## Generic relations in admin
 
-### Inline Admin Classes
+### Inline admin classes
 
 ```python
 from django.contrib.contenttypes.admin import (
@@ -259,7 +272,7 @@ admin.site.register(Bookmark, BookmarkAdmin)
 
 Two layout options: `GenericTabularInline` (table) and `GenericStackedInline` (stacked form).
 
-## Generic Relations in Forms
+## Generic relations in forms
 
 ### generic_inlineformset_factory
 
@@ -289,13 +302,13 @@ INSTALLED_APPS = [
 
 Run `migrate` after adding to create the `django_content_type` table.
 
-## Best Practices
+## Best practices
 
-- Always add a database index on `(content_type, object_id)` for GenericForeignKey fields
-- Use `get_for_model()` and `get_for_id()` instead of direct queries to leverage the ContentType cache
-- Use `related_query_name` on GenericRelation to enable cross-model filtering
-- Use `GenericPrefetch` to avoid N+1 queries when accessing `content_object` on multiple items
-- Use natural keys (`--natural-foreign`) when serializing data that includes ContentType references
-- Clear ContentType cache in test `setUp()` when testing across different model configurations
-- Prefer `PositiveBigIntegerField` for `object_id` to support large primary keys
-- Use `for_concrete_model=False` when you need to distinguish proxy models from their parents
+- Add a database index on `(content_type, object_id)` for GenericForeignKey fields.
+- Use `get_for_model()` and `get_for_id()` instead of direct queries so lookups hit the ContentType cache.
+- Use `related_query_name` on GenericRelation to enable cross-model filtering.
+- Use `GenericPrefetch` to avoid N+1 queries when accessing `content_object` on multiple items.
+- Use natural keys (`--natural-foreign`) when serializing data that references ContentType.
+- Clear the ContentType cache in test `setUp()` when testing across different model configurations.
+- Prefer `PositiveBigIntegerField` for `object_id` to support large primary keys.
+- Use `for_concrete_model=False` to distinguish proxy models from their parents.
