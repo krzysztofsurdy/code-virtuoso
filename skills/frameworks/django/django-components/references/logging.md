@@ -1,12 +1,23 @@
 # Django Logging
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Configuration](#configuration)
+- [Django's built-in loggers](#djangos-built-in-loggers)
+- [Django's built-in handlers](#djangos-built-in-handlers)
+- [Django's built-in filters](#djangos-built-in-filters)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django uses and extends Python's built-in `logging` module. It provides a structured approach to system logging through four components: loggers, handlers, filters, and formatters. Logging is configured via the `LOGGING` setting using Python's `dictConfig` format and is initialized during Django's `setup()` function.
+Django builds on Python's built-in `logging` module and its four components: loggers, handlers, filters, and formatters. Logging is configured through the `LOGGING` setting in Python's `dictConfig` format and is initialized during Django's `setup()` function.
 
-## Core Concepts
+## Core concepts
 
-### The Four Components
+### The four components
 
 #### Loggers
 
@@ -69,11 +80,11 @@ Render log records as text using Python format strings:
 
 ## Configuration
 
-### LOGGING Setting
+### LOGGING setting
 
 Django uses Python's `dictConfig` format. The `LOGGING` dict is merged with Django's default configuration.
 
-#### Minimal Console Logging
+#### Minimal console logging
 
 ```python
 LOGGING = {
@@ -91,7 +102,7 @@ LOGGING = {
 }
 ```
 
-#### File Logging
+#### File logging
 
 ```python
 LOGGING = {
@@ -114,7 +125,7 @@ LOGGING = {
 }
 ```
 
-#### Environment-Driven Log Level
+#### Environment-driven log level
 
 ```python
 import os
@@ -141,7 +152,7 @@ LOGGING = {
 }
 ```
 
-#### Production Configuration
+#### Production configuration
 
 ```python
 LOGGING = {
@@ -207,7 +218,7 @@ LOGGING = {
 }
 ```
 
-### Key Configuration Options
+### Key configuration options
 
 #### disable_existing_loggers
 
@@ -219,7 +230,7 @@ LOGGING = {
 - `True` - log records propagate up the logger hierarchy (e.g., `django.request` -> `django` -> root)
 - `False` - messages handled only by the current logger's handlers
 
-### Custom Logging Configuration
+### Custom logging configuration
 
 ```python
 # Use a custom configuration callable
@@ -232,7 +243,7 @@ import logging.config
 logging.config.dictConfig({...})
 ```
 
-## Django's Built-in Loggers
+## Django's built-in loggers
 
 | Logger | Purpose |
 |--------|---------|
@@ -256,7 +267,7 @@ Logs HTTP errors with extra context:
 
 ### django.db.backends
 
-Logs every SQL query at DEBUG level. Can generate significant output - use with caution in production.
+Logs every SQL query at DEBUG level. The output volume is large, so be careful with it in production.
 
 ### django.security
 
@@ -264,7 +275,7 @@ Sub-loggers for specific security events:
 - `django.security.csrf` - CSRF failures
 - `django.security.DisallowedHost` - requests with disallowed Host header
 
-## Django's Built-in Handlers
+## Django's built-in handlers
 
 ### AdminEmailHandler
 
@@ -284,7 +295,7 @@ Options:
 - `include_html` - include full HTML error page in email (security risk in production)
 - `email_backend` - override the email backend used for sending
 
-## Django's Built-in Filters
+## Django's built-in filters
 
 ### RequireDebugFalse
 
@@ -317,9 +328,9 @@ Options:
 }
 ```
 
-## Common Patterns
+## Common patterns
 
-### Application Logger
+### Application logger
 
 ```python
 # myapp/views.py
@@ -338,7 +349,7 @@ def my_view(request):
     return render(request, "template.html", {"result": result})
 ```
 
-### Structured Logging with Extra Data
+### Structured logging with extra data
 
 ```python
 logger.info(
@@ -351,7 +362,7 @@ logger.info(
 )
 ```
 
-### Development vs Production
+### Development vs production
 
 ```python
 # Development: verbose console output
@@ -372,7 +383,7 @@ else:
     }
 ```
 
-### Suppress Noisy Loggers
+### Suppress noisy loggers
 
 ```python
 LOGGING = {
@@ -387,15 +398,15 @@ LOGGING = {
 }
 ```
 
-## Best Practices
+## Best practices
 
 - Set `"disable_existing_loggers": False` to avoid silencing Django's default loggers
 - Use `__name__` as the logger name for automatic hierarchy based on module path
 - Use `logger.exception()` inside except blocks to automatically include traceback
-- Use `RequireDebugFalse` filter on `AdminEmailHandler` to avoid email floods in development
+- Use the `RequireDebugFalse` filter on `AdminEmailHandler` to avoid email floods in development
 - Do not enable `django.db.backends` at DEBUG level in production - it logs every SQL query
 - Use `%s` string formatting in log calls (not f-strings) for lazy evaluation
 - Use `extra` dict for structured data rather than embedding it in the message string
 - Keep sensitive data out of log messages (passwords, tokens, PII)
-- Consider third-party logging services with proper access control instead of `AdminEmailHandler` with `include_html=True`
-- Set log levels via environment variables for easy deployment configuration
+- Prefer a third-party logging service with access control over `AdminEmailHandler` with `include_html=True`
+- Set log levels through environment variables so they can change per deployment

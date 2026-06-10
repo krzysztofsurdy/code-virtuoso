@@ -1,12 +1,27 @@
 # Django QuerySets
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Methods that return new QuerySets](#methods-that-return-new-querysets)
+- [Methods that do NOT return QuerySets](#methods-that-do-not-return-querysets)
+- [Q objects (complex queries)](#q-objects-complex-queries)
+- [F expressions](#f-expressions)
+- [Aggregation](#aggregation)
+- [Subquery and Exists](#subquery-and-exists)
+- [Window functions](#window-functions)
+- [QuerySet caching](#queryset-caching)
+- [Async QuerySet API](#async-queryset-api)
+- [Best practices](#best-practices)
+
 ## Overview
 
-QuerySets represent a collection of objects from the database. They are lazy (no database hit until evaluated), chainable, and cacheable. Django's QuerySet API provides methods for filtering, ordering, aggregating, and manipulating data without writing raw SQL.
+A QuerySet represents a collection of objects from the database. It is lazy (no database hit until evaluated), chainable, and cacheable. The QuerySet API covers filtering, ordering, aggregating, and modifying data without raw SQL.
 
-## Core Concepts
+## Core concepts
 
-### QuerySet Evaluation
+### QuerySet evaluation
 
 QuerySets are lazy - no database query executes until the QuerySet is evaluated through:
 
@@ -17,7 +32,7 @@ QuerySets are lazy - no database query executes until the QuerySet is evaluated 
 
 Use `exists()` instead of `bool()` and `count()` instead of `len()` for efficiency.
 
-### Creating and Saving Objects
+### Creating and saving objects
 
 ```python
 # Method 1: Instantiate and save
@@ -36,7 +51,7 @@ entry.authors.add(author1, author2)
 entry.authors.set([author1, author2])
 ```
 
-## Methods That Return New QuerySets
+## Methods that return new QuerySets
 
 ### filter() and exclude()
 
@@ -49,7 +64,7 @@ Entry.objects.exclude(pub_date__gte=date.today())
 Entry.objects.filter(headline__startswith="What").exclude(pub_date__gte=date.today())
 ```
 
-### Field Lookups
+### Field lookups
 
 Lookups use double-underscore syntax: `field__lookup=value`.
 
@@ -75,7 +90,7 @@ Lookups use double-underscore syntax: `field__lookup=value`.
 | `week_day` | Day of week (1=Sunday) | `date__week_day=2` |
 | `date` | Date part of datetime | `created__date=date.today()` |
 
-### Spanning Relationships
+### Spanning relationships
 
 ```python
 # Forward: entry -> blog
@@ -213,7 +228,7 @@ Entry.objects.order_by("headline")[0]  # Single object
 
 Negative indexing is not supported.
 
-## Methods That Do NOT Return QuerySets
+## Methods that do NOT return QuerySets
 
 ### get()
 
@@ -304,7 +319,7 @@ Entry.objects.filter(pub_date__year=2007).update(headline="Updated")
 Entry.objects.update(views=F("views") + 1)
 ```
 
-## Q Objects (Complex Queries)
+## Q objects (complex queries)
 
 ```python
 from django.db.models import Q
@@ -325,7 +340,7 @@ Entry.objects.filter(Q(a=1) ^ Q(b=2))
 Entry.objects.filter(Q(pub_date=date(2024, 1, 1)) | Q(pub_date=date(2024, 6, 1)), headline="Hello")
 ```
 
-## F Expressions
+## F expressions
 
 Reference field values in queries without pulling data into Python.
 
@@ -370,7 +385,7 @@ Book.objects.annotate(num_authors=Count("authors"))
 book.num_authors  # 3
 ```
 
-### Aggregation Functions
+### Aggregation functions
 
 | Function | Description |
 |---|---|
@@ -382,7 +397,7 @@ book.num_authors  # 3
 | `StdDev` | Standard deviation |
 | `Variance` | Variance |
 
-### Combining Multiple Aggregations
+### Combining multiple aggregations
 
 Use `distinct=True` to avoid incorrect counts from JOINs:
 
@@ -393,7 +408,7 @@ Book.objects.annotate(
 )
 ```
 
-### Conditional Aggregation
+### Conditional aggregation
 
 ```python
 from django.db.models import Q
@@ -404,7 +419,7 @@ Client.objects.aggregate(
 )
 ```
 
-### Order of filter() and annotate() Matters
+### Order of filter() and annotate() matters
 
 ```python
 # Filter THEN annotate: annotation applies to filtered set
@@ -414,7 +429,7 @@ Publisher.objects.filter(book__rating__gt=3).annotate(num_books=Count("book"))
 Publisher.objects.annotate(num_books=Count("book")).filter(num_books__gt=5)
 ```
 
-### Default Values for Empty Sets
+### Default values for empty sets
 
 ```python
 Book.objects.filter(name="nonexistent").aggregate(Sum("price", default=0))
@@ -439,7 +454,7 @@ Post.objects.filter(Exists(recent_comments))
 Post.objects.filter(~Exists(recent_comments))  # NOT EXISTS
 ```
 
-## Window Functions
+## Window functions
 
 ```python
 from django.db.models import Avg, F, Window
@@ -459,7 +474,7 @@ Movie.objects.annotate(
 )
 ```
 
-## QuerySet Caching
+## QuerySet caching
 
 ```python
 queryset = Entry.objects.all()
@@ -486,7 +501,7 @@ count = await Entry.objects.acount()
 exists = await Entry.objects.filter(pk=1).aexists()
 ```
 
-## Best Practices
+## Best practices
 
 - Use `select_related()` for ForeignKey/OneToOne to avoid N+1 queries
 - Use `prefetch_related()` for ManyToMany and reverse ForeignKey relations
@@ -497,4 +512,4 @@ exists = await Entry.objects.filter(pk=1).aexists()
 - Use `iterator()` for large querysets to avoid caching all results in memory
 - Use `bulk_create()` and `bulk_update()` for batch operations
 - Use `F()` expressions to avoid race conditions in updates
-- Remember that `update()` and `delete()` bypass `save()` and signals
+- `update()` and `delete()` bypass `save()` and signals

@@ -1,12 +1,22 @@
 # Django Management Commands
 
+## Contents
+
+- [Overview](#overview)
+- [Built-in commands](#built-in-commands)
+- [Default options (all commands)](#default-options-all-commands)
+- [Writing custom management commands](#writing-custom-management-commands)
+- [Calling commands programmatically](#calling-commands-programmatically)
+- [Environment variables](#environment-variables)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django management commands are invoked via `manage.py` or `django-admin`. Django ships with dozens of built-in commands for database management, project scaffolding, testing, and more. Custom commands can be created within any installed app.
+Django management commands run through `manage.py` or `django-admin`. Django ships with dozens of built-in commands for database management, project scaffolding, testing, and more. Any installed app can add its own commands.
 
-## Built-in Commands
+## Built-in commands
 
-### Database Commands
+### Database commands
 
 #### migrate
 
@@ -121,7 +131,7 @@ Loads fixture data:
 ./manage.py loaddata --app=myapp             # Search in specific app
 ```
 
-### Server Commands
+### Server commands
 
 #### runserver
 
@@ -144,7 +154,7 @@ Runs development server with fixture data:
 ./manage.py testserver fixture1.json fixture2.json
 ```
 
-### Project Scaffolding
+### Project scaffolding
 
 #### startproject
 
@@ -161,7 +171,7 @@ django-admin startproject --template=/path/to/template myproject
 ./manage.py startapp myapp /path/to/directory
 ```
 
-### Testing and Checks
+### Testing and checks
 
 #### test
 
@@ -194,7 +204,7 @@ Inspects the project for common problems:
 ./manage.py check --fail-level WARNING       # Fail threshold
 ```
 
-### User Management
+### User management
 
 #### createsuperuser
 
@@ -210,7 +220,7 @@ DJANGO_SUPERUSER_PASSWORD=pass ./manage.py createsuperuser --noinput --username=
 ./manage.py changepassword username
 ```
 
-### Static Files
+### Static files
 
 #### collectstatic
 
@@ -258,7 +268,7 @@ Auto-imports (Django 5.2+): models from `INSTALLED_APPS`, `connection`, `setting
 ./manage.py help migrate                     # Command help
 ```
 
-## Default Options (All Commands)
+## Default options (all commands)
 
 | Option | Description |
 |--------|-------------|
@@ -270,9 +280,9 @@ Auto-imports (Django 5.2+): models from `INSTALLED_APPS`, `connection`, `setting
 | `--force-color` | Force colored output |
 | `--skip-checks` | Skip system checks |
 
-## Writing Custom Management Commands
+## Writing custom management commands
 
-### Directory Structure
+### Directory structure
 
 ```
 myapp/
@@ -284,7 +294,7 @@ myapp/
     models.py
 ```
 
-### Basic Command
+### Basic command
 
 ```python
 from django.core.management.base import BaseCommand, CommandError
@@ -320,7 +330,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f'Closed poll "{poll_id}"'))
 ```
 
-### BaseCommand Attributes
+### BaseCommand attributes
 
 | Attribute | Description |
 |-----------|-------------|
@@ -331,11 +341,11 @@ class Command(BaseCommand):
 | `requires_system_checks` | List of check tags or `'__all__'` |
 | `style` | Colored output styling instance |
 
-### Command Output
+### Command output
 
 ```python
 def handle(self, *args, **options):
-    # Always use self.stdout/self.stderr, never print()
+    # Use self.stdout/self.stderr, never print()
     self.stdout.write("Normal output")
     self.stderr.write("Error output")
 
@@ -349,7 +359,7 @@ def handle(self, *args, **options):
     self.stdout.write("No newline", ending="")
 ```
 
-### BaseCommand Subclasses
+### BaseCommand subclasses
 
 #### AppCommand
 
@@ -378,7 +388,7 @@ class Command(LabelCommand):
         self.stdout.write(f"Processing {label}")
 ```
 
-### Suppressing Translations
+### Suppressing translations
 
 ```python
 from django.core.management.base import BaseCommand, no_translations
@@ -390,7 +400,7 @@ class Command(BaseCommand):
         pass
 ```
 
-## Calling Commands Programmatically
+## Calling commands programmatically
 
 ```python
 from django.core.management import call_command
@@ -413,7 +423,7 @@ with open("/path/to/output", "w") as f:
     call_command("dumpdata", stdout=f)
 ```
 
-## Environment Variables
+## Environment variables
 
 | Variable | Purpose |
 |----------|---------|
@@ -423,10 +433,10 @@ with open("/path/to/output", "w") as f:
 | `DJANGO_COLORS` | Color palette (`dark`, `light`, `nocolor`) |
 | `DJANGO_WATCHMAN_TIMEOUT` | Watchman timeout (default: 5s) |
 
-## Best Practices
+## Best practices
 
-- Always use `self.stdout`/`self.stderr` instead of `print()` for testability
-- Use `CommandError` for user-facing errors (formatted nicely by Django)
+- Use `self.stdout`/`self.stderr` instead of `print()` so output can be captured in tests
+- Use `CommandError` for user-facing errors; Django formats them for the terminal
 - Use `add_arguments` with `argparse` for argument parsing
 - Set `help` attribute for command documentation
 - Use `call_command` for programmatic invocation, not `execute()`

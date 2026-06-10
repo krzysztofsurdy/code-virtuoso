@@ -1,12 +1,27 @@
 # Django Migrations
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Schema operations](#schema-operations)
+- [Data migrations](#data-migrations)
+- [Common patterns](#common-patterns)
+- [Reversing migrations](#reversing-migrations)
+- [Squashing migrations](#squashing-migrations)
+- [Dependencies](#dependencies)
+- [Database backend support](#database-backend-support)
+- [Migration transactions](#migration-transactions)
+- [Serialization](#serialization)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Migrations are Django's version control system for database schemas. They propagate model changes (adding fields, deleting models, etc.) to the database in a consistent, repeatable way. Migrations are Python files that describe operations to apply or reverse schema changes.
+Migrations are Django's version control for database schemas. They carry model changes (adding fields, deleting models, and so on) to the database in a repeatable way. Each migration is a Python file that describes operations to apply or reverse.
 
-## Core Concepts
+## Core concepts
 
-### Migration Workflow
+### Migration workflow
 
 ```bash
 # 1. Make changes to models.py
@@ -23,7 +38,7 @@ python manage.py migrate
 # 5. Commit both model changes and migration files
 ```
 
-### Key Commands
+### Key commands
 
 | Command | Description |
 |---|---|
@@ -35,7 +50,7 @@ python manage.py migrate
 | `makemigrations --empty app` | Create an empty migration for data migrations |
 | `makemigrations --name changed_model app` | Create with custom name |
 
-### Migration File Structure
+### Migration file structure
 
 ```python
 from django.db import migrations, models
@@ -55,9 +70,9 @@ Key attributes:
 - `initial`: marks as initial migration (optional)
 - `atomic`: set to `False` to disable transaction wrapping (optional)
 
-## Schema Operations
+## Schema operations
 
-### Model Operations
+### Model operations
 
 ```python
 # Create a model
@@ -86,7 +101,7 @@ migrations.AlterModelOptions(
 )
 ```
 
-### Field Operations
+### Field operations
 
 ```python
 # Add a field
@@ -114,7 +129,7 @@ migrations.RenameField(
 )
 ```
 
-### Index and Constraint Operations
+### Index and constraint operations
 
 ```python
 # Add index
@@ -139,7 +154,7 @@ migrations.AddConstraint(
 migrations.RemoveConstraint(model_name="Article", name="rating_gte_1")
 ```
 
-## Data Migrations
+## Data migrations
 
 Create an empty migration and add `RunPython` operations.
 
@@ -168,9 +183,9 @@ class Migration(migrations.Migration):
     ]
 ```
 
-### Historical Models
+### Historical models
 
-Always use `apps.get_model()` instead of direct imports in data migrations:
+Use `apps.get_model()` instead of direct imports in data migrations:
 
 ```python
 # WRONG: direct import may not match migration state
@@ -218,11 +233,11 @@ migrations.SeparateDatabaseAndState(
 )
 ```
 
-## Common Patterns
+## Common patterns
 
-### Adding a Unique Non-Nullable Field
+### Adding a unique non-nullable field
 
-Multi-step approach for tables with existing rows:
+Tables with existing rows need three steps:
 
 ```python
 # Step 1: Add field as nullable
@@ -258,7 +273,7 @@ migrations.AlterField(
 )
 ```
 
-### Non-Atomic Migrations for Large Tables
+### Non-atomic migrations for large tables
 
 ```python
 from django.db import migrations, transaction
@@ -279,7 +294,7 @@ class Migration(migrations.Migration):
     ]
 ```
 
-### Multiple Database Support
+### Multiple database support
 
 ```python
 def forwards(apps, schema_editor):
@@ -294,7 +309,7 @@ class Migration(migrations.Migration):
     ]
 ```
 
-## Reversing Migrations
+## Reversing migrations
 
 ```bash
 # Reverse to a specific migration
@@ -304,7 +319,7 @@ python manage.py migrate myapp 0002
 python manage.py migrate myapp zero
 ```
 
-## Squashing Migrations
+## Squashing migrations
 
 Combine multiple migrations into one to reduce migration count:
 
@@ -347,7 +362,7 @@ dependencies = [
 ]
 ```
 
-## Database Backend Support
+## Database backend support
 
 | Feature | PostgreSQL | MySQL | SQLite |
 |---|---|---|---|
@@ -359,7 +374,7 @@ dependencies = [
 - MySQL: no transaction support for schema changes; manual fix-up on failures
 - SQLite: limited alteration (Django emulates via create-copy-drop-rename)
 
-## Migration Transactions
+## Migration transactions
 
 ```python
 # Disable transaction wrapping (needed for some PostgreSQL operations)
@@ -386,15 +401,15 @@ class MyValidator:
         return self.max_length == other.max_length
 ```
 
-## Best Practices
+## Best practices
 
 - Commit migrations with model changes as a single commit
-- Never edit auto-generated migrations unless necessary
+- Edit auto-generated migrations only when necessary
 - Use `--name` flag for meaningful migration names
 - Use `apps.get_model()` instead of direct imports in data migrations
 - Use `schema_editor.connection.alias` for multi-database support
 - Test migrations locally before production
 - Run `makemigrations` with the lowest Django version you support
 - Squash migrations periodically to reduce migration count
-- Always provide `reverse_code` for reversible data migrations
+- Provide `reverse_code` for every data migration that can be reversed
 - Use `RunPython.noop` for one-way operations instead of omitting reverse

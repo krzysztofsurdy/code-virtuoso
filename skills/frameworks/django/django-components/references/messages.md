@@ -1,14 +1,29 @@
 # Django Messages Framework
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Adding messages](#adding-messages)
+- [Displaying messages in templates](#displaying-messages-in-templates)
+- [Displaying messages outside templates](#displaying-messages-outside-templates)
+- [Storage backends](#storage-backends)
+- [Managing message levels per request](#managing-message-levels-per-request)
+- [Class-based views integration](#class-based-views-integration)
+- [Message expiration](#message-expiration)
+- [Testing messages](#testing-messages)
+- [Configuration](#configuration)
+- [Best practices](#best-practices)
+
 ## Overview
 
-The Django messages framework provides cookie- and session-based messaging for temporarily storing messages in one request and retrieving them in subsequent requests. Each message is tagged with a priority level (debug, info, success, warning, error) and can carry additional custom tags for styling and categorization.
+The Django messages framework stores messages in a cookie or the session during one request so they can be read in a later request. Each message has a level (debug, info, success, warning, error) and can carry extra custom tags for styling and categorization.
 
-## Core Concepts
+## Core concepts
 
-### Enabling Messages
+### Enabling messages
 
-The default Django project configuration includes everything needed:
+The default Django project configuration already includes everything required:
 
 ```python
 # settings.py
@@ -33,9 +48,9 @@ TEMPLATES = [{
 }]
 ```
 
-### Message Levels
+### Message levels
 
-| Constant | Value | Purpose | Default Tag |
+| Constant | Value | Purpose | Default tag |
 |---|---|---|---|
 | `DEBUG` | 10 | Development-related messages | `debug` |
 | `INFO` | 20 | Informational messages | `info` |
@@ -43,9 +58,9 @@ TEMPLATES = [{
 | `WARNING` | 30 | Potential problem warnings | `warning` |
 | `ERROR` | 40 | Action failed or error occurred | `error` |
 
-## Adding Messages
+## Adding messages
 
-### Shortcut Methods
+### Shortcut methods
 
 ```python
 from django.contrib import messages
@@ -64,14 +79,14 @@ def my_view(request):
 messages.add_message(request, messages.INFO, "Hello world.")
 ```
 
-### Extra Tags
+### Extra tags
 
 ```python
 messages.add_message(request, messages.INFO, "Over 9000!", extra_tags="dragonball")
 messages.error(request, "Email box full", extra_tags="email")
 ```
 
-### Failing Silently
+### Failing silently
 
 Use `fail_silently=True` when the messages framework might not be available:
 
@@ -79,7 +94,7 @@ Use `fail_silently=True` when the messages framework might not be available:
 messages.info(request, "Hello world.", fail_silently=True)
 ```
 
-### Custom Message Levels
+### Custom message levels
 
 ```python
 CRITICAL = 50
@@ -99,9 +114,9 @@ MESSAGE_TAGS = {
 }
 ```
 
-## Displaying Messages in Templates
+## Displaying messages in templates
 
-### Basic Display
+### Basic display
 
 ```django
 {% if messages %}
@@ -115,7 +130,7 @@ MESSAGE_TAGS = {
 {% endif %}
 ```
 
-### With Level Checking
+### With level checking
 
 ```django
 {% if messages %}
@@ -130,7 +145,7 @@ MESSAGE_TAGS = {
 {% endif %}
 ```
 
-### Message Object Attributes
+### Message object attributes
 
 | Attribute | Description |
 |---|---|
@@ -140,7 +155,7 @@ MESSAGE_TAGS = {
 | `extra_tags` | Custom tags passed via extra_tags parameter |
 | `level_tag` | String representation of level (e.g., "error", "success") |
 
-## Displaying Messages Outside Templates
+## Displaying messages outside templates
 
 ```python
 from django.contrib.messages import get_messages
@@ -163,9 +178,9 @@ def api_view(request):
     return JsonResponse({"messages": response_messages})
 ```
 
-## Storage Backends
+## Storage backends
 
-### Available Backends
+### Available backends
 
 | Backend | Description |
 |---|---|
@@ -173,13 +188,13 @@ def api_view(request):
 | `CookieStorage` | Stores in signed cookie. Drops old messages if cookie > 2048 bytes |
 | `SessionStorage` | Stores in request session. Requires `django.contrib.sessions` |
 
-### Configuring Storage
+### Configuring storage
 
 ```python
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 ```
 
-## Managing Message Levels Per Request
+## Managing message levels per request
 
 ```python
 from django.contrib import messages
@@ -199,7 +214,7 @@ messages.set_level(request, None)
 current_level = messages.get_level(request)
 ```
 
-## Class-Based Views Integration
+## Class-based views integration
 
 ### SuccessMessageMixin
 
@@ -214,7 +229,7 @@ class AuthorCreateView(SuccessMessageMixin, CreateView):
     success_message = "%(name)s was created successfully"
 ```
 
-### Custom Success Message with Computed Fields
+### Custom success message with computed fields
 
 ```python
 class ComplicatedCreateView(SuccessMessageMixin, CreateView):
@@ -229,7 +244,7 @@ class ComplicatedCreateView(SuccessMessageMixin, CreateView):
         )
 ```
 
-## Message Expiration
+## Message expiration
 
 Messages are cleared when the storage instance is iterated during response processing.
 
@@ -242,7 +257,7 @@ for message in storage:
 storage.used = False  # Messages will persist to next request
 ```
 
-## Testing Messages
+## Testing messages
 
 ```python
 from django.contrib.messages.test import MessagesTestMixin
@@ -264,14 +279,14 @@ class MyTest(MessagesTestMixin, TestCase):
 | `MESSAGE_STORAGE` | Storage backend class path | `FallbackStorage` |
 | `MESSAGE_TAGS` | Dict mapping levels to tag strings | Default level names |
 
-## Best Practices
+## Best practices
 
-- Always iterate over messages in templates even when expecting only one, to ensure the storage is cleared
-- Use `FallbackStorage` (the default) for the best balance of performance and reliability
+- Iterate over messages in templates even when you expect only one, so the storage is cleared
+- Keep `FallbackStorage` (the default): it tries cookies first and falls back to the session
 - Use `extra_tags` to add CSS classes for styling (e.g., Bootstrap alert classes)
 - Set `MESSAGE_LEVEL` to `DEBUG` only during development
 - Use `SuccessMessageMixin` with class-based views instead of manually adding success messages
 - Place `SessionMiddleware` before `MessageMiddleware` in the `MIDDLEWARE` list
 - Use `MessagesTestMixin` in tests to assert messages are generated correctly
-- Be aware that messages are undefined when the same client makes parallel requests
+- Message behavior is undefined when the same client makes parallel requests
 - Use `fail_silently=True` in reusable apps where the messages framework may not be installed

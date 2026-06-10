@@ -1,12 +1,23 @@
 # Django Pagination
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Page class](#page-class)
+- [Using pagination in views](#using-pagination-in-views)
+- [AsyncPaginator (Django 6.0)](#asyncpaginator-django-60)
+- [Exceptions](#exceptions)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django provides the `Paginator` and `Page` classes for splitting large datasets across multiple pages with navigation links. The pagination system works with QuerySets, lists, tuples, or any object implementing `count()` or `__len__()`. Django 6.0 introduces `AsyncPaginator` and `AsyncPage` for asynchronous views.
+The `Paginator` and `Page` classes split large datasets across pages with navigation links. They work with QuerySets, lists, tuples, or any object that implements `count()` or `__len__()`. From Django 6.0, `AsyncPaginator` and `AsyncPage` cover asynchronous views.
 
-## Core Concepts
+## Core concepts
 
-### Paginator Class
+### Paginator class
 
 ```python
 from django.core.paginator import Paginator
@@ -19,7 +30,7 @@ p.num_pages   # 2 (total pages)
 p.page_range  # range(1, 3) -> [1, 2]
 ```
 
-### Constructor Parameters
+### Constructor parameters
 
 ```python
 Paginator(object_list, per_page, orphans=0, allow_empty_first_page=True, error_messages=None)
@@ -35,7 +46,7 @@ Paginator(object_list, per_page, orphans=0, allow_empty_first_page=True, error_m
 
 Orphans example: 23 items with `per_page=10` and `orphans=3` creates 2 pages (10 + 13 items).
 
-### Paginator Methods
+### Paginator methods
 
 | Method | Description |
 |---|---|
@@ -47,7 +58,7 @@ Orphans example: 23 items with `per_page=10` and `orphans=3` creates 2 pages (10
 - `get_page()`: non-numeric input returns first page, out-of-range returns last page
 - `page()`: raises `PageNotAnInteger` or `EmptyPage` on invalid input
 
-### Elided Page Range
+### Elided page range
 
 For large page counts, generates a range with ellipsis:
 
@@ -57,7 +68,7 @@ list(paginator.get_elided_page_range(10))
 # [1, 2, '...', 7, 8, 9, 10, 11, 12, 13, '...', 49, 50]
 ```
 
-### Paginator Attributes
+### Paginator attributes
 
 | Attribute | Description |
 |---|---|
@@ -66,13 +77,13 @@ list(paginator.get_elided_page_range(10))
 | `num_pages` | Total number of pages |
 | `page_range` | 1-based range iterator of page numbers |
 
-## Page Class
+## Page class
 
 ```python
 page = paginator.page(1)
 ```
 
-### Page Methods
+### Page methods
 
 | Method | Description |
 |---|---|
@@ -84,7 +95,7 @@ page = paginator.page(1)
 | `start_index()` | 1-based index of first item on page |
 | `end_index()` | 1-based index of last item on page |
 
-### Page Attributes
+### Page attributes
 
 | Attribute | Description |
 |---|---|
@@ -108,9 +119,9 @@ page2.start_index()        # 3
 page2.end_index()          # 4
 ```
 
-## Using Pagination in Views
+## Using pagination in views
 
-### Function-Based View
+### Function-based view
 
 ```python
 from django.core.paginator import Paginator
@@ -126,7 +137,7 @@ def listing(request):
     return render(request, "list.html", {"page_obj": page_obj})
 ```
 
-### Class-Based View (ListView)
+### Class-based view (ListView)
 
 ```python
 from django.views.generic import ListView
@@ -139,7 +150,7 @@ class ContactListView(ListView):
 
 This automatically adds `paginator` and `page_obj` to the template context.
 
-### Template with Pagination Navigation
+### Template with pagination navigation
 
 ```django
 {% for contact in page_obj %}
@@ -221,9 +232,9 @@ paginator = Paginator(
 )
 ```
 
-## Common Patterns
+## Common patterns
 
-### Pagination with Filtered QuerySets
+### Pagination with filtered QuerySets
 
 ```python
 def search(request):
@@ -237,13 +248,13 @@ def search(request):
     })
 ```
 
-Preserve query parameters in pagination links:
+Keep query parameters in pagination links:
 
 ```django
 <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">next</a>
 ```
 
-### Elided Page Range in Templates
+### Elided page range in templates
 
 ```django
 {% for page_num in page_obj.paginator.get_elided_page_range(page_obj.number) %}
@@ -257,12 +268,12 @@ Preserve query parameters in pagination links:
 {% endfor %}
 ```
 
-## Best Practices
+## Best practices
 
 - Use `get_page()` instead of `page()` for user-facing views to handle invalid input gracefully
-- Always order QuerySets before paginating to ensure consistent results across pages
-- Use `orphans` parameter to avoid nearly-empty last pages
+- Order QuerySets before paginating so results stay consistent across pages
+- Use the `orphans` parameter to avoid nearly empty last pages
 - Prefer `ListView` with `paginate_by` for simple list views
 - Use `get_elided_page_range()` for large datasets to avoid rendering hundreds of page links
-- Pass the `page_obj` to templates rather than individual pagination attributes
+- Pass `page_obj` to templates instead of individual pagination attributes
 - Use `AsyncPaginator` in async views for non-blocking database access

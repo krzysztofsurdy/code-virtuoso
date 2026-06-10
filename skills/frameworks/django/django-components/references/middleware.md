@@ -1,17 +1,30 @@
 # Django Middleware
 
+## Contents
+
+- [Overview](#overview)
+- [Middleware architecture](#middleware-architecture)
+- [Writing custom middleware](#writing-custom-middleware)
+- [Lifecycle methods](#lifecycle-methods)
+- [Async middleware](#async-middleware)
+- [Streaming responses](#streaming-responses)
+- [Built-in middleware](#built-in-middleware)
+- [Middleware ordering](#middleware-ordering)
+- [Exception handling](#exception-handling)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Middleware is a framework of hooks into Django's request/response processing. It provides a low-level plugin system for globally altering Django's input or output. Each middleware component processes requests on the way in and responses on the way out, forming an "onion" layered architecture.
+Middleware is a set of hooks into Django's request/response processing, a low-level plugin system for altering Django's input or output globally. Each middleware component processes requests on the way in and responses on the way out, so the components wrap the view like the layers of an onion.
 
-## Middleware Architecture
+## Middleware architecture
 
 ```
 Request  ->  Middleware 1  ->  Middleware 2  ->  ... ->  View
 Response <-  Middleware 1  <-  Middleware 2  <-  ... <-  View
 ```
 
-Middleware is activated via the `MIDDLEWARE` setting, which is an ordered list of strings:
+Middleware is activated through the `MIDDLEWARE` setting, an ordered list of strings:
 
 ```python
 MIDDLEWARE = [
@@ -25,9 +38,9 @@ MIDDLEWARE = [
 ]
 ```
 
-## Writing Custom Middleware
+## Writing custom middleware
 
-### Function-Based Middleware
+### Function-based middleware
 
 ```python
 def simple_middleware(get_response):
@@ -45,7 +58,7 @@ def simple_middleware(get_response):
     return middleware
 ```
 
-### Class-Based Middleware
+### Class-based middleware
 
 ```python
 class SimpleMiddleware:
@@ -63,7 +76,7 @@ class SimpleMiddleware:
         return response
 ```
 
-## Lifecycle Methods
+## Lifecycle methods
 
 ### __init__(get_response)
 
@@ -122,9 +135,9 @@ Called after the view finishes, only if the response has a `render()` method (e.
         return response
 ```
 
-## Async Middleware
+## Async middleware
 
-### Function-Based Async Middleware
+### Function-based async middleware
 
 ```python
 from asgiref.sync import iscoroutinefunction
@@ -143,7 +156,7 @@ def simple_middleware(get_response):
     return middleware
 ```
 
-### Class-Based Async Middleware
+### Class-based async middleware
 
 ```python
 from asgiref.sync import iscoroutinefunction, markcoroutinefunction
@@ -162,14 +175,14 @@ class AsyncMiddleware:
         return response
 ```
 
-### Capability Flags
+### Capability flags
 
 | Flag | Default | Meaning |
 |------|---------|---------|
 | `sync_capable` | `True` | Can handle synchronous requests |
 | `async_capable` | `False` | Can handle asynchronous requests |
 
-## Streaming Responses
+## Streaming responses
 
 Check for streaming before accessing content:
 
@@ -184,7 +197,7 @@ def wrap_streaming_content(content):
         yield alter_content(chunk)
 ```
 
-## Built-in Middleware
+## Built-in middleware
 
 ### SecurityMiddleware
 
@@ -306,7 +319,7 @@ LANGUAGES = [
 ]
 ```
 
-### Cache Middleware
+### Cache middleware
 
 - `UpdateCacheMiddleware` - stores responses in cache (place near top)
 - `FetchFromCacheMiddleware` - retrieves cached responses (place near bottom)
@@ -326,9 +339,9 @@ SECURE_CSP = {
 }
 ```
 
-## Middleware Ordering
+## Middleware ordering
 
-Order is critical. Recommended ordering:
+Order matters. Recommended ordering:
 
 ```python
 MIDDLEWARE = [
@@ -348,7 +361,7 @@ MIDDLEWARE = [
 ]
 ```
 
-### Key Ordering Rules
+### Key ordering rules
 
 - **SecurityMiddleware**: Near the top to avoid unnecessary processing on insecure requests
 - **GZipMiddleware**: Before any middleware that modifies the response body
@@ -358,16 +371,16 @@ MIDDLEWARE = [
 - **FetchFromCacheMiddleware**: Near the bottom, after all Vary header modifiers
 - **Fallback middleware**: At the very bottom (FlatpageFallbackMiddleware, RedirectFallbackMiddleware)
 
-## Exception Handling
+## Exception handling
 
 Django converts exceptions to appropriate HTTP responses automatically:
 - Specific exceptions map to 4xx status codes
 - Unknown exceptions map to 500
 - Set `DEBUG_PROPAGATE_EXCEPTIONS = True` to skip conversion
 
-## Best Practices
+## Best practices
 
-- Keep middleware lightweight - it runs on every request
+- Keep middleware light, since it runs on every request
 - Use `process_view` only when you need access to the view function before execution
 - Check `response.streaming` before accessing `response.content`
 - Use `MiddlewareNotUsed` to conditionally disable middleware

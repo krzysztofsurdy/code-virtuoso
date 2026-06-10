@@ -1,12 +1,23 @@
 # Django Files
 
+## Contents
+
+- [Overview](#overview)
+- [Core Concepts](#core-concepts)
+- [Using files in models](#using-files-in-models)
+- [File storage API](#file-storage-api)
+- [File uploads](#file-uploads)
+- [Writing custom storage backends](#writing-custom-storage-backends)
+- [Configuration](#configuration)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django provides a comprehensive file handling API for managing uploaded files, storing files on disk or remote backends, and associating files with model instances through `FileField` and `ImageField`. The system abstracts storage backends behind a unified API, making it easy to switch between local filesystem, cloud storage, or custom backends.
+Django's file handling API covers uploaded files, storage on disk or remote backends, and attaching files to model instances through `FileField` and `ImageField`. Storage backends sit behind one API, so you can switch between the local filesystem, cloud storage, or a custom backend without changing calling code.
 
 ## Core Concepts
 
-### File Objects
+### File objects
 
 Django wraps Python file objects with `django.core.files.File`, adding Django-specific functionality.
 
@@ -20,7 +31,7 @@ with open("/path/to/hello.world", "w") as f:
 # Both myfile and f are closed after the with block
 ```
 
-### File Class API
+### File class API
 
 | Attribute/Method | Description |
 |---|---|
@@ -58,7 +69,7 @@ car.photo.width   # Width in pixels
 car.photo.height  # Height in pixels
 ```
 
-## Using Files in Models
+## Using files in models
 
 ### FileField and ImageField
 
@@ -72,7 +83,7 @@ class Car(models.Model):
     specs = models.FileField(upload_to="specs")
 ```
 
-### Accessing File Attributes
+### Accessing file attributes
 
 ```python
 car = Car.objects.get(name="57 Chevy")
@@ -81,7 +92,7 @@ car.photo.path    # '/media/cars/chevy.jpg'
 car.photo.url     # 'https://media.example.com/cars/chevy.jpg'
 ```
 
-### Saving Files to Model Fields
+### Saving files to model fields
 
 ```python
 from pathlib import Path
@@ -94,7 +105,7 @@ with path.open(mode="rb") as f:
     car.save()
 ```
 
-### File.save() and File.delete() on Model Fields
+### File.save() and File.delete() on model fields
 
 ```python
 # Save a new file to the field
@@ -106,11 +117,11 @@ car.photo.delete(save=True)
 
 When `save=True`, the model's `save()` method is called automatically after the file operation.
 
-## File Storage API
+## File storage API
 
-### Storage Backend Architecture
+### Storage backend architecture
 
-Django delegates file storage to pluggable backends configured via the `STORAGES` setting:
+Django delegates file storage to pluggable backends configured through the `STORAGES` setting:
 
 ```python
 # settings.py
@@ -137,7 +148,7 @@ default_storage.exists(path)      # True
 default_storage.delete(path)
 ```
 
-### Storage Base Class Methods
+### Storage base class methods
 
 | Method | Description |
 |---|---|
@@ -180,7 +191,7 @@ STORAGES = {
 }
 ```
 
-### Callable Storage Parameter
+### Callable storage parameter
 
 ```python
 from django.core.files.storage import storages
@@ -192,9 +203,9 @@ class MyModel(models.Model):
     upload = models.FileField(storage=select_storage)
 ```
 
-## File Uploads
+## File uploads
 
-### Basic Upload Handling
+### Basic upload handling
 
 ```python
 # forms.py
@@ -242,7 +253,7 @@ def upload_file(request):
     return render(request, "upload.html", {"form": form})
 ```
 
-### Multiple File Uploads
+### Multiple file uploads
 
 ```python
 from django import forms
@@ -264,7 +275,7 @@ class MultipleFileField(forms.FileField):
         return result
 ```
 
-### Upload Handlers
+### Upload handlers
 
 Default handlers in `FILE_UPLOAD_HANDLERS`:
 
@@ -273,7 +284,7 @@ Default handlers in `FILE_UPLOAD_HANDLERS`:
 | `MemoryFileUploadHandler` | Files < 2.5 MB kept in memory |
 | `TemporaryFileUploadHandler` | Larger files written to temp directory |
 
-## Writing Custom Storage Backends
+## Writing custom storage backends
 
 ```python
 from django.core.files.storage import Storage
@@ -320,13 +331,13 @@ The `@deconstructible` decorator is required for migration serialization.
 | `FILE_UPLOAD_PERMISSIONS` | Numeric mode for uploaded files (e.g., 0o644) |
 | `FILE_UPLOAD_DIRECTORY_PERMISSIONS` | Numeric mode for upload directories |
 
-## Best Practices
+## Best practices
 
-- Always use `.chunks()` when processing large uploaded files to avoid memory overflow
+- Use `.chunks()` when processing large uploaded files to avoid memory overflow
 - Close files manually when iterating over large querysets to prevent "Too many open files" errors
 - Use `ContentFile` for creating files from in-memory data without touching disk
 - Use `InMemoryStorage` in tests to avoid filesystem side effects
 - Use callable storage parameters to allow runtime storage selection
-- Validate uploaded file types at the application level; do not rely solely on file extensions
+- Validate uploaded file types in the application; do not rely on file extensions alone
 - Use `upload_to` on FileField/ImageField to organize uploads into subdirectories
 - Configure `MEDIA_ROOT` and `MEDIA_URL` separately from static files

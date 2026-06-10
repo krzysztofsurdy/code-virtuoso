@@ -1,12 +1,25 @@
 # Django Forms
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Form fields](#form-fields)
+- [Widgets](#widgets)
+- [Form validation](#form-validation)
+- [ModelForm](#modelform)
+- [Formsets](#formsets)
+- [Form rendering](#form-rendering)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django's form system handles HTML form rendering, data validation, and cleaning. It provides `Form` for standalone forms, `ModelForm` for model-backed forms, and formsets for working with multiple form instances. Forms manage three tasks: preparing data for rendering, creating HTML inputs, and receiving/processing submitted data.
+Django's form system handles HTML form rendering, data validation, and cleaning. `Form` covers standalone forms, `ModelForm` covers model-backed forms, and formsets handle multiple form instances. A form does three jobs: it prepares data for rendering, creates HTML inputs, and receives and processes submitted data.
 
-## Core Concepts
+## Core concepts
 
-### Form Class
+### Form class
 
 ```python
 from django import forms
@@ -18,7 +31,7 @@ class ContactForm(forms.Form):
     cc_myself = forms.BooleanField(required=False)
 ```
 
-### Bound and Unbound Forms
+### Bound and unbound forms
 
 ```python
 # Unbound - no data, renders empty
@@ -34,7 +47,7 @@ form = ContactForm({})
 form.is_bound  # True
 ```
 
-### Processing Forms in Views
+### Processing forms in views
 
 ```python
 from django.shortcuts import render, redirect
@@ -52,7 +65,7 @@ def contact(request):
     return render(request, "contact.html", {"form": form})
 ```
 
-### Validation and Cleaned Data
+### Validation and cleaned data
 
 ```python
 form = ContactForm(data)
@@ -70,9 +83,9 @@ form.add_error("subject", "Custom error")
 form.add_error(None, "Non-field error")
 ```
 
-## Form Fields
+## Form fields
 
-### Core Field Arguments
+### Core field arguments
 
 | Argument | Default | Description |
 |----------|---------|-------------|
@@ -85,9 +98,9 @@ form.add_error(None, "Non-field error")
 | `validators` | `[]` | List of validation functions |
 | `disabled` | `False` | Render as disabled |
 
-### Built-in Field Types
+### Built-in field types
 
-| Field | Normalizes To | Default Widget |
+| Field | Normalizes to | Default widget |
 |-------|--------------|----------------|
 | `BooleanField` | `bool` | `CheckboxInput` |
 | `CharField` | `str` | `TextInput` |
@@ -115,7 +128,7 @@ form.add_error(None, "Non-field error")
 | `ModelMultipleChoiceField` | `QuerySet` | `SelectMultiple` |
 | `SplitDateTimeField` | `datetime` | `SplitDateTimeWidget` |
 
-### Field Examples
+### Field examples
 
 ```python
 class RegistrationForm(forms.Form):
@@ -139,9 +152,9 @@ class RegistrationForm(forms.Form):
 
 ## Widgets
 
-### Built-in Widgets
+### Built-in widgets
 
-| Widget | HTML Output |
+| Widget | HTML output |
 |--------|-------------|
 | `TextInput` | `<input type="text">` |
 | `NumberInput` | `<input type="number">` |
@@ -162,7 +175,7 @@ class RegistrationForm(forms.Form):
 | `SplitDateTimeWidget` | Separate date and time inputs |
 | `SelectDateWidget` | Three selects (day, month, year) |
 
-### Customizing Widgets
+### Customizing widgets
 
 ```python
 class MyForm(forms.Form):
@@ -209,9 +222,9 @@ class DateSelectorWidget(forms.MultiWidget):
         return [None, None, None]
 ```
 
-## Form Validation
+## Form validation
 
-### Validation Order
+### Validation order
 
 1. `Field.to_python()` - coerce to correct type
 2. `Field.validate()` - field-specific validation
@@ -219,7 +232,7 @@ class DateSelectorWidget(forms.MultiWidget):
 4. `clean_<fieldname>()` - per-field custom cleaning on the form
 5. `Form.clean()` - cross-field validation
 
-### Per-Field Validation
+### Per-field validation
 
 ```python
 class RegistrationForm(forms.Form):
@@ -234,7 +247,7 @@ class RegistrationForm(forms.Form):
         return email
 ```
 
-### Cross-Field Validation
+### Cross-field validation
 
 ```python
     def clean(self):
@@ -245,7 +258,7 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("Passwords do not match.")
 ```
 
-### Using add_error for Field-Specific Errors in clean()
+### Using add_error for field-specific errors in clean()
 
 ```python
     def clean(self):
@@ -274,7 +287,7 @@ raise ValidationError([
 ])
 ```
 
-### Custom Field with Validation
+### Custom field with validation
 
 ```python
 class MultiEmailField(forms.Field):
@@ -292,7 +305,7 @@ class MultiEmailField(forms.Field):
 
 ## ModelForm
 
-### Basic Usage
+### Basic usage
 
 ```python
 from django.forms import ModelForm
@@ -340,7 +353,7 @@ article.save()
 form.save_m2m()  # Required when using commit=False with M2M fields
 ```
 
-### Overriding Fields
+### Overriding fields
 
 ```python
 class ArticleForm(ModelForm):
@@ -352,7 +365,7 @@ class ArticleForm(ModelForm):
         field_classes = {"slug": MySlugFormField}
 ```
 
-### ModelForm Factory
+### ModelForm factory
 
 ```python
 from django.forms import modelform_factory
@@ -365,7 +378,7 @@ ArticleForm = modelform_factory(
 )
 ```
 
-### Form Inheritance
+### Form inheritance
 
 ```python
 class BaseArticleForm(ModelForm):
@@ -384,7 +397,7 @@ class SimplifiedForm(BaseArticleForm):
 
 ## Formsets
 
-### Basic Formset
+### Basic formset
 
 ```python
 from django.forms import formset_factory
@@ -403,7 +416,7 @@ else:
     formset = ArticleFormSet()
 ```
 
-### Formset with Initial Data
+### Formset with initial data
 
 ```python
 formset = ArticleFormSet(initial=[
@@ -412,7 +425,7 @@ formset = ArticleFormSet(initial=[
 ])
 ```
 
-### Formset Validation
+### Formset validation
 
 ```python
 from django.forms import BaseFormSet
@@ -440,7 +453,7 @@ ArticleFormSet = formset_factory(
 )
 ```
 
-### Ordering and Deletion
+### Ordering and deletion
 
 ```python
 ArticleFormSet = formset_factory(
@@ -459,7 +472,7 @@ if formset.is_valid():
         pass
 ```
 
-### Multiple Formsets in One View
+### Multiple formsets in one view
 
 ```python
 def manage(request):
@@ -474,7 +487,7 @@ def manage(request):
         book_formset = BookFormSet(prefix="books")
 ```
 
-### Passing Custom Parameters
+### Passing custom parameters
 
 ```python
 class MyForm(forms.Form):
@@ -486,9 +499,9 @@ MyFormSet = formset_factory(MyForm)
 formset = MyFormSet(form_kwargs={"user": request.user})
 ```
 
-## Form Rendering
+## Form rendering
 
-### Template Rendering Methods
+### Template rendering methods
 
 ```python
 form.as_div()    # Wraps fields in <div> (recommended, default)
@@ -497,7 +510,7 @@ form.as_ul()     # Wraps fields in <li>
 form.as_table()  # Wraps fields in <tr>
 ```
 
-### Template Examples
+### Template examples
 
 ```django
 {# Automatic rendering #}
@@ -542,7 +555,7 @@ form.as_table()  # Wraps fields in <tr>
 {% endif %}
 ```
 
-### BoundField Attributes
+### BoundField attributes
 
 | Attribute | Description |
 |-----------|-------------|
@@ -557,7 +570,7 @@ form.as_table()  # Wraps fields in <tr>
 | `field.widget_type` | Widget class name (e.g., "checkbox") |
 | `field.css_classes()` | CSS classes for the field |
 
-### Form Configuration
+### Form configuration
 
 ```python
 class MyForm(forms.Form):
@@ -573,9 +586,9 @@ form = MyForm(
 )
 ```
 
-## Common Patterns
+## Common patterns
 
-### Form with File Upload
+### Form with file upload
 
 ```python
 class UploadForm(forms.Form):
@@ -592,7 +605,7 @@ def upload(request):
     return render(request, "upload.html", {"form": form})
 ```
 
-### Dynamic Form Fields
+### Dynamic form fields
 
 ```python
 class DynamicForm(forms.Form):
@@ -603,7 +616,7 @@ class DynamicForm(forms.Form):
                 self.fields[name] = field
 ```
 
-### Change Detection
+### Change detection
 
 ```python
 form = MyForm(request.POST, initial=original_data)
@@ -611,13 +624,13 @@ if form.has_changed():
     changed = form.changed_data  # List of changed field names
 ```
 
-## Best Practices
+## Best practices
 
-- Always use `fields` (not `exclude`) in ModelForm for security
+- Use `fields` (not `exclude`) in ModelForm so new model fields are not exposed by accident
 - Use `commit=False` when you need to modify the object before saving
 - Call `save_m2m()` after `commit=False` saves when M2M fields are involved
 - Use `prefix` when rendering multiple formsets or forms on one page
 - Validate at the form level (`clean()`) for cross-field rules
 - Use `raise ValidationError(message, code=code)` with error codes for programmatic handling
-- Always pass `request.FILES` alongside `request.POST` for file upload forms
+- Pass `request.FILES` alongside `request.POST` for file upload forms
 - Use `form_kwargs` to pass request-specific data (like `user`) to formset forms

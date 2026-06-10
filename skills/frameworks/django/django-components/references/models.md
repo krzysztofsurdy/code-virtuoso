@@ -1,12 +1,26 @@
 # Django Models
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Field types](#field-types)
+- [Choices with enumerations](#choices-with-enumerations)
+- [Relationships](#relationships)
+- [Meta options](#meta-options)
+- [Model inheritance](#model-inheritance)
+- [Model methods](#model-methods)
+- [Managers](#managers)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Django models are Python classes that define the structure of database tables. Each model maps to a single database table, with class attributes representing fields (columns). Django automatically generates a database-access API from model definitions, handles migrations, and provides an ORM for querying data without writing raw SQL.
+Django models are Python classes that define the structure of database tables. Each model maps to one table, and each class attribute is a field (column). From the model definitions Django generates a database-access API, creates migrations, and gives you an ORM for querying data without raw SQL.
 
-## Core Concepts
+## Core concepts
 
-### Model Definition
+### Model definition
 
 Every model subclasses `django.db.models.Model`. Each attribute is a field that maps to a database column.
 
@@ -24,7 +38,7 @@ class Person(models.Model):
 
 An `id` field (BigAutoField) is added automatically unless you define a field with `primary_key=True`.
 
-### Field Options (Common to All Fields)
+### Field options (common to all fields)
 
 | Option | Description |
 |---|---|
@@ -43,9 +57,9 @@ An `id` field (BigAutoField) is added automatically unless you define a field wi
 | `help_text` | Extra help text for forms |
 | `editable` | If `False`, excluded from admin and ModelForm |
 
-## Field Types
+## Field types
 
-### String Fields
+### String fields
 
 ```python
 name = models.CharField(max_length=100)         # VARCHAR, max_length required
@@ -55,7 +69,7 @@ email = models.EmailField(max_length=254)        # CharField with email validati
 url = models.URLField(max_length=200)            # CharField with URL validation
 ```
 
-### Numeric Fields
+### Numeric fields
 
 ```python
 count = models.IntegerField()                    # -2B to 2B
@@ -66,7 +80,7 @@ rating = models.FloatField()                     # Python float (avoid for money
 price = models.DecimalField(max_digits=10, decimal_places=2)  # Fixed precision
 ```
 
-### Date/Time Fields
+### Date/time fields
 
 ```python
 pub_date = models.DateField()                    # datetime.date
@@ -75,7 +89,7 @@ updated_at = models.DateTimeField(auto_now=True)      # Set on every save
 duration = models.DurationField()                     # timedelta
 ```
 
-### Boolean, Binary, and Special Fields
+### Boolean, binary, and special fields
 
 ```python
 is_active = models.BooleanField(default=True)
@@ -85,7 +99,7 @@ uuid = models.UUIDField(default=uuid.uuid4)     # UUID
 metadata = models.JSONField(default=dict)        # JSON data
 ```
 
-### File Fields
+### File fields
 
 ```python
 document = models.FileField(upload_to='documents/%Y/%m/')
@@ -101,7 +115,7 @@ def user_directory_path(instance, filename):
 upload = models.FileField(upload_to=user_directory_path)
 ```
 
-### Auto-Increment Fields
+### Auto-increment fields
 
 ```python
 id = models.AutoField(primary_key=True)          # 32-bit auto-increment
@@ -109,7 +123,7 @@ id = models.BigAutoField(primary_key=True)        # 64-bit (default in Django)
 id = models.SmallAutoField(primary_key=True)      # 16-bit
 ```
 
-### Generated Fields
+### Generated fields
 
 ```python
 full_name = models.GeneratedField(
@@ -119,7 +133,7 @@ full_name = models.GeneratedField(
 )
 ```
 
-## Choices with Enumerations
+## Choices with enumerations
 
 ```python
 class Student(models.Model):
@@ -139,7 +153,7 @@ Use `TextChoices` for strings, `IntegerChoices` for integers.
 
 ## Relationships
 
-### ForeignKey (Many-to-One)
+### ForeignKey (many-to-one)
 
 ```python
 class Car(models.Model):
@@ -184,7 +198,7 @@ class Restaurant(models.Model):
     place = models.OneToOneField(Place, on_delete=models.CASCADE)
 ```
 
-## Meta Options
+## Meta options
 
 ```python
 class Article(models.Model):
@@ -209,9 +223,9 @@ class Article(models.Model):
         default_related_name = "articles"
 ```
 
-## Model Inheritance
+## Model inheritance
 
-### Abstract Base Classes
+### Abstract base classes
 
 No database table created. Fields are copied to child models.
 
@@ -229,7 +243,7 @@ class Student(CommonInfo):
     # Creates ONE table with name, created_at, grade
 ```
 
-### Multi-Table Inheritance
+### Multi-table inheritance
 
 Each model gets its own table, linked by an automatic OneToOneField.
 
@@ -245,7 +259,7 @@ p = Place.objects.get(id=1)
 p.restaurant  # Access child if it exists
 ```
 
-### Proxy Models
+### Proxy models
 
 Same database table, different Python behavior.
 
@@ -259,7 +273,7 @@ class OrderedPerson(Person):
         pass
 ```
 
-## Model Methods
+## Model methods
 
 ```python
 class Person(models.Model):
@@ -278,7 +292,7 @@ class Person(models.Model):
 
     def save(self, **kwargs):
         self.first_name = self.first_name.strip()
-        super().save(**kwargs)  # Always call super and pass kwargs
+        super().save(**kwargs)  # Call super and pass kwargs
 ```
 
 ## Managers
@@ -303,9 +317,9 @@ class MyManager(models.Manager):
     use_in_migrations = True
 ```
 
-## Common Patterns
+## Common patterns
 
-### UUID Primary Key
+### UUID primary key
 
 ```python
 import uuid
@@ -314,7 +328,7 @@ class MyModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 ```
 
-### Timestamps Mixin
+### Timestamps mixin
 
 ```python
 class TimestampedModel(models.Model):
@@ -325,7 +339,7 @@ class TimestampedModel(models.Model):
         abstract = True
 ```
 
-### Soft Delete
+### Soft delete
 
 ```python
 class SoftDeleteManager(models.Manager):
@@ -341,13 +355,13 @@ class SoftDeleteModel(models.Model):
         abstract = True
 ```
 
-## Best Practices
+## Best practices
 
 - Use `CharField` with `max_length` for bounded strings, `TextField` for unbounded
 - Prefer `DecimalField` over `FloatField` for financial data
 - Use `TextChoices`/`IntegerChoices` enums instead of raw choice tuples
 - Set `related_name` on ForeignKey/M2M to control reverse accessor naming
 - Use `%(app_label)s_%(class)s_related` pattern in abstract base classes for related_name
-- Always call `super().save(**kwargs)` when overriding save()
+- Call `super().save(**kwargs)` when overriding save()
 - Use `constraints` instead of deprecated `unique_together`
 - Keep models in a package (`models/`) when the file grows large
