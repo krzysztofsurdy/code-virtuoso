@@ -1,6 +1,22 @@
 # Symfony Lock Component
 
-Create and manage locks to provide exclusive access to shared resources. Useful for ensuring operations don't execute simultaneously across multiple processes or servers, preventing race conditions and resource conflicts.
+The Lock component creates and manages locks that give exclusive access to a shared resource. Use it to stop an operation from running at the same time in several processes or on several servers, which prevents race conditions and resource conflicts.
+
+## Contents
+
+- [Installation](#installation)
+- [Core concepts](#core-concepts)
+- [Lock acquisition methods](#lock-acquisition-methods)
+- [Expiring locks (TTL)](#expiring-locks-ttl)
+- [Shared (read-write) locks](#shared-read-write-locks)
+- [Checking lock status](#checking-lock-status)
+- [Serializing locks](#serializing-locks)
+- [Auto-release](#auto-release)
+- [Available lock stores](#available-lock-stores)
+- [Store configuration](#store-configuration)
+- [Common use cases](#common-use-cases)
+- [Reliability](#reliability)
+- [Key interfaces and classes](#key-interfaces-and-classes)
 
 ## Installation
 
@@ -8,11 +24,11 @@ Create and manage locks to provide exclusive access to shared resources. Useful 
 composer require symfony/lock
 ```
 
-## Core Concepts
+## Core concepts
 
-### Lock Factory and Stores
+### Lock factory and stores
 
-Create locks using `LockFactory` with a store backend:
+Create locks with `LockFactory` and a store backend:
 
 ```php
 use Symfony\Component\Lock\LockFactory;
@@ -22,9 +38,7 @@ $store = new SemaphoreStore();
 $factory = new LockFactory($store);
 ```
 
-### Basic Lock Operations
-
-Acquire and release locks:
+### Basic lock operations
 
 ```php
 $lock = $factory->createLock('pdf-creation');
@@ -38,11 +52,11 @@ if ($lock->acquire()) {
 }
 ```
 
-## Lock Acquisition Methods
+## Lock acquisition methods
 
-### Non-Blocking Acquisition
+### Non-blocking acquisition
 
-Returns immediately (true if acquired, false otherwise):
+Returns immediately: true if the lock was acquired, false otherwise.
 
 ```php
 if ($lock->acquire()) {
@@ -52,18 +66,18 @@ if ($lock->acquire()) {
 }
 ```
 
-### Blocking Acquisition
+### Blocking acquisition
 
-Waits indefinitely until lock is available:
+Waits until the lock is available, with no timeout:
 
 ```php
 $lock->acquire(true);  // Blocks until acquired
 // Lock is now held
 ```
 
-## Expiring Locks (TTL)
+## Expiring locks (TTL)
 
-Set Time To Live to automatically release locks after a timeout, preventing deadlocks:
+A time to live (TTL) releases the lock automatically after a timeout, which prevents deadlocks:
 
 ```php
 $lock = $factory->createLock('pdf-creation', ttl: 30);
@@ -77,16 +91,16 @@ if ($lock->acquire()) {
 }
 ```
 
-### Refreshing Locks
+### Refreshing locks
 
-Extend TTL for long-running tasks:
+Extend the TTL for long-running tasks:
 
 ```php
 $lock->refresh();        // Reset to original TTL
 $lock->refresh(600);     // Reset to custom TTL (600 seconds)
 ```
 
-### Checking Remaining Lifetime
+### Checking the remaining lifetime
 
 ```php
 $remaining = $lock->getRemainingLifetime();  // Returns float in seconds
@@ -99,9 +113,9 @@ if ($lock->getRemainingLifetime() <= 5) {
 }
 ```
 
-## Shared/Read-Write Locks
+## Shared (read-write) locks
 
-Allow multiple concurrent readers with exclusive write access:
+Many readers can hold the lock at once, while a writer gets exclusive access:
 
 ```php
 $lock = $factory->createLock('user-'.$userId);
@@ -119,7 +133,7 @@ if ($lock->acquireRead()) {
 $lock->acquire(true);
 ```
 
-## Lock Status Checking
+## Checking lock status
 
 ```php
 if ($lock->isAcquired()) {
@@ -133,9 +147,9 @@ if ($lock->isExpired()) {
 $remaining = $lock->getRemainingLifetime();  // null if no TTL
 ```
 
-## Serializing Locks
+## Serializing locks
 
-Share locks across processes using the `Key` object:
+Share a lock across processes with the `Key` object:
 
 ```php
 use Symfony\Component\Lock\Key;
@@ -149,15 +163,15 @@ $lock->acquire(true);
 $this->bus->dispatch(new RefreshTaxonomy($article, $key));
 ```
 
-## Auto-Release Control
+## Auto-release
 
-By default, locks auto-release when destroyed. Disable for cross-request locks:
+By default, a lock is released when the object is destroyed. Disable this for locks that must outlive the request:
 
 ```php
 $lock = $factory->createLock('resource', 3600, false);  // autoRelease=false
 ```
 
-## Available Lock Stores
+## Available lock stores
 
 | Store | Type | Blocking | Expiring | Sharing | Serialization |
 |-------|------|----------|----------|---------|---------------|
@@ -173,11 +187,11 @@ $lock = $factory->createLock('resource', 3600, false);  // autoRelease=false
 | DynamoDbStore | Remote | Retry | Yes | No | Yes |
 | CombinedStore | Remote | Varies | Yes | Yes | Yes |
 
-## Store Configuration
+## Store configuration
 
-### FlockStore (File-Based)
+### FlockStore (file-based)
 
-Uses filesystem for local locks:
+Uses the local filesystem:
 
 ```php
 use Symfony\Component\Lock\Store\FlockStore;
@@ -186,7 +200,7 @@ $store = new FlockStore('/var/stores');
 $factory = new LockFactory($store);
 ```
 
-### SemaphoreStore (Semaphore-Based)
+### SemaphoreStore (semaphore-based)
 
 Uses System V IPC semaphores:
 
@@ -198,7 +212,7 @@ $store = new SemaphoreStore();
 
 ### RedisStore
 
-Remote locks using Redis:
+Remote locks in Redis:
 
 ```php
 use Symfony\Component\Lock\Store\RedisStore;
@@ -223,7 +237,7 @@ $store = new PostgreSqlStore('pgsql:host=localhost;dbname=app', [
 
 ### PdoStore
 
-Uses any PDO-compatible database:
+Works with any PDO-supported database:
 
 ```php
 use Symfony\Component\Lock\Store\PdoStore;
@@ -236,7 +250,7 @@ $store = new PdoStore('mysql:host=127.0.0.1;dbname=app', [
 
 ### MemcachedStore
 
-Remote locks using Memcached:
+Remote locks in Memcached:
 
 ```php
 use Symfony\Component\Lock\Store\MemcachedStore;
@@ -246,9 +260,9 @@ $memcached->addServer('localhost', 11211);
 $store = new MemcachedStore($memcached);
 ```
 
-### CombinedStore (High Availability)
+### CombinedStore (high availability)
 
-Uses consensus strategy across multiple stores:
+Applies a consensus strategy across several stores:
 
 ```php
 use Symfony\Component\Lock\Store\CombinedStore;
@@ -265,11 +279,11 @@ $store = new CombinedStore($stores, new ConsensusStrategy());
 $factory = new LockFactory($store);
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Background Job Execution
+### Background jobs
 
-Prevent duplicate job execution:
+Prevent a job from running twice at once:
 
 ```php
 $lock = $factory->createLock('send-emails', ttl: 300);
@@ -290,9 +304,9 @@ try {
 }
 ```
 
-### Resource Update Synchronization
+### Synchronizing resource updates
 
-Ensure atomic resource updates:
+Make a resource update atomic:
 
 ```php
 $lock = $factory->createLock('user-profile-'.$userId, ttl: 10);
@@ -308,9 +322,9 @@ if ($lock->acquire()) {
 }
 ```
 
-### Read-Write Operations
+### Read-write operations
 
-Multiple readers, exclusive writer:
+Many readers, one exclusive writer:
 
 ```php
 $cacheLock = $factory->createLock('article-cache-'.$articleId);
@@ -334,27 +348,27 @@ if ($cacheLock->acquire(true)) {
 }
 ```
 
-## Reliability Considerations
+## Reliability
 
-### Clock Synchronization
+### Clock synchronization
 
-When using expiring locks with multiple servers, ensure all nodes have synchronized clocks (use NTP).
+When expiring locks are used across several servers, keep all nodes' clocks synchronized (for example with NTP).
 
-### Token-Based Ownership
+### Token-based ownership
 
-Remote stores use unique tokens to verify true lock ownership, preventing unauthorized releases.
+Remote stores use unique tokens to verify who owns a lock, so a process cannot release a lock it does not hold.
 
-### Store-Specific Behaviors
+### Store-specific behavior
 
-- **FlockStore**: All processes must access the same physical filesystem
-- **Redis/Memcached**: In-memory; locks lost on restart
-- **PostgreSQL**: Locks auto-release on session end
-- **Database Stores**: Require network connectivity; handle gracefully
-- **CombinedStore**: Requires consensus between stores for reliability
+- **FlockStore**: all processes must use the same physical filesystem.
+- **Redis/Memcached**: in-memory, so locks are lost on restart.
+- **PostgreSQL**: locks are released when the session ends.
+- **Database stores**: need network connectivity, so handle connection failures.
+- **CombinedStore**: needs consensus between its stores.
 
-### Long-Running Operations
+### Long-running operations
 
-Monitor lock lifetime and refresh proactively:
+Check the remaining lifetime and refresh the lock before it expires:
 
 ```php
 $lock = $factory->createLock('process', ttl: 60);
@@ -381,12 +395,12 @@ try {
 }
 ```
 
-## Key Interfaces and Classes
+## Key interfaces and classes
 
-- **LockFactory**: Creates locks from stores
-- **LockInterface**: Defines lock operations
-- **StoreInterface**: Implements lock storage backend
-- **Key**: Serializable lock identifier
-- **SharedLockInterface**: Extends LockInterface for shared locks
-- **BlockingStoreInterface**: Indicates store supports blocking
-- **ExpiringStoreInterface**: Indicates store supports TTL
+- **LockFactory**: creates locks from stores
+- **LockInterface**: defines lock operations
+- **StoreInterface**: the lock storage backend
+- **Key**: serializable lock identifier
+- **SharedLockInterface**: extends `LockInterface` with shared locks
+- **BlockingStoreInterface**: marks a store that supports blocking
+- **ExpiringStoreInterface**: marks a store that supports TTL

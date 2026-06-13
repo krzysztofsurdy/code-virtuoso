@@ -1,8 +1,20 @@
 # Symfony JsonPath Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Basic usage](#basic-usage)
+- [Query syntax](#query-syntax)
+- [Building queries with JsonPath](#building-queries-with-jsonpath)
+- [Testing with JsonPathAssertionsTrait](#testing-with-jsonpathassertionstrait)
+- [Error handling](#error-handling)
+- [Full example](#full-example)
+- [When to use JsonPath](#when-to-use-jsonpath)
+
 ## Overview
 
-The JsonPath component enables you to query and extract data from JSON structures using the RFC 9535 JSONPath standard. It provides a `JsonCrawler` for direct querying and a `JsonPath` fluent API for programmatic query building, similar to the DomCrawler component but designed specifically for JSON documents.
+The JsonPath component queries and extracts data from JSON using the RFC 9535 JSONPath standard. `JsonCrawler` runs queries, and the `JsonPath` fluent API builds them programmatically. It is similar to the DomCrawler component, but for JSON documents.
 
 ## Installation
 
@@ -10,9 +22,9 @@ The JsonPath component enables you to query and extract data from JSON structure
 composer require symfony/json-path
 ```
 
-## Basic Usage
+## Basic usage
 
-### Create a Crawler and Query JSON
+### Create a crawler and query JSON
 
 ```php
 use Symfony\Component\JsonPath\JsonCrawler;
@@ -22,11 +34,11 @@ $crawler = new JsonCrawler($json);
 $results = $crawler->find('$.store.book[0].title');
 ```
 
-## Query Syntax
+## Query syntax
 
-### Accessing Properties
+### Accessing properties
 
-Use dot notation, bracket notation, or mixed notation to access JSON properties:
+Use dot, bracket, or mixed notation:
 
 ```php
 // Dot notation
@@ -39,7 +51,7 @@ $crawler->find('$["store"]["book"][0]["title"]');
 $crawler->find('$["store"].book[0].title');
 ```
 
-### Root and Recursive Selection
+### Root and recursive selection
 
 ```php
 // Root element
@@ -49,7 +61,7 @@ $data = $crawler->find('$');
 $authors = $crawler->find('$..author');
 ```
 
-### Array Access
+### Array access
 
 ```php
 // First element
@@ -70,7 +82,7 @@ $stepped = $crawler->find('$.books[0:4:2]');
 
 ### Filtering
 
-Apply filter expressions to select matching elements:
+Filter expressions select the matching elements:
 
 ```php
 // Books with price less than 20
@@ -83,9 +95,9 @@ $authorsBooks = $crawler->find('$.books[?(@.author == "John")]');
 $available = $crawler->find('$.books[?(@.price > 10 && @.inStock)]');
 ```
 
-## Programmatic Query Building with JsonPath
+## Building queries with JsonPath
 
-Use the `JsonPath` fluent API to build queries dynamically:
+The `JsonPath` fluent API builds queries dynamically:
 
 ```php
 use Symfony\Component\JsonPath\JsonPath;
@@ -99,7 +111,7 @@ $path = (new JsonPath())
 $title = $crawler->find($path);
 ```
 
-### JsonPath Methods
+### JsonPath methods
 
 | Method | Description | Example |
 |--------|-------------|---------|
@@ -114,13 +126,13 @@ $title = $crawler->find($path);
 | `filter($expression)` | Apply filter expression | `->filter('@.price > 20')` |
 | `__toString()` | Get JSONPath string representation | `(string)$path` |
 
-### Practical Example
+### Practical example
 
 ```php
 $json = '{"users": [{"name": "Alice", "role": "admin"}, {"name": "Bob", "role": "user"}]}';
 $crawler = new JsonCrawler($json);
 
-// Using JsonPath to build query
+// Build the query with JsonPath
 $adminPath = (new JsonPath())
     ->key('users')
     ->all()
@@ -132,7 +144,7 @@ $adminNames = $crawler->find($adminPath);
 
 ## Testing with JsonPathAssertionsTrait
 
-Use the `JsonPathAssertionsTrait` in PHPUnit test classes to assert against JSON data:
+Add `JsonPathAssertionsTrait` to a PHPUnit test class to assert against JSON data:
 
 ```php
 use PHPUnit\Framework\TestCase;
@@ -158,7 +170,7 @@ class ApiResponseTest extends TestCase
 }
 ```
 
-### Available Assertion Methods
+### Assertion methods
 
 - `assertJsonPathCount($count, $path, $json)` - Assert exact count of matched elements
 - `assertJsonPathEquals($expected, $path, $json)` - Assert result equals expected (type coercion with `==`)
@@ -168,9 +180,9 @@ class ApiResponseTest extends TestCase
 - `assertJsonPathContains($value, $path, $json)` - Assert value found in matched results
 - `assertJsonPathNotContains($value, $path, $json)` - Assert value not found in results
 
-## Error Handling
+## Error handling
 
-The component throws specific exceptions for various error conditions:
+The component throws specific exceptions:
 
 ```php
 use Symfony\Component\JsonPath\JsonCrawler;
@@ -191,13 +203,13 @@ try {
 }
 ```
 
-### Exception Types
+### Exception types
 
 - `InvalidArgumentException` - Invalid argument passed to method
 - `InvalidJsonStringInputException` - Malformed JSON string provided to JsonCrawler
 - `JsonCrawlerException` - Invalid JSONPath expression (unknown functions, syntax errors, etc.)
 
-## Complete Example
+## Full example
 
 ```php
 use Symfony\Component\JsonPath\JsonCrawler;
@@ -248,17 +260,16 @@ $title = $crawler->find($secondBook); // "Symfony Mastery"
 $allAuthors = $crawler->find('$..author');
 ```
 
-## When to Use JsonPath
+## When to use JsonPath
 
-Use the JsonPath component when you need to:
+Use the JsonPath component to:
 - Extract data from JSON API responses
-- Query complex nested JSON structures
-- Parse JSON configuration files
+- Query nested JSON structures
+- Read JSON configuration files
 - Test JSON responses in PHPUnit tests
 - Validate data in JSON documents dynamically
 
-Compare with alternatives:
-- **JsonPath** - For flexible JSON querying similar to DOM manipulation
-- **json_decode()** - For simple flat structure access
-- **jq command-line tool** - For command-line JSON processing
-- **API Platform** - For complete REST API solutions with JSON handling
+Alternatives:
+- **json_decode()** for simple, flat structures
+- **jq** for command-line JSON processing
+- **API Platform** for building REST APIs with JSON handling

@@ -1,8 +1,19 @@
 # Symfony Intl Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core classes and methods](#core-classes-and-methods)
+- [Form field types](#form-field-types)
+- [Common patterns](#common-patterns)
+- [Reducing disk usage](#reducing-disk-usage)
+- [Key concepts](#key-concepts)
+- [Related components](#related-components)
+
 ## Overview
 
-The Intl Component provides standardized access to localization data from the ICU (International Components for Unicode) library. Use this component to build applications that support multiple languages, countries, currencies, and timezones with automatic locale-aware data.
+The Intl component gives access to localization data from the ICU (International Components for Unicode) library: names and codes for languages, scripts, countries, currencies, locales, and timezones, translated into the requested locale.
 
 ## Installation
 
@@ -10,11 +21,11 @@ The Intl Component provides standardized access to localization data from the IC
 composer require symfony/intl
 ```
 
-## Core Classes and Methods
+## Core classes and methods
 
 ### Languages
 
-Manage language names and codes using ISO 639-1 (alpha-2) and ISO 639-2 (alpha-3) formats.
+Language names and codes in ISO 639-1 (alpha-2) and ISO 639-2 (alpha-3) formats.
 
 ```php
 use Symfony\Component\Intl\Languages;
@@ -40,7 +51,7 @@ $names = Languages::getAlpha3Names(); // ['eng' => 'English', 'fra' => 'French',
 
 ### Scripts
 
-Access script names for writing systems (e.g., Simplified/Traditional Chinese).
+Script names for writing systems (e.g., Simplified and Traditional Chinese).
 
 ```php
 use Symfony\Component\Intl\Scripts;
@@ -57,7 +68,7 @@ $exists = Scripts::exists('Latn'); // true
 
 ### Countries
 
-Access country names and codes using ISO 3166-1 alpha-2, alpha-3, and numeric formats.
+Country names and codes in ISO 3166-1 alpha-2, alpha-3, and numeric formats.
 
 ```php
 use Symfony\Component\Intl\Countries;
@@ -88,7 +99,7 @@ $names = Countries::getAlpha3Names(); // ['USA' => 'United States', ...]
 
 ### Currencies
 
-Access currency information including names, symbols, and metadata.
+Currency names, symbols, and metadata.
 
 ```php
 use Symfony\Component\Intl\Currencies;
@@ -117,7 +128,7 @@ $exists = Currencies::exists('USD'); // true
 
 ### Locales
 
-Work with complete locale identifiers (language + region + parameters).
+Full locale identifiers (language, region, and parameters).
 
 ```php
 use Symfony\Component\Intl\Locales;
@@ -134,7 +145,7 @@ $exists = Locales::exists('en_US'); // true
 
 ### Timezones
 
-Access timezone names and UTC/GMT offset information.
+Timezone names and UTC/GMT offsets.
 
 ```php
 use Symfony\Component\Intl\Timezones;
@@ -159,13 +170,13 @@ $gmtOffset = Timezones::getGmtOffset('America/New_York'); // 'GMT-5'
 $exists = Timezones::exists('America/New_York'); // true
 ```
 
-## Form Field Types
+## Form field types
 
-Integrate Intl data with Symfony Forms for user selection:
+These Form field types use Intl data:
 
 ### CountryType
 
-Select countries using ISO 3166-1 alpha-2 codes.
+Selects a country by ISO 3166-1 alpha-2 code.
 
 ```php
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
@@ -184,7 +195,7 @@ $builder->add('country', CountryType::class, [
 
 ### CurrencyType
 
-Select currencies using ISO 4217 codes with filtering options.
+Selects a currency by ISO 4217 code, with filtering options.
 
 ```php
 use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
@@ -212,7 +223,7 @@ $builder->add('currency', CurrencyType::class, [
 
 ### LanguageType
 
-Select languages using ISO 639 codes.
+Selects a language by ISO 639 code.
 
 ```php
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
@@ -239,7 +250,7 @@ $builder->add('language', LanguageType::class, [
 
 ### LocaleType
 
-Select locales (language + country combinations).
+Selects a locale (language and country combination).
 
 ```php
 use Symfony\Component\Form\Extension\Core\Type\LocaleType;
@@ -252,7 +263,7 @@ $builder->add('locale', LocaleType::class, [
 
 ### TimezoneType
 
-Select timezones with support for both PHP and ICU formats.
+Selects a timezone, in either PHP or ICU format.
 
 ```php
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
@@ -274,20 +285,20 @@ $builder->add('timezone', TimezoneType::class, [
 ]);
 ```
 
-## Common Patterns
+## Common patterns
 
-### Locale-Aware Data Retrieval
+### Locale-aware data retrieval
 
 ```php
 use Symfony\Component\Intl\Countries;
 
-// Get country names in Spanish
+// Names in the default locale
 $countries = Countries::getNames(\Locale::getDefault());
-// Retrieve data in a specific locale
+// Names in a specific locale
 Countries::getNames('es_ES');
 ```
 
-### Validate User Input
+### Validate user input
 
 ```php
 use Symfony\Component\Intl\Countries;
@@ -304,7 +315,7 @@ if (!Currencies::exists($userCurrency)) {
 }
 ```
 
-### Build Custom Select Options
+### Build custom select options
 
 ```php
 use Symfony\Component\Intl\Languages;
@@ -316,29 +327,26 @@ foreach (Languages::getNames() as $code => $name) {
 asort($options);
 ```
 
-## Performance Optimization
+## Reducing disk usage
 
-Compress internal ICU data files to reduce disk space:
+Compress the internal ICU data files to save disk space:
 
 ```bash
 php ./vendor/symfony/intl/Resources/bin/compress
 ```
 
-This reduces the binary data files using zlib compression without affecting functionality.
+This compresses the binary data files with zlib and does not change behavior.
 
-## Key Concepts
+## Key concepts
 
-- **Locale Support**: Most methods accept an optional locale parameter (defaults to `Locale::getDefault()`)
-- **Error Handling**: Invalid codes trigger `Symfony\Component\Intl\Exception\MissingResourceException`
-- **ISO Standards**: Follows International Organization for Standardization (ISO) codes:
-  - ISO 639 for languages
-  - ISO 3166-1 for countries
-  - ISO 4217 for currencies
-- **ICU Data**: All data comes from the Unicode Consortium's ICU Project
-- **Form Integration**: Form field types automatically use Intl data without manual configuration
+- **Locale support**: most methods accept an optional locale parameter (defaults to `Locale::getDefault()`).
+- **Error handling**: invalid codes throw `Symfony\Component\Intl\Exception\MissingResourceException`.
+- **ISO standards**: ISO 639 for languages, ISO 3166-1 for countries, ISO 4217 for currencies.
+- **ICU data**: all data comes from the Unicode Consortium's ICU project.
+- **Form integration**: the Form field types use Intl data without extra configuration.
 
-## Related Components
+## Related components
 
-- [Form Component](../form.html) - For form field integration
-- [Validator Component](../validator.html) - For constraint validation
-- [Translation Component](../translation.html) - For message translation
+- [Form Component](../form.html) - form field integration
+- [Validator Component](../validator.html) - constraint validation
+- [Translation Component](../translation.html) - message translation

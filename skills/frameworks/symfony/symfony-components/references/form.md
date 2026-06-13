@@ -1,14 +1,31 @@
 # Symfony Form Component
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Form field types](#form-field-types)
+- [Common form type options](#common-form-type-options)
+- [Form events](#form-events)
+- [Data Transformers](#data-transformers)
+- [Collections and embedded forms](#collections-and-embedded-forms)
+- [Validation groups](#validation-groups)
+- [Custom form types](#custom-form-types)
+- [The inherit_data option](#the-inherit_data-option)
+- [Empty data](#empty-data)
+- [Form rendering](#form-rendering)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+
 ## Overview
 
-The Symfony Form component provides a robust system for building HTML forms in PHP applications. It handles form creation, data binding, validation, rendering, and submission with built-in support for CSRF protection, internationalization, and custom field types.
+The Symfony Form component builds HTML forms in PHP applications. It handles form creation, data binding, validation, rendering, and submission, and includes CSRF protection, internationalization, and support for custom field types.
 
-## Core Concepts
+## Core concepts
 
-### Form Creation
+### Form creation
 
-Create forms using the FormBuilder or factory pattern:
+Create forms with the FormBuilder or the form factory:
 
 ```php
 // Using FormFactory (standalone)
@@ -28,9 +45,9 @@ public function buildForm(FormBuilderInterface $builder, array $options): void
 }
 ```
 
-### Form Submission and Validation
+### Form submission and validation
 
-Handle form submissions with automatic validation:
+Handle a submission and validate it:
 
 ```php
 $form->handleRequest($request);
@@ -48,9 +65,9 @@ if ($form->isSubmitted() && !$form->isValid()) {
 }
 ```
 
-## Form Field Types
+## Form field types
 
-### Text Input Types
+### Text input types
 - **TextType**: Basic single-line text input
 - **TextareaType**: Multi-line text input
 - **EmailType**: Email address validation
@@ -65,7 +82,7 @@ if ($form->isSubmitted() && !$form->isValid()) {
 - **NumberType**: Decimal number input
 - **PercentType**: Percentage input
 
-### Choice Types
+### Choice types
 - **ChoiceType**: Single or multiple select options
 - **EnumType**: PHP enum selection
 - **EntityType**: Doctrine entity selection
@@ -75,7 +92,7 @@ if ($form->isSubmitted() && !$form->isValid()) {
 - **TimezoneType**: Timezone selection
 - **CurrencyType**: Currency selection
 
-### Date/Time Types
+### Date and time types
 - **DateType**: Date picker
 - **DateTimeType**: Date and time picker
 - **TimeType**: Time input
@@ -83,13 +100,13 @@ if ($form->isSubmitted() && !$form->isValid()) {
 - **BirthdayType**: Birthday with age restrictions
 - **WeekType**: ISO 8601 week selection
 
-### Boolean & File Types
+### Boolean and file types
 - **CheckboxType**: Single checkbox
 - **RadioType**: Radio button option
 - **FileType**: File upload
 - **RepeatedType**: Confirm field (e.g., password confirmation)
 
-### Collection & Container Types
+### Collection and container types
 - **CollectionType**: Embed multiple forms of the same type
 - **FormType**: Container for grouping fields
 - **HiddenType**: Hidden form field
@@ -97,11 +114,11 @@ if ($form->isSubmitted() && !$form->isValid()) {
 - **SubmitType**: Submit button
 - **ResetType**: Reset button
 
-### Specialized Types
+### Specialized types
 - **UuidType**: UUID field
 - **UlidType**: ULID field
 
-## Form Type Options (Most Common)
+## Common form type options
 
 ```php
 ->add('fieldName', FieldType::class, [
@@ -123,9 +140,9 @@ if ($form->isSubmitted() && !$form->isValid()) {
 ])
 ```
 
-## Form Events
+## Form events
 
-Use form events to modify forms and data at different lifecycle stages:
+Form events let you modify the form and its data at each stage of the lifecycle:
 
 ```php
 use Symfony\Component\Form\FormEvents;
@@ -160,7 +177,7 @@ $builder->addEventListener(FormEvents::POST_SUBMIT, function (PostSubmitEvent $e
 });
 ```
 
-### Event Subscribers for Organization
+### Event subscribers
 
 ```php
 namespace App\Form\EventListener;
@@ -189,9 +206,9 @@ $builder->addEventSubscriber(new DynamicFieldSubscriber());
 
 ## Data Transformers
 
-Transform data between model format, normalized format, and view format:
+Transformers convert data between the model format, the normalized format, and the view format.
 
-### Using CallbackTransformer
+### CallbackTransformer
 
 ```php
 use Symfony\Component\Form\CallbackTransformer;
@@ -209,7 +226,7 @@ $builder->get('tags')
     ));
 ```
 
-### Custom Transformer Class
+### Custom transformer class
 
 ```php
 use Symfony\Component\Form\DataTransformerInterface;
@@ -246,9 +263,9 @@ class IssueToNumberTransformer implements DataTransformerInterface
 $builder->get('issue')->addModelTransformer(new IssueToNumberTransformer($em));
 ```
 
-## Collections and Embedded Forms
+## Collections and embedded forms
 
-### Basic Collection
+### Basic collection
 
 ```php
 $builder->add('tags', CollectionType::class, [
@@ -257,7 +274,7 @@ $builder->add('tags', CollectionType::class, [
 ]);
 ```
 
-### Dynamic Collections
+### Dynamic collections
 
 ```php
 $builder->add('tags', CollectionType::class, [
@@ -279,7 +296,7 @@ public function removeTag(Tag $tag): void
 }
 ```
 
-### JavaScript for Dynamic Addition
+### JavaScript for adding items
 
 ```javascript
 document.querySelectorAll('.add_item_link').forEach(btn => {
@@ -294,9 +311,9 @@ document.querySelectorAll('.add_item_link').forEach(btn => {
 });
 ```
 
-## Validation Groups
+## Validation groups
 
-Configure different validation rules based on context:
+Apply different validation rules depending on context:
 
 ```php
 public function configureOptions(OptionsResolver $resolver): void
@@ -318,9 +335,9 @@ public function configureOptions(OptionsResolver $resolver): void
 ])
 ```
 
-## Custom Form Types
+## Custom form types
 
-### Based on Existing Type
+### Based on an existing type
 
 ```php
 class ShippingType extends AbstractType
@@ -342,7 +359,7 @@ class ShippingType extends AbstractType
 }
 ```
 
-### Built from Scratch
+### Built from scratch
 
 ```php
 class AddressType extends AbstractType
@@ -365,9 +382,9 @@ class AddressType extends AbstractType
 }
 ```
 
-## The inherit_data Option
+## The inherit_data option
 
-Reduce duplication by having forms inherit data from their parent:
+A form with `inherit_data` uses its parent's data, which removes duplication between forms:
 
 ```php
 class LocationType extends AbstractType
@@ -392,9 +409,9 @@ class LocationType extends AbstractType
 $builder->add('location', LocationType::class);
 ```
 
-## Empty Data Configuration
+## Empty data
 
-Specify what data to use when form is empty:
+Set the data to use when the form is submitted empty:
 
 ```php
 public function configureOptions(OptionsResolver $resolver): void
@@ -411,9 +428,9 @@ public function configureOptions(OptionsResolver $resolver): void
 }
 ```
 
-## Form Rendering
+## Form rendering
 
-### Twig Functions
+### Twig functions
 
 ```twig
 {{ form(form) }}                        {# Render entire form #}
@@ -427,7 +444,7 @@ public function configureOptions(OptionsResolver $resolver): void
 {{ form_end(form) }}                    {# Close form tag #}
 ```
 
-### Custom Attributes
+### Custom attributes
 
 ```twig
 {{ form_widget(form.field, {'attr': {'class': 'form-control', 'data-toggle': 'tooltip'}}) }}
@@ -435,7 +452,7 @@ public function configureOptions(OptionsResolver $resolver): void
 {{ form_label(form.field, 'Custom Label') }}
 ```
 
-### Accessing Field Variables
+### Accessing field variables
 
 ```twig
 {{ form.field.vars.id }}
@@ -446,9 +463,9 @@ public function configureOptions(OptionsResolver $resolver): void
 {{ form.field.vars.attr }}
 ```
 
-## Common Patterns
+## Common patterns
 
-### Optional Field Based on Checkbox
+### Optional field based on a checkbox
 
 ```php
 $builder->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
@@ -464,7 +481,7 @@ $builder->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $eve
 });
 ```
 
-### Dependent Field Selection
+### Dependent field selection
 
 ```php
 $formModifier = function (FormInterface $form, ?Category $category = null): void {
@@ -483,16 +500,13 @@ $builder->get('category')->addEventListener(FormEvents::POST_SUBMIT, function (P
 });
 ```
 
-## Best Practices
+## Best practices
 
-- Use form types to encapsulate reusable form configurations
-- Leverage event subscribers for complex dynamic behavior
-- Apply validation groups to support multiple form contexts
-- Use data transformers for complex data format conversions
-- Implement `inherit_data` to reduce form duplication
-- Use embedded forms (CollectionType) for one-to-many relationships
-- Always validate and sanitize user input
-- Use CSRF protection for all forms modifying state
-- Create custom form types instead of duplicating field definitions
-- Use `allow_add` and `allow_delete` with `by_reference: false` for collections
-- Set `inherit_data: true` in shared form types that work across entities
+- Put reusable form configuration in form types, and create a custom type instead of duplicating field definitions.
+- Use event subscribers for complex dynamic behavior.
+- Use validation groups when a form is used in several contexts.
+- Use data transformers for non-trivial format conversions.
+- Set `inherit_data: true` in shared form types that work across entities.
+- Use `CollectionType` for one-to-many relationships, with `allow_add` and `allow_delete` and `by_reference: false`.
+- Validate all user input.
+- Keep CSRF protection on every form that changes state.

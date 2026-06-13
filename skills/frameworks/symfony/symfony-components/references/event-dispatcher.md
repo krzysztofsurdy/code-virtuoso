@@ -1,10 +1,24 @@
 # Symfony EventDispatcher Component
 
+## Contents
+
+- [Overview](#overview)
+- [Core concepts](#core-concepts)
+- [Key classes and methods](#key-classes-and-methods)
+- [Usage examples](#usage-examples)
+- [Generic event object](#generic-event-object)
+- [Immutable event dispatcher](#immutable-event-dispatcher)
+- [Traceable event dispatcher](#traceable-event-dispatcher)
+- [Service container integration](#service-container-integration)
+- [Best practices](#best-practices)
+- [Installation](#installation)
+- [Common patterns](#common-patterns)
+
 ## Overview
 
-The EventDispatcher component implements the **Observer** and **Mediator** design patterns, enabling application components to communicate through events without tight coupling. Create a plugin-based architecture where listeners react to dispatched events throughout your application lifecycle.
+The EventDispatcher component implements the Observer and Mediator patterns. Components communicate through events instead of calling each other directly, so listeners can react to dispatched events without the dispatching code knowing about them. This makes plugin-style architectures straightforward.
 
-## Core Concepts
+## Core concepts
 
 ### Events
 - Identified by unique names (e.g., `kernel.response`, `acme.order.placed`)
@@ -12,16 +26,16 @@ The EventDispatcher component implements the **Observer** and **Mediator** desig
 - Can carry domain-specific data via custom event classes
 
 ### Listeners
-- Callable functions or class methods responding to specific events
+- Callables (functions or class methods) that respond to specific events
 - Executed in priority order (higher priority executes first)
 - Receive the event object, event name, and dispatcher instance
 
 ### Subscribers
 - Classes implementing `EventSubscriberInterface`
 - Register multiple listeners at once
-- Define event subscriptions and priorities in `getSubscribedEvents()` method
+- Declare event subscriptions and priorities in the `getSubscribedEvents()` method
 
-## Key Classes and Methods
+## Key classes and methods
 
 ### EventDispatcher
 ```php
@@ -76,9 +90,9 @@ interface EventSubscriberInterface
 }
 ```
 
-## Essential Usage Examples
+## Usage examples
 
-### 1. Create Custom Event Class
+### 1. Create a custom event class
 ```php
 namespace Acme\Store\Event;
 
@@ -103,7 +117,7 @@ final class OrderPlacedEvent extends Event
 }
 ```
 
-### 2. Dispatch an Event
+### 2. Dispatch an event
 ```php
 use Acme\Store\Event\OrderPlacedEvent;
 
@@ -115,7 +129,7 @@ $dispatcher->dispatch($event);
 $dispatcher->dispatch($event, 'store.order.placed');
 ```
 
-### 3. Register Listener with Priority
+### 3. Register a listener with a priority
 ```php
 // Higher numbers execute earlier
 $dispatcher->addListener('store.order.placed', function (OrderPlacedEvent $event): void {
@@ -129,7 +143,7 @@ $dispatcher->addListener('store.order.placed', function (OrderPlacedEvent $event
 }, 50); // Lower priority
 ```
 
-### 4. Create Event Subscriber
+### 4. Create an event subscriber
 ```php
 namespace Acme\Store\Subscriber;
 
@@ -172,7 +186,7 @@ class StoreSubscriber implements EventSubscriberInterface
 $dispatcher->addSubscriber(new StoreSubscriber());
 ```
 
-### 5. Stop Event Propagation
+### 5. Stop event propagation
 ```php
 $dispatcher->addListener('store.order.placed', function (OrderPlacedEvent $event): void {
     if (!$event->getOrder()->isValid()) {
@@ -186,7 +200,7 @@ $dispatcher->addListener('store.order.placed', function (OrderPlacedEvent $event
 });
 ```
 
-### 6. Listener with Full Signature
+### 6. Listener with the full signature
 ```php
 $dispatcher->addListener('store.order.placed', function (
     OrderPlacedEvent $event,
@@ -200,7 +214,7 @@ $dispatcher->addListener('store.order.placed', function (
 });
 ```
 
-## Generic Event Object
+## Generic event object
 
 Use `GenericEvent` for simple cases without custom event classes:
 
@@ -226,9 +240,9 @@ $dispatcher->addListener('my.event', function (GenericEvent $event): void {
 });
 ```
 
-## Immutable Event Dispatcher
+## Immutable event dispatcher
 
-Use `ImmutableEventDispatcher` to prevent modification of listener configuration:
+Use `ImmutableEventDispatcher` to prevent changes to the listener configuration:
 
 ```php
 use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
@@ -247,11 +261,11 @@ $immutable->dispatch($event);
 $immutable->addListener('another.event', $listener); // Fails
 ```
 
-**Use cases:** Dependency injection boundaries, API encapsulation, thread-safe references.
+Use it at dependency injection boundaries and to encapsulate the dispatcher in an API.
 
-## Traceable Event Dispatcher
+## Traceable event dispatcher
 
-Debug event listener execution and identify unused listeners:
+Records which listeners ran and which did not, which helps debug listener execution and find unused listeners:
 
 ```php
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
@@ -262,7 +276,7 @@ $traceableDispatcher = new TraceableEventDispatcher(
     new Stopwatch()
 );
 
-// Use normally - it tracks calls automatically
+// Use it as a normal dispatcher; it tracks calls automatically
 $traceableDispatcher->dispatch($event);
 
 // Analyze which listeners were called
@@ -278,12 +292,12 @@ foreach ($notCalled as $listener) {
 }
 ```
 
-## Service Container Integration
+## Service container integration
 
-Register listeners and subscribers with dependency injection:
+Register listeners and subscribers as tagged services:
 
 ```php
-// Using YAML configuration
+// YAML configuration
 services:
   app.order_listener:
     class: Acme\Store\Listener\OrderListener
@@ -299,7 +313,7 @@ services:
       - name: kernel.event_subscriber
 ```
 
-Register compiler pass for automatic listener registration:
+Register the compiler pass for automatic listener registration:
 
 ```php
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
@@ -307,15 +321,15 @@ use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 $container->addCompilerPass(new RegisterListenersPass());
 ```
 
-## Best Practices
+## Best practices
 
-1. **Create custom event classes** for domain-specific events rather than using GenericEvent
-2. **Use class names as event identifiers**: `dispatch($event)` without explicit name when using class-based events
-3. **Set appropriate priorities** (0 is default): use 100+ for essential operations, negative for cleanup
-4. **Stop propagation sparingly** when semantically meaningful (validation failures, etc.)
-5. **Implement EventSubscriberInterface** when registering multiple related listeners
-6. **Use ImmutableEventDispatcher** at API boundaries to prevent accidental modifications
-7. **Use TraceableEventDispatcher** during development to identify unused listeners
+1. Create custom event classes for domain events instead of using `GenericEvent`.
+2. Use class names as event identifiers, so `dispatch($event)` needs no explicit name.
+3. Keep the default priority (0) unless order matters. Use 100+ for operations that must run first and negative values for cleanup.
+4. Stop propagation sparingly, only where it has a clear meaning such as a validation failure.
+5. Implement `EventSubscriberInterface` when registering several related listeners.
+6. Use `ImmutableEventDispatcher` at API boundaries to prevent accidental changes.
+7. Use `TraceableEventDispatcher` during development to find unused listeners.
 
 ## Installation
 
@@ -323,14 +337,14 @@ $container->addCompilerPass(new RegisterListenersPass());
 composer require symfony/event-dispatcher
 ```
 
-Requires the contracts package (often installed automatically):
+Requires the contracts package (usually installed automatically):
 ```bash
 composer require symfony/contracts
 ```
 
-## Common Patterns
+## Common patterns
 
-### Event Subscribers for Domain Models
+### Event subscribers for domain models
 ```php
 final class UserSubscriber implements EventSubscriberInterface
 {
@@ -356,7 +370,7 @@ final class UserSubscriber implements EventSubscriberInterface
 }
 ```
 
-### Event Dispatcher Facade
+### Event dispatcher facade
 ```php
 class MyApplication
 {
@@ -379,19 +393,3 @@ class MyApplication
     }
 }
 ```
-```
-
-## How to Create the File
-
-Since I don't have write permissions in this environment, you'll need to create the file manually. Follow these steps:
-
-1. Navigate to the directory: `/Users/krzysztofsurdy/ProjectsPrivate/symfony-virtuoso/skills/symfony-event-dispatcher/`
-2. Create a new file named `SKILL.md`
-3. Copy and paste the complete markdown content shown above
-
-Alternatively, you can run this command in your terminal:
-
-```bash
-cat > /Users/krzysztofsurdy/ProjectsPrivate/symfony-virtuoso/skills/symfony-event-dispatcher/SKILL.md << 'EOF'
-[paste the content above here]
-EOF

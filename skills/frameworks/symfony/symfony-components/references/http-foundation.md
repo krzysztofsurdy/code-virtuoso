@@ -1,6 +1,15 @@
 # Symfony HttpFoundation Component
 
-Provides an object-oriented interface for HTTP requests and responses, replacing PHP procedural approaches (`$_GET`, `echo`, `header()`, `setcookie()`) with clean, manageable classes.
+Provides an object-oriented interface for HTTP requests and responses. It replaces PHP's procedural approach (`$_GET`, `echo`, `header()`, `setcookie()`) with classes.
+
+## Contents
+
+- [Installation](#installation)
+- [Request class](#request-class)
+- [Response class](#response-class)
+- [Utility classes](#utility-classes)
+- [Safe content preference (RFC 8674)](#safe-content-preference-rfc-8674)
+- [Common use cases](#common-use-cases)
 
 ## Installation
 
@@ -8,11 +17,11 @@ Provides an object-oriented interface for HTTP requests and responses, replacing
 composer require symfony/http-foundation
 ```
 
-## Request Class - Handle HTTP Requests
+## Request class
 
-Create request instances and access incoming data safely.
+Create request instances and read incoming data.
 
-### Creating Requests
+### Creating requests
 
 ```php
 use Symfony\Component\HttpFoundation\Request;
@@ -29,9 +38,9 @@ $request = Request::create(
 );
 ```
 
-### Accessing Request Data
+### Accessing request data
 
-All data properties expose ParameterBag instances with uniform access methods:
+All data properties are ParameterBag instances with the same access methods:
 
 ```php
 // Query string parameters ($_GET)
@@ -68,9 +77,9 @@ $payload = $request->getPayload();  // InputBag instance
 $payload->all();
 ```
 
-### Type-Safe Data Access
+### Type-safe data access
 
-Use FilterBag methods to convert and validate data:
+Use the typed getters to convert and validate data:
 
 ```php
 $request->query->getInt('id');             // Convert to integer
@@ -83,7 +92,7 @@ $request->query->getEnum('status', MyEnum::class);  // Enum conversion
 $request->query->filter('email', FILTER_VALIDATE_EMAIL);  // Custom filter
 ```
 
-### ParameterBag Methods
+### ParameterBag methods
 
 ```php
 // Check/modify
@@ -95,7 +104,7 @@ $request->query->replace(['new' => 'data']);
 $request->query->keys();
 ```
 
-### Request Information
+### Request information
 
 ```php
 $request->getMethod();          // GET, POST, PUT, etc.
@@ -107,7 +116,7 @@ $request->isXmlHttpRequest();   // AJAX request?
 $request->isMethod('POST');     // Check specific method
 ```
 
-### Headers and Content Negotiation
+### Headers and content negotiation
 
 ```php
 // Get individual header
@@ -125,7 +134,7 @@ $charsets = $request->getCharsets();
 // Get accepted encodings
 $encodings = $request->getEncodings();
 
-// Advanced Accept header parsing
+// Accept header parsing
 use Symfony\Component\HttpFoundation\AcceptHeader;
 
 $acceptHeader = AcceptHeader::fromString(
@@ -139,7 +148,7 @@ if ($acceptHeader->has('text/html')) {
 }
 ```
 
-### Session Access
+### Session access
 
 ```php
 // Check if previous session exists
@@ -150,9 +159,9 @@ if ($request->hasPreviousSession()) {
 }
 ```
 
-### Request Matching
+### Request matching
 
-Match requests against specific criteria:
+Match requests against criteria:
 
 ```php
 use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
@@ -174,7 +183,7 @@ if ($matcher->matches($request)) { }
 
 Available matchers: AttributesRequestMatcher, ExpressionRequestMatcher, HeaderRequestMatcher, HostRequestMatcher, IpsRequestMatcher, IsJsonRequestMatcher, MethodRequestMatcher, PathRequestMatcher, PortRequestMatcher, QueryParameterRequestMatcher, SchemeRequestMatcher.
 
-### IP Address Utilities
+### IP address utilities
 
 ```php
 use Symfony\Component\HttpFoundation\IpUtils;
@@ -195,7 +204,7 @@ $isPrivate = IpUtils::isPrivateIp('192.168.1.1');   // true
 $isPrivate = IpUtils::isPrivateIp('8.8.8.8');       // false
 ```
 
-### Other Request Methods
+### Other request methods
 
 ```php
 $request->duplicate();          // Create request copy
@@ -206,11 +215,11 @@ $request->getQueryString();    // Query string
 $request->overrideGlobals();   // Override PHP globals with Request data
 ```
 
-## Response Class - Send HTTP Responses
+## Response class
 
-Create and send HTTP responses to clients.
+Create and send HTTP responses.
 
-### Basic Response Creation
+### Basic response creation
 
 ```php
 use Symfony\Component\HttpFoundation\Response;
@@ -228,7 +237,7 @@ $response->headers->set('X-Custom-Header', 'value');
 $response->setCharset('UTF-8');
 ```
 
-### Sending Responses
+### Sending responses
 
 ```php
 // Prepare response (fix HTTP specification issues)
@@ -241,7 +250,7 @@ $response->send();
 $response->send(false);
 ```
 
-### JsonResponse - JSON APIs
+### JsonResponse
 
 ```php
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -263,7 +272,7 @@ $response->setCallback('handleResponse');
 // Security note: Always return object, not array at root level
 ```
 
-### RedirectResponse - HTTP Redirects
+### RedirectResponse
 
 ```php
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -272,9 +281,9 @@ $response = new RedirectResponse('/path/to/redirect');
 $response->setStatusCode(Response::HTTP_MOVED_PERMANENTLY);  // 301
 ```
 
-### StreamedResponse - Stream Large Content
+### StreamedResponse
 
-Stream content with callback to handle large responses:
+Streams large responses through a callback:
 
 ```php
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -299,9 +308,9 @@ $response->headers->set('X-Accel-Buffering', 'no');
 $response->send();
 ```
 
-### StreamedJsonResponse - Stream JSON Arrays
+### StreamedJsonResponse
 
-Generate large JSON arrays with minimal memory using generators:
+Generates large JSON arrays with low memory use by consuming generators:
 
 ```php
 use Symfony\Component\HttpFoundation\StreamedJsonResponse;
@@ -335,9 +344,9 @@ public function loadArticles(): \Generator
 }
 ```
 
-### EventStreamResponse - Server-Sent Events
+### EventStreamResponse
 
-Real-time push updates to browsers without polling:
+Pushes server-sent events to browsers without polling:
 
 ```php
 use Symfony\Component\HttpFoundation\EventStreamResponse;
@@ -368,9 +377,9 @@ $response = new EventStreamResponse(function (): iterable {
 $response->send();
 ```
 
-### BinaryFileResponse - Serve Files
+### BinaryFileResponse
 
-Serve files with automatic Range request support, X-Sendfile, and headers:
+Serves files, with Range request support, X-Sendfile, and the right headers:
 
 ```php
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -428,7 +437,7 @@ $response->headers->clearCookie('old_cookie');
 $cookie = Cookie::fromString('Set-Cookie: name=value; Path=/');
 ```
 
-### HTTP Cache Management
+### HTTP cache management
 
 ```php
 // Cache control directives
@@ -444,12 +453,12 @@ $response->setLastModified(new \DateTime());
 $response->setEtag('version-123');
 $response->setVary('Accept-Encoding');
 
-// Advanced cache control
+// Extended cache control
 $response->setStaleIfError(86400);         // Serve stale for errors
 $response->setStaleWhileRevalidate(60);    // Revalidate in background
 $response->setImmutable();                 // Never revalidate
 
-// Batch configuration
+// Set several options at once
 $response->setCache([
     'public'           => true,
     'max_age'          => 3600,
@@ -469,9 +478,9 @@ if ($response->isNotModified($request)) {
 }
 ```
 
-## Utility Classes
+## Utility classes
 
-### HeaderUtils - HTTP Header Processing
+### HeaderUtils
 
 ```php
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -503,7 +512,7 @@ $disposition = HeaderUtils::makeDisposition(
 );
 ```
 
-### UrlHelper - URL Generation
+### UrlHelper
 
 ```php
 use Symfony\Component\HttpFoundation\UrlHelper;
@@ -524,7 +533,7 @@ $relative = $urlHelper->getRelativePath('/blog/article');
 // {{ relative_path('/path') }}
 ```
 
-### AcceptHeader - Content Negotiation
+### AcceptHeader
 
 ```php
 use Symfony\Component\HttpFoundation\AcceptHeader;
@@ -551,9 +560,9 @@ $accept->get('text/xml')->getQuality();        // 0.8 (matches text/*)
 $accept->get('application/xml')->getQuality(); // 0.3 (matches */*)
 ```
 
-## Safe Content Preference (RFC 8674)
+## Safe content preference (RFC 8674)
 
-Respect user preferences for safe content:
+Honor the user's preference for safe content:
 
 ```php
 // Check if user prefers safe content
@@ -564,9 +573,9 @@ if ($request->preferSafeContent()) {
 }
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Download File
+### Download a file
 ```php
 $response = new BinaryFileResponse('/path/to/document.pdf');
 $response->setContentDisposition(
@@ -576,12 +585,12 @@ $response->setContentDisposition(
 return $response;
 ```
 
-### API JSON Response
+### API JSON response
 ```php
 return new JsonResponse(['status' => 'success', 'id' => 42]);
 ```
 
-### Stream Large Dataset
+### Stream a large dataset
 ```php
 $response = new StreamedJsonResponse([
     'data' => loadMillionRecords()
@@ -589,7 +598,7 @@ $response = new StreamedJsonResponse([
 return $response;
 ```
 
-### Real-time Updates
+### Real-time updates
 ```php
 $response = new EventStreamResponse(function () {
     while (true) {
@@ -600,7 +609,7 @@ $response = new EventStreamResponse(function () {
 return $response;
 ```
 
-### Redirect After POST
+### Redirect after POST
 ```php
 return new RedirectResponse('/success-page');
 ```

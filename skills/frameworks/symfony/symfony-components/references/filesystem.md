@@ -1,6 +1,16 @@
 # Symfony Filesystem Component
 
-The Filesystem component offers a unified interface for filesystem operations across Windows, UNIX, and Linux platforms, with built-in error handling and atomic file operations.
+The Filesystem component gives one interface for filesystem operations on Windows, UNIX, and Linux. It throws exceptions on failure and supports atomic file writes.
+
+## Contents
+
+- [Installation](#installation)
+- [Core classes](#core-classes)
+- [Filesystem methods](#filesystem-methods)
+- [Path manipulation methods](#path-manipulation-methods)
+- [Error handling](#error-handling)
+- [Common use cases](#common-use-cases)
+- [Key features](#key-features)
 
 ## Installation
 
@@ -8,11 +18,11 @@ The Filesystem component offers a unified interface for filesystem operations ac
 composer require symfony/filesystem
 ```
 
-## Core Classes
+## Core classes
 
-### Filesystem Class
+### Filesystem class
 
-The main class for all filesystem operations. Initialize it with:
+The main class for filesystem operations:
 
 ```php
 use Symfony\Component\Filesystem\Filesystem;
@@ -20,9 +30,9 @@ use Symfony\Component\Filesystem\Filesystem;
 $filesystem = new Filesystem();
 ```
 
-### Path Class
+### Path class
 
-Utility class for platform-independent path manipulation. Use static methods directly:
+Utility class for platform-independent path manipulation. Its methods are static:
 
 ```php
 use Symfony\Component\Filesystem\Path;
@@ -30,11 +40,11 @@ use Symfony\Component\Filesystem\Path;
 $normalized = Path::canonicalize('/var/www/vhost/../config.ini');
 ```
 
-## Filesystem Methods
+## Filesystem methods
 
-### Directory Operations
+### Directory operations
 
-**mkdir()** - Create directories recursively with optional permissions:
+**mkdir()** - Create directories recursively, with optional permissions:
 
 ```php
 $filesystem->mkdir('/path/to/dir');
@@ -60,7 +70,7 @@ $filesystem->remove('/path/to/directory');
 $filesystem->remove(['/path/1', '/path/2']); // Remove multiple
 ```
 
-**mirror()** - Copy entire directory structure recursively:
+**mirror()** - Copy a whole directory structure recursively:
 
 ```php
 $filesystem->mirror('/path/to/source', '/path/to/target');
@@ -73,7 +83,7 @@ $filesystem->mirror('/source', '/target', null, [
 ]);
 ```
 
-### File Operations
+### File operations
 
 **copy()** - Copy a single file:
 
@@ -103,7 +113,7 @@ $filesystem->dumpFile('file.txt', 'Hello World');
 $filesystem->dumpFile('/path/config.json', json_encode($data));
 ```
 
-**readFile()** - Read entire file contents:
+**readFile()** - Read the entire contents of a file:
 
 ```php
 $contents = $filesystem->readFile('/path/to/file.txt');
@@ -115,13 +125,13 @@ $contents = $filesystem->readFile('/path/to/file.txt');
 $filesystem->appendToFile('logs.txt', 'New log entry');
 ```
 
-**tempnam()** - Create temporary file:
+**tempnam()** - Create a temporary file:
 
 ```php
 $tempFile = $filesystem->tempnam('/tmp', 'prefix_', '.png');
 ```
 
-### Permission Operations
+### Permission operations
 
 **chmod()** - Change file permissions:
 
@@ -144,7 +154,7 @@ $filesystem->chgrp('file.txt', 'www-data');
 $filesystem->chgrp(['/path/1', '/path/2'], 'nginx');
 ```
 
-### Symlink Operations
+### Symlink operations
 
 **symlink()** - Create symbolic links:
 
@@ -177,11 +187,11 @@ $relative = $filesystem->makePathRelative('/a/b/c', '/a/c');
 // => ../b/c/
 ```
 
-## Path Manipulation Methods
+## Path manipulation methods
 
 ### Canonicalization
 
-Remove ".", "..", backslashes, and resolve tilde (~):
+Removes "." and "..", converts backslashes, and resolves the tilde (~):
 
 ```php
 Path::canonicalize('/var/www/vhost/webmozart/../config.ini');
@@ -194,7 +204,7 @@ Path::canonicalize('C:\\Program Files\\..\\PHP');
 // => C:/PHP
 ```
 
-### Joining Paths
+### Joining paths
 
 Concatenate paths with proper separators:
 
@@ -206,7 +216,7 @@ Path::join('C:\\Programs', 'Apache', 'Config');
 // => C:/Programs/Apache/Config
 ```
 
-### Normalizing Paths
+### Normalizing paths
 
 Convert to forward slashes and standard format:
 
@@ -215,7 +225,7 @@ Path::normalize('C:\\Program Files\\PHP');
 // => C:/Program Files/PHP
 ```
 
-### Absolute vs Relative Paths
+### Absolute and relative paths
 
 **isAbsolute()** - Check if path is absolute:
 
@@ -247,7 +257,7 @@ Path::makeRelative('/var/www/project/config/config.yaml', '/var/www/project');
 // => config/config.yaml
 ```
 
-### Finding Common Base Path
+### Finding a common base path
 
 **getLongestCommonBasePath()** - Find longest common base path:
 
@@ -259,7 +269,7 @@ $basePath = Path::getLongestCommonBasePath(
 // => /var/www/vhosts/project/httpdocs
 ```
 
-**isBasePath()** - Check if path is base of another:
+**isBasePath()** - Check whether a path is the base of another:
 
 ```php
 Path::isBasePath("/var/www", "/var/www/project");        // => true
@@ -267,7 +277,7 @@ Path::isBasePath("/var/www", "/var/www-backup");         // => false
 Path::isBasePath("/var/www", "/var/www");                // => true
 ```
 
-### Directory Information
+### Directory information
 
 **getDirectory()** - Get directory component:
 
@@ -295,9 +305,9 @@ Path::getRoot('//server/share/file.txt');
 // => //server/share
 ```
 
-## Error Handling
+## Error handling
 
-All operations throw exceptions on failure. Catch them for graceful handling:
+All operations throw exceptions on failure:
 
 ```php
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
@@ -312,22 +322,22 @@ try {
 }
 ```
 
-**Exception Types:**
+Exception types:
 
 - `ExceptionInterface` - Base interface for all exceptions
 - `IOExceptionInterface` - I/O operation failures
 - `IOException` - Directory creation failures
 
-## Common Use Cases
+## Common use cases
 
-### Safe Configuration File Writing
+### Safe configuration file writing
 
 ```php
 $config = ['debug' => true, 'version' => '1.0'];
 $filesystem->dumpFile('/path/config.json', json_encode($config));
 ```
 
-### Batch Directory Creation
+### Batch directory creation
 
 ```php
 $paths = [
@@ -338,7 +348,7 @@ $paths = [
 $filesystem->mkdir($paths);
 ```
 
-### Mirror Project Structure
+### Mirror a project structure
 
 ```php
 $filesystem->mirror(
@@ -349,7 +359,7 @@ $filesystem->mirror(
 );
 ```
 
-### Convert Path References
+### Convert path references
 
 ```php
 $absolute = Path::makeAbsolute(
@@ -362,7 +372,7 @@ $relative = Path::makeRelative(
 );
 ```
 
-### Clean Up Temporary Files
+### Clean up temporary files
 
 ```php
 if ($filesystem->exists($tempFile)) {
@@ -370,12 +380,12 @@ if ($filesystem->exists($tempFile)) {
 }
 ```
 
-## Key Features
+## Key features
 
 - Cross-platform support (Windows, UNIX, Linux)
 - Atomic file write operations
 - Recursive directory operations
 - Batch operations with array support
-- Comprehensive exception handling
+- Exceptions on every failure
 - Symlink support with fallback mechanisms
 - Safe path manipulation without filesystem access

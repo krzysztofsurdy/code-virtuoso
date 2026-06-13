@@ -1,8 +1,29 @@
 # Symfony Finder Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Basic usage](#basic-usage)
+- [Specifying the search location](#specifying-the-search-location)
+- [Filtering by type](#filtering-by-type)
+- [Filtering by file name](#filtering-by-file-name)
+- [Filtering by file contents](#filtering-by-file-contents)
+- [Filtering by path](#filtering-by-path)
+- [Filtering by file size](#filtering-by-file-size)
+- [Filtering by file date](#filtering-by-file-date)
+- [Filtering by directory depth](#filtering-by-directory-depth)
+- [Custom filtering](#custom-filtering)
+- [Sorting results](#sorting-results)
+- [Converting and iterating results](#converting-and-iterating-results)
+- [Reading file contents](#reading-file-contents)
+- [SplFileInfo extended methods](#splfileinfo-extended-methods)
+- [Common use cases](#common-use-cases)
+- [Performance](#performance)
+
 ## Overview
 
-The Finder Component is a Symfony utility that provides a fluent interface for finding files and directories based on different criteria. It supports glob patterns, regular expressions, file size, modification dates, and custom filtering logic.
+The Finder component has a fluent interface for finding files and directories. It filters by glob pattern, regular expression, file size, modification date, content, depth, and custom closures.
 
 ## Installation
 
@@ -10,9 +31,9 @@ The Finder Component is a Symfony utility that provides a fluent interface for f
 composer require symfony/finder
 ```
 
-## Basic Usage
+## Basic usage
 
-### Create a Finder Instance and Search
+### Create a Finder and search
 
 ```php
 use Symfony\Component\Finder\Finder;
@@ -30,15 +51,15 @@ if ($finder->hasResults()) {
 }
 ```
 
-### Important Notes
+### Notes
 
-- The `in()` method is mandatory - it defines the search directory
-- Finder returns `SplFileInfo` instances with extended methods for relative paths
-- Finder is stateful - clone it before multiple searches: `foreach ((clone $finder)->name('pattern') as $file)`
+- `in()` is mandatory. It defines the search directory.
+- Finder returns `SplFileInfo` instances with extra methods for relative paths.
+- Finder is stateful, so clone it before running several searches: `foreach ((clone $finder)->name('pattern') as $file)`
 
-## Specifying Search Location
+## Specifying the search location
 
-### Single and Multiple Locations
+### Single and multiple locations
 
 ```php
 // Single location
@@ -49,35 +70,35 @@ $finder->in([__DIR__, '/elsewhere']);
 $finder->in(__DIR__)->in('/elsewhere');
 ```
 
-### Wildcard Patterns
+### Wildcard patterns
 
 ```php
 // Wildcard patterns in path
 $finder->in('src/Symfony/*/*/Resources');
 ```
 
-### Exclude Directories
+### Exclude directories
 
 ```php
 $finder->exclude('ruby');
 $finder->exclude(['vendor', 'node_modules']);
 ```
 
-### Ignore Unreadable Directories
+### Ignore unreadable directories
 
 ```php
 $finder->ignoreUnreadableDirs()->in(__DIR__);
 ```
 
-### URL Wrappers (FTP, S3, etc.)
+### URL wrappers (FTP, S3, etc.)
 
 ```php
 $finder->in('ftp://example.com/pub/');
 ```
 
-## Filtering by Type
+## Filtering by type
 
-### Files and Directories
+### Files and directories
 
 ```php
 // Find files only
@@ -90,7 +111,7 @@ $finder->directories();
 $finder->files()->followLinks();
 ```
 
-### Version Control Files
+### Version control files
 
 ```php
 // Don't ignore VCS files (Git, SVN, etc.)
@@ -100,9 +121,9 @@ $finder->ignoreVCS(false);
 $finder->ignoreVCSIgnored(true);
 ```
 
-## Filtering by File Name
+## Filtering by file name
 
-### Basic Name Filtering
+### Name filtering
 
 ```php
 // Single pattern
@@ -122,9 +143,9 @@ $finder->files()->notName(['*.rb', '*.py']);
 $finder->files()->name('/\.php$/');
 ```
 
-## Filtering by File Contents
+## Filtering by file contents
 
-### Search File Content
+### Search file content
 
 ```php
 // String search
@@ -137,9 +158,9 @@ $finder->files()->contains('/lorem\s+ipsum$/i');
 $finder->files()->notContains('dolor sit amet');
 ```
 
-## Filtering by Path
+## Filtering by path
 
-### Path Matching
+### Path matching
 
 ```php
 // Match paths containing "data"
@@ -160,9 +181,9 @@ $finder->notPath(['first/dir', 'other/dir']);
 $finder->path('/^foo\/bar/');
 ```
 
-## Filtering by File Size
+## Filtering by file size
 
-### Size Comparison
+### Size comparison
 
 ```php
 // Single size filter
@@ -173,7 +194,7 @@ $finder->files()->size('>= 1K')->size('<= 2K');
 $finder->files()->size(['>= 1K', '<= 2K']);
 ```
 
-### Operators and Units
+### Operators and units
 
 - Operators: `>`, `>=`, `<`, `<=`, `==`, `!=`
 - Units: `k` (kilobytes), `ki` (kibibytes), `m` (megabytes), `mi` (mebibytes), `g` (gigabytes), `gi` (gibibytes)
@@ -185,9 +206,9 @@ $finder->files()->size('> 1Gi');                 // Greater than 1 gibibyte
 $finder->files()->size('== 512k');               // Exactly 512 kilobytes
 ```
 
-## Filtering by File Date
+## Filtering by file date
 
-### Date Comparison
+### Date comparison
 
 ```php
 // Date range
@@ -199,11 +220,11 @@ $finder->date('since yesterday');
 $finder->date('since 2020-01-01');
 ```
 
-### Operators and Aliases
+### Operators and aliases
 
 - Operators: `>`, `>=`, `<`, `<=`, `==`
 - Aliases: `since`/`after` (equivalent to `>`), `until`/`before` (equivalent to `<`)
-- Accepts any `strtotime()` compatible format
+- Accepts any format `strtotime()` understands
 
 ```php
 // Examples
@@ -212,9 +233,9 @@ $finder->date('since yesterday');
 $finder->date('until next week');
 ```
 
-## Filtering by Directory Depth
+## Filtering by directory depth
 
-### Restrict Recursion Levels
+### Restrict recursion levels
 
 ```php
 // Direct children only
@@ -228,9 +249,9 @@ $finder->depth('> 2')->depth('< 5');
 $finder->depth(['> 2', '< 5']);
 ```
 
-## Custom Filtering
+## Custom filtering
 
-### Filter Closure
+### Filter closure
 
 ```php
 $filter = function (\SplFileInfo $file) {
@@ -241,7 +262,7 @@ $filter = function (\SplFileInfo $file) {
 $finder->files()->filter($filter);
 ```
 
-### Directory Pruning (Performance Optimization)
+### Directory pruning
 
 ```php
 // Return false to skip entire directory
@@ -255,9 +276,9 @@ $filter = function (\SplFileInfo $file) {
 $finder->filter($filter);
 ```
 
-## Sorting Results
+## Sorting results
 
-### Sort by Name
+### Sort by name
 
 ```php
 // Standard name sort
@@ -271,7 +292,7 @@ $finder->sortByCaseInsensitiveName();
 $finder->sortByCaseInsensitiveName(true);  // natural sort
 ```
 
-### Sort by File Properties
+### Sort by file properties
 
 ```php
 $finder->sortByExtension();
@@ -279,7 +300,7 @@ $finder->sortBySize();
 $finder->sortByType();
 ```
 
-### Sort by Time
+### Sort by time
 
 ```php
 $finder->sortByAccessedTime();
@@ -287,7 +308,7 @@ $finder->sortByChangedTime();
 $finder->sortByModifiedTime();
 ```
 
-### Custom Sorting
+### Custom sorting
 
 ```php
 $finder->sort(function (\SplFileInfo $a, \SplFileInfo $b): int {
@@ -295,28 +316,28 @@ $finder->sort(function (\SplFileInfo $a, \SplFileInfo $b): int {
 });
 ```
 
-### Reverse Sort Order
+### Reverse sort order
 
 ```php
 $finder->sortByName()->reverseSorting();
 ```
 
-## Converting and Iterating Results
+## Converting and iterating results
 
-### Convert to Array
+### Convert to array
 
 ```php
 // Array with file paths as keys
 $files = iterator_to_array($finder);
 
-// Array with numeric keys (prevents key duplication)
+// Array with numeric keys (avoids key collisions)
 $files = iterator_to_array($finder, false);
 
 // Count results
 $count = iterator_count($finder);
 ```
 
-### Iterate Results
+### Iterate results
 
 ```php
 foreach ($finder as $file) {
@@ -325,9 +346,9 @@ foreach ($finder as $file) {
 }
 ```
 
-## Reading File Contents
+## Reading file contents
 
-### Get File Contents
+### Get file contents
 
 ```php
 use Symfony\Component\Finder\Finder;
@@ -341,9 +362,9 @@ foreach ($finder as $file) {
 }
 ```
 
-## SplFileInfo Extended Methods
+## SplFileInfo extended methods
 
-The Finder returns `SplFileInfo` instances with these additional methods:
+Finder returns `SplFileInfo` instances with these additional methods:
 
 ```php
 $file->getRelativePath();      // Relative directory path
@@ -352,9 +373,9 @@ $file->getRealPath();          // Absolute path
 $file->getContents();          // File contents
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Find All PHP Files in Source Directory
+### Find all PHP files in a source directory
 
 ```php
 $finder = new Finder();
@@ -365,7 +386,7 @@ foreach ($finder as $file) {
 }
 ```
 
-### Find Large Files Modified Recently
+### Find large, recently modified files
 
 ```php
 $finder = new Finder();
@@ -375,7 +396,7 @@ $finder->files()
     ->in(__DIR__);
 ```
 
-### Find Files Matching Multiple Criteria
+### Find files matching several criteria
 
 ```php
 $finder = new Finder();
@@ -387,7 +408,7 @@ $finder->files()
     ->in('src');
 ```
 
-### Find Specific Files with Custom Filter
+### Find files with a custom filter
 
 ```php
 $finder = new Finder();
@@ -398,10 +419,9 @@ $finder->files()
     });
 ```
 
-## Performance Considerations
+## Performance
 
-- Sorting methods load all results into memory first, which is slow for large datasets
-- For large directory trees, use directory pruning in `filter()` to skip expensive recursion
-- Git integration searches for `.gitignore` files from the search directory, not the repository root
-- Start from the Git root for consistent `.gitignore` behavior
-- Clone Finder instances before multiple searches to avoid state issues
+- Sorting methods load all results into memory first, which is slow for large result sets.
+- For large directory trees, prune directories in `filter()` to skip expensive recursion.
+- Git integration looks for `.gitignore` files starting from the search directory, not the repository root. Start from the Git root for consistent `.gitignore` behavior.
+- Clone Finder instances before running several searches.

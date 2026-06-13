@@ -1,21 +1,36 @@
 # Symfony ExpressionLanguage Component
 
+## Contents
+
+- [Installation](#installation)
+- [Core concepts](#core-concepts)
+- [Basic usage](#basic-usage)
+- [Supported literals and data types](#supported-literals-and-data-types)
+- [Operators](#operators)
+- [Working with objects](#working-with-objects)
+- [Working with arrays](#working-with-arrays)
+- [Built-in functions](#built-in-functions)
+- [Custom functions](#custom-functions)
+- [Caching](#caching)
+- [Common use cases](#common-use-cases)
+- [Key classes and interfaces](#key-classes-and-interfaces)
+
 ## Installation
 
 ```bash
 composer require symfony/expression-language
 ```
 
-## Core Concepts
+## Core concepts
 
-The ExpressionLanguage component provides a secure sandbox engine to compile and evaluate dynamic expressions (typically one-liners that return values). It supports two operation modes:
+The ExpressionLanguage component is a sandboxed engine for compiling and evaluating dynamic expressions, typically one-liners that return a value. It has two modes:
 
-- **Evaluation**: Execute expressions directly without compilation
-- **Compilation**: Convert expressions to PHP code for caching and performance
+- **Evaluation**: runs the expression directly, without compilation
+- **Compilation**: converts the expression to PHP code, which can be cached
 
-## Basic Usage
+## Basic usage
 
-### Create an ExpressionLanguage Instance
+### Create an ExpressionLanguage instance
 
 ```php
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -23,7 +38,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 $expressionLanguage = new ExpressionLanguage();
 ```
 
-### Evaluate Expressions
+### Evaluate expressions
 
 ```php
 // Simple arithmetic
@@ -41,7 +56,7 @@ $result = $expressionLanguage->evaluate(
 ); // Arthur Dent
 ```
 
-### Compile Expressions
+### Compile expressions
 
 ```php
 // Compile to PHP code string
@@ -51,7 +66,7 @@ $code = $expressionLanguage->compile('1 + 2'); // (1 + 2)
 $code = $expressionLanguage->compile('fruit.variety', ['fruit']);
 ```
 
-### Parse and Lint Expressions
+### Parse and lint expressions
 
 ```php
 // Parse into AST for inspection
@@ -69,7 +84,7 @@ $expressionLanguage->lint(
 );
 ```
 
-## Supported Literals and Data Types
+## Supported literals and data types
 
 - **Strings**: `'hello'`, `"world"` (single and double quotes)
 - **Numbers**: `103`, `9.95`, `.99`, `1_000_000` (with optional underscores)
@@ -82,43 +97,43 @@ $expressionLanguage->lint(
 
 ## Operators
 
-### Arithmetic Operators
+### Arithmetic operators
 - `+` (addition), `-` (subtraction), `*` (multiplication), `/` (division), `%` (modulus), `**` (power)
 
-### Comparison Operators
+### Comparison operators
 - `==` (equal), `===` (identical), `!=` (not equal), `!==` (not identical)
 - `<` (less than), `>` (greater than), `<=` (less than or equal), `>=` (greater than or equal)
 - `matches` (regex match), `contains`, `starts with`, `ends with`
 
-### Logical Operators
+### Logical operators
 - `not` or `!`, `and` or `&&`, `or` or `||`, `xor`
 
-### String Operators
+### String operators
 - `~` (concatenation): `'Hello' ~ ' ' ~ 'World'`
 
-### Array Operators
+### Array operators
 - `in` (contains), `not in` (does not contain) - strict comparison
 
-### Bitwise Operators
+### Bitwise operators
 - `&` (and), `|` (or), `^` (xor), `~` (not), `<<` (left shift), `>>` (right shift)
 
-### Range Operator
+### Range operator
 - `..` (range): `user.age in 18..45`
 
-### Ternary Operators
+### Ternary operators
 - `foo ? 'yes' : 'no'` (conditional)
 - `foo ?: 'no'` (elvis operator)
 - `foo ? 'yes'` (shorthand)
 
-### Null-Safe Operator
+### Null-safe operator
 - `?.` (returns null instead of throwing if object is null): `fruit?.color`, `fruit?.getStock()`
 
-### Null-Coalescing Operator
+### Null-coalescing operator
 - `??` (returns right-hand side if left is null): `foo ?? 'default'`
 
-## Working with Objects
+## Working with objects
 
-### Access Public Properties and Methods
+### Access public properties and methods
 
 ```php
 $robot = new Robot();
@@ -137,7 +152,7 @@ $expressionLanguage->evaluate('fruit?.color', ['fruit' => null]); // null
 $expressionLanguage->evaluate('fruit?.getStock()', ['fruit' => null]); // null
 ```
 
-## Working with Arrays
+## Working with arrays
 
 ```php
 $data = ['life' => 10, 'universe' => 10, 'everything' => 22];
@@ -152,7 +167,7 @@ $expressionLanguage->evaluate('data[0] ?? "default"', ['data' => $data]); // def
 $expressionLanguage->evaluate('group in ["hr", "marketing"]', ['group' => 'hr']); // true
 ```
 
-## Built-in Functions
+## Built-in functions
 
 ### constant()
 Returns PHP constants or class constants:
@@ -177,9 +192,9 @@ $expressionLanguage->evaluate('min(1, 2, 3)'); // 1
 $expressionLanguage->evaluate('max(1, 2, 3)'); // 3
 ```
 
-## Custom Functions
+## Custom functions
 
-### Register Functions Directly
+### Register functions directly
 
 ```php
 $expressionLanguage->register(
@@ -200,7 +215,7 @@ $expressionLanguage->register(
 $expressionLanguage->evaluate('lowercase("HELLO")'); // hello
 ```
 
-### Using Expression Providers
+### Using expression providers
 
 Create reusable expression providers by implementing `ExpressionFunctionProviderInterface`:
 
@@ -228,7 +243,7 @@ class StringExpressionLanguageProvider implements ExpressionFunctionProviderInte
 }
 ```
 
-### Register Providers
+### Register providers
 
 ```php
 // Via constructor
@@ -240,7 +255,7 @@ $expressionLanguage = new ExpressionLanguage(null, [
 $expressionLanguage->registerProvider(new StringExpressionLanguageProvider());
 ```
 
-### Create Functions from Existing PHP Functions
+### Create functions from existing PHP functions
 
 ```php
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
@@ -252,9 +267,9 @@ ExpressionFunction::fromPhp('strtoupper');
 ExpressionFunction::fromPhp('MyNamespace\\customFunction', 'my_function');
 ```
 
-### Best Practice: Custom ExpressionLanguage Class
+### Custom ExpressionLanguage class
 
-For libraries, extend ExpressionLanguage with default providers:
+In libraries, extend `ExpressionLanguage` with default providers:
 
 ```php
 use Psr\Cache\CacheItemPoolInterface;
@@ -273,18 +288,18 @@ class ExpressionLanguage extends BaseExpressionLanguage
 
 ## Caching
 
-ExpressionLanguage automatically caches parsed expressions to avoid redundant tokenization and parsing.
+ExpressionLanguage caches parsed expressions, so repeated expressions are not tokenized and parsed again.
 
-### Default Caching
+### Default caching
 
 ```php
 // Uses ArrayAdapter for in-memory caching by default
 $expressionLanguage = new ExpressionLanguage();
 ```
 
-### Custom Cache Configuration
+### Custom cache configuration
 
-Inject a PSR-6 compatible cache implementation:
+Inject a PSR-6 cache implementation:
 
 ```php
 use Symfony\Component\Cache\Adapter\RedisAdapter;
@@ -299,7 +314,7 @@ $cache = new FilesystemAdapter();
 $expressionLanguage = new ExpressionLanguage($cache);
 ```
 
-### Manual Parsed Expression Caching
+### Manual parsed expression caching
 
 ```php
 // Cache and reuse ParsedExpression
@@ -316,9 +331,9 @@ $expression = new SerializedParsedExpression(
 $expressionLanguage->evaluate($expression); // 5
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Business Rule Engine
+### Business rules
 
 ```php
 // Determine special pricing based on user group
@@ -328,17 +343,17 @@ if ($expressionLanguage->evaluate($expression, ['user' => $user])) {
 }
 ```
 
-### Validation Rules
+### Validation rules
 
 ```php
-// Complex validation logic
+// Validation logic
 $expression = 'product.stock < 15 and product.category not in ["discontinued"]';
 if ($expressionLanguage->evaluate($expression, ['product' => $product])) {
     // Show warning
 }
 ```
 
-### Content Filtering
+### Content filtering
 
 ```php
 // Show article if it meets engagement threshold
@@ -348,7 +363,7 @@ if ($expressionLanguage->evaluate($expression, ['article' => $article])) {
 }
 ```
 
-### Security & Access Control
+### Security and access control
 
 ```php
 // Check user permissions
@@ -358,7 +373,7 @@ if ($expressionLanguage->evaluate($expression, ['user' => $user, 'resource' => $
 }
 ```
 
-## Key Classes and Interfaces
+## Key classes and interfaces
 
 - **ExpressionLanguage**: Main class for evaluating and compiling expressions
 - **ExpressionFunction**: Represents a custom function with compiler and evaluator callbacks

@@ -1,6 +1,16 @@
 # Symfony Ldap Component
 
-The Ldap Component provides utilities for connecting to and interacting with LDAP servers. It supports configuration options for connections, authentication methods (bind, SASL), querying, and CRUD operations on directory entries.
+The Ldap component connects to LDAP servers and works with them. It supports connection options, authentication (bind and SASL), queries, and create, update, and delete operations on directory entries.
+
+## Contents
+
+- [Installation](#installation)
+- [Connection and authentication](#connection-and-authentication)
+- [Querying and searching](#querying-and-searching)
+- [Creating and updating entries](#creating-and-updating-entries)
+- [Batch Operations](#batch-operations)
+- [Security configuration](#security-configuration)
+- [Security best practices](#security-best-practices)
 
 ## Installation
 
@@ -8,11 +18,11 @@ The Ldap Component provides utilities for connecting to and interacting with LDA
 composer require symfony/ldap
 ```
 
-## Basic Connection & Authentication
+## Connection and authentication
 
-### Create LDAP Connection
+### Create an LDAP connection
 
-Create an Ldap instance using the ext_ldap adapter:
+Create an `Ldap` instance with the `ext_ldap` adapter:
 
 ```php
 use Symfony\Component\Ldap\Ldap;
@@ -37,7 +47,7 @@ $ldap = Ldap::create('ext_ldap', [
 ]);
 ```
 
-### Connection Configuration Options
+### Connection options
 
 - `host` - IP or hostname of LDAP server
 - `port` - Port number (389 default, 636 for SSL)
@@ -47,9 +57,9 @@ $ldap = Ldap::create('ext_ldap', [
 - `optReferrals` - Auto-follow referrals (true/false)
 - `options` - Additional LDAP server options
 
-### Authenticate to LDAP Server
+### Authenticate to the server
 
-Bind with DN and password:
+Bind with a DN and password:
 
 ```php
 // Simple bind
@@ -62,11 +72,11 @@ $ldap->saslBind($dn, $password);
 $dn = $ldap->whoami();
 ```
 
-Warning: Blank passwords are always valid on LDAP servers that allow unauthenticated binds. Validate passwords in your application.
+Warning: a blank password is always accepted by LDAP servers that allow unauthenticated binds, so reject blank passwords in your application.
 
-## Querying & Searching
+## Querying and searching
 
-### Execute LDAP Queries
+### Execute LDAP queries
 
 ```php
 // Basic query
@@ -88,9 +98,9 @@ foreach ($results as $entry) {
 $all_results = $query->execute()->toArray();
 ```
 
-### Query Scopes
+### Query scopes
 
-Control search depth with scope parameter:
+The `scope` option controls search depth:
 
 ```php
 use Symfony\Component\Ldap\Adapter\QueryInterface;
@@ -111,11 +121,9 @@ $query = $ldap->query('dc=symfony,dc=com', '(cn=*)', [
 ]);
 ```
 
-## Creating & Updating Entries
+## Creating and updating entries
 
-### Create Entry Objects
-
-Create new LDAP entries with attributes:
+### Create entry objects
 
 ```php
 use Symfony\Component\Ldap\Entry;
@@ -128,7 +136,7 @@ $entry = new Entry('cn=Fabien Potencier,dc=symfony,dc=com', [
 ]);
 ```
 
-### Add, Update & Delete Entries
+### Add, update, and delete entries
 
 ```php
 $entryManager = $ldap->getEntryManager();
@@ -147,9 +155,7 @@ $entryManager->remove($entry);
 $entryManager->remove(new Entry('cn=Test User,dc=symfony,dc=com'));
 ```
 
-### Manage Entry Attributes
-
-Access and modify entry attributes:
+### Manage entry attributes
 
 ```php
 // Get single attribute value
@@ -172,9 +178,9 @@ $entryManager->removeAttributeValues($entry, 'mail', [
 
 ## Batch Operations
 
-### Apply Multiple Attribute Operations
+### Apply several attribute operations
 
-Use batch operations for complex multi-attribute updates:
+Batch operations update several attributes in one call:
 
 ```php
 use Symfony\Component\Ldap\Adapter\ExtLdap\UpdateOperation;
@@ -193,11 +199,11 @@ Operation types:
 - `LDAP_MODIFY_BATCH_REMOVE_ALL` - Remove all values (set values to null)
 - `LDAP_MODIFY_BATCH_REPLACE` - Replace attribute value
 
-## Security Configuration
+## Security configuration
 
-### LDAP Client Service Configuration
+### LDAP client service
 
-Configure LDAP in services.yaml:
+Configure the client in `services.yaml`:
 
 ```yaml
 # config/services.yaml
@@ -214,9 +220,9 @@ services:
                     referrals: false
 ```
 
-### LDAP User Provider
+### LDAP user provider
 
-Load users directly from LDAP server:
+Loads users directly from the LDAP server:
 
 ```yaml
 # config/packages/security.yaml
@@ -234,20 +240,20 @@ security:
                 filter: '(&(uid={user_identifier})(accountStatus=active))'
 ```
 
-LDAP user provider options:
+User provider options:
 - `service` - Ldap service name
 - `base_dn` - Base distinguished name
 - `search_dn` - Read-only admin DN for queries
-- `search_password` - Admin password (use env vars)
+- `search_password` - Admin password (use an environment variable)
 - `default_roles` - Roles assigned to fetched users
 - `uid_key` - User identifier attribute (uid, sAMAccountName, userPrincipalName)
-- `extra_fields` - Additional attributes to fetch
+- `extra_fields` - Extra attributes to fetch
 - `filter` - Custom query filter
 - `role_fetcher` - Custom RoleFetcherInterface service
 
-### Form Login LDAP Authentication
+### Form login LDAP authentication
 
-Authenticate users via login form with LDAP:
+Authenticates users through a login form against LDAP:
 
 ```yaml
 # config/packages/security.yaml
@@ -259,9 +265,9 @@ security:
                 dn_string: 'uid={user_identifier},dc=example,dc=com'
 ```
 
-### HTTP Basic LDAP Authentication
+### HTTP Basic LDAP authentication
 
-Authenticate via HTTP Basic auth:
+Authenticates through HTTP Basic auth:
 
 ```yaml
 # config/packages/security.yaml
@@ -274,9 +280,9 @@ security:
                 dn_string: 'uid={user_identifier},dc=example,dc=com'
 ```
 
-### Advanced: Query String for Dynamic DN Discovery
+### Dynamic DN discovery with query_string
 
-When users span multiple DN branches, use query_string:
+When users are spread across several DN branches, use `query_string`:
 
 ```yaml
 # config/packages/security.yaml
@@ -291,11 +297,10 @@ security:
                 search_password: '%env(LDAP_PASSWORD)%'
 ```
 
-## Security Best Practices
+## Security best practices
 
-- Store sensitive credentials (search_password) as environment variables
-- The Security component auto-escapes input when using LDAP user providers
-- When using Ldap component directly, prevent LDAP injection attacks manually
-- Always validate passwords in your application (avoid accepting blank passwords)
-- Use TLS or SSL encryption for LDAP connections
-- Set `referrals: false` in adapter options to prevent LDAP injection via referrals
+- Store credentials such as `search_password` in environment variables.
+- The Security component escapes input automatically when you use the LDAP user provider. When you use the Ldap component directly, escape input yourself to prevent LDAP injection.
+- Reject blank passwords in your application.
+- Use TLS or SSL for LDAP connections.
+- Set `referrals: false` in the adapter options to prevent LDAP injection via referrals.

@@ -1,8 +1,20 @@
 # Symfony HttpKernel Component
 
+## Contents
+
+- [Overview](#overview)
+- [When to use](#when-to-use)
+- [Key concepts](#key-concepts)
+- [Common patterns](#common-patterns)
+- [Kernel constants](#kernel-constants)
+- [Full working example](#full-working-example)
+- [Testing](#testing)
+- [Common pitfalls](#common-pitfalls)
+- [Additional resources](#additional-resources)
+
 ## Overview
 
-The HttpKernel component converts HTTP requests into HTTP responses through an event-driven architecture. It handles the complete request-response lifecycle including controller resolution, argument injection, exception handling, and response modification. Use this component when building custom HTTP kernels, managing request-response flows, creating event listeners, or implementing middleware patterns.
+The HttpKernel component turns an HTTP request into an HTTP response through a series of dispatched events. It covers the whole request-response lifecycle: controller resolution, argument injection, exception handling, and response modification.
 
 ## When to use
 
@@ -19,31 +31,31 @@ The HttpKernel component converts HTTP requests into HTTP responses through an e
 
 ## Key concepts
 
-### Request-Response Lifecycle
+### Request-response lifecycle
 
-The HttpKernel processes requests through a series of dispatch events:
+The HttpKernel processes a request through these steps and events:
 
-1. **kernel.request** - Early request processing, add info or return response early
-2. **Controller Resolution** - Determine which callable handles the request
-3. **kernel.controller** - Modify controller or initialize systems
-4. **Argument Resolution** - Determine controller method parameters
-5. **Controller Execution** - Execute the resolved controller
-6. **kernel.view** - Convert non-Response controller returns to Response
-7. **kernel.response** - Modify response before sending
-8. **kernel.finish_request** - Reset application state after response
-9. **kernel.terminate** - Execute heavy tasks after response sent
-10. **kernel.exception** - Handle exceptions and create error responses
+1. **kernel.request**: early request processing; add information or return a response early
+2. **Controller resolution**: find the callable that handles the request
+3. **kernel.controller**: replace the controller or initialize systems
+4. **Argument resolution**: determine the controller method parameters
+5. **Controller execution**: run the resolved controller
+6. **kernel.view**: convert a non-Response controller return value into a Response
+7. **kernel.response**: modify the response before it is sent
+8. **kernel.finish_request**: reset application state after the response
+9. **kernel.terminate**: run heavy tasks after the response is sent
+10. **kernel.exception**: handle exceptions and create error responses
 
-### Kernel Events
+### Kernel events
 
 All kernel events extend `KernelEvent` and provide common methods:
 
-- `isMainRequest()` - Check if main or sub request
-- `getRequest()` - Get current Request object
-- `getKernel()` - Get kernel instance
-- `getRequestType()` - Return MAIN_REQUEST or SUB_REQUEST constant
+- `isMainRequest()`: whether this is the main request or a sub-request
+- `getRequest()`: the current Request object
+- `getKernel()`: the kernel instance
+- `getRequestType()`: the `MAIN_REQUEST` or `SUB_REQUEST` constant
 
-**Event Classes and Purposes:**
+Event classes and purposes:
 
 | Event | Class | Purpose |
 |-------|-------|---------|
@@ -56,9 +68,9 @@ All kernel events extend `KernelEvent` and provide common methods:
 | `kernel.terminate` | `TerminateEvent` | Execute slow tasks after response sent |
 | `kernel.exception` | `ExceptionEvent` | Handle exceptions, create error responses |
 
-### Core Interfaces and Classes
+### Core interfaces and classes
 
-**HttpKernelInterface** - Main contract for converting Request to Response:
+**HttpKernelInterface** is the main contract for converting a Request into a Response:
 
 ```php
 interface HttpKernelInterface
@@ -74,7 +86,7 @@ interface HttpKernelInterface
 }
 ```
 
-**ControllerResolverInterface** - Determines which callable handles request:
+**ControllerResolverInterface** finds the callable that handles the request:
 
 ```php
 interface ControllerResolverInterface
@@ -83,7 +95,7 @@ interface ControllerResolverInterface
 }
 ```
 
-**ArgumentResolverInterface** - Determines controller method arguments:
+**ArgumentResolverInterface** determines the controller method arguments:
 
 ```php
 interface ArgumentResolverInterface
@@ -92,7 +104,7 @@ interface ArgumentResolverInterface
 }
 ```
 
-**ResetInterface** - Clean up state for long-running processes:
+**ResetInterface** cleans up state in long-running processes:
 
 ```php
 interface ResetInterface
@@ -187,7 +199,7 @@ $dispatcher->addListener(
 );
 ```
 
-### Transform controller result to Response
+### Transform a controller result into a Response
 
 ```php
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -235,7 +247,7 @@ class MyKernelSubscriber implements EventSubscriberInterface
 $dispatcher->addSubscriber(new MyKernelSubscriber());
 ```
 
-### Create custom controller resolver
+### Create a custom controller resolver
 
 ```php
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
@@ -254,7 +266,7 @@ class CustomControllerResolver extends ControllerResolver
 }
 ```
 
-### Execute heavy tasks after response
+### Run heavy tasks after the response
 
 ```php
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
@@ -286,7 +298,7 @@ $dispatcher->addListener(
 );
 ```
 
-### Implement state cleanup for long-running processes
+### Clean up state in long-running processes
 
 ```php
 use Symfony\Contracts\Service\ResetInterface;
@@ -301,7 +313,7 @@ class MyDatabaseConnection implements ResetInterface
 }
 ```
 
-## Kernel Constants
+## Kernel constants
 
 ```php
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -320,7 +332,7 @@ KernelEvents::TERMINATE            // 'kernel.terminate'
 KernelEvents::EXCEPTION            // 'kernel.exception'
 ```
 
-## Complete working example
+## Full working example
 
 ```php
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -374,7 +386,7 @@ $kernel->terminate($request, $response);
 
 ## Testing
 
-Test kernel event listeners by creating mock requests and dispatching events:
+Test kernel event listeners by building a request, wrapping it in an event, and calling the listener:
 
 ```php
 use PHPUnit\Framework\TestCase;
@@ -400,19 +412,19 @@ class KernelListenerTest extends TestCase
 
 ## Common pitfalls
 
-- **Setting response in kernel.controller**: Use kernel.request instead to return early responses
-- **Heavy tasks in kernel.response**: Move slow operations to kernel.terminate which runs after response
-- **Not checking isMainRequest()**: Sub-requests should often be handled differently
-- **Missing ResetInterface**: Long-running processes need ResetInterface for state cleanup
-- **Exception swallowing**: Let exceptions propagate unless intentionally handling them
-- **Not implementing error responses**: kernel.exception listeners should always set a Response
-- **Modifying immutable objects**: Use headers->set() or setCookie() for Response headers
-- **Listener priority**: Higher priorities execute first; use negative priorities for cleanup
-- **Infinite loops with sub-requests**: Prevent recursion with request attributes or type checks
+- **Setting a response in kernel.controller**: use kernel.request to return early responses.
+- **Heavy tasks in kernel.response**: move slow operations to kernel.terminate, which runs after the response is sent.
+- **Not checking isMainRequest()**: sub-requests often need different handling.
+- **Missing ResetInterface**: long-running processes need `ResetInterface` to clean up state.
+- **Exception swallowing**: let exceptions propagate unless you handle them on purpose.
+- **Missing error responses**: kernel.exception listeners should set a Response.
+- **Modifying immutable objects**: use `headers->set()` or `setCookie()` to change Response headers.
+- **Listener priority**: higher priorities run first; use negative priorities for cleanup.
+- **Infinite loops with sub-requests**: prevent recursion with request attributes or type checks.
 
 ## Additional resources
 
 - [Symfony HttpFoundation Component](https://symfony.com/doc/current/components/http_foundation.html) - Request and Response classes
 - [Symfony EventDispatcher Component](https://symfony.com/doc/current/components/event_dispatcher.html) - Event system details
 - [Symfony Routing Component](https://symfony.com/doc/current/components/routing.html) - URL matching and route resolution
-- [Built-in Symfony Events Reference](https://symfony.com/doc/current/reference/events.html) - Complete event listing
+- [Built-in Symfony Events Reference](https://symfony.com/doc/current/reference/events.html) - full event listing
