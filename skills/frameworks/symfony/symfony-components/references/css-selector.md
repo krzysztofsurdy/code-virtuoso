@@ -1,18 +1,31 @@
 # Symfony CssSelector Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core classes and methods](#core-classes-and-methods)
+- [Usage patterns](#usage-patterns)
+- [Supported CSS selectors](#supported-css-selectors)
+- [Common use cases](#common-use-cases)
+- [Error handling](#error-handling)
+- [Performance considerations](#performance-considerations)
+- [Related components](#related-components)
+- [Best practices](#best-practices)
+
 ## Overview
 
-The CssSelector component bridges the gap between familiar CSS selector syntax and powerful XPath expressions. While XPath is powerful for querying HTML/XML documents, it has a steep learning curve. CSS selectors are intuitive for web developers but less powerful. This component converts CSS selectors to XPath equivalents, enabling you to use familiar CSS selector syntax with tools that require XPath.
+The CssSelector component converts CSS selectors to XPath expressions. XPath is the more expressive way to query HTML and XML documents, but it has a steep learning curve, while CSS selectors are familiar to web developers. With this component you write CSS selectors and use them with tools that require XPath.
 
 ## Installation
 
-Install the component via Composer:
+Install the component with Composer:
 
 ```bash
 composer require symfony/css-selector
 ```
 
-## Core Classes and Methods
+## Core classes and methods
 
 ### CssSelectorConverter
 
@@ -28,15 +41,15 @@ $xpath = $converter->toXPath('div.item > h4 > a');
 // Returns: descendant-or-self::div[@class and contains(concat(' ',normalize-space(@class), ' '), ' item ')]/h4/a
 ```
 
-#### Key Method
+#### Key method
 
 - **`toXPath(string $selector): string`** - Convert a CSS selector string to an XPath expression
 
-## Usage Patterns
+## Usage patterns
 
-### Basic XPath Conversion
+### Basic XPath conversion
 
-Convert CSS selectors to XPath for use with DOM tools:
+Convert a CSS selector to XPath for use with DOM tools:
 
 ```php
 use Symfony\Component\CssSelector\CssSelectorConverter;
@@ -61,7 +74,7 @@ foreach ($results as $node) {
 
 ### Integration with DomCrawler
 
-Use CssSelector through the DomCrawler component for jQuery-like syntax:
+DomCrawler uses CssSelector under the hood, so you can pass CSS selectors straight to `filter()`:
 
 ```php
 use Symfony\Component\DomCrawler\Crawler;
@@ -75,9 +88,9 @@ $href = $links->attr('href');
 $text = $links->text();
 ```
 
-### SimpleXML Integration
+### SimpleXML integration
 
-Convert CSS selectors for use with SimpleXMLElement:
+Convert a CSS selector for use with `SimpleXMLElement`:
 
 ```php
 use Symfony\Component\CssSelector\CssSelectorConverter;
@@ -93,9 +106,9 @@ foreach ($results as $article) {
 }
 ```
 
-## Supported CSS Selectors
+## Supported CSS selectors
 
-### Element and Class Selectors
+### Element and class selectors
 
 ```php
 $converter->toXPath('div');                 // Element selector
@@ -115,7 +128,7 @@ $converter->toXPath('div + p');      // Adjacent sibling combinator
 $converter->toXPath('div ~ p');      // General sibling combinator
 ```
 
-### Pseudo-classes (Supported)
+### Pseudo-classes (supported)
 
 ```php
 $converter->toXPath('input:enabled');       // Enabled form elements
@@ -128,14 +141,14 @@ $converter->toXPath(':is(div, p)');         // Matches any selector in list
 $converter->toXPath(':where(div, p)');      // Matches any selector (no specificity)
 ```
 
-### Pseudo-classes (Not Supported)
+### Pseudo-classes (not supported)
 
 - `:link`, `:visited`, `:target` - Link state selectors
 - `:hover`, `:focus`, `:active` - User action selectors
 - `:invalid`, `:indeterminate` - UI state selectors
 - `:before`, `:after`, `:first-line`, `:first-letter` - Pseudo-elements
 
-### Partial Support
+### Partial support
 
 The following pseudo-classes work with specific element names but not with the universal selector `*`:
 
@@ -150,9 +163,9 @@ $converter->toXPath('li:nth-of-type(2)');
 $converter->toXPath('*:first-of-type');  // Will throw exception
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Web Scraping
+### Web scraping
 
 ```php
 use Symfony\Component\DomCrawler\Crawler;
@@ -169,7 +182,7 @@ foreach ($articles as $article) {
 }
 ```
 
-### Form Testing
+### Form testing
 
 ```php
 use Symfony\Component\DomCrawler\Crawler;
@@ -184,7 +197,7 @@ $submitButton = $crawler->filter('button[type="submit"]');
 $formAction = $crawler->filter('form#login')->attr('action');
 ```
 
-### DOM Navigation and Traversal
+### DOM navigation and traversal
 
 ```php
 use Symfony\Component\DomCrawler\Crawler;
@@ -204,7 +217,7 @@ foreach ($links as $link) {
 }
 ```
 
-### API Response Parsing
+### API response parsing
 
 ```php
 use Symfony\Component\DomCrawler\Crawler;
@@ -224,9 +237,9 @@ foreach ($results as $item) {
 }
 ```
 
-## Error Handling
+## Error handling
 
-The CssSelectorConverter throws an exception for unsupported selectors:
+`CssSelectorConverter` throws an exception for unsupported selectors:
 
 ```php
 use Symfony\Component\CssSelector\CssSelectorConverter;
@@ -242,11 +255,11 @@ try {
 }
 ```
 
-## Performance Considerations
+## Performance considerations
 
-- Caching: Create a single converter instance and reuse it to avoid repeated instantiation
-- Complex selectors: Simpler selectors generally perform better than deeply nested ones
-- XPath optimization: The generated XPath expressions are optimized for common patterns
+- Reuse a single converter instance instead of creating a new one per call
+- Simpler selectors generally perform better than deeply nested ones
+- The generated XPath expressions are optimized for common patterns
 
 ```php
 // Good: Reuse converter instance
@@ -261,16 +274,16 @@ for ($i = 0; $i < 1000; $i++) {
 }
 ```
 
-## Related Components
+## Related components
 
 - **DomCrawler**: Uses CssSelector internally via the `filter()` method for CSS selector queries
 - **HttpClient**: Commonly used to fetch HTML documents for parsing with CssSelector
 - **Symfony Functional Tests**: Integrates CssSelector for assertions on response content
 
-## Best Practices
+## Best practices
 
-1. **Validate selectors**: Test CSS selectors are valid before use in production code
-2. **Use specific selectors**: More specific selectors are faster and more maintainable than broad queries
-3. **Combine with DomCrawler**: For HTML parsing, use DomCrawler's `filter()` method rather than manual XPath conversion
-4. **Document complex selectors**: Add comments explaining non-obvious CSS selectors
-5. **Handle errors gracefully**: Wrap selector conversions in try-catch blocks when input comes from untrusted sources
+1. **Validate selectors**: Check that selectors are valid before using them in production code
+2. **Use specific selectors**: They are faster and easier to maintain than broad queries
+3. **Combine with DomCrawler**: For HTML parsing, use `filter()` instead of converting to XPath by hand
+4. **Document complex selectors**: Add a comment explaining any selector that is not obvious
+5. **Catch exceptions**: Wrap selector conversion in try-catch when the input comes from untrusted sources

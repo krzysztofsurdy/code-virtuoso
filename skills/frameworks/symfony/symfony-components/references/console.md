@@ -1,6 +1,21 @@
 # Symfony Console Component
 
-## Core Application Setup
+## Contents
+
+- [Core application setup](#core-application-setup)
+- [Creating commands](#creating-commands)
+- [Input handling](#input-handling)
+- [Output handling](#output-handling)
+- [Console helpers](#console-helpers)
+- [Dependency injection and service definition](#dependency-injection-and-service-definition)
+- [Verbosity levels](#verbosity-levels)
+- [Events](#events)
+- [Calling other commands](#calling-other-commands)
+- [Lazy command loading](#lazy-command-loading)
+- [Testing commands](#testing-commands)
+- [Key return codes](#key-return-codes)
+
+## Core application setup
 
 Create a standalone console application:
 
@@ -34,7 +49,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 Alternatively, set a default command: `$application->setDefaultCommand($command->getName(), true);`
 
-## Creating Commands
+## Creating commands
 
 Use the `#[AsCommand]` attribute to define commands:
 
@@ -67,13 +82,13 @@ class CreateUserCommand extends Command
 
 Define command aliases using pipe separators: `name: 'app:create-user|app:add-user'`
 
-### Command Lifecycle
+### Command lifecycle
 
-1. **initialize()** - Optional: initialize variables
-2. **interact()** - Optional: ask for missing arguments/options
-3. **__invoke() or execute()** - Required: main logic
+1. `initialize()` (optional): initialize variables
+2. `interact()` (optional): ask for missing arguments and options
+3. `__invoke()` or `execute()` (required): main logic
 
-## Input Handling
+## Input handling
 
 ### Arguments
 
@@ -117,7 +132,7 @@ $this->addOption('yell', 'y', InputOption::VALUE_NONE, 'Description')
 
 Access: `$input->getOption('yell')`
 
-### Input Mapping with DTOs
+### Input mapping with DTOs
 
 Group arguments and options using the `#[MapInput]` attribute:
 
@@ -130,7 +145,7 @@ class CreateUserInput {
 public function __invoke(#[MapInput] CreateUserInput $input): int { }
 ```
 
-### Value Completion
+### Value completion
 
 Add autocomplete suggestions:
 
@@ -146,9 +161,9 @@ public static function suggestFormats(CompletionInput $input): array {
 }
 ```
 
-## Output Handling
+## Output handling
 
-### Basic Output
+### Basic output
 
 ```php
 $output->write('No newline');              // No newline
@@ -156,9 +171,9 @@ $output->writeln('With newline');          // With newline
 $output->writeln(['Line 1', 'Line 2']);    // Multiple lines
 ```
 
-### Output Sections
+### Output sections
 
-Create independent console regions for parallel output:
+Create independent console regions, for example for parallel output:
 
 ```php
 $section = $output->section();
@@ -187,7 +202,7 @@ $io->warning('Warning message');
 $io->error('Error message');
 ```
 
-### Color & Format Tags
+### Color and format tags
 
 ```php
 $output->writeln('<info>green text</info>');
@@ -207,9 +222,9 @@ $output->getFormatter()->setStyle('fire', $style);
 $output->writeln('<fire>text</>');
 ```
 
-## Console Helpers
+## Console helpers
 
-### Table Helper
+### Table helper
 
 ```php
 use Symfony\Component\Console\Helper\Table;
@@ -248,7 +263,7 @@ new TableCell('Spans 2 rows', ['rowspan' => 2])
 $table->render();
 ```
 
-### Progress Bar Helper
+### Progress bar helper
 
 ```php
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -280,7 +295,7 @@ $progressBar->setRedrawFrequency(100);
 
 Format placeholders: `current`, `max`, `bar`, `percent`, `elapsed`, `remaining`, `estimated`, `memory`, `message`
 
-### Question Helper
+### Question helper
 
 ```php
 use Symfony\Component\Console\Question\Question;
@@ -332,7 +347,7 @@ $question->setHiddenFallback(false);
 $question->setMultiline(true);
 ```
 
-### SymfonyStyle Helpers
+### SymfonyStyle helpers
 
 ```php
 $io = new SymfonyStyle($input, $output);
@@ -359,9 +374,9 @@ $io->progressFinish();
 $io->progressIterate($items);  // Loop with progress
 ```
 
-## Dependency Injection & Service Definition
+## Dependency injection and service definition
 
-Commands support dependency injection automatically in Symfony:
+In a Symfony application, commands get dependency injection automatically:
 
 ```php
 #[AsCommand(name: 'app:create-user')]
@@ -386,9 +401,9 @@ services:
             - { name: 'console.command', command: 'app:my-command' }
 ```
 
-## Verbosity Levels
+## Verbosity levels
 
-Control output based on verbosity flags:
+Vary output by verbosity flag:
 
 ```php
 // Constants
@@ -465,9 +480,9 @@ class MyCommand
 }
 ```
 
-## Calling Other Commands
+## Calling other commands
 
-Call commands from within commands:
+Call a command from inside another command:
 
 ```php
 use Symfony\Component\Console\Application;
@@ -487,11 +502,11 @@ public function __invoke(OutputInterface $output, Application $app): int
 }
 ```
 
-Use `doRun()` instead of `run()` to prevent auto-exit and properly dispatch events.
+Use `doRun()` instead of `run()`: it does not auto-exit and it dispatches events correctly.
 
-## Lazy Command Loading
+## Lazy command loading
 
-Defer command instantiation until invoked:
+Defer command instantiation until the command is invoked:
 
 ```php
 use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
@@ -515,7 +530,7 @@ $commandLoader = new ContainerCommandLoader($container, [
 $application->setCommandLoader($commandLoader);
 ```
 
-## Testing Commands
+## Testing commands
 
 ```php
 use Symfony\Component\Console\Tester\CommandTester;
@@ -538,7 +553,7 @@ $this->assertStringContainsString('User created', $output);
 $tester->setInputs(['yes', 'option1']);
 ```
 
-## Key Return Codes
+## Key return codes
 
 - `Command::SUCCESS` (0) - Success
 - `Command::FAILURE` (1) - General failure

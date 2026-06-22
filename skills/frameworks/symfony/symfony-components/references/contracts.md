@@ -1,24 +1,36 @@
 # Symfony Contracts
 
+## Contents
+
+- [Overview](#overview)
+- [When to use](#when-to-use)
+- [Key concepts](#key-concepts)
+- [Common patterns](#common-patterns)
+- [Available contract packages](#available-contract-packages)
+- [Configuration](#configuration)
+- [Testing](#testing)
+- [Common pitfalls](#common-pitfalls)
+- [Additional resources](#additional-resources)
+
 ## Overview
 
-The Contracts component provides a comprehensive set of abstractions extracted from Symfony components. These are battle-tested, semantic interfaces that enable loose coupling, interoperability, and reusability across Symfony components and third-party PHP packages.
+The Contracts component is a set of abstractions extracted from Symfony components. Its interfaces keep components loosely coupled and make them interchangeable across Symfony components and third-party PHP packages.
 
-Contracts are organized by domain into independent packages, allowing you to depend only on the abstractions you need, regardless of whether you use full Symfony or just specific packages.
+Contracts are split by domain into independent packages, so you depend only on the abstractions you need, whether or not you use full Symfony.
 
 ## When to use
 
 - Building applications that need loose coupling between components
 - Creating reusable libraries that work with any compatible implementation
 - Integrating Symfony components with third-party packages
-- Using autowiring and service injection patterns
+- Using autowiring and service injection
 - Setting up auto-configuration for service tagging
 - Handling caching, events, translations, or HTTP operations
-- Deprecating features with standardized warnings
+- Deprecating features with standard warnings
 
 ## Key concepts
 
-### Loose Coupling via Interfaces
+### Loose coupling via interfaces
 
 Accept contracts through type hints instead of concrete implementations:
 
@@ -36,18 +48,18 @@ public function process(CacheInterface $cache): void {
 }
 ```
 
-### Contract Organization
+### Contract organization
 
-Contracts are split by domain into separate packages and sub-namespaces. Each package provides focused abstractions:
+Contracts are split by domain into separate packages and sub-namespaces:
 
 - **Cache Contracts** - Caching operations and management
 - **Event Dispatcher Contracts** - Event system abstractions
 - **Service Contracts** - Service container and lifecycle management
 - **Translation Contracts** - Translation and localization
 - **HTTP Client Contracts** - HTTP client operations
-- **Deprecation Contracts** - Standardized deprecation triggers
+- **Deprecation Contracts** - Standard deprecation triggers
 
-### Provider Convention
+### Provider convention
 
 Packages implementing contracts declare them in `composer.json`:
 
@@ -62,7 +74,7 @@ Packages implementing contracts declare them in `composer.json`:
 
 ## Common patterns
 
-### Pattern 1: Autowiring Cache Implementations
+### Pattern 1: Autowiring cache implementations
 
 ```php
 use Symfony\Contracts\Cache\CacheInterface;
@@ -80,7 +92,7 @@ class MyService {
 }
 ```
 
-### Pattern 2: Event Dispatcher Integration
+### Pattern 2: Event dispatcher integration
 
 ```php
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -97,7 +109,7 @@ class OrderProcessor {
 }
 ```
 
-### Pattern 3: Service Container Lifecycle
+### Pattern 3: Service container lifecycle
 
 ```php
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -119,7 +131,7 @@ class MyHandler implements ServiceSubscriberInterface {
 }
 ```
 
-### Pattern 4: Translation Services
+### Pattern 4: Translation services
 
 ```php
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -140,7 +152,7 @@ class EmailTemplate {
 }
 ```
 
-### Pattern 5: HTTP Client Operations
+### Pattern 5: HTTP client operations
 
 ```php
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -157,7 +169,7 @@ class ApiClient {
 }
 ```
 
-### Pattern 6: Deprecation Notices
+### Pattern 6: Deprecation notices
 
 ```php
 class LegacyService {
@@ -171,7 +183,7 @@ class LegacyService {
 }
 ```
 
-## Available Contract Packages
+## Available contract packages
 
 ### symfony/cache-contracts
 Abstractions for cache implementations. Provides:
@@ -188,7 +200,7 @@ composer require symfony/cache-contracts
 Abstractions for event systems. Provides:
 - `EventDispatcherInterface` - Dispatch and listen to events
 - `Event` - Base event class
-- Support for both traditional and new attribute-based listeners
+- Support for both class-based and attribute-based listeners
 
 Installation:
 ```bash
@@ -199,7 +211,7 @@ composer require symfony/event-dispatcher-contracts
 Abstractions for service container operations. Provides:
 - `ServiceProviderInterface` - Service provider access
 - `ServiceSubscriberInterface` - Lazy service dependency declaration
-- `ResetInterface` - Service reset/cleanup
+- `ResetInterface` - Service reset and cleanup
 - `ServiceSubscriberTrait` - Helper trait for service subscribers
 
 Installation:
@@ -208,7 +220,7 @@ composer require symfony/service-contracts
 ```
 
 ### symfony/translation-contracts
-Abstractions for translation/localization. Provides:
+Abstractions for translation and localization. Provides:
 - `TranslatorInterface` - Message translation operations
 - Support for pluralization
 - Locale handling
@@ -230,8 +242,8 @@ composer require symfony/http-client-contracts
 ```
 
 ### symfony/deprecation-contracts
-Standardized deprecation handling. Provides:
-- `trigger_deprecation()` - Unified deprecation warnings
+Standard deprecation handling. Provides:
+- `trigger_deprecation()` - A single way to emit deprecation warnings
 - Consistent formatting across projects
 - Integration with test tools and error reporting
 
@@ -242,7 +254,7 @@ composer require symfony/deprecation-contracts
 
 ## Configuration
 
-Contracts are interfaces without configuration. However, configure their implementations:
+Contracts are interfaces and have no configuration of their own. Configure their implementations instead:
 
 ```yaml
 # config/packages/cache.yaml
@@ -262,7 +274,7 @@ framework:
             event.bus: ~
 ```
 
-Configure service autowiring in services.yaml:
+Configure service autowiring in `services.yaml`:
 
 ```yaml
 # config/services.yaml
@@ -279,7 +291,7 @@ services:
 
 ## Testing
 
-### Test Cache Contract Implementations
+### Test cache contract implementations
 
 ```php
 use PHPUnit\Framework\TestCase;
@@ -303,7 +315,7 @@ class CacheServiceTest extends TestCase {
 }
 ```
 
-### Mock Event Dispatcher
+### Mock event dispatcher
 
 ```php
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -328,16 +340,16 @@ class EventProcessorTest extends TestCase {
 
 ## Common pitfalls
 
-- **Mixing Contracts with Implementations**: Use contracts in type hints, but inject implementations. Never type-hint concrete classes when contracts exist.
-- **Forgetting Provider Declaration**: If creating a library, declare what contracts your package provides in `composer.json`.
-- **Not Using Lazy Services**: When implementing `ServiceSubscriberInterface`, only request services you actually use to enable lazy loading.
-- **Ignoring Deprecation Warnings**: Use `trigger_deprecation()` consistently for all deprecated code to help users migrate.
-- **Assuming Implementation Details**: Contracts define behavior, not internal implementation. Don't rely on specific implementation details.
-- **Missing Autowiring Setup**: Enable autowiring and autoconfigure in your `services.yaml` to automatically inject contracts.
+- **Mixing contracts with implementations**: Use contracts in type hints and inject implementations. Never type-hint a concrete class when a contract exists.
+- **Forgetting the provider declaration**: A library should declare in `composer.json` which contracts it provides.
+- **Not using lazy services**: When implementing `ServiceSubscriberInterface`, request only the services you use so they load lazily.
+- **Ignoring deprecation warnings**: Call `trigger_deprecation()` for all deprecated code so users can migrate.
+- **Relying on implementation details**: Contracts define behavior only. Do not depend on how a particular implementation works.
+- **Missing autowiring setup**: Enable `autowire` and `autoconfigure` in `services.yaml` so contracts are injected automatically.
 
 ## Additional resources
 
-- For detailed API reference and implementation guides, see the official [Symfony Contracts Documentation](https://symfony.com/doc/current/components/contracts.html)
-- Study [PHP-FIG PSRs](https://www.php-fig.org/) for underlying standards
-- Review Symfony's [Service Container Autowiring Guide](https://symfony.com/doc/current/service_container/autowiring.html)
-- Explore [Service Tagging Documentation](https://symfony.com/doc/current/service_container/tags.html)
+- Official [Symfony Contracts Documentation](https://symfony.com/doc/current/components/contracts.html)
+- [PHP-FIG PSRs](https://www.php-fig.org/), the underlying standards
+- Symfony's [Service Container Autowiring Guide](https://symfony.com/doc/current/service_container/autowiring.html)
+- [Service Tagging Documentation](https://symfony.com/doc/current/service_container/tags.html)

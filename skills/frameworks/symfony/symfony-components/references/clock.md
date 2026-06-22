@@ -1,8 +1,20 @@
 # Symfony Clock Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core classes](#core-classes)
+- [Integration patterns](#integration-patterns)
+- [Testing time-sensitive logic](#testing-time-sensitive-logic)
+- [Doctrine integration](#doctrine-integration)
+- [Exception handling](#exception-handling)
+- [Best practices](#best-practices)
+- [Common scenarios](#common-scenarios)
+
 ## Overview
 
-The Clock component decouples your application from the system clock, enabling fixed time for testing time-sensitive logic. It provides multiple clock implementations and DatePoint classes for working with dates/times through the Clock abstraction.
+The Clock component decouples your application from the system clock, so tests can fix the time. It provides several clock implementations and a `DatePoint` class for working with dates and times through the Clock abstraction.
 
 ## Installation
 
@@ -10,11 +22,11 @@ The Clock component decouples your application from the system clock, enabling f
 composer require symfony/clock
 ```
 
-## Core Classes
+## Core classes
 
-### Clock Class
+### Clock class
 
-The static Clock class manages clock implementations globally.
+The static `Clock` class manages clock implementations globally.
 
 ```php
 use Symfony\Component\Clock\Clock;
@@ -40,11 +52,11 @@ $now = $clock->now();
 $clock->sleep(2.5);
 ```
 
-### Clock Implementations
+### Clock implementations
 
-**NativeClock** - Default implementation interacting with system clock. Equivalent to `new \DateTimeImmutable()`.
+**NativeClock** - Default implementation, reads the system clock. Equivalent to `new \DateTimeImmutable()`.
 
-**MockClock** - Freezes time for testing. Time only advances via `sleep()` or `modify()`. Full control over current time.
+**MockClock** - Freezes time for testing. Time advances only through `sleep()` or `modify()`.
 
 ```php
 $clock = new MockClock('2022-11-16 15:20:00');
@@ -52,11 +64,11 @@ $clock->sleep(600); // Advance 10 minutes
 $clock->modify('2022-11-16 15:00:00'); // Jump to specific time
 ```
 
-**MonotonicClock** - Uses `hrtime()` for high-resolution, monotonic timing. Unaffected by system clock changes. Ideal for precise measurements.
+**MonotonicClock** - Uses `hrtime()` for high-resolution, monotonic timing. System clock changes do not affect it, which makes it the right choice for measuring durations.
 
-### DatePoint Class
+### DatePoint class
 
-Wrapper around `DateTimeImmutable` that fetches time from Clock class. All date/time operations delegate to DateTimeImmutable.
+Wrapper around `DateTimeImmutable` that gets the current time from the `Clock` class. All date and time operations delegate to `DateTimeImmutable`.
 
 ```php
 use Symfony\Component\Clock\DatePoint;
@@ -85,7 +97,7 @@ $withTimezone = $datePoint->setTimezone(new \DateTimezone('UTC'));
 
 ### now() Function
 
-Helper function returns current time as DatePoint from Clock.
+Helper function that returns the current time from `Clock` as a `DatePoint`.
 
 ```php
 use function Symfony\Component\Clock\now;
@@ -99,11 +111,11 @@ $yesterday = now('-1 day');
 $specificDate = now('2022-11-16 15:00:00');
 ```
 
-## Integration Patterns
+## Integration patterns
 
 ### ClockAwareTrait
 
-Use in services to access clock via `$this->now()`.
+Use it in services to read the clock via `$this->now()`.
 
 ```php
 namespace App\TimeUtils;
@@ -127,7 +139,7 @@ class MonthSensitive
 // In Symfony service: setter injection automatic via ClockAwareTrait
 ```
 
-### Dependency Injection
+### Dependency injection
 
 ```php
 namespace App\TimeUtils;
@@ -145,11 +157,11 @@ class ExpirationChecker
 }
 ```
 
-## Testing Time-Sensitive Logic
+## Testing time-sensitive logic
 
 ### ClockSensitiveTrait
 
-Testing trait provides `mockTime()` for creating MockClock instances.
+Testing trait that provides `mockTime()` for creating `MockClock` instances.
 
 ```php
 namespace App\Tests;
@@ -174,7 +186,7 @@ class MonthSensitiveTest extends TestCase
 }
 ```
 
-### MockClock Testing Example
+### MockClock testing example
 
 ```php
 use Symfony\Component\Clock\MockClock;
@@ -202,19 +214,19 @@ class ExpirationCheckerTest extends TestCase
 }
 ```
 
-## Doctrine Integration
+## Doctrine integration
 
-### Custom Doctrine Types
+### Custom Doctrine types
 
-Map DatePoint to immutable date/time columns using custom types.
+Map `DatePoint` to immutable date and time columns with custom types.
 
-| Type | Base Type | Class |
+| Type | Base type | Class |
 |------|-----------|-------|
 | `date_point` | `datetime_immutable` | `DatePointType` |
 | `day_point` | `date_immutable` | `DayPointType` |
 | `time_point` | `time_immutable` | `TimePointType` |
 
-### Entity Configuration
+### Entity configuration
 
 ```php
 use Symfony\Component\Clock\DatePoint;
@@ -237,9 +249,9 @@ class Product
 }
 ```
 
-## Exception Handling
+## Exception handling
 
-Handle invalid timezones and date strings when working with user input.
+Catch invalid timezones and date strings when working with user input.
 
 ```php
 try {
@@ -249,24 +261,24 @@ try {
 }
 ```
 
-**Available Exceptions** (PHP 8.3+ with polyfill support):
+**Available exceptions** (PHP 8.3+ with polyfill support):
 - `DateMalformedStringException` - Invalid date string format
 - `DateInvalidTimeZoneException` - Invalid timezone identifier
 
-## Best Practices
+## Best practices
 
-1. **Use ClockAwareTrait or Dependency Injection** - Access clock consistently throughout services
-2. **Test with MockClock** - Control time completely in test environments
-3. **Use DatePoint for Immutability** - All date operations return new instances
-4. **Set MockClock Globally** - Call `Clock::set()` at test start to affect all services
-5. **Leverage now() Function** - Simple, clean way to get current DatePoint
-6. **Avoid System Time in Logic** - Never use `new \DateTime()` or `time()` directly in time-sensitive code
-7. **Use MonotonicClock for Measurements** - High-resolution timing unaffected by system adjustments
-8. **Store DatePoints in Database** - Use custom Doctrine types for type safety
+1. **Use ClockAwareTrait or dependency injection** - Get the clock the same way in every service
+2. **Test with MockClock** - Full control over time in tests
+3. **Use DatePoint for immutability** - Every date operation returns a new instance
+4. **Set MockClock globally** - Call `Clock::set()` at the start of a test to affect all services
+5. **Use the now() function** - The shortest way to get the current `DatePoint`
+6. **Keep system time out of logic** - Never call `new \DateTime()` or `time()` directly in time-sensitive code
+7. **Use MonotonicClock for measurements** - High-resolution timing that system adjustments do not affect
+8. **Store DatePoints with the custom Doctrine types** - They keep the type safe
 
-## Common Scenarios
+## Common scenarios
 
-### Checking Expiration
+### Checking expiration
 
 ```php
 use Symfony\Component\Clock\Clock;
@@ -281,7 +293,7 @@ class TokenValidator
 }
 ```
 
-### Scheduling Events
+### Scheduling events
 
 ```php
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -297,7 +309,7 @@ class EventScheduler
 }
 ```
 
-### Timezone-Aware Operations
+### Timezone-aware operations
 
 ```php
 $clock = Clock::get()->withTimeZone('America/New_York');
@@ -305,7 +317,7 @@ $now = $clock->now();
 echo $now->format('Y-m-d H:i:s e'); // 2024-01-15 14:30:00 America/New_York
 ```
 
-### Measuring Elapsed Time
+### Measuring elapsed time
 
 ```php
 $stopwatch = new MonotonicClock();

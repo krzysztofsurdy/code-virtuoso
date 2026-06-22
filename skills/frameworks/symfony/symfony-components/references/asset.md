@@ -1,6 +1,17 @@
 # Symfony Asset Component
 
-The Asset component provides a robust solution for managing web asset URLs and versioning. It eliminates hardcoded asset paths, enables cache busting, supports CDN distribution, and handles complex asset management scenarios at scale.
+The Asset component manages web asset URLs and versioning. It removes hardcoded asset paths, enables cache busting, and supports CDN distribution.
+
+## Contents
+
+- [Installation](#installation)
+- [Core concepts](#core-concepts)
+- [Version strategies](#version-strategies)
+- [Package classes](#package-classes)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
+- [PackageInterface](#packageinterface)
+- [Integration with Symfony Framework](#integration-with-symfony-framework)
 
 ## Installation
 
@@ -8,25 +19,25 @@ The Asset component provides a robust solution for managing web asset URLs and v
 composer require symfony/asset
 ```
 
-## Core Concepts
+## Core concepts
 
 ### Asset Packages
-Packages group assets sharing the same properties (versioning strategy, base path, CDN hosts, etc.). Choose the appropriate package type for your use case:
+Packages group assets that share the same properties (versioning strategy, base path, CDN hosts). Pick the package type that fits:
 
 - **Package**: Basic package without base path manipulation
 - **PathPackage**: Adds a common base path prefix (e.g., `/static/images`)
 - **UrlPackage**: Generates absolute URLs for CDN or external hosting
-- **Packages**: Manages multiple named packages with different configurations
+- **Packages**: Manages several named packages with different configurations
 
 ### Versioning Strategies
-Versioning adds identifiers to asset URLs to force browsers to download fresh versions when content changes:
+Versioning adds an identifier to asset URLs so browsers download a fresh copy when content changes:
 
 - **EmptyVersionStrategy**: No versioning (basic assets)
 - **StaticVersionStrategy**: Appends fixed version (e.g., `?v1`)
 - **JsonManifestVersionStrategy**: Uses manifest file from build tools (Webpack, etc.)
-- **Custom Strategies**: Implement `VersionStrategyInterface` for custom logic
+- **Custom strategies**: Implement `VersionStrategyInterface` for custom logic
 
-## Version Strategies
+## Version strategies
 
 ### EmptyVersionStrategy
 No versioning applied:
@@ -39,7 +50,7 @@ echo $package->getUrl('/image.png');  // /image.png
 ```
 
 ### StaticVersionStrategy
-Appends fixed version to asset URLs. Useful for simple, application-wide versioning:
+Appends a fixed version to asset URLs. Suits simple, application-wide versioning:
 
 ```php
 use Symfony\Component\Asset\Package;
@@ -61,7 +72,7 @@ echo $package->getUrl('/image.png');  // /v1/image.png
 **Constructor**: `StaticVersionStrategy($version, $format = '%s?%s')`
 
 ### JsonManifestVersionStrategy
-Reads asset mappings from JSON manifest file. Use with Webpack, Gulp, or other build tools:
+Reads asset mappings from a JSON manifest file. Use it with Webpack, Gulp, or other build tools:
 
 ```php
 use Symfony\Component\Asset\Package;
@@ -88,7 +99,7 @@ $package = new Package(new JsonManifestVersionStrategy(
 ));
 ```
 
-**Manifest JSON Format**:
+**Manifest JSON format**:
 ```json
 {
     "css/app.css": "build/css/app.b916426ea1d10021f3f17ce8031f93c2.css",
@@ -99,7 +110,7 @@ $package = new Package(new JsonManifestVersionStrategy(
 **Constructor**: `JsonManifestVersionStrategy($manifestPath, $httpClient = null, $strict = false)`
 
 ### Custom Version Strategies
-Implement `VersionStrategyInterface` for domain-specific versioning logic:
+Implement `VersionStrategyInterface` for versioning logic specific to your application:
 
 ```php
 use Symfony\Component\Asset\VersionStrategy\VersionStrategyInterface;
@@ -150,11 +161,11 @@ class GulpBusterVersionStrategy implements VersionStrategyInterface
 }
 ```
 
-**Required Methods**:
+**Required methods**:
 - `getVersion(string $path): string` - Return version identifier
 - `applyVersion(string $path): string` - Return versioned asset URL
 
-## Package Classes
+## Package classes
 
 ### Package
 Basic package without base path manipulation:
@@ -169,7 +180,7 @@ echo $package->getUrl('image.png');   // image.png?v1
 ```
 
 ### PathPackage
-Groups assets with common base path. Useful for organizing assets by type:
+Groups assets under a common base path, for example by type:
 
 ```php
 use Symfony\Component\Asset\PathPackage;
@@ -180,7 +191,7 @@ echo $pathPackage->getUrl('logo.png');   // /static/images/logo.png?v1
 echo $pathPackage->getUrl('/logo.png');  // /logo.png?v1 (absolute paths bypass base path)
 ```
 
-**With Request Context** (for subdirectory applications):
+**With request context** (for subdirectory applications):
 ```php
 use Symfony\Component\Asset\Context\RequestStackContext;
 
@@ -229,7 +240,7 @@ echo $urlPackage->getUrl('/icon.png');   // https://static2.example.com/images/i
 // Note: Selection is deterministic (same asset always uses same CDN)
 ```
 
-**With Request Context** (auto-select URL scheme):
+**With request context** (auto-select URL scheme):
 ```php
 use Symfony\Component\Asset\Context\RequestStackContext;
 
@@ -241,7 +252,7 @@ $urlPackage = new UrlPackage(
 // Automatically uses HTTPS for secure requests, HTTP for insecure
 ```
 
-**Alternative Protocols**:
+**Alternative protocols**:
 ```php
 // File protocol
 $localPackage = new UrlPackage(
@@ -261,7 +272,7 @@ echo $ftpPackage->getUrl('/logo.png');    // ftp://example.com/images/logo.png
 **Constructor**: `UrlPackage($baseUrls, $versionStrategy, $context = null)`
 
 ### Packages (Manager)
-Manages multiple named packages for different asset types:
+Manages several named packages for different asset types:
 
 ```php
 use Symfony\Component\Asset\Packages;
@@ -295,9 +306,9 @@ echo $packages->getUrl('/app.js', 'cdn');   // https://cdn1.example.com/app.js?v
 - `getUrl(string $path, ?string $packageName = null): string`
 - `getVersion(string $path, ?string $packageName = null): string`
 
-## Common Patterns
+## Common patterns
 
-### Cache Busting with Static Version
+### Cache busting with static version
 Update version when deploying to force browser cache refresh:
 
 ```php
@@ -305,8 +316,8 @@ $versionStrategy = new StaticVersionStrategy($_ENV['ASSET_VERSION'] ?? 'v1');
 $package = new Package($versionStrategy);
 ```
 
-### CDN with Multiple Providers
-Distribute load across multiple CDN endpoints:
+### CDN with multiple providers
+Spread load across several CDN endpoints:
 
 ```php
 $urlPackage = new UrlPackage(
@@ -319,8 +330,8 @@ $urlPackage = new UrlPackage(
 );
 ```
 
-### Manifest-Based Versioning (Webpack/Vite)
-Use build tool output for optimized asset paths:
+### Manifest-based versioning (Webpack/Vite)
+Use the build tool output for asset paths:
 
 ```php
 $package = new Package(
@@ -331,8 +342,8 @@ $package = new Package(
 );
 ```
 
-### Environment-Specific Configuration
-Different strategies for development and production:
+### Environment-specific configuration
+Use different strategies for development and production:
 
 ```php
 if ($isDevelopment) {
@@ -343,18 +354,18 @@ if ($isDevelopment) {
 $package = new Package($versionStrategy);
 ```
 
-## Best Practices
+## Best practices
 
-1. **Use Centralized Asset Management**: Always use the Asset component instead of hardcoding URLs in templates
-2. **Choose Appropriate Strategy**: Use `EmptyVersionStrategy` for development, `JsonManifestVersionStrategy` for production with build tools
-3. **Implement Custom Strategies for Complex Logic**: When standard strategies don't fit your requirements
-4. **Leverage Named Packages**: Organize assets by type (images, documents, scripts) using named packages
-5. **Use Request Context**: Enable context awareness for applications in subdirectories
-6. **Cache Manifest Files**: Load manifest files once and cache in memory for performance
-7. **Handle Missing Assets Gracefully**: In custom strategies, return empty string or handle errors appropriately
-8. **Use Multiple CDNs Wisely**: Deterministic selection ensures consistency; use for load distribution
-9. **Schema-Agnostic URLs**: Use protocol-relative URLs (`//cdn.example.com/`) for auto-detection of HTTP/HTTPS
-10. **Test Asset URLs**: Verify asset URLs in both development and production environments
+1. **Centralize asset management**: Use the Asset component instead of hardcoding URLs in templates
+2. **Match the strategy to the environment**: `EmptyVersionStrategy` for development, `JsonManifestVersionStrategy` for production with build tools
+3. **Write a custom strategy when the standard ones do not fit**
+4. **Use named packages**: Organize assets by type (images, documents, scripts)
+5. **Use request context**: Applications in subdirectories need it to build correct URLs
+6. **Cache manifest files**: Load the manifest once and keep it in memory
+7. **Handle missing assets**: In custom strategies, return an empty string or handle the error explicitly
+8. **Use multiple CDNs for load distribution**: Selection is deterministic, so the same asset always comes from the same host
+9. **Use schema-agnostic URLs**: Protocol-relative URLs (`//cdn.example.com/`) let the browser pick HTTP or HTTPS
+10. **Test asset URLs**: Check them in both development and production
 
 ## PackageInterface
 
@@ -368,7 +379,7 @@ interface PackageInterface
 }
 ```
 
-Use this interface for type hints when passing packages around your application.
+Use this interface for type hints when passing packages around.
 
 ## Integration with Symfony Framework
 

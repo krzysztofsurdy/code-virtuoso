@@ -1,6 +1,21 @@
 # Symfony BrowserKit Component
 
-The BrowserKit component simulates web browser behavior, enabling programmatic HTTP requests, link clicks, form submissions, cookie management, and browsing history navigation. Use it for functional testing, web scraping, and automated interactions.
+The BrowserKit component simulates a web browser: programmatic HTTP requests, link clicks, form submissions, cookie management, and history navigation. Use it for functional testing, web scraping, and automated interactions.
+
+## Contents
+
+- [Installation](#installation)
+- [Creating a client](#creating-a-client)
+- [Making requests](#making-requests)
+- [Clicking links](#clicking-links)
+- [Submitting forms](#submitting-forms)
+- [Cookie management](#cookie-management)
+- [History navigation](#history-navigation)
+- [External HTTP requests](#external-http-requests)
+- [Custom headers](#custom-headers)
+- [Key classes and methods](#key-classes-and-methods)
+- [Best practices](#best-practices)
+- [Related components](#related-components)
 
 ## Installation
 
@@ -8,7 +23,7 @@ The BrowserKit component simulates web browser behavior, enabling programmatic H
 composer require symfony/browser-kit
 ```
 
-## Creating a Client
+## Creating a client
 
 Extend `AbstractBrowser` and implement `doRequest()`:
 
@@ -30,7 +45,7 @@ Pre-built implementations:
 - `HttpBrowser` - HTTP layer requests via HttpClient
 - Custom clients extending `AbstractBrowser`
 
-## Making Requests
+## Making requests
 
 All request methods return a `Crawler` instance for HTML traversal:
 
@@ -47,18 +62,18 @@ $crawler = $client->jsonRequest('GET', '/', ['param' => 'value']);
 $crawler = $client->xmlHttpRequest('GET', '/');
 ```
 
-### Wrapping Content
+### Wrapping content
 
-For HTML fragments lacking proper context:
+For HTML fragments that lack a proper surrounding context:
 
 ```php
 $client->wrapContent('<table>%s</table>');
 $crawler = $client->xmlHttpRequest('GET', '/fragment');
 ```
 
-The wrapper MUST contain `%s` placeholder for original content.
+The wrapper must contain a `%s` placeholder for the original content.
 
-## Clicking Links
+## Clicking links
 
 ```php
 // Simple click by text
@@ -72,7 +87,7 @@ $client->click($link);
 $client->clickLink('Go elsewhere...', ['X-Custom-Header' => 'data']);
 ```
 
-## Submitting Forms
+## Submitting forms
 
 ```php
 // Simple form submission
@@ -95,9 +110,9 @@ $form['password'] = 'anypass';
 $crawler = $client->submit($form);
 ```
 
-## Cookie Management
+## Cookie management
 
-### Retrieving Cookies
+### Retrieving cookies
 
 ```php
 $cookieJar = $client->getCookieJar();
@@ -125,7 +140,7 @@ foreach ($cookieJar->allValues('http://example.com') as $value) { }
 foreach ($cookieJar->allRawValues('http://example.com') as $rawValue) { }
 ```
 
-### Setting Cookies
+### Setting cookies
 
 ```php
 use Symfony\Component\BrowserKit\Cookie;
@@ -146,7 +161,7 @@ $client->request('GET', '/', [], [], [
 ]);
 ```
 
-## History Navigation
+## History navigation
 
 ```php
 $client->request('GET', '/');
@@ -169,9 +184,9 @@ if (!$client->getHistory()->isLastPage()) {
 $client->restart();
 ```
 
-## External HTTP Requests
+## External HTTP requests
 
-Make requests to external websites:
+Request external websites with `HttpBrowser`:
 
 ```php
 use Symfony\Component\BrowserKit\HttpBrowser;
@@ -188,7 +203,7 @@ $browser->submitForm('Sign in', ['login' => 'user', 'password' => 'pass']);
 $pullRequests = $browser->clickLink('Pull requests')->filter('.link-text')->text();
 ```
 
-### Handling Responses
+### Handling responses
 
 ```php
 $browser->request('GET', 'https://github.com');
@@ -198,9 +213,9 @@ $response = $browser->getResponse();
 $data = $browser->getResponse()->toArray(); // Returns decoded array
 ```
 
-## Custom Headers
+## Custom headers
 
-Override `getHeaders()` for special requirements:
+Override `getHeaders()` to add or change headers:
 
 ```php
 protected function getHeaders(Request $request): array
@@ -213,7 +228,7 @@ protected function getHeaders(Request $request): array
 }
 ```
 
-## Key Classes & Methods
+## Key classes and methods
 
 **AbstractBrowser**
 - `request(method, uri, parameters, files, server)` - Make HTTP request
@@ -247,18 +262,18 @@ protected function getHeaders(Request $request): array
 
 **HttpBrowser** - Implementation for HTTP requests via HttpClient
 
-## Best Practices
+## Best practices
 
 - Use `HttpBrowser` for external HTTP requests, custom client for internal testing
-- Always check response status before proceeding with assertions
-- Use Crawler methods for robust element selection (selectLink, selectButton, filter)
+- Check the response status before making assertions
+- Select elements with Crawler methods (selectLink, selectButton, filter)
 - Pass absolute file paths for file uploads
-- Leverage History API to validate navigation flows
-- Use xmlHttpRequest() for AJAX endpoints with proper server parameters
-- Extract cookies before restart() if you need to preserve authentication state
-- Consider using the DomCrawler component in tandem for complex HTML parsing
+- Use the history API to validate navigation flows
+- Use `xmlHttpRequest()` for AJAX endpoints, with the right server parameters
+- Extract cookies before `restart()` if you need to keep authentication state
+- Combine with the DomCrawler component for complex HTML parsing
 
-## Related Components
+## Related components
 
 - [DomCrawler](dom_crawler.html) - HTML traversal and element manipulation
 - [HttpClient](../http_client.html) - HTTP client for external requests

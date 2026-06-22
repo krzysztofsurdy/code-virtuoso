@@ -1,84 +1,84 @@
 ---
 name: symfony-components
-description: Comprehensive reference for all 38 Symfony framework components with PHP 8.3+ and Symfony 7.x patterns. Use when the user asks to implement, configure, or troubleshoot any Symfony component including HttpFoundation, HttpKernel, DependencyInjection, Form, Validator, Cache, Messenger, Console, EventDispatcher, Workflow, Serializer, Security, Routing, Twig, Doctrine integration, or any other Symfony component. Covers APIs, configuration, best practices, and common pitfalls.
+description: Reference for all 38 Symfony framework components with PHP 8.3+ and Symfony 7.x patterns. Use when the user asks to implement, configure, or troubleshoot any Symfony component including HttpFoundation, HttpKernel, DependencyInjection, Form, Validator, Cache, Messenger, Console, EventDispatcher, Workflow, Serializer, Security, Routing, Twig, Doctrine integration, or any other Symfony component. Covers APIs, configuration, best practices, and common pitfalls.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---
 
 # Symfony Components
 
-Complete reference for all 38 Symfony components — patterns, APIs, configuration, and best practices for PHP 8.3+ and Symfony 7.x.
+Reference for all 38 Symfony components: patterns, APIs, configuration, and best practices for PHP 8.3+ and Symfony 7.x.
 
 ## Component Index
 
 ### HTTP & Runtime
-- **HttpFoundation** — Object-oriented HTTP requests/responses replacing PHP globals → [reference](references/http-foundation.md)
-- **HttpKernel** — Request handling, kernel events, controller resolution, middleware → [reference](references/http-kernel.md)
-- **PSR-7 Bridge** — Bidirectional HttpFoundation ↔ PSR-7 conversion → [reference](references/psr7-bridge.md)
-- **Runtime** — Decoupled bootstrapping for multiple runtime environments → [reference](references/runtime.md)
+- **HttpFoundation**: Object-oriented HTTP requests/responses replacing PHP globals → [reference](references/http-foundation.md)
+- **HttpKernel**: Request handling, kernel events, controller resolution, middleware → [reference](references/http-kernel.md)
+- **PSR-7 Bridge**: Bidirectional HttpFoundation ↔ PSR-7 conversion → [reference](references/psr7-bridge.md)
+- **Runtime**: Decoupled bootstrapping for multiple runtime environments → [reference](references/runtime.md)
 
 ### Messaging
-- **Messenger** — Sync/async message buses, transports (AMQP, Redis, Doctrine), middleware, envelopes → [reference](references/messenger.md)
+- **Messenger**: Sync/async message buses, transports (AMQP, Redis, Doctrine), middleware, envelopes → [reference](references/messenger.md)
 
 ### Console
-- **Console** — CLI commands, input/output handling, helpers, formatters, progress bars → [reference](references/console.md)
+- **Console**: CLI commands, input/output handling, helpers, formatters, progress bars → [reference](references/console.md)
 
 ### Dependency Injection
-- **DependencyInjection** — Service container, autowiring, compiler passes, tagged services → [reference](references/dependency-injection.md)
-- **Contracts** — Decoupled abstractions for interoperability (Cache, EventDispatcher, HttpClient, etc.) → [reference](references/contracts.md)
+- **DependencyInjection**: Service container, autowiring, compiler passes, tagged services → [reference](references/dependency-injection.md)
+- **Contracts**: Decoupled abstractions for interoperability (Cache, EventDispatcher, HttpClient, etc.) → [reference](references/contracts.md)
 
 ### Forms & Validation
-- **Form** — Form creation, field types, events, data transformers, collections, theming → [reference](references/form.md)
-- **Validator** — JSR-303 constraints, custom validators, groups, severity levels → [reference](references/validator.md)
-- **OptionsResolver** — Option configuration with defaults, validation, normalization, nesting → [reference](references/options-resolver.md)
+- **Form**: Form creation, field types, events, data transformers, collections, theming → [reference](references/form.md)
+- **Validator**: JSR-303 constraints, custom validators, groups, severity levels → [reference](references/validator.md)
+- **OptionsResolver**: Option configuration with defaults, validation, normalization, nesting → [reference](references/options-resolver.md)
 
 ### Cache, Lock & Semaphore
-- **Cache** — PSR-6/PSR-16 adapters, tag-based invalidation, stampede prevention → [reference](references/cache.md)
-- **Lock** — Exclusive resource locking across processes/servers (Redis, PostgreSQL, file) → [reference](references/lock.md)
-- **Semaphore** — Concurrent access with configurable limits (Redis, DynamoDB) → [reference](references/semaphore.md)
+- **Cache**: PSR-6/PSR-16 adapters, tag-based invalidation, stampede prevention → [reference](references/cache.md)
+- **Lock**: Exclusive resource locking across processes/servers (Redis, PostgreSQL, file) → [reference](references/lock.md)
+- **Semaphore**: Concurrent access with configurable limits (Redis, DynamoDB) → [reference](references/semaphore.md)
 
 ### Events & Workflow
-- **EventDispatcher** — Observer/Mediator patterns, listeners, subscribers, priorities → [reference](references/event-dispatcher.md)
-- **Workflow** — State machines, workflow transitions, guards, metadata, events → [reference](references/workflow.md)
+- **EventDispatcher**: Observer/Mediator patterns, listeners, subscribers, priorities → [reference](references/event-dispatcher.md)
+- **Workflow**: State machines, workflow transitions, guards, metadata, events → [reference](references/workflow.md)
 
 ### Configuration & Expressions
-- **Config** — Configuration loading, validation, caching, tree building, bundle config → [reference](references/config.md)
-- **ExpressionLanguage** — Safe expression sandbox for business rules, validation, security → [reference](references/expression-language.md)
-- **Yaml** — YAML parsing, dumping, linting with full data type support → [reference](references/yaml.md)
+- **Config**: Configuration loading, validation, caching, tree building, bundle config → [reference](references/config.md)
+- **ExpressionLanguage**: Safe expression sandbox for business rules, validation, security → [reference](references/expression-language.md)
+- **Yaml**: YAML parsing, dumping, linting with full data type support → [reference](references/yaml.md)
 
 ### Filesystem, Finder & Process
-- **Filesystem** — Platform-independent file/directory operations, atomic writes, path utils → [reference](references/filesystem.md)
-- **Finder** — File search with fluent criteria (name, size, date, depth, content) → [reference](references/finder.md)
-- **Process** — Secure system command execution, async processes, output streaming → [reference](references/process.md)
+- **Filesystem**: Platform-independent file/directory operations, atomic writes, path utils → [reference](references/filesystem.md)
+- **Finder**: File search with fluent criteria (name, size, date, depth, content) → [reference](references/finder.md)
+- **Process**: Secure system command execution, async processes, output streaming → [reference](references/process.md)
 
 ### Serialization & Types
-- **PropertyAccess** — Read/write objects and arrays via string paths (`foo.bar[baz]`) → [reference](references/property-access.md)
-- **PropertyInfo** — Property metadata extraction (types, access, descriptions) → [reference](references/property-info.md)
-- **TypeInfo** — PHP type extraction, resolution, and validation → [reference](references/type-info.md)
-- **VarDumper** — Enhanced variable debugging with HTML/CLI formatters → [reference](references/var-dumper.md)
-- **VarExporter** — Export PHP data to OPcache-optimized code, lazy ghost/proxy objects → [reference](references/var-exporter.md)
+- **PropertyAccess**: Read/write objects and arrays via string paths (`foo.bar[baz]`) → [reference](references/property-access.md)
+- **PropertyInfo**: Property metadata extraction (types, access, descriptions) → [reference](references/property-info.md)
+- **TypeInfo**: PHP type extraction, resolution, and validation → [reference](references/type-info.md)
+- **VarDumper**: Enhanced variable debugging with HTML/CLI formatters → [reference](references/var-dumper.md)
+- **VarExporter**: Export PHP data to OPcache-optimized code, lazy ghost/proxy objects → [reference](references/var-exporter.md)
 
 ### Testing
-- **BrowserKit** — Simulated browser for programmatic HTTP, cookies, history → [reference](references/browser-kit.md)
-- **DomCrawler** — HTML/XML traversal, CSS selectors, form automation → [reference](references/dom-crawler.md)
-- **CssSelector** — CSS-to-XPath conversion for DOM querying → [reference](references/css-selector.md)
-- **PHPUnit Bridge** — Deprecation reporting, time/DNS mocking, parallel tests → [reference](references/phpunit-bridge.md)
+- **BrowserKit**: Simulated browser for programmatic HTTP, cookies, history → [reference](references/browser-kit.md)
+- **DomCrawler**: HTML/XML traversal, CSS selectors, form automation → [reference](references/dom-crawler.md)
+- **CssSelector**: CSS-to-XPath conversion for DOM querying → [reference](references/css-selector.md)
+- **PHPUnit Bridge**: Deprecation reporting, time/DNS mocking, parallel tests → [reference](references/phpunit-bridge.md)
 
 ### Data & Text Utilities
-- **Uid** — UUID (v1–v8) and ULID generation, conversion, Doctrine integration → [reference](references/uid.md)
-- **Clock** — Testable time abstraction with MockClock and DatePoint → [reference](references/clock.md)
-- **Intl** — Internationalization data (languages, countries, currencies, timezones) → [reference](references/intl.md)
-- **JsonPath** — RFC 9535 JSONPath queries on JSON structures → [reference](references/json-path.md)
-- **Mime** — MIME message creation for emails and content types → [reference](references/mime.md)
-- **Ldap** — LDAP/Active Directory connections, queries, and management → [reference](references/ldap.md)
-- **Asset** — URL generation and versioning for web assets → [reference](references/asset.md)
+- **Uid**: UUID (v1-v8) and ULID generation, conversion, Doctrine integration → [reference](references/uid.md)
+- **Clock**: Testable time abstraction with MockClock and DatePoint → [reference](references/clock.md)
+- **Intl**: Internationalization data (languages, countries, currencies, timezones) → [reference](references/intl.md)
+- **JsonPath**: RFC 9535 JSONPath queries on JSON structures → [reference](references/json-path.md)
+- **Mime**: MIME message creation for emails and content types → [reference](references/mime.md)
+- **Ldap**: LDAP/Active Directory connections, queries, and management → [reference](references/ldap.md)
+- **Asset**: URL generation and versioning for web assets → [reference](references/asset.md)
 
 ## Quick Patterns
 
 ### Dependency Injection (Autowiring)
 
 ```yaml
-# services.yaml — most services are autowired automatically
+# services.yaml: most services are autowired automatically
 services:
     _defaults:
         autowire: true
@@ -210,9 +210,9 @@ if ($lock->acquire()) {
 
 - Target **PHP 8.3+** and **Symfony 7.x** with strict typing
 - Use **attributes** over YAML/XML for routes, commands, message handlers, event listeners
-- Prefer **autowiring** — only register services manually when configuration is needed
+- Prefer **autowiring**; register services manually only when they need configuration
 - Use **Cache Contracts** (`$cache->get()`) over raw PSR-6 for stampede prevention
 - Apply **validation groups** to support multiple form contexts
 - Use **state machines** by default; use workflows only when parallel states are needed
-- Create **custom constraints** for business logic that can't be expressed with built-in ones
-- Mock **time and DNS** in tests using PHPUnit Bridge for deterministic results
+- Create **custom constraints** for business logic the built-in ones cannot express
+- Mock **time and DNS** in tests with PHPUnit Bridge so results are deterministic

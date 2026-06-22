@@ -1,12 +1,31 @@
 # Symfony DependencyInjection Component
 
-Manage dependencies efficiently with Symfony's powerful dependency injection container. Configure services, automate dependency resolution, and optimize container performance.
+The DependencyInjection component provides Symfony's service container. Use it to configure services, resolve dependencies automatically, and compile the container for production.
 
-## Core Concepts
+## Contents
 
-### Types of Injection
+- [Core concepts](#core-concepts)
+- [Autowiring](#autowiring)
+- [Factory services](#factory-services)
+- [Lazy services](#lazy-services)
+- [Service subscribers and locators](#service-subscribers-and-locators)
+- [Service tags](#service-tags)
+- [Compiler passes](#compiler-passes)
+- [Service aliases](#service-aliases)
+- [Service decoration](#service-decoration)
+- [Parent services](#parent-services)
+- [Optional dependencies](#optional-dependencies)
+- [Service definitions](#service-definitions)
+- [Container compilation and caching](#container-compilation-and-caching)
+- [Best practices](#best-practices)
+- [Service visibility](#service-visibility)
+- [Key classes and interfaces](#key-classes-and-interfaces)
 
-**Constructor Injection** (Recommended)
+## Core concepts
+
+### Types of injection
+
+**Constructor injection** (recommended)
 ```php
 class NewsletterManager
 {
@@ -14,7 +33,7 @@ class NewsletterManager
 }
 ```
 
-**Setter Injection** (Optional dependencies)
+**Setter injection** (optional dependencies)
 ```php
 class NewsletterManager
 {
@@ -26,7 +45,7 @@ class NewsletterManager
 }
 ```
 
-**Immutable-Setter Injection**
+**Immutable-setter injection**
 ```php
 public function withMailer(MailerInterface $mailer): self
 {
@@ -36,7 +55,7 @@ public function withMailer(MailerInterface $mailer): self
 }
 ```
 
-**Property Injection** (Third-party code)
+**Property injection** (third-party code)
 ```yaml
 services:
     app.newsletter_manager:
@@ -45,9 +64,9 @@ services:
             mailer: '@mailer'
 ```
 
-### Service Configuration
+### Service configuration
 
-**YAML Configuration**
+**YAML configuration**
 ```yaml
 services:
     App\Mail\NewsletterManager:
@@ -60,7 +79,7 @@ services:
         shared: true
 ```
 
-**PHP Configuration**
+**PHP configuration**
 ```php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
@@ -77,9 +96,9 @@ return static function(ContainerConfigurator $container) {
 
 ## Autowiring
 
-Enable automatic dependency resolution by type-hints.
+Autowiring resolves dependencies from type hints.
 
-**Enable Autowiring**
+**Enable autowiring**
 ```yaml
 services:
     _defaults:
@@ -87,21 +106,21 @@ services:
         autoconfigure: true
 ```
 
-**Interface-Based Autowiring**
+**Interface-based autowiring**
 ```yaml
 services:
     App\Util\Rot13Transformer: ~
     App\Util\TransformerInterface: '@App\Util\Rot13Transformer'
 ```
 
-**Named Autowiring Aliases**
+**Named autowiring aliases**
 ```yaml
 services:
     App\Util\TransformerInterface: '@App\Util\Rot13Transformer'
     App\Util\TransformerInterface $shoutyTransformer: '@App\Util\UppercaseTransformer'
 ```
 
-**#[Target] Attribute**
+**#[Target] attribute**
 ```php
 use Symfony\Component\DependencyInjection\Attribute\Target;
 
@@ -114,7 +133,7 @@ class MastodonClient
 }
 ```
 
-**#[Autowire] Attribute for Scalars**
+**#[Autowire] attribute for scalars**
 ```php
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -129,18 +148,18 @@ class MessageGenerator
 }
 ```
 
-## Factory Services
+## Factory services
 
 Delegate object creation to factory classes.
 
-**Static Factory**
+**Static factory**
 ```yaml
 services:
     App\Email\NewsletterManager:
         factory: ['App\Email\NewsletterManagerStaticFactory', 'createNewsletterManager']
 ```
 
-**Instance Factory**
+**Instance factory**
 ```yaml
 services:
     App\Email\NewsletterManagerFactory: ~
@@ -148,25 +167,25 @@ services:
         factory: ['@App\Email\NewsletterManagerFactory', 'createNewsletterManager']
 ```
 
-**Invokable Factory**
+**Invokable factory**
 ```yaml
 services:
     App\Email\NewsletterManager:
         factory: '@App\Email\InvokableNewsletterManagerFactory'
 ```
 
-## Lazy Services
+## Lazy services
 
 Defer instantiation of expensive services until first use.
 
-**YAML Configuration**
+**YAML configuration**
 ```yaml
 services:
     App\Twig\AppExtension:
         lazy: true
 ```
 
-**#[Lazy] Attribute**
+**#[Lazy] attribute**
 ```php
 use Symfony\Component\DependencyInjection\Attribute\Lazy;
 
@@ -174,18 +193,18 @@ use Symfony\Component\DependencyInjection\Attribute\Lazy;
 class AppExtension implements ExtensionInterface {}
 ```
 
-**Interface Proxifying**
+**Interface proxying**
 ```yaml
 services:
     App\Twig\AppExtension:
         lazy: 'Twig\Extension\ExtensionInterface'
 ```
 
-## Service Subscribers & Locators
+## Service subscribers and locators
 
-Lazily load multiple services without injecting the entire container.
+Load several services lazily without injecting the whole container.
 
-**Service Subscribers**
+**Service subscribers**
 ```php
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Psr\Container\ContainerInterface;
@@ -210,7 +229,7 @@ class CommandBus implements ServiceSubscriberInterface
 }
 ```
 
-**Service Locators**
+**Service locators**
 ```yaml
 services:
     App\CommandBus:
@@ -220,7 +239,7 @@ services:
                 App\BarCommand: '@app.command_handler.bar'
 ```
 
-**#[AutowireLocator] Attribute**
+**#[AutowireLocator] attribute**
 ```php
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 
@@ -233,7 +252,7 @@ class CommandBus
 }
 ```
 
-**#[AutowireIterator] Attribute**
+**#[AutowireIterator] attribute**
 ```php
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
@@ -246,11 +265,11 @@ class HandlerCollection
 }
 ```
 
-## Service Tags
+## Service tags
 
-Mark services for special handling by framework or bundles.
+Tag services so the framework or a bundle can handle them specially.
 
-**Defining Tagged Services**
+**Defining tagged services**
 ```yaml
 services:
     App\Twig\AppExtension:
@@ -261,7 +280,7 @@ services:
             - { name: 'app.mail_transport', alias: 'smtp', priority: 10 }
 ```
 
-**#[AsTaggedItem] Attribute**
+**#[AsTaggedItem] attribute**
 ```php
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
@@ -269,7 +288,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 class Handler {}
 ```
 
-**Processing Tagged Services**
+**Processing tagged services**
 ```php
 foreach ($container->findTaggedServiceIds('app.mail_transport') as $id => $tags) {
     foreach ($tags as $attributes) {
@@ -281,9 +300,9 @@ foreach ($container->findTaggedServiceIds('app.mail_transport') as $id => $tags)
 }
 ```
 
-## Compiler Passes
+## Compiler passes
 
-Manipulate service definitions during compilation.
+Compiler passes change service definitions during compilation.
 
 **Implement CompilerPassInterface**
 ```php
@@ -304,7 +323,7 @@ class CustomPass implements CompilerPassInterface
 }
 ```
 
-**Register in Kernel**
+**Register in the kernel**
 ```php
 class Kernel extends BaseKernel
 {
@@ -315,7 +334,7 @@ class Kernel extends BaseKernel
 }
 ```
 
-**Pass Execution Order**
+**Pass execution order**
 ```php
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
@@ -328,18 +347,18 @@ $container->addCompilerPass(
 
 Available phases: `TYPE_BEFORE_OPTIMIZATION`, `TYPE_OPTIMIZE`, `TYPE_BEFORE_REMOVING`, `TYPE_REMOVE`, `TYPE_AFTER_REMOVING`
 
-## Service Aliases
+## Service aliases
 
-Create shortcuts to services with different IDs.
+An alias gives a service a second ID.
 
-**YAML Configuration**
+**YAML configuration**
 ```yaml
 services:
     App\Mail\PhpMailer: ~
     app.mailer: '@App\Mail\PhpMailer'
 ```
 
-**#[AsAlias] Attribute**
+**#[AsAlias] attribute**
 ```php
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -347,18 +366,18 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 class PhpMailer {}
 ```
 
-**Mark Services as Public/Private**
+**Mark services public or private**
 ```yaml
 services:
     App\Service\Foo:
         public: true
 ```
 
-## Service Decoration
+## Service decoration
 
 Wrap services with decorators using the Decorator pattern.
 
-**Basic Decoration**
+**Basic decoration**
 ```yaml
 services:
     App\Mailer: ~
@@ -367,7 +386,7 @@ services:
         arguments: ['@.inner']
 ```
 
-**#[AsDecorator] Attribute**
+**#[AsDecorator] attribute**
 ```php
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
@@ -379,7 +398,7 @@ class DecoratingMailer
 }
 ```
 
-**Decoration Priority**
+**Decoration priority**
 ```yaml
 services:
     Bar:
@@ -393,11 +412,11 @@ services:
 ```
 Result: `new Baz(new Bar(new Foo()))`
 
-## Parent Services
+## Parent services
 
-Share common configuration across multiple services.
+Share common configuration across services.
 
-**Define Parent Service**
+**Define a parent service**
 ```yaml
 services:
     App\Repository\BaseDoctrineRepository:
@@ -415,18 +434,18 @@ services:
             index_0: '@doctrine.custom_entity_manager'
 ```
 
-## Optional Dependencies
+## Optional dependencies
 
-Handle missing services gracefully.
+Handle services that may be missing.
 
-**Setting Missing to Null**
+**Set a missing service to null**
 ```php
 NewsletterManager::class => [
     'arguments' => [service('logger')->nullOnInvalid()],
 ],
 ```
 
-**Ignoring Missing Dependencies**
+**Ignore missing dependencies**
 ```yaml
 services:
     App\Newsletter\NewsletterManager:
@@ -434,16 +453,16 @@ services:
             - setLogger: ['@?logger']
 ```
 
-**PHP Configuration**
+**PHP configuration**
 ```php
 'calls' => [
     'setLogger' => [service('logger')->ignoreOnInvalid()],
 ],
 ```
 
-## Service Definitions
+## Service definitions
 
-Manipulate service definitions programmatically in compiler passes.
+Change service definitions programmatically in compiler passes.
 
 ```php
 use Symfony\Component\DependencyInjection\Definition;
@@ -469,7 +488,7 @@ if ($container->hasDefinition('app.mailer')) {
 }
 ```
 
-## Container Compilation & Caching
+## Container compilation and caching
 
 Compile and dump the container for production.
 
@@ -506,29 +525,29 @@ require $file;
 $container = new MyCachedContainer();
 ```
 
-## Best Practices
+## Best practices
 
 - Use constructor injection for required dependencies
-- Enable autowiring with type-hints for cleaner configuration
+- Enable autowiring and rely on type hints to keep configuration short
 - Use setter injection only for optional dependencies
-- Mark services private by default for better optimization
-- Use service tags to organize related services
-- Implement lazy loading for heavy/rarely-used services
-- Use service locators instead of injecting the full container
-- Leverage compiler passes to handle cross-service configuration
-- Cache compiled container in production for performance
-- Use aliases to provide convenient shortcuts to services
-- Document service dependencies with proper type-hints and attributes
-- Avoid circular dependencies; refactor if needed
+- Keep services private by default, which lets the container optimize them
+- Use service tags to group related services
+- Make heavy or rarely used services lazy
+- Inject a service locator instead of the full container
+- Use compiler passes for configuration that spans several services
+- Cache the compiled container in production
+- Use aliases as shortcuts to services
+- Express service dependencies through type hints and attributes
+- Avoid circular dependencies; refactor if you hit one
 
-## Service Visibility
+## Service visibility
 
 - **Private services** (default): Only accessible via dependency injection
 - **Public services**: Accessible via `$container->get('service_id')`
 - **Synthetic services**: Injected directly into the container at runtime
 - **Abstract services**: Only used as parents for inheritance
 
-## Key Classes & Interfaces
+## Key classes and interfaces
 
 - `ContainerBuilder`: Build and configure services
 - `Container`: Runtime access to services

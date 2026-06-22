@@ -1,21 +1,33 @@
 # Symfony Config Component
 
+## Contents
+
+- [Overview](#overview)
+- [Core classes](#core-classes)
+- [Loading configuration resources](#loading-configuration-resources)
+- [Configuration caching](#configuration-caching)
+- [Creating bundle configuration](#creating-bundle-configuration)
+- [Loading service configuration](#loading-service-configuration)
+- [Sharing configuration across bundles](#sharing-configuration-across-bundles)
+- [Best practices](#best-practices)
+- [Common patterns](#common-patterns)
+
 ## Overview
 
-The Config Component is a Symfony utility for managing application configuration. It provides tools to define configuration structures with validation rules, load configuration from multiple sources, merge configurations, and implement intelligent caching.
+The Config component manages application configuration. It defines configuration structures with validation rules, loads configuration from several sources, merges it, and caches the result.
 
-### When to Use This Skill
+### When to use this reference
 
 - Define and validate application or bundle configuration
 - Load configuration from YAML, XML, INI, attributes, or custom formats
-- Merge multiple configuration sources
-- Cache processed configuration for performance
-- Create user-friendly bundle configuration interfaces
-- Share configuration across multiple bundles
+- Merge several configuration sources
+- Cache processed configuration
+- Give bundles a user-friendly configuration interface
+- Share configuration across bundles
 
-## Core Classes
+## Core classes
 
-### Configuration Definition
+### Configuration definition
 
 #### TreeBuilder
 Defines all configuration validation rules. Returned from a `Configuration` class implementing `ConfigurationInterface`:
@@ -45,7 +57,7 @@ class DatabaseConfiguration implements ConfigurationInterface
 ```
 
 #### Processor
-Processes and merges multiple configuration arrays according to defined rules:
+Processes and merges configuration arrays according to the defined rules:
 
 ```php
 use Symfony\Component\Config\Definition\Processor;
@@ -55,9 +67,7 @@ $configuration = new DatabaseConfiguration();
 $processedConfig = $processor->processConfiguration($configuration, $configs);
 ```
 
-### Node Types
-
-Define configuration nodes using these types:
+### Node types
 
 - **scalar** - Generic scalar values (strings, numbers, booleans, null)
 - **boolean** - Boolean true/false values
@@ -68,7 +78,7 @@ Define configuration nodes using these types:
 - **array** - Nested array structures with prototypes
 - **variable** - No validation, accepts any value
 
-### Node Definition Examples
+### Node definition examples
 
 ```php
 $rootNode
@@ -105,7 +115,7 @@ $rootNode
 ;
 ```
 
-### Array Nodes with Prototypes
+### Array nodes with prototypes
 
 Define nested array structures with repeating elements:
 
@@ -123,7 +133,7 @@ Define nested array structures with repeating elements:
 ->end()
 ```
 
-### Array Node Methods
+### Array node methods
 
 - `arrayPrototype()` - Repeat the same structure for array elements
 - `useAttributeAsKey('name')` - Use a child node's value as the array key
@@ -133,7 +143,7 @@ Define nested array structures with repeating elements:
 - `ignoreExtraKeys()` - Allow extra configuration keys
 - `acceptAndWrap()` - Auto-wrap scalar values into arrays
 
-### Normalization and Validation
+### Normalization and validation
 
 #### Normalization
 
@@ -150,7 +160,7 @@ Normalize configuration before validation:
 
 #### Validation
 
-Use ExprBuilder for custom validation logic:
+Use `ExprBuilder` for custom validation logic:
 
 ```php
 ->scalarNode('driver')
@@ -166,9 +176,9 @@ Validation conditions:
 - `ifTrue()`, `ifFalse()`, `ifString()`, `ifNull()`, `ifEmpty()`, `ifArray()`
 - `ifInArray()`, `ifNotInArray()`, `always()`
 
-### Deprecating Options
+### Deprecating options
 
-Mark configuration options as deprecated:
+Mark an option as deprecated:
 
 ```php
 ->integerNode('old_option')
@@ -176,9 +186,9 @@ Mark configuration options as deprecated:
 ->end()
 ```
 
-### Documenting Options
+### Documenting options
 
-Add descriptions to configuration options:
+Add a description to an option:
 
 ```php
 ->integerNode('entries_per_page')
@@ -187,11 +197,11 @@ Add descriptions to configuration options:
 ->end()
 ```
 
-## Loading Configuration Resources
+## Loading configuration resources
 
 ### FileLocator
 
-Search for configuration files in specified directories:
+Searches the given directories for configuration files:
 
 ```php
 use Symfony\Component\Config\FileLocator;
@@ -201,7 +211,7 @@ $files = $locator->locate('users.yaml', null, false);  // false = first match
 $allFiles = $locator->locate('*.yaml', null, true);    // true = all matches
 ```
 
-### Custom Loader Implementation
+### Custom loader implementation
 
 Create custom loaders by extending `FileLoader` or implementing `LoaderInterface`:
 
@@ -231,9 +241,9 @@ class YamlUserLoader extends FileLoader
 }
 ```
 
-### Loader Resolution
+### Loader resolution
 
-Use `LoaderResolver` and `DelegatingLoader` to automatically select loaders:
+Use `LoaderResolver` and `DelegatingLoader` to pick the loader automatically:
 
 ```php
 use Symfony\Component\Config\Loader\DelegatingLoader;
@@ -248,11 +258,11 @@ $delegatingLoader = new DelegatingLoader($resolver);
 $delegatingLoader->load(__DIR__.'/users.yaml');  // Automatically selects YamlUserLoader
 ```
 
-## Configuration Caching
+## Configuration caching
 
-### ConfigCache Class
+### ConfigCache class
 
-Cache processed configuration and track resource modifications:
+Cache processed configuration and track changes to its resources:
 
 ```php
 use Symfony\Component\Config\ConfigCache;
@@ -281,7 +291,7 @@ if (!$cache->isFresh()) {
 require $cachePath;
 ```
 
-### Constructor Parameters
+### Constructor parameters
 
 ```php
 new ConfigCache($cachePath, $debug = false, $metaPath = null);
@@ -291,18 +301,18 @@ new ConfigCache($cachePath, $debug = false, $metaPath = null);
 - `$debug` - When true, creates `.meta` file for resource tracking
 - `$metaPath` - Optional absolute path to the meta file
 
-### How Caching Works
+### How caching works
 
-1. **Check Freshness** - `isFresh()` examines resource timestamps in `.meta` file
-2. **Generate** - If stale, regenerate cache by loading all resources
-3. **Store** - Write generated code and resource list via `write()`
-4. **Track** - In debug mode, timestamps serialized for future comparisons
+1. **Check freshness**: `isFresh()` compares resource timestamps against the `.meta` file
+2. **Generate**: If the cache is stale, load all resources again
+3. **Store**: Write the generated code and resource list with `write()`
+4. **Track**: In debug mode, timestamps are serialized for later comparison
 
-## Creating Bundle Configuration
+## Creating bundle configuration
 
-### Modern Approach: AbstractBundle
+### With AbstractBundle
 
-Define configuration directly in your bundle class:
+Define configuration directly in the bundle class:
 
 ```php
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
@@ -337,7 +347,7 @@ class AcmeSocialBundle extends AbstractBundle
 }
 ```
 
-### Traditional Approach: Configuration and Extension Classes
+### With Configuration and Extension classes
 
 Create separate `Configuration` and `Extension` classes:
 
@@ -390,9 +400,9 @@ class AcmeSocialExtension extends Extension
 }
 ```
 
-### User Configuration
+### User configuration
 
-Users configure bundles with friendly syntax:
+Users configure the bundle in YAML:
 
 ```yaml
 # config/packages/acme_social.yaml
@@ -402,15 +412,15 @@ acme_social:
         client_secret: your_secret
 ```
 
-### View Configuration Reference
+### View the configuration reference
 
 ```bash
 php bin/console config:dump-reference acme_social
 ```
 
-## Loading Service Configuration
+## Loading service configuration
 
-### Modern Approach: AbstractBundle.loadExtension()
+### With AbstractBundle.loadExtension()
 
 ```php
 class AcmeHelloBundle extends AbstractBundle
@@ -436,7 +446,7 @@ class AcmeHelloBundle extends AbstractBundle
 }
 ```
 
-### Traditional Approach: Extension Class
+### With an Extension class
 
 ```php
 namespace Acme\HelloBundle\DependencyInjection;
@@ -456,11 +466,11 @@ class AcmeHelloExtension extends Extension
 }
 ```
 
-## Sharing Configuration Across Bundles
+## Sharing configuration across bundles
 
 ### Using PrependExtensionInterface
 
-Prepend configuration for other bundles before their `load()` method is called:
+Prepend configuration for other bundles before their `load()` method runs:
 
 ```php
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -493,26 +503,26 @@ class FooBundle extends AbstractBundle
 }
 ```
 
-### Key Behaviors
+### Key behaviors
 
-- **User config overrides** - User-defined configuration takes priority over prepended settings
-- **First bundle wins** - First registered bundle's prepended value takes priority
-- **Compile-time only** - Prepend methods called only during container compilation
+- **User config overrides**: User-defined configuration takes priority over prepended settings
+- **First bundle wins**: The first registered bundle's prepended value takes priority
+- **Compile-time only**: Prepend methods run only during container compilation
 
-## Best Practices
+## Best practices
 
-1. **Use AbstractBundle for new bundles** - Simpler API than separate Extension/Configuration classes
-2. **Define sensible defaults** - Configure default values for all options
-3. **Validate configuration** - Use validation rules to catch configuration errors early
-4. **Document options** - Use `info()` to describe what each configuration option does
-5. **Implement caching** - Use ConfigCache with proper resource tracking in production
-6. **Support multiple formats** - Create loaders for YAML, XML, PHP to maximize flexibility
-7. **Use deprecation warnings** - Mark deprecated options to guide users to newer alternatives
-8. **Normalize configuration** - Use beforeNormalization() to handle user input variations
+1. **Use AbstractBundle for new bundles** - The API is simpler than separate Extension and Configuration classes
+2. **Define defaults** - Give every option a default value
+3. **Validate configuration** - Use validation rules to catch errors early
+4. **Document options** - Use `info()` to describe what each option does
+5. **Cache in production** - Use `ConfigCache` with resource tracking
+6. **Support several formats** - Write loaders for YAML, XML, and PHP
+7. **Deprecate options before removing them** - Point users to the replacement
+8. **Normalize configuration** - Use `beforeNormalization()` to handle variations in user input
 
-## Common Patterns
+## Common patterns
 
-### Optional Bundle Features
+### Optional bundle features
 
 ```php
 public function prepend(ContainerBuilder $container): void
@@ -527,7 +537,7 @@ public function prepend(ContainerBuilder $container): void
 }
 ```
 
-### Environment-Specific Configuration
+### Environment-specific configuration
 
 ```php
 if ($container->getParameter('kernel.environment') === 'dev') {
@@ -538,7 +548,7 @@ if ($container->getParameter('kernel.environment') === 'dev') {
 }
 ```
 
-### Merging Configuration from Multiple Files
+### Merging configuration from multiple files
 
 ```php
 $processor = new Processor();

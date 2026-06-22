@@ -1,8 +1,24 @@
 # Symfony Cache Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Two caching approaches](#two-caching-approaches)
+- [Cache adapters](#cache-adapters)
+- [Cache items](#cache-items)
+- [Cache invalidation](#cache-invalidation)
+- [Stampede prevention](#stampede-prevention)
+- [PSR-6/PSR-16 interoperability](#psr-6psr-16-interoperability)
+- [Marshalling (serialization)](#marshalling-serialization)
+- [Sub-namespaces](#sub-namespaces)
+- [Console commands](#console-commands)
+- [Common use cases](#common-use-cases)
+- [Best practices](#best-practices)
+
 ## Overview
 
-The Cache component is a powerful, standards-compliant caching framework implementing PSR-6 and providing the simpler Cache Contracts API with built-in stampede prevention. It supports multiple backends (filesystem, Redis, Memcached, APCu, PDO, and more) and enables efficient cache management with tag-based invalidation.
+The Cache component implements PSR-6 and also provides the simpler Cache Contracts API, which has built-in stampede prevention. It supports several backends (filesystem, Redis, Memcached, APCu, PDO, and more) and offers tag-based invalidation.
 
 ## Installation
 
@@ -10,11 +26,11 @@ The Cache component is a powerful, standards-compliant caching framework impleme
 composer require symfony/cache
 ```
 
-## Two Caching Approaches
+## Two caching approaches
 
-### Cache Contracts (Recommended)
+### Cache Contracts (recommended)
 
-Simpler, more powerful API with automatic stampede prevention:
+A smaller API with automatic stampede prevention:
 
 ```php
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -34,11 +50,11 @@ $cache->delete('my_cache_key');
 - Only two methods: `get()` and `delete()`
 - Automatic cache stampede prevention via locking
 - Probabilistic early expiration support (beta parameter)
-- Less boilerplate code
+- Less boilerplate
 
-### PSR-6 Interface
+### PSR-6 interface
 
-Explicit item/pool management:
+Explicit item and pool management:
 
 ```php
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -56,11 +72,11 @@ $cache->deleteItems(['key1', 'key2']);
 $cache->clear();
 ```
 
-## Cache Adapters
+## Cache adapters
 
-### APCu Adapter
+### APCu adapter
 
-High-performance shared memory cache (in-process):
+Shared memory cache (in-process):
 
 ```php
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
@@ -75,7 +91,7 @@ $cache = new ApcuAdapter(
 **Pros:** Fastest cache, no external dependencies
 **Cons:** Single server only, write-heavy workloads cause fragmentation, SAPI-dependent (CLI vs FPM)
 
-### Filesystem Adapter
+### Filesystem adapter
 
 File-based caching:
 
@@ -95,7 +111,7 @@ $cache->prune();
 **Pros:** No external dependencies, simple to set up
 **Cons:** Slower IO, not suitable for high-throughput scenarios
 
-### Redis Adapter
+### Redis adapter
 
 Distributed in-memory caching:
 
@@ -106,7 +122,7 @@ $client = RedisAdapter::createConnection('redis://localhost:6379');
 $cache = new RedisAdapter($client, $namespace = '', $defaultLifetime = 0);
 ```
 
-**DSN Examples:**
+**DSN examples:**
 ```
 redis://localhost:6379
 redis://pass@localhost:6379/5
@@ -116,15 +132,15 @@ redis:?host[sentinel1:26379]&redis_sentinel=mymaster
 
 **Features:** Tag-aware adapter available, marshalling options, cluster/sentinel support
 
-**Redis Configuration:**
+**Redis configuration:**
 ```
 maxmemory 100mb
 maxmemory-policy allkeys-lru
 ```
 
-### Memcached Adapter
+### Memcached adapter
 
-Distributed memory caching across multiple servers:
+Distributed memory caching across several servers:
 
 ```php
 use Symfony\Component\Cache\Adapter\MemcachedAdapter;
@@ -141,7 +157,7 @@ $client = MemcachedAdapter::createConnection([
 
 **Options:** `libketama_compatible`, `serializer` (php/igbinary), `hash`, `distribution`, `connect_timeout`
 
-### PDO Adapter
+### PDO adapter
 
 SQL database-backed caching:
 
@@ -159,9 +175,9 @@ $cache->createTable();  // Create table explicitly
 $cache->prune();        // Remove expired entries
 ```
 
-### Chain Adapter
+### Chain adapter
 
-Combine multiple adapters in layered order:
+Combine several adapters in layers:
 
 ```php
 use Symfony\Component\Cache\Adapter\{ChainAdapter, ApcuAdapter, FilesystemAdapter};
@@ -174,21 +190,21 @@ $cache = new ChainAdapter([
 // Automatically propagates missing items from lower to upper adapters
 ```
 
-### Other Adapters
+### Other adapters
 
 - **Array Adapter:** In-memory array (request-scoped)
 - **Proxy Adapter:** Wrapper for custom implementations
 - **Couchbase Adapters:** Couchbase bucket and collection backends
 
-## Cache Items
+## Cache items
 
-### Item Keys and Values
+### Item keys and values
 
 **Keys:** Alphanumeric, underscore, period only (A-Z, a-z, 0-9, _, .)
 
 **Values:** Any PHP-serializable type (strings, objects, arrays, scalars)
 
-### Item Configuration
+### Item configuration
 
 ```php
 use Symfony\Contracts\Cache\ItemInterface;
@@ -208,7 +224,7 @@ $value = $cache->get('key', function (ItemInterface $item): mixed {
 });
 ```
 
-### Cache Hits and Misses
+### Cache hits and misses
 
 ```php
 $item = $cache->getItem('latest_news');
@@ -223,11 +239,11 @@ if (!$item->isHit()) {
 }
 ```
 
-## Cache Invalidation
+## Cache invalidation
 
-### Tag-Based Invalidation
+### Tag-based invalidation
 
-Invalidate multiple cache entries using tags:
+Invalidate several cache entries at once using tags:
 
 ```php
 $cache->get('products_1', function (ItemInterface $item) {
@@ -244,9 +260,9 @@ $cache->get('products_2', function (ItemInterface $item) {
 $cache->invalidateTags(['products']);
 ```
 
-### Tag-Aware Adapters
+### Tag-aware adapters
 
-Use optimized tag-aware implementations:
+Use a tag-aware wrapper or an adapter built for tags:
 
 ```php
 use Symfony\Component\Cache\Adapter\{FilesystemAdapter, RedisAdapter, TagAwareAdapter};
@@ -265,18 +281,18 @@ $cache = new RedisTagAwareAdapter($redisClient);
 $cache->prune();
 ```
 
-### Expiration-Based Invalidation
+### Expiration-based invalidation
 
-Set TTL for automatic expiration:
+Set a TTL so items expire automatically:
 
 ```php
 $item->expiresAfter(3600);     // 1 hour
 $item->expiresAt($dateTime);   // Specific date
 ```
 
-## Stampede Prevention
+## Stampede prevention
 
-Cache stampede occurs when many requests hit expired cache simultaneously. Symfony prevents this automatically:
+A cache stampede happens when many requests hit an expired entry at the same time. Cache Contracts prevent it automatically:
 
 ```php
 use Symfony\Contracts\Cache\ItemInterface;
@@ -309,7 +325,7 @@ $psr6Cache = new FilesystemAdapter();
 $psr16Cache = new Psr16Cache($psr6Cache);
 ```
 
-## Marshalling (Serialization)
+## Marshalling (serialization)
 
 Control how data is serialized before storage:
 
@@ -325,15 +341,15 @@ $cache = new RedisAdapter(
 );
 ```
 
-**Available Marshallers:**
+**Available marshallers:**
 - `DefaultMarshaller`: PHP serialization or Igbinary
 - `DeflateMarshaller`: Compression wrapper
 - `SodiumMarshaller`: Encryption wrapper
 - `TagAwareMarshaller`: For tag-aware caching
 
-## Sub-Namespaces
+## Sub-namespaces
 
-Create context-dependent cache variations:
+Create cache variations that depend on context:
 
 ```php
 $userCache = $cache->withSubNamespace(sprintf('user-%d', $userId));
@@ -343,7 +359,7 @@ $userCache->get('dashboard', function (ItemInterface $item) {
 });
 ```
 
-## Console Commands
+## Console commands
 
 ```bash
 # Delete specific cache item
@@ -356,9 +372,9 @@ php bin/console cache:pool:clear cache.app
 php bin/console cache:pool:prune
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Query Result Caching
+### Query result caching
 
 ```php
 $results = $cache->get('products_query', function (ItemInterface $item) {
@@ -368,7 +384,7 @@ $results = $cache->get('products_query', function (ItemInterface $item) {
 });
 ```
 
-### Configuration Caching
+### Configuration caching
 
 ```php
 $config = $cache->get('app_config', function (ItemInterface $item) {
@@ -377,7 +393,7 @@ $config = $cache->get('app_config', function (ItemInterface $item) {
 });
 ```
 
-### API Response Caching
+### API response caching
 
 ```php
 $data = $cache->get('external_api_' . md5($url), function (ItemInterface $item) {
@@ -387,15 +403,15 @@ $data = $cache->get('external_api_' . md5($url), function (ItemInterface $item) 
 });
 ```
 
-## Best Practices
+## Best practices
 
-1. **Prefer Cache Contracts** over PSR-6 for simpler code and built-in stampede prevention
-2. **Use Tags** when managing complex cache dependencies
-3. **Set Appropriate TTLs** based on data freshness requirements
-4. **Chain Adapters** for optimal performance (fast + fallback)
-5. **Use Namespaces** to isolate cache contexts
-6. **Prune Regularly** for adapters that don't auto-expire
-7. **Monitor Memory** in APCu/Redis with appropriate policies
-8. **Test Cache** hit/miss scenarios in tests
-9. **Avoid Write-Heavy** operations with APCu (fragmentation)
-10. **Use Marshalling** for security or compression needs
+1. **Prefer Cache Contracts** over PSR-6: simpler code and built-in stampede prevention
+2. **Use tags** to manage cache dependencies
+3. **Set TTLs** that match how fresh the data must be
+4. **Chain adapters** for a fast layer plus a fallback
+5. **Use namespaces** to isolate cache contexts
+6. **Prune regularly** for adapters that do not expire items on their own
+7. **Monitor memory** in APCu and Redis, and set eviction policies
+8. **Test hit and miss scenarios**
+9. **Avoid write-heavy workloads** on APCu (fragmentation)
+10. **Use marshalling** for encryption or compression

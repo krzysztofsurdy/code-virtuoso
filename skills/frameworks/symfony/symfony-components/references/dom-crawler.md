@@ -1,8 +1,27 @@
 # Symfony DomCrawler Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core concepts](#core-concepts)
+- [Filtering and selecting](#filtering-and-selecting)
+- [DOM traversal](#dom-traversal)
+- [Accessing content](#accessing-content)
+- [Working with links](#working-with-links)
+- [Working with images](#working-with-images)
+- [Working with forms](#working-with-forms)
+- [XML and namespaces](#xml-and-namespaces)
+- [URI resolution](#uri-resolution)
+- [Expression evaluation](#expression-evaluation)
+- [Integration with BrowserKit](#integration-with-browserkit)
+- [Common use cases](#common-use-cases)
+- [Important behaviors](#important-behaviors)
+- [Performance tips](#performance-tips)
+
 ## Overview
 
-The DomCrawler component provides a powerful API for navigating and querying DOM elements in HTML and XML documents. It's designed for **reading and traversing** DOM content, not for manipulation or re-dumping HTML/XML.
+The DomCrawler component navigates and queries DOM elements in HTML and XML documents. It is built for **reading and traversing** DOM content, not for modifying it or dumping HTML/XML back out.
 
 ## Installation
 
@@ -10,17 +29,17 @@ The DomCrawler component provides a powerful API for navigating and querying DOM
 composer require symfony/dom-crawler
 ```
 
-Optionally install CssSelector component for CSS selector support:
+Install the CssSelector component as well if you want CSS selector support:
 
 ```bash
 composer require symfony/css-selector
 ```
 
-## Core Concepts
+## Core concepts
 
-### Creating Crawler Instances
+### Creating crawler instances
 
-Initialize a Crawler with HTML, XML, or DOM content:
+Create a `Crawler` from HTML, XML, or DOM content:
 
 ```php
 use Symfony\Component\DomCrawler\Crawler;
@@ -31,7 +50,7 @@ $crawler = new Crawler('<html><body><p>Hello</p></body></html>');
 // From XML string
 $crawler = new Crawler('<root><entry>Data</entry></root>', 'http://example.com');
 
-// Add content to existing crawler
+// Add content to an existing crawler
 $crawler->addHtmlContent($html);
 $crawler->addXmlContent($xml);
 $crawler->addContent($content, 'text/xml');
@@ -39,11 +58,11 @@ $crawler->addDocument($domDocument);
 $crawler->addNodeList($nodeList);
 ```
 
-## Filtering & Selecting
+## Filtering and selecting
 
-### CSS Selectors
+### CSS selectors
 
-Use CSS selectors for intuitive DOM querying (requires CssSelector component):
+Query the DOM with CSS selectors (requires the CssSelector component):
 
 ```php
 $crawler->filter('body > p');
@@ -55,9 +74,9 @@ $crawler->filter('button:enabled');
 
 Supported pseudo-classes: `:enabled`, `:disabled`, `:checked`, `:unchecked`, `:only-of-type`, `:scope`, `:is()`, `:where()`
 
-### XPath Expressions
+### XPath expressions
 
-Use XPath for advanced queries:
+Use XPath for queries CSS cannot express:
 
 ```php
 $crawler->filterXPath('descendant-or-self::body/p');
@@ -65,9 +84,9 @@ $crawler->filterXPath('//div[@class="item"]//span[@id]');
 $crawler->filterXPath('//a[contains(@href, "/login")]');
 ```
 
-### Custom Filtering
+### Custom filtering
 
-Reduce results using callback functions:
+Reduce results with a callback:
 
 ```php
 $crawler->filter('p')->reduce(function (Crawler $node, $i): bool {
@@ -78,9 +97,9 @@ $crawler->filter('p')->reduce(function (Crawler $node, $i): bool {
 $crawler->filter('p')->matches('p.lorem');
 ```
 
-## DOM Traversal
+## DOM traversal
 
-### Navigation Methods
+### Navigation methods
 
 Move through the DOM tree:
 
@@ -101,9 +120,9 @@ $crawler->filter('p')->ancestors();       // All ancestors
 $crawler->closest('div');                 // Nearest matching parent
 ```
 
-## Accessing Content
+## Accessing content
 
-### Text Content
+### Text content
 
 ```php
 // Get text with optional default value
@@ -133,7 +152,7 @@ $id = $crawler->filter('p')->id();
 $tag = $crawler->filter('body/*')->nodeName();
 ```
 
-### HTML Content
+### HTML content
 
 ```php
 // Get inner HTML
@@ -143,9 +162,9 @@ $inner = $crawler->filter('div')->html();
 $outer = $crawler->filter('div')->outerHtml();
 ```
 
-### Batch Extraction
+### Batch extraction
 
-Extract multiple values at once:
+Extract several values at once:
 
 ```php
 $data = $crawler->filterXPath('//p')->extract(['_name', '_text', 'class', 'id']);
@@ -155,9 +174,9 @@ $data = $crawler->filterXPath('//p')->extract(['_name', '_text', 'class', 'id'])
 $data = $crawler->filter('article')->extract(['_text' => 'content', 'class' => 'className']);
 ```
 
-## Working with Links
+## Working with links
 
-### Link Selection & Retrieval
+### Link selection and retrieval
 
 ```php
 use Symfony\Component\DomCrawler\Link;
@@ -170,9 +189,9 @@ $uri = $link->getUri();        // Absolute URI
 $method = $link->getMethod();  // GET, POST, etc.
 ```
 
-## Working with Images
+## Working with images
 
-### Image Selection & Retrieval
+### Image selection and retrieval
 
 ```php
 use Symfony\Component\DomCrawler\Image;
@@ -184,9 +203,9 @@ $image = $crawler->selectImage('Kitten')->image();
 $uri = $image->getUri();
 ```
 
-## Working with Forms
+## Working with forms
 
-### Form Selection
+### Form selection
 
 ```php
 // Select form by button text
@@ -196,7 +215,7 @@ $form = $crawler->selectButton('Sign in')->form();
 $form = $crawler->selectButton('btnSubmit')->form();
 ```
 
-### Form Data Manipulation
+### Form data manipulation
 
 ```php
 // Set single value
@@ -225,7 +244,7 @@ $form['photo']->upload('/path/to/file.jpg');
 $form['field']->disableValidation()->select('Invalid value');
 ```
 
-### Retrieving Form Data
+### Retrieving form data
 
 ```php
 // Get form submission URI
@@ -241,9 +260,9 @@ $values = $form->getPhpValues();
 $files = $form->getPhpFiles();
 ```
 
-## XML & Namespaces
+## XML and namespaces
 
-### Automatic Namespace Handling
+### Automatic namespace handling
 
 The component automatically registers common namespace prefixes:
 
@@ -255,7 +274,7 @@ $crawler->filterXPath('//default:entry/media:group//yt:aspectRatio');
 $crawler->filter('default|entry media|group yt|aspectRatio');
 ```
 
-### Explicit Namespace Registration
+### Explicit namespace registration
 
 ```php
 $crawler->registerNamespace('m', 'http://search.yahoo.com/mrss/');
@@ -264,9 +283,9 @@ $crawler->registerNamespace('yt', 'http://gdata.youtube.com/schemas/2007');
 $crawler = $crawler->filterXPath('//m:group//yt:aspectRatio');
 ```
 
-## URI Resolution
+## URI resolution
 
-### Resolving Relative URLs
+### Resolving relative URLs
 
 ```php
 use Symfony\Component\DomCrawler\UriResolver;
@@ -279,11 +298,11 @@ UriResolver::resolve('?a=b', 'http://localhost/bar#foo');
 // Result: 'http://localhost/bar?a=b'
 ```
 
-## Expression Evaluation
+## Expression evaluation
 
-### XPath Functions
+### XPath functions
 
-Execute XPath expressions that return non-node results:
+Evaluate XPath expressions that return something other than nodes:
 
 ```php
 // Extract substring
@@ -300,7 +319,7 @@ $text = $crawler->evaluate('string(//h1)');
 
 ## Integration with BrowserKit
 
-### Making Requests & Parsing Responses
+### Making requests and parsing responses
 
 ```php
 use Symfony\Component\BrowserKit\HttpBrowser;
@@ -327,9 +346,9 @@ $crawler = $browser->click($link);
 $pullRequests = $crawler->filter('.table-list-header-toggle a:nth-child(1)')->text();
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Web Scraping
+### Web scraping
 
 ```php
 $crawler = new Crawler(file_get_contents('https://example.com'));
@@ -343,7 +362,7 @@ $articles = $crawler->filter('article')->each(function (Crawler $article) {
 });
 ```
 
-### Testing HTML Responses
+### Testing HTML responses
 
 ```php
 $form = $crawler->selectButton('Submit')->form();
@@ -370,17 +389,17 @@ $entries = $crawler->filterXPath('//atom:entry')->each(function (Crawler $entry)
 });
 ```
 
-## Important Behaviors
+## Important behaviors
 
-- **HTML Auto-correction**: Malformed HTML is automatically fixed according to HTML5 specifications
-- **Filter Return Type**: All filter methods return new Crawler instances, enabling method chaining
-- **Empty Results**: Use `$crawler->count() > 0` to verify if filters returned results
-- **Not for Manipulation**: Use `DOMDocument` or `DOMXPath` directly if you need DOM modification
-- **Whitespace Handling**: Use `trim()` on text content when extracting
+- **HTML auto-correction**: Malformed HTML is fixed according to the HTML5 specification
+- **Filter return type**: Filter methods return new `Crawler` instances, so calls can be chained
+- **Empty results**: Check `$crawler->count() > 0` to see whether a filter matched anything
+- **No manipulation**: Use `DOMDocument` or `DOMXPath` directly if you need to modify the DOM
+- **Whitespace**: Call `trim()` on extracted text
 
-## Performance Tips
+## Performance tips
 
 - Cache compiled CSS selectors for repeated queries
 - Use more specific selectors to reduce DOM traversal
-- Combine filters into single expressions when possible
+- Combine filters into a single expression when possible
 - Use `eq()` instead of `first()` when targeting specific indices for clarity
