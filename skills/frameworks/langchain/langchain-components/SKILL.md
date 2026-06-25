@@ -1,58 +1,58 @@
 ---
 name: langchain-components
-description: Comprehensive reference for the LangChain ecosystem including LangChain, LangGraph, and Deep Agents for Python 3.10+. Use when the user asks to build AI agents, implement RAG pipelines, configure chat models, create tool-calling agents, set up retrieval chains, manage conversation memory, orchestrate multi-agent workflows, or integrate with LLM providers (OpenAI, Anthropic, Google). Covers models, messages, output parsers, vector stores, embedding strategies, streaming, middleware, and LangGraph state machines.
+description: Reference for the LangChain ecosystem (LangChain, LangGraph, and Deep Agents) for Python 3.10+. Use when the user asks to build AI agents, implement RAG pipelines, configure chat models, create tool-calling agents, set up retrieval chains, manage conversation memory, orchestrate multi-agent workflows, or integrate with LLM providers (OpenAI, Anthropic, Google). Covers models, messages, output parsers, vector stores, embedding strategies, streaming, middleware, and LangGraph state machines.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---
 
 # LangChain Components
 
-Complete reference for the LangChain ecosystem — models, agents, tools, retrieval, memory, middleware, streaming, multi-agent orchestration, LangGraph workflows, Deep Agents, and provider integrations for Python 3.10+.
+Reference for the LangChain ecosystem on Python 3.10+: models, agents, tools, retrieval, memory, middleware, streaming, multi-agent orchestration, LangGraph workflows, Deep Agents, and provider integrations.
 
-## Component Index
+## Component index
 
-### Models & Output
-- **Models** — Chat models, tool calling, multimodal inputs, caching, rate limiting, custom models [reference](references/models.md)
-- **Messages** — Message types (Human, AI, System, Tool), message operations, serialization, OpenAI format conversion [reference](references/messages.md)
+### Models and output
+- **Models**: Chat models, tool calling, multimodal inputs, caching, rate limiting, custom models ([reference](references/models.md))
+- **Messages**: Message types (Human, AI, System, Tool), message operations, serialization, OpenAI format conversion ([reference](references/messages.md))
 
 ### Agents
-- **Agents** — create_agent, tools, structured output, guardrails, human-in-the-loop, context engineering [reference](references/agents.md)
-- **Multi-Agent** — Subagents, handoffs, skills, router, custom workflows, pattern selection [reference](references/multi-agent.md)
+- **Agents**: create_agent, tools, structured output, guardrails, human-in-the-loop, context engineering ([reference](references/agents.md))
+- **Multi-Agent**: Subagents, handoffs, skills, router, custom workflows, pattern selection ([reference](references/multi-agent.md))
 
-### Tools & MCP
-- **Tools** — Tool creation (@tool decorator, ToolNode), InjectedState, MCP integration, error handling [reference](references/tools.md)
+### Tools and MCP
+- **Tools**: Tool creation (@tool decorator, ToolNode), InjectedState, MCP integration, error handling ([reference](references/tools.md))
 
-### Retrieval & RAG
-- **Retrieval** — Document loaders, text splitters, embeddings, vector stores, agentic RAG, semantic search [reference](references/retrieval.md)
+### Retrieval and RAG
+- **Retrieval**: Document loaders, text splitters, embeddings, vector stores, agentic RAG, semantic search ([reference](references/retrieval.md))
 
 ### Memory
-- **Memory** — Short-term (checkpointers, message trimming, summarization), long-term (store abstraction, namespaces) [reference](references/memory.md)
+- **Memory**: Short-term (checkpointers, message trimming, summarization), long-term (store abstraction, namespaces) ([reference](references/memory.md))
 
-### Middleware & Streaming
-- **Middleware** — 16 built-in middleware, custom middleware (decorator, class, wrap-style), execution order [reference](references/middleware.md)
-- **Streaming** — Stream modes (updates, messages, custom), token streaming, useStream React hook [reference](references/streaming.md)
+### Middleware and streaming
+- **Middleware**: 16 built-in middleware, custom middleware (decorator, class, wrap-style), execution order ([reference](references/middleware.md))
+- **Streaming**: Stream modes (updates, messages, custom), token streaming, useStream React hook ([reference](references/streaming.md))
 
-### Runtime & Architecture
-- **Runtime** — Dependency injection, context schemas, ToolRuntime, component architecture (5 layers) [reference](references/runtime.md)
+### Runtime and architecture
+- **Runtime**: Dependency injection, context schemas, ToolRuntime, component architecture (5 layers) ([reference](references/runtime.md))
 
-### Testing & Deployment
-- **Testing** — Unit testing (GenericFakeChatModel), integration testing (AgentEvals), LangSmith observability [reference](references/testing.md)
+### Testing and deployment
+- **Testing**: Unit testing (GenericFakeChatModel), integration testing (AgentEvals), LangSmith observability ([reference](references/testing.md))
 
 ### LangGraph
-- **LangGraph Core** — Graph API, Functional API, workflows vs agents, state management, quickstart [reference](references/langgraph-core.md)
-- **LangGraph State** — Memory, persistence, durable execution, interrupts, checkpointers [reference](references/langgraph-state.md)
-- **LangGraph Advanced** — Subgraphs, time-travel, streaming, Graph API usage, Functional API usage [reference](references/langgraph-advanced.md)
+- **LangGraph Core**: Graph API, Functional API, workflows vs agents, state management, quickstart ([reference](references/langgraph-core.md))
+- **LangGraph State**: Memory, persistence, durable execution, interrupts, checkpointers ([reference](references/langgraph-state.md))
+- **LangGraph Advanced**: Subgraphs, time-travel, streaming, Graph API usage, Functional API usage ([reference](references/langgraph-advanced.md))
 
 ### Deep Agents
-- **Deep Agents** — Harness framework, models, subagents, skills, sandboxes, human-in-the-loop, long-term memory [reference](references/deep-agents.md)
+- **Deep Agents**: Harness framework, models, subagents, skills, sandboxes, human-in-the-loop, long-term memory ([reference](references/deep-agents.md))
 
 ### Integrations
-- **Integrations** — Chat models, document loaders, retrievers, embeddings, vector stores, tools, stores, splitters [reference](references/integrations.md)
-- **Providers** — OpenAI, Anthropic, Google, AWS, Ollama setup and configuration [reference](references/providers.md)
+- **Integrations**: Chat models, document loaders, retrievers, embeddings, vector stores, tools, stores, splitters ([reference](references/integrations.md))
+- **Providers**: OpenAI, Anthropic, Google, AWS, Ollama setup and configuration ([reference](references/providers.md))
 
-## Quick Patterns
+## Quick patterns
 
-### Create an Agent with Tools
+### Create an agent with tools
 
 ```python
 from langchain.chat_models import init_chat_model
@@ -70,7 +70,7 @@ response = agent.invoke(
 )
 ```
 
-### Structured Output
+### Structured output
 
 ```python
 from pydantic import BaseModel
@@ -83,7 +83,7 @@ structured_model = model.with_structured_output(SearchQuery)
 result = structured_model.invoke("Who won the World Cup in 2022?")
 ```
 
-### RAG with Retrieval
+### RAG with retrieval
 
 ```python
 from langchain_community.document_loaders import WebBaseLoader
@@ -97,7 +97,7 @@ vector_store = InMemoryVectorStore.from_documents(chunks, OpenAIEmbeddings())
 retriever_tool = vector_store.as_retriever()
 ```
 
-### Multi-Agent Handoffs
+### Multi-agent handoffs
 
 ```python
 from langgraph.prebuilt import create_agent
@@ -111,7 +111,7 @@ supervisor = create_agent(
 )
 ```
 
-### LangGraph Workflow
+### LangGraph workflow
 
 ```python
 from langgraph.graph import StateGraph, START, END
@@ -135,15 +135,15 @@ for chunk in agent.stream(
     print(chunk)
 ```
 
-## Best Practices
+## Best practices
 
 - Use `init_chat_model()` for provider-agnostic model initialization
 - Prefer `create_agent` over building custom agent loops
 - Use LangGraph for complex workflows requiring state, persistence, or human-in-the-loop
-- Apply middleware for cross-cutting concerns (guardrails, rate limiting, PII detection)
+- Use middleware for cross-cutting concerns (guardrails, rate limiting, PII detection)
 - Use checkpointers for conversation persistence and short-term memory
 - Use the Store abstraction for long-term memory across conversations
-- Choose the right multi-agent pattern: handoffs for specialization, routers for classification, subagents for parallel work
+- Pick the multi-agent pattern by need: handoffs for specialization, routers for classification, subagents for parallel work
 - Use `with_structured_output()` for type-safe LLM responses
-- Prefer agentic RAG (tool-based retrieval) over chain-based RAG for flexibility
+- Prefer agentic RAG (tool-based retrieval) over chain-based RAG, which is less flexible
 - Use `stream_mode="messages"` for token-level streaming to frontends

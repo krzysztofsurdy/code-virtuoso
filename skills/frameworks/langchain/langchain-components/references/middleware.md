@@ -1,10 +1,20 @@
 # Middleware
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core concepts](#core-concepts)
+- [Built-in middleware](#built-in-middleware)
+- [Custom middleware](#custom-middleware)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Middleware enables fine-grained control over agent execution by providing hooks at various stages of the agent loop. Middleware intercepts execution at specific points - before/after model calls, before/after tool calls, and at agent start/end - allowing you to add observability, transformation, resilience, and governance to your agents without modifying core logic.
+Middleware gives you fine-grained control over agent execution through hooks at several stages of the agent loop. It intercepts execution before and after model calls, before and after tool calls, and at agent start and end, so you can add observability, transformation, resilience, and governance without touching the core logic.
 
-Middleware is integrated via the `create_agent` function and can be combined freely to build comprehensive agent systems.
+Pass middleware to `create_agent`. Middleware can be combined freely.
 
 ## Installation
 
@@ -12,31 +22,31 @@ Middleware is integrated via the `create_agent` function and can be combined fre
 pip install langchain
 ```
 
-## Core Concepts
+## Core concepts
 
-### Agent Loop Architecture
+### Agent loop
 
-The basic agent loop flow: model invocation -> tool selection -> tool execution -> completion (when no additional tools are called). Middleware exposes hooks before and after each of these steps.
+The basic loop is: model invocation -> tool selection -> tool execution -> completion (when no more tools are called). Middleware exposes hooks before and after each of these steps.
 
-### Hook Types
+### Hook types
 
-**Node-style hooks** execute sequentially at defined points:
+**Node-style hooks** run sequentially at defined points:
 
-| Hook | When It Fires |
+| Hook | When it fires |
 |------|---------------|
 | `before_agent` | Once at initial execution |
-| `before_model` | Prior to each model invocation |
-| `after_model` | Following model responses |
+| `before_model` | Before each model invocation |
+| `after_model` | After each model response |
 | `after_agent` | Once at final execution |
 
-**Wrap-style hooks** control execution flow around calls:
+**Wrap-style hooks** control execution flow around a call:
 
-| Hook | What It Wraps |
+| Hook | What it wraps |
 |------|---------------|
-| `wrap_model_call` | Surrounds each model interaction |
-| `wrap_tool_call` | Surrounds each tool interaction |
+| `wrap_model_call` | Each model call |
+| `wrap_tool_call` | Each tool call |
 
-### Basic Usage
+### Basic usage
 
 ```python
 from langchain.agents import create_agent
@@ -52,11 +62,11 @@ agent = create_agent(
 )
 ```
 
-## Built-in Middleware
+## Built-in middleware
 
-### Summarization Middleware
+### Summarization middleware
 
-Automatically condenses conversation history when approaching token limits while preserving recent messages.
+Condenses conversation history as it approaches the token limit and keeps recent messages.
 
 ```python
 from langchain.agents.middleware import SummarizationMiddleware
@@ -73,16 +83,16 @@ SummarizationMiddleware(
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `model` | str / BaseChatModel | The summarization model |
+| `model` | str / BaseChatModel | Summarization model |
 | `trigger` | dict | Activation condition: `fraction` (0-1), `tokens` (absolute), or `messages` (count) |
 | `keep` | dict | Context to preserve after summarization |
 | `token_counter` | callable | Custom token counting function |
 | `summary_prompt` | str | Custom prompt template for summarization |
 | `trim_tokens_to_summarize` | int | Max tokens to include when generating summaries (default: 4000) |
 
-### Human-in-the-Loop Middleware
+### Human-in-the-loop middleware
 
-Pauses execution for human approval, editing, or rejection of tool calls before implementation.
+Pauses execution so a person can approve, edit, or reject a tool call before it runs.
 
 ```python
 from langchain.agents.middleware import HumanInTheLoopMiddleware
@@ -102,13 +112,13 @@ agent = create_agent(
 )
 ```
 
-**Requirements:** Needs a checkpointer to maintain state across interruptions.
+**Requirements:** A checkpointer, to keep state across interruptions.
 
 **Allowed decisions:** approve, edit, reject.
 
-### Model Call Limit Middleware
+### Model call limit middleware
 
-Restricts the number of model calls to prevent runaway agents and manage costs.
+Limits the number of model calls to stop runaway agents and control cost.
 
 ```python
 from langchain.agents.middleware import ModelCallLimitMiddleware
@@ -120,9 +130,9 @@ ModelCallLimitMiddleware(
 )
 ```
 
-### Tool Call Limit Middleware
+### Tool call limit middleware
 
-Controls tool execution by limiting call counts globally or per-tool.
+Limits tool call counts, globally or per tool.
 
 ```python
 from langchain.agents.middleware import ToolCallLimitMiddleware
@@ -135,9 +145,9 @@ ToolCallLimitMiddleware(
 )
 ```
 
-### Model Fallback Middleware
+### Model fallback middleware
 
-Automatically switches to alternative models when the primary model fails.
+Switches to alternative models when the primary model fails.
 
 ```python
 from langchain.agents.middleware import ModelFallbackMiddleware
@@ -147,9 +157,9 @@ ModelFallbackMiddleware(
 )
 ```
 
-### PII Detection Middleware
+### PII detection middleware
 
-Detects and handles Personally Identifiable Information using configurable strategies.
+Detects personally identifiable information (PII) and handles it with a configurable strategy.
 
 ```python
 from langchain.agents.middleware import PIIDetectionMiddleware
@@ -167,16 +177,16 @@ PIIDetectionMiddleware(
 
 | Strategy | Behavior |
 |----------|----------|
-| `block` | Raise exception when PII detected |
+| `block` | Raise an exception when PII is detected |
 | `redact` | Replace with `[REDACTED_{TYPE}]` |
 | `mask` | Partially obscure (e.g., `****-****-****-1234`) |
 | `hash` | Replace with deterministic hash |
 
-**Custom detectors** support regex patterns, compiled patterns, or custom detection functions returning matches with text/start/end properties.
+**Custom detectors** can be regex patterns, compiled patterns, or detection functions that return matches with `text`, `start`, and `end` properties.
 
-### To-Do List Middleware
+### To-do list middleware
 
-Equips agents with task planning and tracking for complex multi-step operations.
+Gives agents task planning and tracking for complex multi-step operations.
 
 ```python
 from langchain.agents.middleware import ToDoListMiddleware
@@ -187,11 +197,11 @@ ToDoListMiddleware(
 )
 ```
 
-Auto-provides a `write_todos` tool and system prompts guiding effective planning.
+Adds a `write_todos` tool and system prompts that guide planning.
 
-### LLM Tool Selector Middleware
+### LLM tool selector middleware
 
-Uses an LLM to intelligently select relevant tools before main model invocation. Best for agents with 10+ tools.
+Uses an LLM to pick the relevant tools before the main model call. Best for agents with 10+ tools.
 
 ```python
 from langchain.agents.middleware import LLMToolSelectorMiddleware
@@ -203,9 +213,9 @@ LLMToolSelectorMiddleware(
 )
 ```
 
-### Tool Retry Middleware
+### Tool retry middleware
 
-Automatically retries failed tool calls with exponential backoff.
+Retries failed tool calls with exponential backoff.
 
 ```python
 from langchain.agents.middleware import ToolRetryMiddleware
@@ -221,9 +231,9 @@ ToolRetryMiddleware(
 )
 ```
 
-### Model Retry Middleware
+### Model retry middleware
 
-Automatically retries failed model calls with exponential backoff. Configuration is similar to Tool Retry.
+Retries failed model calls with exponential backoff. Configuration is similar to tool retry.
 
 ```python
 from langchain.agents.middleware import ModelRetryMiddleware
@@ -237,9 +247,9 @@ ModelRetryMiddleware(
 )
 ```
 
-### LLM Tool Emulator Middleware
+### LLM tool emulator middleware
 
-Emulates tool execution using an LLM for testing without actual tool calls.
+Emulates tool execution with an LLM, for testing without real tool calls.
 
 ```python
 from langchain.agents.middleware import LLMToolEmulatorMiddleware
@@ -250,9 +260,9 @@ LLMToolEmulatorMiddleware(
 )
 ```
 
-### Context Editing Middleware
+### Context editing middleware
 
-Manages conversation context by clearing older tool outputs when token limits are reached.
+Manages conversation context by clearing older tool outputs when the token limit is reached.
 
 ```python
 from langchain.agents.middleware import ContextEditingMiddleware, ClearToolUsesEdit
@@ -269,9 +279,9 @@ ContextEditingMiddleware(
 )
 ```
 
-### Shell Tool Middleware
+### Shell tool middleware
 
-Exposes persistent shell sessions for command execution.
+Exposes persistent shell sessions for running commands.
 
 ```python
 from langchain.agents.middleware import ShellToolMiddleware
@@ -285,15 +295,15 @@ ShellToolMiddleware(
 )
 ```
 
-**Execution Policies:**
+**Execution policies:**
 
-| Policy | Security Level |
+| Policy | Security level |
 |--------|----------------|
 | `HostExecutionPolicy` | Full host access (default) |
 | `DockerExecutionPolicy` | Isolated Docker container |
 | `CodexSandboxExecutionPolicy` | Codex CLI sandbox with syscall restrictions |
 
-### File Search Middleware
+### File search middleware
 
 Provides Glob and Grep search tools over the filesystem.
 
@@ -307,9 +317,9 @@ FileSearchMiddleware(
 )
 ```
 
-### Filesystem Middleware (Deep Agents)
+### Filesystem middleware (Deep Agents)
 
-Provides context engineering through filesystem interaction for memory management.
+Provides context engineering through filesystem access, for memory management.
 
 ```python
 from langchain.agents.middleware import FilesystemMiddleware
@@ -325,9 +335,9 @@ FilesystemMiddleware(
 
 Tools provided: `ls`, `read_file`, `write_file`, `edit_file`.
 
-### Subagent Middleware (Deep Agents)
+### Subagent middleware (Deep Agents)
 
-Allows spawning subagents to isolate context and handle specialized tasks.
+Spawns subagents to isolate context and handle specialized tasks.
 
 ```python
 from langchain.agents.middleware import SubagentMiddleware, SubagentDefinition
@@ -345,9 +355,9 @@ SubagentMiddleware(
 )
 ```
 
-## Custom Middleware
+## Custom middleware
 
-### Decorator-Based (Single Hook)
+### Decorator-based (single hook)
 
 ```python
 from langchain.agents.middleware import before_model, after_model
@@ -364,7 +374,7 @@ def log_response(state, config):
     return {}
 ```
 
-### Class-Based (Multiple Hooks)
+### Class-based (multiple hooks)
 
 ```python
 from langchain.agents.middleware import AgentMiddleware
@@ -385,7 +395,7 @@ class MonitoringMiddleware(AgentMiddleware):
         return result
 ```
 
-### Wrap-Style Hooks
+### Wrap-style hooks
 
 ```python
 from langchain.agents.middleware import AgentMiddleware
@@ -403,7 +413,7 @@ class RetryMiddleware(AgentMiddleware):
         return result
 ```
 
-### Custom State
+### Custom state
 
 ```python
 from dataclasses import dataclass
@@ -415,7 +425,7 @@ class CustomState(AgentState):
     user_tier: str = "free"
 ```
 
-### Agent Jumps (Control Flow)
+### Agent jumps (control flow)
 
 ```python
 from langchain.agents.middleware import before_model
@@ -429,9 +439,9 @@ def check_limit(state, config):
 
 Jump targets: `"end"`, `"tools"`, `"model"`.
 
-### Execution Order
+### Execution order
 
-When multiple middleware are registered:
+When several middleware are registered:
 - `before_*` hooks: first-to-last order
 - Wrap hooks: nested (outermost wraps innermost)
 - `after_*` hooks: reverse order (last-to-first)
@@ -449,13 +459,13 @@ When multiple middleware are registered:
 | `ExtendedModelResponse` | Return type for wrap-style hooks |
 | `Command` | Control flow commands with state updates |
 
-## Best Practices
+## Best practices
 
 - Keep middleware focused on a single concern
-- Handle errors gracefully within middleware
-- Choose the right hook type: node-style for observation/transformation, wrap-style for execution control
+- Handle errors inside the middleware
+- Choose the hook type by purpose: node-style for observation and transformation, wrap-style for execution control
 - Document custom state properties
 - Test middleware independently before combining
-- Consider execution order when stacking multiple middleware
-- Leverage built-in middleware before writing custom solutions
-- Use `can_jump_to` declarations for control flow to make intent explicit
+- Check the execution order when stacking middleware
+- Use built-in middleware before writing your own
+- Declare `can_jump_to` for control flow so the intent is explicit

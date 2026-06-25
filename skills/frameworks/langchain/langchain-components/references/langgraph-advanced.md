@@ -1,8 +1,21 @@
-# LangGraph Advanced Features
+# LangGraph advanced features
+
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Subgraphs](#subgraphs)
+- [Time travel](#time-travel)
+- [Streaming](#streaming)
+- [Graph API advanced usage](#graph-api-advanced-usage)
+- [Functional API advanced usage](#functional-api-advanced-usage)
+- [Application structure for deployment](#application-structure-for-deployment)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
 
 ## Overview
 
-This reference covers LangGraph's advanced capabilities: subgraphs for modular composition, time travel for debugging, streaming for real-time updates, and application structure for deployment.
+This reference covers subgraphs for modular composition, time travel for debugging, streaming for real-time updates, and application structure for deployment.
 
 ## Installation
 
@@ -12,11 +25,11 @@ pip install -U langgraph
 
 ## Subgraphs
 
-Subgraphs are graphs used as nodes within other graphs. They enable building multi-agent systems, reusing node sets across graphs, and distributing development across teams.
+Subgraphs are graphs used as nodes inside other graphs. Use them to build multi-agent systems, reuse a set of nodes across graphs, or split development across teams.
 
-### Pattern 1: Call Inside a Node Function
+### Pattern 1: call inside a node function
 
-Use when parent and subgraph have different state schemas or state transformation is needed:
+Use when the parent and subgraph have different state schemas or the state needs transforming:
 
 ```python
 def call_subgraph(state: ParentState):
@@ -26,15 +39,15 @@ def call_subgraph(state: ParentState):
 builder.add_node("node_1", call_subgraph)
 ```
 
-### Pattern 2: Add as Node Directly
+### Pattern 2: add as a node directly
 
-Use when parent and subgraph share state keys:
+Use when the parent and subgraph share state keys:
 
 ```python
 builder.add_node("node_1", subgraph)
 ```
 
-### Subgraph Persistence Options
+### Subgraph persistence options
 
 | Setting | `checkpointer=False` | `checkpointer=None` (default) | `checkpointer=True` |
 |---------|----------------------|-------------------------------|---------------------|
@@ -45,14 +58,14 @@ builder.add_node("node_1", subgraph)
 | State inspection | No | Limited | Yes |
 | Durable execution | No | Yes | Yes |
 
-#### Stateless Without Interrupts (`checkpointer=False`)
+#### Stateless without interrupts (`checkpointer=False`)
 
 - No durable execution
 - Runs like a normal function call
 - No checkpointing overhead
-- Warning: Cannot recover from crashes mid-run
+- Cannot recover from a crash mid-run
 
-#### Stateless With Interrupts (`checkpointer=None` - default)
+#### Stateless with interrupts (`checkpointer=None`, the default)
 
 - Recommended for most applications, including multi-agent systems
 - Supports `interrupt()` for human-in-the-loop
@@ -62,13 +75,13 @@ builder.add_node("node_1", subgraph)
 
 #### Stateful (`checkpointer=True`)
 
-- Subagent remembers previous interactions across calls on same thread
+- The subagent remembers earlier interactions across calls on the same thread
 - Each call picks up where the last one left off
-- Cannot support parallel tool calls to same subgraph (checkpoint namespace conflicts)
+- Does not support parallel tool calls to the same subgraph (checkpoint namespace conflicts)
 
-### Namespace Isolation
+### Namespace isolation
 
-When multiple different stateful subgraphs exist, wrap each in its own `StateGraph` with unique node names:
+When you have several different stateful subgraphs, wrap each in its own `StateGraph` with unique node names:
 
 ```python
 # Each subgraph gets a unique namespace
@@ -85,46 +98,46 @@ parent_builder.add_node("agent_a", subgraph_a)
 parent_builder.add_node("agent_b", subgraph_b)
 ```
 
-### State Inspection
+### State inspection
 
 ```python
 subgraph_state = graph.get_state(config, subgraphs=True).tasks[0].state
 ```
 
-Requirement: Subgraph must be statically discoverable (added directly as node or called within a node function). Does not work when subgraphs are called inside tools.
+The subgraph must be statically discoverable (added directly as a node or called within a node function). This does not work when the subgraph is called inside a tool.
 
-### Streaming Subgraph Outputs
+### Streaming subgraph outputs
 
 ```python
 for chunk in graph.stream({"foo": "foo"}, subgraphs=True, stream_mode="updates"):
     print(chunk)
 ```
 
-Output includes namespace tuples showing graph hierarchy.
+The output includes namespace tuples that show the graph hierarchy.
 
-### Multi-Level Subgraphs
+### Multi-level subgraphs
 
-Nested hierarchies (parent -> child -> grandchild) use node wrapper functions for different state schemas. Each level transforms state before invoking the next.
+For nested hierarchies (parent -> child -> grandchild) with different state schemas, use node wrapper functions. Each level transforms state before invoking the next.
 
-### Key Constraints
+### Key constraints
 
-- Parent graph requires a checkpointer for subgraph persistence features
-- Stateful subgraphs don't support parallel tool calls to the same instance
-- State inspection requires static discovery of subgraph structure
+- The parent graph needs a checkpointer for subgraph persistence features
+- Stateful subgraphs do not support parallel tool calls to the same instance
+- State inspection needs the subgraph structure to be statically discoverable
 
-## Time Travel
+## Time travel
 
-Time travel enables examining decision-making processes by resuming execution from prior checkpoints while optionally modifying state.
+Time travel lets you inspect how a run reached its result by resuming execution from an earlier checkpoint, optionally with modified state.
 
-### Use Cases
+### Use cases
 
-- **Understanding reasoning**: Analyzing steps leading to successful outcomes
-- **Debugging mistakes**: Identifying error sources
-- **Exploring alternatives**: Testing different execution paths
+- **Understanding reasoning**: analyze the steps that led to a good outcome
+- **Debugging mistakes**: find where an error came from
+- **Exploring alternatives**: try different execution paths
 
 ### Workflow
 
-#### 1. Execute Graph
+#### 1. Execute the graph
 
 ```python
 from langgraph.checkpoint.memory import InMemorySaver
@@ -136,7 +149,7 @@ config = {"configurable": {"thread_id": "1"}}
 result = graph.invoke({"topic": "dogs"}, config=config)
 ```
 
-#### 2. Identify Checkpoint
+#### 2. Identify a checkpoint
 
 ```python
 # Retrieve execution history (most recent first)
@@ -147,14 +160,14 @@ target_state = all_states[2]  # Example: third checkpoint
 target_config = target_state.config
 ```
 
-#### 3. Modify State (Optional)
+#### 3. Modify state (optional)
 
 ```python
 # Create new checkpoint with modified state
 graph.update_state(target_config, {"topic": "chickens"})
 ```
 
-#### 4. Resume Execution
+#### 4. Resume execution
 
 ```python
 # Resume from specific checkpoint
@@ -167,7 +180,7 @@ config_with_checkpoint = {
 result = graph.invoke(None, config=config_with_checkpoint)
 ```
 
-### Key APIs
+### Key methods
 
 | Method | Purpose |
 |--------|---------|
@@ -178,9 +191,9 @@ result = graph.invoke(None, config=config_with_checkpoint)
 
 ## Streaming
 
-Streaming is crucial for responsive LLM applications, displaying output progressively before complete responses are ready.
+Streaming keeps LLM applications responsive by showing output progressively, before the full response is ready.
 
-### Stream Modes
+### Stream modes
 
 | Mode | Purpose | Output |
 |------|---------|--------|
@@ -188,9 +201,9 @@ Streaming is crucial for responsive LLM applications, displaying output progress
 | `updates` | State changes per step | Node name with changes |
 | `custom` | User-defined data from nodes | Custom data |
 | `messages` | LLM tokens with metadata | 2-tuples (chunk, metadata) |
-| `debug` | Comprehensive execution info | Detailed debug data |
+| `debug` | Full execution info | Detailed debug data |
 
-### Basic Usage
+### Basic usage
 
 ```python
 # Sync
@@ -202,7 +215,7 @@ async for chunk in graph.astream(inputs, stream_mode="updates"):
     print(chunk)
 ```
 
-### Graph State Streaming
+### Graph state streaming
 
 **Updates mode** returns node names with state modifications:
 
@@ -214,7 +227,7 @@ for chunk in graph.stream({"topic": "ice cream"}, stream_mode="updates"):
 
 **Values mode** returns complete state snapshots after each step.
 
-### Subgraph Streaming
+### Subgraph streaming
 
 ```python
 for chunk in graph.stream({"foo": "foo"}, subgraphs=True, stream_mode="updates"):
@@ -222,7 +235,7 @@ for chunk in graph.stream({"foo": "foo"}, subgraphs=True, stream_mode="updates")
 # Output includes namespace tuples: (namespace_tuple, data)
 ```
 
-### LLM Token Streaming
+### LLM token streaming
 
 The `messages` mode returns tuples of `(message_chunk, metadata)`:
 
@@ -231,7 +244,7 @@ for msg, metadata in graph.stream(inputs, stream_mode="messages"):
     print(msg.content, end="", flush=True)
 ```
 
-#### Filtering by Tags
+#### Filtering by tags
 
 ```python
 joke_model = init_chat_model(model="gpt-4.1-mini", tags=['joke'])
@@ -241,7 +254,7 @@ async for msg, metadata in graph.astream(inputs, stream_mode="messages"):
         print(msg.content, end="|", flush=True)
 ```
 
-#### Filtering by Node
+#### Filtering by node
 
 ```python
 for msg, metadata in graph.stream(inputs, stream_mode="messages"):
@@ -249,9 +262,9 @@ for msg, metadata in graph.stream(inputs, stream_mode="messages"):
         print(msg.content)
 ```
 
-### Custom Data Streaming
+### Custom data streaming
 
-#### From Nodes
+#### From nodes
 
 ```python
 from langgraph.config import get_stream_writer
@@ -262,7 +275,7 @@ def node(state):
     return {"answer": "data"}
 ```
 
-#### From Tools
+#### From tools
 
 ```python
 @tool
@@ -275,7 +288,7 @@ def query_database(query: str) -> str:
 
 Access with `stream_mode="custom"`.
 
-#### Arbitrary LLM Integration
+#### Arbitrary LLM integration
 
 ```python
 from langgraph.config import get_stream_writer
@@ -287,20 +300,20 @@ def call_arbitrary_model(state):
     return {"result": "completed"}
 ```
 
-### Multiple Stream Modes
+### Multiple stream modes
 
 ```python
 for mode, chunk in graph.stream(inputs, stream_mode=["updates", "custom"]):
     print(f"{mode}: {chunk}")
 ```
 
-### Disabling Streaming
+### Disabling streaming
 
 ```python
 model = init_chat_model("claude-sonnet-4-6", streaming=False)
 ```
 
-### Python < 3.11 Async Considerations
+### Async on Python < 3.11
 
 For LLM calls, pass `RunnableConfig` explicitly:
 
@@ -321,14 +334,14 @@ async def generate_joke(state: State, writer: StreamWriter):
     return {"joke": f"About {state['topic']}"}
 ```
 
-### Debug Mode
+### Debug mode
 
 ```python
 for chunk in graph.stream({"topic": "ice cream"}, stream_mode="debug"):
     print(chunk)
 ```
 
-## Graph API Advanced Usage
+## Graph API advanced usage
 
 ### Sequences
 
@@ -340,9 +353,9 @@ builder.add_edge("node_a", "node_b")
 builder.add_edge("node_b", "node_c")
 ```
 
-### Parallel Execution
+### Parallel execution
 
-Fan-out/fan-in patterns execute nodes concurrently:
+Fan-out/fan-in patterns run nodes concurrently:
 
 ```python
 builder.add_edge(START, "node_a")
@@ -351,17 +364,17 @@ builder.add_edge("node_a", "node_c")
 builder.add_edge("node_b", "node_c")  # node_c waits for both
 ```
 
-### Deferred Execution
+### Deferred execution
 
 ```python
 builder.add_node("reduce_node", reduce_func, defer=True)
 ```
 
-Delays execution until all pending tasks complete. Useful for map-reduce with uneven branch lengths.
+Delays the node until all pending tasks complete. Useful for map-reduce with branches of uneven length.
 
-### Overwrite Type
+### Overwrite type
 
-Bypass reducers to directly replace state values:
+Bypass reducers and replace a state value directly:
 
 ```python
 from langgraph.types import Overwrite
@@ -370,7 +383,7 @@ def my_node(state: State):
     return {"my_list": Overwrite(["fresh", "list"])}
 ```
 
-### Input/Output Schema Filtering
+### Input/output schema filtering
 
 ```python
 class InputState(TypedDict):
@@ -387,9 +400,9 @@ class InternalState(TypedDict):
 builder = StateGraph(InternalState, input_schema=InputState, output_schema=OutputState)
 ```
 
-## Functional API Advanced Usage
+## Functional API advanced usage
 
-### Entrypoint Composition
+### Entrypoint composition
 
 ```python
 @entrypoint(checkpointer=checkpointer)
@@ -402,7 +415,7 @@ def child_workflow(inputs: dict):
     return process(inputs)
 ```
 
-### Graph Integration
+### Graph integration
 
 ```python
 @entrypoint(checkpointer=checkpointer)
@@ -412,7 +425,7 @@ def my_workflow(inputs: dict):
     return result
 ```
 
-### Error Handling with Retry
+### Error handling with retry
 
 ```python
 from langgraph.types import RetryPolicy
@@ -422,9 +435,9 @@ def call_api(data: dict) -> dict:
     return requests.post(API_URL, json=data).json()
 ```
 
-### Resumption After Failure
+### Resumption after failure
 
-Checkpointers preserve task results, allowing continuation without recomputing:
+Checkpointers keep task results, so a run can continue without recomputing them:
 
 ```python
 @entrypoint(checkpointer=checkpointer)
@@ -434,16 +447,16 @@ def workflow(inputs: dict):
     return step2
 ```
 
-## Application Structure for Deployment
+## Application structure for deployment
 
-### Required Components
+### Required components
 
-1. `langgraph.json` - Configuration file
-2. Graph implementations - Application logic
-3. Dependency file - `requirements.txt` or `pyproject.toml`
-4. `.env` file (optional) - Environment variables
+1. `langgraph.json`: configuration file
+2. Graph implementations: application logic
+3. Dependency file: `requirements.txt` or `pyproject.toml`
+4. `.env` file (optional): environment variables
 
-### Directory Structure
+### Directory structure
 
 ```
 my-app/
@@ -460,7 +473,7 @@ my-app/
 └── langgraph.json
 ```
 
-### Configuration File (langgraph.json)
+### Configuration file (langgraph.json)
 
 ```json
 {
@@ -473,10 +486,10 @@ my-app/
 ```
 
 **Key sections:**
-- `dependencies`: Required packages and local modules
-- `graphs`: Maps graph names to file paths and variables (compiled graphs or graph-generating functions)
-- `env`: Points to environment variable file
-- `dockerfile_lines`: System libraries/binaries (optional)
+- `dependencies`: required packages and local modules
+- `graphs`: maps graph names to file paths and variables (compiled graphs or graph-generating functions)
+- `env`: points to the environment variable file
+- `dockerfile_lines`: system libraries and binaries (optional)
 
 ## Key APIs
 
@@ -494,17 +507,17 @@ my-app/
 | `CachePolicy` | Configure result caching |
 | `Overwrite` | Bypass state reducers |
 
-## Best Practices
+## Best practices
 
 - Use `checkpointer=None` (default) for most subgraph scenarios
-- Use `checkpointer=True` only when subagent needs multi-turn memory
-- Never use stateful subgraphs with parallel tool calls to same instance
-- Wrap each stateful subgraph in unique `StateGraph` for namespace isolation
+- Use `checkpointer=True` only when the subagent needs multi-turn memory
+- Never use stateful subgraphs with parallel tool calls to the same instance
+- Wrap each stateful subgraph in its own `StateGraph` for namespace isolation
 - Use time travel for debugging non-deterministic LLM behavior
-- Stream with `updates` mode for efficiency, `values` for complete state
+- Stream with `updates` mode for efficiency and `values` for the complete state
 - Use `get_stream_writer()` for custom progress updates
 - Pass `RunnableConfig` explicitly in async LLM calls (Python < 3.11)
 - Use `stream_mode=["updates", "custom"]` to combine multiple modes
 - Structure applications with `langgraph.json` for LangSmith deployment
 - Use `defer=True` for map-reduce patterns with uneven branches
-- Filter streams by tags or node names for targeted output
+- Filter streams by tag or node name to get only the output you need

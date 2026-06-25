@@ -1,8 +1,24 @@
 # Deep Agents
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Quick start](#quick-start)
+- [Core components](#core-components)
+- [Models](#models)
+- [Subagents](#subagents)
+- [Skills](#skills)
+- [Human-in-the-loop](#human-in-the-loop)
+- [Long-term memory](#long-term-memory)
+- [Sandboxes](#sandboxes)
+- [Context management](#context-management)
+- [Research agent example](#research-agent-example)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Deep Agents is a framework for building LLM-powered agents with integrated planning, file management, subagent capabilities, and long-term memory. It is built on LangChain's core components and uses LangGraph for execution. The framework provides an "agent harness" that combines planning, virtual filesystem access, task delegation, context management, code execution, and human-in-the-loop features.
+Deep Agents is a framework for building LLM-powered agents with built-in planning, file management, subagents, and long-term memory. It is built on LangChain's core components and runs on LangGraph. Its "agent harness" bundles planning, a virtual filesystem, task delegation, context management, code execution, and human-in-the-loop support.
 
 ## Installation
 
@@ -10,7 +26,7 @@ Deep Agents is a framework for building LLM-powered agents with integrated plann
 pip install deepagents
 ```
 
-## Quick Start
+## Quick start
 
 ```python
 from deepagents import create_deep_agent
@@ -29,15 +45,15 @@ result = agent.invoke(
 )
 ```
 
-## Core Components
+## Core components
 
 ### Planning (write_todos)
 
-Built-in `write_todos` tool allows agents to break down complex tasks into discrete steps with three statuses: `pending`, `in_progress`, and `completed`. Useful for long-running tasks that require organized multi-step execution.
+The built-in `write_todos` tool lets an agent break a complex task into discrete steps, each with one of three statuses: `pending`, `in_progress`, or `completed`. It suits long-running, multi-step tasks.
 
-### Virtual Filesystem
+### Virtual filesystem
 
-A configurable virtual filesystem provides file operations:
+A configurable virtual filesystem provides these file operations:
 
 | Tool | Purpose |
 |---|---|
@@ -49,7 +65,7 @@ A configurable virtual filesystem provides file operations:
 | `grep` | Searches file contents with multiple output modes |
 | `execute` | Runs shell commands (sandbox backends only) |
 
-### Pluggable Filesystem Backends
+### Pluggable filesystem backends
 
 | Backend | Description |
 |---|---|
@@ -61,15 +77,15 @@ A configurable virtual filesystem provides file operations:
 
 ## Models
 
-Deep agents work with any LangChain chat model supporting tool calling.
+Deep agents work with any LangChain chat model that supports tool calling.
 
-### String-Based Model Selection
+### String-based model selection
 
 ```python
 agent = create_deep_agent(model="openai:gpt-5.3-codex")
 ```
 
-### Advanced Configuration
+### Advanced configuration
 
 ```python
 from langchain.chat_models import init_chat_model
@@ -82,7 +98,7 @@ model = init_chat_model(
 agent = create_deep_agent(model=model)
 ```
 
-### Direct Provider Instantiation
+### Direct provider instantiation
 
 ```python
 from langchain_anthropic import ChatAnthropic
@@ -97,22 +113,22 @@ agent = create_deep_agent(model=model)
 
 ## Subagents
 
-Subagents enable deep agents to delegate work while maintaining clean context. They solve context bloat by isolating detailed tool work - the main agent receives only final results, not intermediate outputs.
+Subagents let a deep agent delegate work without cluttering its own context. Detailed tool work stays inside the subagent, and the main agent receives only the final result, not the intermediate outputs.
 
-### When to Use Subagents
+### When to use subagents
 
-- Multi-step tasks cluttering main agent context
-- Specialized domains requiring custom instructions
-- Tasks needing different model capabilities
-- High-level coordination scenarios
+- Multi-step tasks that would clutter the main agent's context
+- Specialized domains that need custom instructions
+- Tasks that need a different model
+- High-level coordination
 
-### When NOT to Use
+### When not to use
 
 - Simple, single-step tasks
-- When intermediate context is essential
-- When overhead exceeds benefits
+- Cases where the intermediate context is essential
+- Cases where the overhead outweighs the benefit
 
-### SubAgent Configuration
+### SubAgent configuration
 
 ```python
 research_subagent = {
@@ -143,7 +159,7 @@ Optional fields:
 
 ### CompiledSubAgent
 
-For complex workflows using pre-built LangGraph:
+For complex workflows built with LangGraph:
 
 ```python
 from deepagents import CompiledSubAgent
@@ -155,9 +171,9 @@ custom_subagent = CompiledSubAgent(
 )
 ```
 
-### General-Purpose Subagent
+### General-purpose subagent
 
-Available automatically unless overridden. Inherits same system prompt, tools, model, and skills from the main agent.
+Available automatically unless overridden. It inherits the main agent's system prompt, tools, model, and skills.
 
 ```python
 agent = create_deep_agent(
@@ -172,15 +188,15 @@ agent = create_deep_agent(
 )
 ```
 
-### Multi-Subagent Pattern
+### Multi-subagent pattern
 
-1. Data-collector subagent: Gathers information
-2. Data-analyzer subagent: Extracts insights
-3. Report-writer subagent: Formats output
+1. Data-collector subagent: gathers information
+2. Data-analyzer subagent: extracts insights
+3. Report-writer subagent: formats the output
 
-Main agent coordinates, delegating to appropriate specialists.
+The main agent coordinates and delegates to the right specialist.
 
-### Subagent Context
+### Subagent context
 
 Parent context propagates to all subagents. Use namespaced keys for per-subagent configuration:
 
@@ -194,19 +210,19 @@ Parent context propagates to all subagents. Use namespaced keys for per-subagent
 }
 ```
 
-### Subagent Best Practices
+### Subagent best practices
 
 - Use specific, action-oriented descriptions
 - Include tool usage and output formatting guidance in system prompts
-- Restrict tools to task requirements for improved focus and security
-- Assign different models based on task strengths
+- Restrict tools to what the task needs, for focus and security
+- Assign models according to task strengths
 - Instruct subagents to return summaries only, not raw data
 
 ## Skills
 
-Skills extend agent capabilities through reusable, specialized workflows following the Agent Skills specification. They use progressive disclosure - agents only review skill details when relevant to the task.
+Skills are reusable, specialized workflows that follow the Agent Skills specification. They use progressive disclosure: an agent reads a skill's details only when the task calls for it.
 
-### SKILL.md Format
+### SKILL.md format
 
 ```yaml
 ---
@@ -220,7 +236,7 @@ allowed-tools: [read_file, write_file]
 ...
 ```
 
-### Configuration Methods
+### Configuration methods
 
 **StateBackend (default):** Pass skill files via `invoke(files={...})` using `create_file_data()`.
 
@@ -228,7 +244,7 @@ allowed-tools: [read_file, write_file]
 
 **FilesystemBackend:** Load skills from disk relative to `root_dir`.
 
-### Skills vs Memory
+### Skills vs memory
 
 | Aspect | Skills | Memory |
 |---|---|---|
@@ -236,9 +252,9 @@ allowed-tools: [read_file, write_file]
 | File | `SKILL.md` | `AGENTS.md` |
 | Use case | Large, task-specific contexts | Always-relevant project conventions |
 
-## Human-in-the-Loop
+## Human-in-the-loop
 
-The `interrupt_on` parameter pauses execution for manual review using LangGraph's interrupt capabilities.
+The `interrupt_on` parameter pauses execution for manual review, using LangGraph's interrupt mechanism.
 
 ### Configuration
 
@@ -256,7 +272,7 @@ agent = create_deep_agent(
 )
 ```
 
-### Decision Types
+### Decision types
 
 | Type | Action |
 |---|---|
@@ -264,7 +280,7 @@ agent = create_deep_agent(
 | `edit` | Modify arguments before execution |
 | `reject` | Skip tool execution entirely |
 
-### Handling Interrupts
+### Handling interrupts
 
 ```python
 from langgraph.types import Command
@@ -278,9 +294,9 @@ result = agent.invoke(
 
 Decisions must match `action_requests` order when multiple tools require approval.
 
-## Long-Term Memory
+## Long-term memory
 
-Deep agents extend persistent memory across conversation threads using `CompositeBackend` that routes specific filesystem paths to durable storage.
+Deep agents keep memory across conversation threads by using a `CompositeBackend` that routes specific filesystem paths to durable storage.
 
 ### Setup
 
@@ -305,14 +321,14 @@ agent = create_deep_agent(
 )
 ```
 
-### Storage Types
+### Storage types
 
-| Type | Lifetime | Backend | Example Path |
+| Type | Lifetime | Backend | Example path |
 |---|---|---|---|
 | Short-term (transient) | Single thread | Agent state | `/notes.txt` |
 | Long-term (persistent) | Cross-thread | LangGraph Store | `/memories/preferences.txt` |
 
-### Cross-Thread Access
+### Cross-thread access
 
 ```python
 import uuid
@@ -328,7 +344,7 @@ agent.invoke({
 }, config=config2)
 ```
 
-### External Access (LangSmith)
+### External access (LangSmith)
 
 ```python
 from langgraph_sdk import get_client
@@ -347,14 +363,14 @@ await client.store.put_item(
 )
 ```
 
-### Store Implementations
+### Store implementations
 
-| Store | Use Case |
+| Store | Use case |
 |---|---|
 | `InMemoryStore` | Development (data lost on restart) |
 | `PostgresStore` | Production (persistent) |
 
-### FileData Schema
+### FileData schema
 
 ```python
 from deepagents.backends.utils import create_file_data
@@ -365,24 +381,24 @@ file_data = create_file_data("Hello\nWorld")
 
 ## Sandboxes
 
-Sandboxes provide isolated execution environments allowing agents to safely run code, access filesystems, and execute shell commands without compromising host system security.
+Sandboxes are isolated execution environments where an agent can run code, use a filesystem, and execute shell commands without putting the host system at risk.
 
-### Integration Patterns
+### Integration patterns
 
 | Pattern | Description | Recommended |
 |---|---|---|
 | Agent in Sandbox | Agent runs inside sandbox | No (secrets risk) |
 | Sandbox as Tool | Agent calls sandbox tools via API | Yes |
 
-### Supported Providers
+### Supported providers
 
-| Provider | Package | Use Case |
+| Provider | Package | Use case |
 |---|---|---|
 | Modal | `langchain-modal` | ML/AI workloads with GPU access |
 | Daytona | `langchain-daytona` | TypeScript/Python, fast cold starts |
 | Runloop | `langchain-runloop` | Disposable devboxes |
 
-### Modal Example
+### Modal example
 
 ```python
 import modal
@@ -411,7 +427,7 @@ finally:
     modal_sandbox.terminate()
 ```
 
-### File Transfer APIs
+### File transfer APIs
 
 ```python
 # Upload files to sandbox
@@ -427,7 +443,7 @@ for result in results:
         print(f"{result.path}: {result.content.decode()}")
 ```
 
-### Security Considerations
+### Security considerations
 
 **Never put secrets inside a sandbox.** API keys, tokens, and database credentials can be read and exfiltrated by a context-injected agent.
 
@@ -435,22 +451,22 @@ Safe alternatives:
 1. Keep secrets in external tools outside sandbox (recommended)
 2. Use network proxy that injects credentials before forwarding
 
-### Lifecycle Management
+### Lifecycle management
 
 Always clean up sandbox resources:
 - Modal: `modal_sandbox.terminate()`
 - Runloop: `devbox.shutdown()`
 - Daytona: `sandbox.stop()`
 
-## Context Management
+## Context management
 
-### Runtime Context Compression
+### Runtime context compression
 
-**Offloading:** When tool inputs exceed 20,000 tokens (configurable), the system truncates older tool calls, replacing them with a file pointer and preview.
+**Offloading:** When tool inputs exceed 20,000 tokens (configurable), older tool calls are truncated and replaced with a file pointer and a preview.
 
-**Summarization:** At 85% of `max_input_tokens`, an LLM generates a structured summary including intent, artifacts, and next steps. The original conversation is preserved on the filesystem.
+**Summarization:** At 85% of `max_input_tokens`, an LLM writes a structured summary covering intent, artifacts, and next steps. The original conversation is kept on the filesystem.
 
-### Input Context Order
+### Input context order
 
 1. Custom system prompt
 2. Base agent prompt
@@ -463,7 +479,7 @@ Always clean up sandbox resources:
 9. Human-in-the-loop settings
 10. Local context
 
-## Research Agent Example
+## Research agent example
 
 ```python
 from deepagents import create_deep_agent
@@ -493,7 +509,7 @@ result = agent.invoke({
 print(result["messages"][-1].content)
 ```
 
-## Best Practices
+## Best practices
 
 - Use subagents for multi-step tasks to prevent context bloat
 - Assign different models to subagents based on task requirements

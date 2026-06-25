@@ -1,8 +1,26 @@
 # Messages
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core message components](#core-message-components)
+- [Message types](#message-types)
+- [Usage patterns](#usage-patterns)
+- [Message content formats](#message-content-formats)
+- [Standard content blocks reference](#standard-content-blocks-reference)
+- [Multimodal input examples](#multimodal-input-examples)
+- [Streaming messages](#streaming-messages)
+- [Token usage tracking](#token-usage-tracking)
+- [Tool calls in AIMessage](#tool-calls-in-aimessage)
+- [Tool execution flow](#tool-execution-flow)
+- [Standard content block parsing](#standard-content-block-parsing)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
+
 ## Overview
 
-Messages are the foundational unit for model interactions in LangChain. They encapsulate role identification, content payload, and optional metadata to represent conversation state with LLMs. LangChain provides a consistent message format across different providers, supporting text, multimodal content, tool calls, and structured content blocks.
+Messages are the basic unit of model interaction in LangChain. Each one carries a role, a content payload, and optional metadata, and together they represent the conversation state sent to an LLM. The message format is the same across providers and supports text, multimodal content, tool calls, and structured content blocks.
 
 ## Installation
 
@@ -10,21 +28,21 @@ Messages are the foundational unit for model interactions in LangChain. They enc
 pip install langchain
 ```
 
-## Core Message Components
+## Core message components
 
-Every message contains three essential elements:
+Every message has three elements:
 
 | Element | Purpose |
 |---------|---------|
-| **Role** | Message type identifier (system, user, assistant, tool) |
-| **Content** | Actual payload (text, images, audio, documents) |
+| **Role** | Message type (system, user, assistant, tool) |
+| **Content** | The payload (text, images, audio, documents) |
 | **Metadata** | Optional fields for response info, IDs, token counts |
 
-## Message Types
+## Message types
 
 ### SystemMessage
 
-Provides initial instructions that prime model behavior. Used to establish tone, define role, and set response guidelines.
+Gives the model its initial instructions: tone, role, and response guidelines.
 
 ```python
 from langchain.messages import SystemMessage, HumanMessage
@@ -36,7 +54,7 @@ response = model.invoke(messages)
 
 ### HumanMessage
 
-Represents user input supporting text, images, audio, files, and multimodal content.
+Represents user input: text, images, audio, files, and other multimodal content.
 
 ```python
 from langchain.messages import HumanMessage
@@ -46,11 +64,11 @@ human_msg = HumanMessage(content="Hello!", name="alice", id="msg_123")
 
 ### AIMessage
 
-Contains model-generated output including text, tool calls, and provider-specific metadata.
+Holds model-generated output: text, tool calls, and provider-specific metadata.
 
 | Attribute | Description |
 |-----------|-------------|
-| `text` | Text content of message |
+| `text` | Text content of the message |
 | `content` | Raw message content |
 | `content_blocks` | Standardized content blocks |
 | `tool_calls` | Model-generated tool calls |
@@ -64,7 +82,7 @@ print(type(response))  # <class 'langchain.messages.AIMessage'>
 
 ### ToolMessage
 
-Passes tool execution results back to the model. Must reference the corresponding tool call ID.
+Passes tool execution results back to the model. It must reference the ID of the corresponding tool call.
 
 ```python
 from langchain.messages import ToolMessage
@@ -80,12 +98,12 @@ tool_message = ToolMessage(
 |-----------|----------|-------------|
 | `content` | Yes | Tool output (stringified) |
 | `tool_call_id` | Yes | Matching AIMessage call ID |
-| `name` | No | Tool name that was called |
-| `artifact` | No | Supplementary data not sent to model |
+| `name` | No | Name of the tool that was called |
+| `artifact` | No | Supplementary data not sent to the model |
 
-## Usage Patterns
+## Usage patterns
 
-### Text Prompts
+### Text prompts
 
 Simple string input for standalone requests:
 
@@ -93,9 +111,9 @@ Simple string input for standalone requests:
 response = model.invoke("Write a haiku about spring")
 ```
 
-### Message Prompts
+### Message prompts
 
-List of message objects for multi-turn conversations:
+A list of message objects, for multi-turn conversations:
 
 ```python
 messages = [
@@ -106,7 +124,7 @@ messages = [
 response = model.invoke(messages)
 ```
 
-### Dictionary Format
+### Dictionary format
 
 OpenAI-compatible format:
 
@@ -119,17 +137,17 @@ messages = [
 response = model.invoke(messages)
 ```
 
-## Message Content Formats
+## Message content formats
 
 Messages accept content in three formats:
 
-### String Content
+### String content
 
 ```python
 human_message = HumanMessage("Hello, how are you?")
 ```
 
-### Provider-Native List
+### Provider-native list
 
 ```python
 human_message = HumanMessage(content=[
@@ -138,7 +156,7 @@ human_message = HumanMessage(content=[
 ])
 ```
 
-### Standard Content Blocks
+### Standard content blocks
 
 ```python
 human_message = HumanMessage(content_blocks=[
@@ -147,20 +165,20 @@ human_message = HumanMessage(content_blocks=[
 ])
 ```
 
-## Standard Content Blocks Reference
+## Standard content blocks reference
 
-### Core Blocks
+### Core blocks
 
-| Block Type | Key Fields |
+| Block type | Key fields |
 |------------|------------|
 | `TextContentBlock` | `type: "text"`, `text`, `annotations`, `extras` |
 | `ReasoningContentBlock` | `type: "reasoning"`, `reasoning`, `extras` |
 
-### Multimodal Blocks
+### Multimodal blocks
 
 All multimodal blocks support `url`, `base64`, `id`, and `mime_type` fields.
 
-| Block Type | Type Value |
+| Block type | Type value |
 |------------|------------|
 | `ImageContentBlock` | `"image"` |
 | `AudioContentBlock` | `"audio"` |
@@ -168,15 +186,15 @@ All multimodal blocks support `url`, `base64`, `id`, and `mime_type` fields.
 | `FileContentBlock` | `"file"` |
 | `PlainTextContentBlock` | `"text-plain"` |
 
-### Tool Calling Blocks
+### Tool calling blocks
 
-| Block Type | Type Value | Key Fields |
+| Block type | Type value | Key fields |
 |------------|------------|------------|
 | `ToolCall` | `"tool_call"` | `name`, `args`, `id` (all required) |
 | `ToolCallChunk` | `"tool_call_chunk"` | `name`, `args` (partial), `id`, `index` |
 | `InvalidToolCall` | `"invalid_tool_call"` | `name`, `args`, `error` |
 
-### Server-Side Tool Blocks
+### Server-side tool blocks
 
 | Block Type | Type Value | Key Fields |
 |------------|------------|------------|
@@ -184,13 +202,13 @@ All multimodal blocks support `url`, `base64`, `id`, and `mime_type` fields.
 | `ServerToolCallChunk` | `"server_tool_call_chunk"` | `id`, `name`, `args`, `index` |
 | `ServerToolResult` | `"server_tool_result"` | `tool_call_id`, `status`, `output` |
 
-### Provider-Specific Block
+### Provider-specific block
 
-`NonStandardContentBlock` - `type: "non_standard"`, `value` (provider-specific data).
+`NonStandardContentBlock`: `type: "non_standard"`, `value` (provider-specific data).
 
-## Multimodal Input Examples
+## Multimodal input examples
 
-### Image Input
+### Image input
 
 ```python
 # From URL
@@ -211,7 +229,7 @@ message = {
     ]
 }
 
-# From File ID
+# From file ID
 message = {
     "role": "user",
     "content": [
@@ -221,7 +239,7 @@ message = {
 }
 ```
 
-### PDF Document Input
+### PDF document input
 
 ```python
 # From URL
@@ -243,7 +261,7 @@ message = {
 }
 ```
 
-### Audio Input
+### Audio input
 
 ```python
 # From base64
@@ -265,7 +283,7 @@ message = {
 }
 ```
 
-### Video Input
+### Video input
 
 ```python
 # From base64
@@ -287,9 +305,9 @@ message = {
 }
 ```
 
-## Streaming Messages
+## Streaming messages
 
-During streaming, receive `AIMessageChunk` objects that combine into full messages:
+Streaming yields `AIMessageChunk` objects that add up to a full message:
 
 ```python
 full_message = None
@@ -297,7 +315,7 @@ for chunk in model.stream("Hi"):
     full_message = chunk if full_message is None else full_message + chunk
 ```
 
-## Token Usage Tracking
+## Token usage tracking
 
 ```python
 response = model.invoke("Hello!")
@@ -305,7 +323,7 @@ response.usage_metadata
 # Returns: {'input_tokens': 8, 'output_tokens': 304, 'total_tokens': 312}
 ```
 
-## Tool Calls in AIMessage
+## Tool calls in AIMessage
 
 ```python
 model_with_tools = model.bind_tools([get_weather])
@@ -317,7 +335,7 @@ for tool_call in response.tool_calls:
     print(f"ID: {tool_call['id']}")
 ```
 
-## Tool Execution Flow
+## Tool execution flow
 
 ```python
 from langchain.messages import AIMessage, HumanMessage, ToolMessage
@@ -344,9 +362,9 @@ messages = [
 response = model.invoke(messages)
 ```
 
-## Standard Content Block Parsing
+## Standard content block parsing
 
-Messages from different providers parse into a consistent format:
+Messages from different providers parse into one consistent format:
 
 ```python
 message = AIMessage(
@@ -356,7 +374,7 @@ message = AIMessage(
 message.content_blocks  # Returns standardized format
 ```
 
-Enable standard content output:
+To get standard content output:
 
 ```python
 model = init_chat_model("gpt-5-nano", output_version="v1")
@@ -372,13 +390,13 @@ model = init_chat_model("gpt-5-nano", output_version="v1")
 | `AIMessageChunk` | Streaming response fragment |
 | `ToolMessage` | Tool execution result |
 
-## Best Practices
+## Best practices
 
 - Use text prompts for simple, single requests without conversation history
-- Use message prompts for conversations requiring history and system instructions
-- Include system messages to establish model behavior and constraints
+- Use message prompts for conversations that need history and system instructions
+- Include a system message to set model behavior and constraints
 - Use `content_blocks` property for type-safe, provider-agnostic content access
 - Store supplementary tool data in `ToolMessage.artifact` (not sent to model)
 - Check provider documentation for supported file formats and size limits
 - Use dictionary format for OpenAI-compatible code
-- Always match `tool_call_id` between AIMessage tool calls and ToolMessage responses
+- Always match `tool_call_id` between AIMessage tool calls and their ToolMessage responses

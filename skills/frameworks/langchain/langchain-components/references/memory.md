@@ -1,10 +1,24 @@
 # Memory
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Short-term memory](#short-term-memory)
+- [Message management strategies](#message-management-strategies)
+- [Accessing state in tools](#accessing-state-in-tools)
+- [Dynamic prompts via middleware](#dynamic-prompts-via-middleware)
+- [After-model middleware](#after-model-middleware)
+- [Long-term memory](#long-term-memory)
+- [Checkpointer options](#checkpointer-options)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
+
 ## Overview
 
-LangChain provides two types of memory for AI agents: **short-term memory** (conversation context within a single thread) and **long-term memory** (persistent knowledge across conversations). Short-term memory uses checkpointers to maintain conversation history, while long-term memory uses a store abstraction to persist structured data across threads.
+LangChain has two types of memory for agents: **short-term memory** (conversation context within a single thread) and **long-term memory** (knowledge that persists across conversations). Short-term memory keeps conversation history in a checkpointer. Long-term memory stores structured data across threads through a store abstraction.
 
-Memory is critical for agents to retain context, learn from feedback, and adapt to user preferences. Long conversations pose a challenge since full history may not fit inside an LLM's context window, requiring strategies like trimming, summarization, or external persistence.
+Memory lets an agent retain context, learn from feedback, and adapt to user preferences. Long conversations are the main problem: the full history may not fit in the LLM's context window, so you need trimming, summarization, or external persistence.
 
 ## Installation
 
@@ -15,9 +29,9 @@ pip install langgraph-checkpoint-postgres  # PostgreSQL
 pip install langgraph-checkpoint-sqlite    # SQLite
 ```
 
-## Short-term Memory
+## Short-term memory
 
-### Basic Setup with InMemorySaver
+### Basic setup with InMemorySaver
 
 ```python
 from langchain.agents import create_agent
@@ -36,7 +50,7 @@ agent.invoke(
 )
 ```
 
-### Production Setup with PostgreSQL
+### Production setup with PostgreSQL
 
 ```python
 from langchain.agents import create_agent
@@ -52,7 +66,7 @@ with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
     )
 ```
 
-### Custom State Extension
+### Custom state extension
 
 ```python
 from langchain.agents import create_agent, AgentState
@@ -79,11 +93,11 @@ result = agent.invoke(
 )
 ```
 
-## Message Management Strategies
+## Message management strategies
 
-### Trim Messages
+### Trim messages
 
-Keep only the last N messages before LLM calls:
+Keep only the last N messages before each LLM call:
 
 ```python
 from langchain.messages import RemoveMessage
@@ -110,7 +124,7 @@ def trim_messages(state: AgentState, runtime: Runtime) -> dict[str, Any] | None:
     }
 ```
 
-### Delete Specific Messages
+### Delete specific messages
 
 ```python
 from langchain.messages import RemoveMessage
@@ -125,9 +139,9 @@ def delete_all_messages(state):
     return {"messages": [RemoveMessage(id=REMOVE_ALL_MESSAGES)]}
 ```
 
-### Summarization Middleware
+### Summarization middleware
 
-Condense older messages automatically when the conversation grows too long:
+Condenses older messages automatically when the conversation grows too long:
 
 ```python
 from langchain.agents import create_agent
@@ -152,13 +166,13 @@ agent = create_agent(
 
 | Parameter | Purpose |
 |---|---|
-| `model` | Model used for summarization (can be cheaper/smaller) |
+| `model` | Model used for summarization (can be cheaper or smaller) |
 | `trigger` | When to summarize (e.g., after 4000 tokens) |
-| `keep` | How many recent messages to preserve |
+| `keep` | How many recent messages to keep |
 
-## Accessing State in Tools
+## Accessing state in tools
 
-### Read State
+### Read state
 
 ```python
 from langchain.agents import create_agent, AgentState
@@ -174,7 +188,7 @@ def get_user_info(runtime: ToolRuntime) -> str:
     return "User is John Smith" if user_id == "user_123" else "Unknown user"
 ```
 
-### Write State from Tools
+### Write state from tools
 
 ```python
 from langgraph.types import Command
@@ -187,7 +201,7 @@ def update_user_info(runtime: ToolRuntime[Context, CustomState]) -> Command:
     return Command(update={"user_name": name})
 ```
 
-## Dynamic Prompts via Middleware
+## Dynamic prompts via middleware
 
 ```python
 from langchain.agents.middleware import dynamic_prompt, ModelRequest
@@ -198,7 +212,7 @@ def dynamic_system_prompt(request: ModelRequest) -> str:
     return f"You are a helpful assistant. Address the user as {user_name}."
 ```
 
-## After Model Middleware
+## After-model middleware
 
 ```python
 from langchain.agents.middleware import after_model
@@ -213,19 +227,19 @@ def validate_response(state: AgentState, runtime: Runtime) -> dict | None:
     return None
 ```
 
-## Long-term Memory
+## Long-term memory
 
-Long-term memory persists across conversation threads using the LangGraph store abstraction. Memories are organized as JSON documents in namespaces.
+Long-term memory persists across conversation threads through the LangGraph store abstraction. Memories are JSON documents organized in namespaces.
 
-### Store Architecture
+### Store architecture
 
 | Concept | Analogy | Purpose |
 |---|---|---|
-| Namespace | Folder | Organizational container (typically includes user ID) |
-| Key | Filename | Distinct identifier within a namespace |
+| Namespace | Folder | Container for organizing memories (typically includes the user ID) |
+| Key | Filename | Unique identifier within a namespace |
 | Value | File content | JSON document with memory data |
 
-### Basic Setup
+### Basic setup
 
 ```python
 from langgraph.store.memory import InMemoryStore
@@ -235,7 +249,7 @@ namespace = (user_id, application_context)
 store.put(namespace, "a-memory", {"rules": [...], "my-key": "my-value"})
 ```
 
-### Store Operations
+### Store operations
 
 | Operation | Description |
 |---|---|
@@ -243,7 +257,7 @@ store.put(namespace, "a-memory", {"rules": [...], "my-key": "my-value"})
 | `store.get(namespace, key)` | Retrieve a specific memory |
 | `store.search(namespace, filter={...}, query="...")` | Find memories with vector similarity |
 
-### Reading Long-term Memory in Tools
+### Reading long-term memory in tools
 
 ```python
 @tool
@@ -253,7 +267,7 @@ def get_user_info(runtime: ToolRuntime[Context]) -> str:
     return str(user_info.value) if user_info else "Unknown user"
 ```
 
-### Writing Long-term Memory from Tools
+### Writing long-term memory from tools
 
 ```python
 @tool
@@ -263,15 +277,15 @@ def save_user_info(user_info: UserInfo, runtime: ToolRuntime[Context]) -> str:
     return "Successfully saved user info."
 ```
 
-### Passing Store to Agent
+### Passing the store to the agent
 
 ```python
 agent = create_agent(model="gpt-5", tools=[get_user_info, save_user_info], store=store)
 ```
 
-## Checkpointer Options
+## Checkpointer options
 
-| Backend | Package | Use Case |
+| Backend | Package | Use case |
 |---|---|---|
 | `InMemorySaver` | `langgraph` | Development and testing |
 | `PostgresSaver` | `langgraph-checkpoint-postgres` | Production deployments |
@@ -289,19 +303,19 @@ agent = create_agent(model="gpt-5", tools=[get_user_info, save_user_info], store
 | `ToolRuntime` | `langchain.tools` | Runtime access in tools |
 | `RemoveMessage` | `langchain.messages` | Delete messages from history |
 | `REMOVE_ALL_MESSAGES` | `langgraph.graph.message` | Sentinel for clearing all messages |
-| `SummarizationMiddleware` | `langchain.agents.middleware` | Auto-summarize long conversations |
+| `SummarizationMiddleware` | `langchain.agents.middleware` | Summarizes long conversations automatically |
 | `@before_model` | `langchain.agents.middleware` | Pre-process before LLM call |
 | `@after_model` | `langchain.agents.middleware` | Post-process after LLM call |
 | `@dynamic_prompt` | `langchain.agents.middleware` | Context-aware system prompts |
 | `Command` | `langgraph.types` | Return state updates from tools |
 
-## Best Practices
+## Best practices
 
 - Use `InMemorySaver` for development; switch to PostgreSQL or SQLite for production
 - Always specify `thread_id` in config to isolate conversation threads
-- Use summarization middleware to handle long conversations instead of truncating
-- When deleting messages, ensure valid history structure (some providers require user message first, tool results after tool calls)
+- Use summarization middleware for long conversations instead of truncating
+- When deleting messages, keep the history valid (some providers require a user message first and tool results after tool calls)
 - Use namespaces with user IDs to isolate long-term memories per user
 - Keep long-term memory values as structured JSON for easier querying
-- Use vector-indexed stores (`index={"embed": embed, "dims": N}`) to enable semantic search across memories
+- Use vector-indexed stores (`index={"embed": embed, "dims": N}`) for semantic search across memories
 - Prefer `@before_model` middleware for message trimming over manual state manipulation

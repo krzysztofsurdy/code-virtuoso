@@ -1,29 +1,44 @@
 # LangChain Integrations
 
+## Contents
+
+- [Overview](#overview)
+- [Integration categories](#integration-categories)
+- [Chat models](#chat-models)
+- [Embedding models](#embedding-models)
+- [Document loaders](#document-loaders)
+- [Vector stores](#vector-stores)
+- [Retrievers](#retrievers)
+- [Tools](#tools)
+- [Text splitters](#text-splitters)
+- [Stores (key-value)](#stores-key-value)
+- [Popular providers](#popular-providers)
+- [Best practices](#best-practices)
+
 ## Overview
 
-LangChain provides 1000+ integrations across chat and embedding models, tools and toolkits, document loaders, vector stores, and more. A provider is a third-party service or platform that LangChain integrates with to access AI capabilities. Each integration follows the `langchain-[provider]` package naming pattern on PyPI.
+LangChain has 1000+ integrations covering chat and embedding models, tools and toolkits, document loaders, vector stores, and more. A provider is a third-party service or platform that LangChain connects to. Each integration is published on PyPI as a `langchain-[provider]` package.
 
-## Integration Categories
+## Integration categories
 
 | Category | Purpose | Count |
 |---|---|---|
-| Chat Models | Conversational AI interfaces | 100+ |
-| Embedding Models | Text-to-vector transformation | 80+ |
-| Document Loaders | Data ingestion from diverse sources | 200+ |
-| Vector Stores | Similarity search and storage | 100+ |
+| Chat models | Conversational AI interfaces | 100+ |
+| Embedding models | Text-to-vector transformation | 80+ |
+| Document loaders | Data ingestion from many sources | 200+ |
+| Vector stores | Similarity search and storage | 100+ |
 | Retrievers | Document retrieval interfaces | 70+ |
 | Tools | Agent-callable utilities | 150+ |
-| Text Splitters | Document chunking strategies | 20+ |
+| Text splitters | Document chunking strategies | 20+ |
 | Stores | Key-value storage for caching | 10+ |
 
-## Chat Models
+## Chat models
 
-Chat models accept message sequences as input and return messages as output, differing from traditional string-based LLMs.
+Chat models take a sequence of messages as input and return a message, unlike traditional string-based LLMs.
 
-### Featured Models
+### Featured models
 
-| Provider | Package | Tool Calling | Structured Output | Multimodal |
+| Provider | Package | Tool calling | Structured output | Multimodal |
 |---|---|---|---|---|
 | OpenAI | `langchain-openai` | Yes | Yes | Yes |
 | Anthropic | `langchain-anthropic` | Yes | Yes | Yes |
@@ -34,19 +49,19 @@ Chat models accept message sequences as input and return messages as output, dif
 | Ollama | `langchain-ollama` | Yes | Yes | Varies |
 | MistralAI | `langchain-mistralai` | Yes | Yes | No |
 
-### Chat Completions API Compatibility
+### Chat Completions API compatibility
 
-Certain model providers offer endpoints compatible with OpenAI's Chat Completions API. Use `ChatOpenAI` with a custom `base_url` parameter for compatible endpoints, though non-standard response fields may not be preserved.
+Some providers expose endpoints compatible with OpenAI's Chat Completions API. Point `ChatOpenAI` at them with a custom `base_url`. Non-standard response fields may not be preserved.
 
-### Routers and Proxies
+### Routers and proxies
 
-OpenRouter provides unified access to models across multiple providers through a single API interface, simplifying credential management and enabling model switching.
+OpenRouter gives access to models from many providers through a single API, which centralizes credentials and makes switching models easy.
 
-## Embedding Models
+## Embedding models
 
-Embedding models transform raw text into fixed-length vectors that capture semantic meaning, enabling similarity-based search and comparison.
+Embedding models turn text into fixed-length vectors that capture semantic meaning, which makes similarity search and comparison possible.
 
-### Core Interface
+### Core interface
 
 ```python
 from langchain_openai import OpenAIEmbeddings
@@ -60,17 +75,17 @@ vectors = embeddings.embed_documents(["text 1", "text 2"])
 query_vector = embeddings.embed_query("search query")
 ```
 
-### Similarity Metrics
+### Similarity metrics
 
 | Metric | Description |
 |---|---|
-| Cosine Similarity | Measures angle between vectors |
-| Euclidean Distance | Measures straight-line distance |
-| Dot Product | Measures vector projection |
+| Cosine similarity | Measures the angle between vectors |
+| Euclidean distance | Measures straight-line distance |
+| Dot product | Measures vector projection |
 
-### Caching Embeddings
+### Caching embeddings
 
-`CacheBackedEmbeddings` stores embeddings in key-value stores using hashed text as cache keys:
+`CacheBackedEmbeddings` stores embeddings in a key-value store, keyed by a hash of the text:
 
 ```python
 from langchain.embeddings import CacheBackedEmbeddings
@@ -91,11 +106,11 @@ Key parameters:
 - `namespace` - prevents collisions across models (always set this)
 - `query_embedding_cache` - optional query caching
 
-## Document Loaders
+## Document loaders
 
-Document loaders provide a standardized interface for reading data from diverse sources into LangChain's Document format.
+Document loaders read data from many sources into LangChain's Document format through one interface.
 
-### Core Interface
+### Core interface
 
 ```python
 from langchain_community.document_loaders.csv_loader import CSVLoader
@@ -110,24 +125,24 @@ for document in loader.lazy_load():
     print(document)
 ```
 
-### Loader Categories
+### Loader categories
 
 | Category | Examples |
 |---|---|
 | Webpages | Web, RecursiveURL, Sitemap, Firecrawl, Spider |
 | PDFs | PyPDF, PyMuPDF, PDFPlumber, PDFMiner, Unstructured |
-| Cloud Storage | AWS S3, Azure Blob, Google Cloud Storage, Google Drive, Dropbox, OneDrive |
+| Cloud storage | AWS S3, Azure Blob, Google Cloud Storage, Google Drive, Dropbox, OneDrive |
 | Databases | MongoDB, Cassandra, Snowflake, BigQuery |
 | Social/Messaging | Twitter, Reddit, Telegram, WhatsApp, Discord, Slack |
 | Productivity | Notion, GitHub, Figma, Jira, Trello |
 | Academic | Arxiv, PubMed, Wikipedia |
-| Common Files | CSV, JSON, HTML, Markdown |
+| Common files | CSV, JSON, HTML, Markdown |
 
-## Vector Stores
+## Vector stores
 
-Vector stores embed data and perform similarity searches through a two-phase workflow: indexing (documents to vectors) and querying (query to similar results).
+Vector stores embed data and run similarity searches in two phases: indexing (documents to vectors) and querying (query to similar results).
 
-### Core Interface
+### Core interface
 
 ```python
 from langchain_core.vectorstores import InMemoryVectorStore
@@ -144,14 +159,14 @@ vector_store.delete(ids=["id1"])
 similar_docs = vector_store.similarity_search("your query here", k=5)
 ```
 
-### Search Parameters
+### Search parameters
 
 | Parameter | Description |
 |---|---|
 | `k` | Number of results to return |
 | `filter` | Metadata-based filtering (support varies by implementation) |
 
-### Popular Vector Stores
+### Popular vector stores
 
 | Store | Type | Package |
 |---|---|---|
@@ -167,11 +182,11 @@ similar_docs = vector_store.similarity_search("your query here", k=5)
 
 ## Retrievers
 
-Retrievers accept string queries and return Document objects. They are more general than vector stores and do not require storage capabilities. All vector stores can be cast to retrievers.
+Retrievers take a string query and return Document objects. They are more general than vector stores and do not need to store anything. Every vector store can be turned into a retriever.
 
 ### Types
 
-**Bring-Your-Own Documents:**
+**Bring-your-own documents:**
 
 | Retriever | Type | Package |
 |---|---|---|
@@ -181,7 +196,7 @@ Retrievers accept string queries and return Document objects. They are more gene
 | NVIDIARetriever | Self-hosted | `langchain-nvidia-ai-endpoints` |
 | VertexAISearchRetriever | Cloud | `langchain-google-community` |
 
-**External Index Retrievers:**
+**External index retrievers:**
 
 | Retriever | Source | Package |
 |---|---|---|
@@ -191,24 +206,24 @@ Retrievers accept string queries and return Document objects. They are more gene
 
 ## Tools
 
-Tools are utilities designed to be called by a model: their inputs are generated by models, and their outputs are passed back to models. A toolkit groups related tools for collaborative use.
+Tools are utilities a model calls: the model generates their inputs, and their outputs go back to the model. A toolkit groups related tools.
 
 ### Categories
 
-| Category | Options | Notable Free-Tier |
+| Category | Options | Notable free tier |
 |---|---|---|
 | Search | 16 options | DuckDuckGo, Brave, Exa (1K/mo), Tavily (1K/mo) |
-| Code Interpreters | 4 options | Azure Container Apps, Riza (self-hosted) |
+| Code interpreters | 4 options | Azure Container Apps, Riza (self-hosted) |
 | Productivity | GitHub, GitLab, Gmail, Jira, Slack, Twilio | Most free with rate limits |
-| Web Browsing | PlayWright, MultiOn | PlayWright (free) |
+| Web browsing | PlayWright, MultiOn | PlayWright (free) |
 | Databases | SQL, Cassandra, Spark, Stardog | Varies |
 | Financial | GOAT, Privy, Ampersend | GOAT, Privy (free) |
 
 Composio provides 500+ integrations with OAuth handling and event-driven workflows on a freemium model.
 
-## Text Splitters
+## Text splitters
 
-Text splitters break large documents into smaller, individually retrievable chunks.
+Text splitters break large documents into smaller chunks that can be retrieved individually.
 
 ### Installation
 
@@ -216,9 +231,9 @@ Text splitters break large documents into smaller, individually retrievable chun
 pip install -U langchain-text-splitters
 ```
 
-### Splitting Strategies
+### Splitting strategies
 
-**1. Text Structure-Based (Recommended Default)**
+**1. Text structure-based (recommended default)**
 
 ```python
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -230,9 +245,9 @@ text_splitter = RecursiveCharacterTextSplitter(
 texts = text_splitter.split_text(document)
 ```
 
-RecursiveCharacterTextSplitter preserves larger units (paragraphs) when possible, progressively breaking down to sentences, then words if needed.
+RecursiveCharacterTextSplitter keeps larger units (paragraphs) intact where it can, and falls back to sentences, then words, only when needed.
 
-**2. Length-Based (Token or Character)**
+**2. Length-based (token or character)**
 
 ```python
 from langchain_text_splitters import CharacterTextSplitter
@@ -245,21 +260,21 @@ text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
 texts = text_splitter.split_text(document)
 ```
 
-**3. Document Structure-Based**
+**3. Document structure-based**
 
-Exploits inherent formatting in structured documents:
+Uses the formatting already present in structured documents:
 - Markdown header-based splitting
 - JSON object/array element splitting
 - Code function/class splitting
 - HTML tag-based splitting
 
-## Stores (Key-Value)
+## Stores (key-value)
 
-Key-value stores primarily used for caching embeddings. All implementations support batch operations: `mget()`, `mset()`, `mdelete()`, `yield_keys()`.
+Key-value stores are mainly used for caching embeddings. All implementations support the batch operations `mget()`, `mset()`, `mdelete()`, and `yield_keys()`.
 
-### Available Implementations
+### Available implementations
 
-| Store | Use Case |
+| Store | Use case |
 |---|---|
 | InMemoryByteStore | Local development |
 | LocalFileStore | Local development |
@@ -270,9 +285,9 @@ Key-value stores primarily used for caching embeddings. All implementations supp
 | UpstashRedisByteStore | Production (serverless) |
 | BigtableByteStore | Production (Google Cloud) |
 
-## Popular Providers
+## Popular providers
 
-| Provider | Package | Primary Capabilities |
+| Provider | Package | Primary capabilities |
 |---|---|---|
 | OpenAI | `langchain-openai` | Chat, Embeddings, DALL-E, Moderation |
 | Anthropic | `langchain-anthropic` | Chat (Claude), Middleware |
@@ -285,11 +300,11 @@ Key-value stores primarily used for caching embeddings. All implementations supp
 | Fireworks | `langchain-fireworks` | Chat, Embeddings |
 | NVIDIA | `langchain-nvidia-ai-endpoints` | Chat, Embeddings, Retrieval |
 
-## Best Practices
+## Best practices
 
 - Start with `RecursiveCharacterTextSplitter` for text splitting unless you have structured documents
 - Always set `namespace` when using `CacheBackedEmbeddings` to prevent collisions
-- Use `lazy_load()` for large document collections to manage memory
-- All vector stores can be cast to retrievers - use retrievers when you need broader search capabilities
+- Use `lazy_load()` for large document collections to limit memory use
+- Every vector store can be turned into a retriever. Use a retriever when you need broader search than similarity lookup
 - Choose embedding similarity metrics based on your use case (cosine for normalized vectors, Euclidean for absolute distances)
-- Use batch operations (`mget`, `mset`) with stores to minimize network round-trips
+- Use batch operations (`mget`, `mset`) with stores to cut network round-trips

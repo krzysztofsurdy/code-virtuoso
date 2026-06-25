@@ -1,10 +1,25 @@
 # LangGraph Core
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core capabilities](#core-capabilities)
+- [Two APIs](#two-apis)
+- [Graph API](#graph-api)
+- [Functional API](#functional-api)
+- [Quickstart: calculator agent](#quickstart-calculator-agent)
+- [Workflows and Agents](#workflows-and-agents)
+- [Thinking in LangGraph](#thinking-in-langgraph)
+- [Graph migrations](#graph-migrations)
+- [Key APIs](#key-apis)
+- [Best practices](#best-practices)
+
 ## Overview
 
-LangGraph is a low-level orchestration framework for building stateful agents and workflows. It models agent workflows as graphs using three foundational components: State, Nodes, and Edges. The framework uses message passing inspired by Google's Pregel, processing in discrete "super-steps" where active nodes execute and pass messages to recipients.
+LangGraph is a low-level orchestration framework for building stateful agents and workflows. It models a workflow as a graph made of three parts: State, Nodes, and Edges. Execution uses message passing inspired by Google's Pregel and proceeds in discrete "super-steps", in which active nodes run and pass messages to their recipients.
 
-LangGraph is trusted by companies like Klarna, Replit, and Elastic. It draws inspiration from Pregel, Apache Beam, and NetworkX designs. You don't need to use LangChain to use LangGraph.
+Companies such as Klarna, Replit, and Elastic use it in production. Its design draws on Pregel, Apache Beam, and NetworkX. LangGraph does not require LangChain.
 
 ## Installation
 
@@ -14,31 +29,31 @@ pip install -U langgraph
 uv add langgraph
 ```
 
-## Core Capabilities
+## Core capabilities
 
-1. **Durable execution** - Agents persist through failures and resume from interruption points
-2. **Human-in-the-loop** - State inspection and modification at any point
-3. **Comprehensive memory** - Both short-term and long-term storage
-4. **Debugging support** - LangSmith integration for visualization and tracing
-5. **Production deployment** - Scalable infrastructure for stateful workflows
+1. **Durable execution**: agents survive failures and resume from where they were interrupted
+2. **Human-in-the-loop**: inspect and modify state at any point
+3. **Memory**: short-term and long-term storage
+4. **Debugging support**: LangSmith integration for visualization and tracing
+5. **Production deployment**: scalable infrastructure for stateful workflows
 
 ## Two APIs
 
-LangGraph offers two complementary approaches that share the same runtime:
+LangGraph has two APIs that share the same runtime:
 
 | Aspect | Graph API | Functional API |
 |--------|-----------|----------------|
-| Control Flow | Explicit graph paradigm | Standard Python constructs |
-| State Management | Requires State declaration and reducers | Function-scoped, no explicit declaration |
+| Control flow | Explicit graph paradigm | Standard Python constructs |
+| State management | Requires State declaration and reducers | Function-scoped, no explicit declaration |
 | Checkpointing | New checkpoint after each superstep | Results saved to existing checkpoint |
 | Visualization | Easy graph visualization | Not supported (dynamic runtime graph) |
-| Best For | Complex workflows, team environments | Minimal changes to existing code |
+| Best for | Complex workflows, team environments | Minimal changes to existing code |
 
 ## Graph API
 
-### State Definition
+### State definition
 
-State is a shared data structure representing the application's current snapshot. Can be defined using:
+State is a shared data structure holding the application's current snapshot. Define it with one of:
 
 - **TypedDict** (primary approach)
 - **Dataclass** (for default values)
@@ -53,7 +68,7 @@ class State(TypedDict):
     bar: Annotated[list[str], add]  # Uses reducer to append
 ```
 
-#### Multiple Schemas Pattern
+#### Multiple schemas pattern
 
 ```python
 class InputState(TypedDict):
@@ -74,7 +89,7 @@ builder = StateGraph(
 )
 ```
 
-#### Messages in State
+#### Messages in state
 
 ```python
 from langgraph.graph.message import add_messages
@@ -83,11 +98,11 @@ class GraphState(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages]
 ```
 
-The `add_messages` reducer handles message ID tracking and enables updates to existing messages while appending new ones. `MessagesState` is a prebuilt state with this setup.
+The `add_messages` reducer tracks message IDs, so it can update existing messages as well as append new ones. `MessagesState` is a prebuilt state with this setup.
 
 ### Reducers
 
-Each state key has an independent reducer function determining how updates apply. Default behavior overwrites values. Using `operator.add` appends to lists:
+Each state key has its own reducer function that decides how updates are applied. By default a key is overwritten. Using `operator.add` appends to lists:
 
 ```python
 from operator import add
@@ -99,7 +114,7 @@ class State(TypedDict):
 
 ### Nodes
 
-Nodes are Python functions (sync or async) that encode agent logic. They accept state as input and return updated state.
+Nodes are Python functions (sync or async) that hold the agent logic. They take state as input and return a state update.
 
 ```python
 def plain_node(state: State):
@@ -118,7 +133,7 @@ builder.add_node("node_with_runtime", node_with_runtime)
 builder.add_node("node_with_config", node_with_config)
 ```
 
-#### Special Nodes
+#### Special nodes
 
 ```python
 from langgraph.graph import START, END
@@ -127,7 +142,7 @@ graph.add_edge(START, "node_a")   # Entry point
 graph.add_edge("node_a", END)     # Terminal node
 ```
 
-#### Node Caching
+#### Node caching
 
 ```python
 from langgraph.cache.memory import InMemoryCache
@@ -144,13 +159,13 @@ graph = builder.compile(cache=InMemoryCache())
 
 ### Edges
 
-#### Normal Edges
+#### Normal edges
 
 ```python
 graph.add_edge("node_a", "node_b")
 ```
 
-#### Conditional Edges
+#### Conditional edges
 
 ```python
 graph.add_conditional_edges("node_a", routing_function)
@@ -163,7 +178,7 @@ graph.add_conditional_edges(
 )
 ```
 
-#### Entry Points
+#### Entry points
 
 ```python
 from langgraph.graph import START
@@ -174,7 +189,7 @@ graph.add_conditional_edges(START, routing_function)   # Conditional entry
 
 Multiple outgoing edges execute destination nodes in parallel during the next super-step.
 
-### Send API (Map-Reduce)
+### Send API (map-reduce)
 
 ```python
 from langgraph.types import Send
@@ -187,7 +202,7 @@ graph.add_conditional_edges("node_a", continue_to_jokes)
 
 ### Command
 
-Combines state updates with control flow:
+Combines a state update with control flow:
 
 ```python
 from langgraph.types import Command
@@ -200,20 +215,20 @@ def my_node(state: State) -> Command[Literal["my_other_node"]]:
 ```
 
 **Command parameters:**
-- `update`: State changes
-- `goto`: Navigate to specific nodes
-- `graph`: Target parent graph from subgraphs
-- `resume`: Provide value after interrupt
+- `update`: state changes
+- `goto`: navigate to specific nodes
+- `graph`: target the parent graph from a subgraph
+- `resume`: provide a value after an interrupt
 
-### Graph Compilation
+### Graph compilation
 
 ```python
 graph = graph_builder.compile(...)
 ```
 
-Compilation checks structure, sets runtime arguments like checkpointers and breakpoints. Required before execution.
+Compilation checks the graph structure and sets runtime arguments such as checkpointers and breakpoints. It is required before execution.
 
-### Runtime Context
+### Runtime context
 
 ```python
 from dataclasses import dataclass
@@ -232,7 +247,7 @@ def node_a(state: State, runtime: Runtime[ContextSchema]):
     llm = get_llm(runtime.context.llm_provider)
 ```
 
-### Recursion Limit
+### Recursion limit
 
 Default is 1000 steps (since v1.0.6). Exceeding raises `GraphRecursionError`.
 
@@ -240,7 +255,7 @@ Default is 1000 steps (since v1.0.6). Exceeding raises `GraphRecursionError`.
 graph.invoke(inputs, config={"recursion_limit": 5})
 ```
 
-#### RemainingSteps Managed Value
+#### RemainingSteps managed value
 
 ```python
 from langgraph.managed import RemainingSteps
@@ -255,7 +270,7 @@ def reasoning_node(state: State) -> dict:
     return {"messages": ["thinking..."]}
 ```
 
-#### Available Metadata
+#### Available metadata
 
 ```python
 metadata = config["metadata"]
@@ -266,26 +281,26 @@ print(metadata['langgraph_path'])             # Execution path
 print(metadata['langgraph_checkpoint_ns'])    # Checkpoint namespace
 ```
 
-### Graph Composition Patterns
+### Graph composition patterns
 
 **Sequences:** Chain nodes linearly using `add_sequence()` or manual `add_edge()` calls.
 
-**Parallel Execution:** Fan-out/fan-in patterns execute nodes concurrently within supersteps.
+**Parallel execution:** Fan-out/fan-in patterns execute nodes concurrently within supersteps.
 
-**Conditional Branching:** Use `add_conditional_edges()` to route based on state values.
+**Conditional branching:** Use `add_conditional_edges()` to route based on state values.
 
-**Deferred Execution:** Set `defer=True` to delay execution until all pending tasks complete (useful for map-reduce with uneven branches).
+**Deferred execution:** Set `defer=True` to delay execution until all pending tasks complete (useful for map-reduce with uneven branches).
 
-### Overwrite Type
+### Overwrite type
 
-Bypass reducers to directly replace state values:
+Bypass reducers and replace a state value directly:
 
 ```python
 from langgraph.types import Overwrite
 # or use "__overwrite__" JSON key
 ```
 
-### Retry Policies
+### Retry policies
 
 ```python
 from langgraph.types import RetryPolicy
@@ -293,7 +308,7 @@ from langgraph.types import RetryPolicy
 builder.add_node("my_node", my_node, retry=RetryPolicy(max_attempts=3))
 ```
 
-### Async Support
+### Async support
 
 ```python
 async def my_node(state: State):
@@ -308,7 +323,7 @@ async for chunk in graph.astream(inputs):
 
 ### Visualization
 
-Render graphs as Mermaid diagrams or PNG using Graphviz:
+Render a graph as a Mermaid diagram or as a PNG using Graphviz:
 
 ```python
 graph.get_graph().draw_mermaid_png()
@@ -331,29 +346,29 @@ def my_workflow(inputs: dict) -> int:
     return result
 ```
 
-#### Injectable Parameters
+#### Injectable parameters
 
 | Parameter | Purpose |
 |-----------|---------|
-| `previous` | Access prior checkpoint state for given thread |
+| `previous` | Prior checkpoint state for the given thread |
 | `store` | BaseStore instance for long-term memory |
 | `writer` | StreamWriter for async Python < 3.11 |
-| `config` | Runtime configuration access |
+| `config` | Runtime configuration |
 
-#### Short-term Memory with `previous`
+#### Short-term memory with `previous`
 
 ```python
 @entrypoint(checkpointer=checkpointer)
 def my_workflow(inputs: dict, *, previous=None) -> int:
-    # previous contains return value from prior invocation on same thread
+    # previous holds the return value from the prior invocation on the same thread
     pass
 ```
 
-Use `entrypoint.final(value=return_val, save=saved_val)` to decouple returned values from checkpoint-persisted values.
+Use `entrypoint.final(value=return_val, save=saved_val)` to separate the returned value from the value saved to the checkpoint.
 
 ### Tasks
 
-The `@task` decorator marks functions as executable units that return future-like objects:
+The `@task` decorator marks a function as a unit of work that returns a future-like object:
 
 ```python
 @task
@@ -366,36 +381,36 @@ result = add_one(5).result()  # Synchronous
 result = await add_one(5)      # Async
 ```
 
-#### When to Use Tasks
+#### When to use tasks
 
 - Checkpointing long-running operations
 - Human-in-the-loop workflows (encapsulating randomness)
 - Parallel I/O-bound operations
 - Observability and monitoring
-- Retryable work management
+- Retryable work
 
-#### Parallel Execution
+#### Parallel execution
 
 ```python
 futures = [add_one(i) for i in numbers]
 return [f.result() for f in futures]
 ```
 
-### Critical Design Patterns
+### Design requirements
 
-**Serialization:** Both entrypoint inputs/outputs and task outputs must be JSON-serializable.
+**Serialization:** Entrypoint inputs and outputs and task outputs must be JSON-serializable.
 
-**Determinism:** Randomness must be encapsulated inside tasks to ensure resumed workflows follow identical execution sequences.
+**Determinism:** Put randomness inside tasks so a resumed workflow follows the same execution sequence.
 
-**Idempotency:** Design task operations as idempotent to prevent duplicate API calls on re-execution.
+**Idempotency:** Make task operations idempotent so re-execution does not duplicate API calls.
 
-**Side Effects:** Encapsulate side effects (file writes, emails) in tasks to prevent re-execution upon resumption.
+**Side effects:** Put side effects (file writes, emails) in tasks so they are not repeated on resumption.
 
-### Entrypoint Composition
+### Entrypoint composition
 
-Entrypoints can call other entrypoints. Child entrypoints automatically inherit parent checkpointers.
+Entrypoints can call other entrypoints. A child entrypoint inherits its parent's checkpointer.
 
-### Task Caching
+### Task caching
 
 ```python
 @task(cache_policy=CachePolicy(ttl=120))
@@ -403,9 +418,9 @@ def my_task(x: int) -> int:
     return x + 1
 ```
 
-## Quickstart: Calculator Agent
+## Quickstart: calculator agent
 
-### Graph API Approach
+### Graph API approach
 
 ```python
 from langchain_anthropic import ChatAnthropic
@@ -475,7 +490,7 @@ builder.add_edge("tool_node", "llm_call")
 graph = builder.compile()
 ```
 
-### Functional API Approach
+### Functional API approach
 
 ```python
 from langgraph.func import entrypoint, task
@@ -509,19 +524,19 @@ def agent(messages):
 
 ## Workflows and Agents
 
-### Workflow Patterns
+### Workflow patterns
 
-| Pattern | Description | Use Case |
+| Pattern | Description | Use case |
 |---------|-------------|----------|
-| Prompt Chaining | Sequential LLM calls processing previous output | Document translation, content verification |
-| Parallelization | LLMs work simultaneously on tasks | Speed, confidence validation |
-| Routing | Direct inputs to context-specific tasks | Different content types |
-| Orchestrator-Worker | Orchestrator breaks tasks, workers execute | Complex multi-part tasks |
-| Evaluator-Optimizer | One LLM generates, another evaluates | Translation refinement |
+| Prompt chaining | Sequential LLM calls, each processing the previous output | Document translation, content verification |
+| Parallelization | LLMs work on tasks at the same time | Speed, confidence validation |
+| Routing | Send inputs to context-specific tasks | Different content types |
+| Orchestrator-worker | Orchestrator breaks up the task, workers execute | Complex multi-part tasks |
+| Evaluator-optimizer | One LLM generates, another evaluates | Translation refinement |
 
 ### Agents
 
-Agents operate in continuous feedback loops for unpredictable problems:
+Agents run in a continuous feedback loop and suit problems whose steps cannot be predicted:
 
 ```python
 @tool
@@ -530,42 +545,42 @@ def multiply(a: int, b: int) -> int:
     return a * b
 ```
 
-Agents receive tool definitions and autonomously decide which to invoke based on goals.
+An agent receives tool definitions and decides on its own which to call to reach its goal.
 
 ## Thinking in LangGraph
 
-### Five-Step Development Process
+### Five-step development process
 
-1. **Map workflow as discrete steps** - Break process into individual nodes and sketch connections
-2. **Identify operation types** - LLM steps, Data steps, Action steps, User input steps
-3. **Design state structure** - Store raw data, not formatted text. Format prompts inside nodes
-4. **Build node functions** - Accept current state and return updates
-5. **Wire nodes together** - Minimal graph structure with essential edges
+1. **Map the workflow as discrete steps**: break the process into individual nodes and sketch the connections
+2. **Identify operation types**: LLM steps, data steps, action steps, user input steps
+3. **Design the state structure**: store raw data, not formatted text, and format prompts inside nodes
+4. **Build node functions**: take the current state and return updates
+5. **Wire the nodes together**: keep the graph minimal, with only the edges you need
 
-### Error Handling Strategies
+### Error handling strategies
 
-| Error Type | Handler | Strategy |
+| Error type | Handler | Strategy |
 |-----------|---------|----------|
 | Transient (network/rate limits) | System | Retry policies |
 | LLM-recoverable | LLM | Store error, loop back |
 | User-fixable | Human | Use `interrupt()` |
 | Unexpected | Developer | Bubble up |
 
-### Node Granularity Trade-offs
+### Node granularity trade-offs
 
-Smaller nodes provide:
+Smaller nodes give you:
 - Better isolation of external service failures
-- Intermediate state visibility for debugging
+- Visible intermediate state for debugging
 - Independent retry configuration per operation type
-- Improved testability and reusability
+- Easier testing and reuse
 
-## Graph Migrations
+## Graph migrations
 
-LangGraph handles topology changes while preserving checkpointed state:
-- Threads at graph end: All changes supported
-- Interrupted threads: All changes except renaming/removing interrupted nodes
-- State keys: Full backwards/forwards compatibility for adding/removing
-- Renamed keys: Lose saved state in existing threads
+LangGraph supports topology changes while keeping checkpointed state:
+- Threads at the end of the graph: all changes supported
+- Interrupted threads: all changes except renaming or removing the interrupted nodes
+- State keys: adding and removing are fully backwards and forwards compatible
+- Renamed keys: lose their saved state in existing threads
 
 ## Key APIs
 
@@ -574,7 +589,7 @@ LangGraph handles topology changes while preserving checkpointed state:
 | `StateGraph` | Build graph with typed state |
 | `MessagesState` | Prebuilt state for LLM conversations |
 | `START`, `END` | Entry and terminal nodes |
-| `Command` | Combined state update + control flow |
+| `Command` | State update and control flow in one return value |
 | `Send` | Dynamic routing for map-reduce |
 | `@entrypoint` | Functional API workflow entry |
 | `@task` | Functional API work unit |
@@ -583,14 +598,14 @@ LangGraph handles topology changes while preserving checkpointed state:
 | `Runtime` | Access context and store in nodes |
 | `RunnableConfig` | Thread ID, metadata access |
 
-## Best Practices
+## Best practices
 
-- State should store raw data, not formatted text
-- Format prompts inside nodes when needed
+- Store raw data in state, not formatted text
+- Format prompts inside nodes
 - Use `Command` objects for routing decisions within nodes
-- Call `interrupt()` first in nodes requiring human input
+- Call `interrupt()` first in nodes that need human input
 - Design side effects as idempotent operations
-- Encapsulate non-deterministic code within tasks or nodes
+- Put non-deterministic code inside tasks or nodes
 - Use `RetryPolicy` for transient failures
 - Compile with `MemorySaver` checkpointer for persistence
 - Use `thread_id` for resumable execution

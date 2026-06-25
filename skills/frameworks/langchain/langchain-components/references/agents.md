@@ -1,10 +1,26 @@
-# Agents, Context Engineering, Guardrails & Human-in-the-Loop
+# Agents, context engineering, guardrails, and human-in-the-loop
+
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Creating agents](#creating-agents)
+- [Invocation](#invocation)
+- [Tools](#tools)
+- [Structured output](#structured-output)
+- [Custom state](#custom-state)
+- [Dynamic model selection](#dynamic-model-selection)
+- [Middleware and error handling](#middleware-and-error-handling)
+- [Context engineering](#context-engineering)
+- [Guardrails](#guardrails)
+- [Human-in-the-loop (HITL)](#human-in-the-loop-hitl)
+- [Best practices](#best-practices)
 
 ## Overview
 
-Agents combine language models with tools to create reasoning systems that iteratively work toward solutions. They follow a ReAct (Reasoning + Acting) loop: input, model decision, tool execution, observation, repeat until completion. The `create_agent` function provides a production-ready implementation using LangGraph's graph-based runtime.
+Agents combine a language model with tools and loop until the task is done. They follow a ReAct (Reasoning + Acting) loop: input, model decision, tool execution, observation, repeat. The `create_agent` function implements this loop on LangGraph's graph-based runtime.
 
-Context engineering - supplying appropriate information and tools in suitable formats - is the primary factor in agent reliability. Guardrails add safety checks at key execution points, while human-in-the-loop patterns enable human oversight of sensitive operations.
+Context engineering (giving the model the right information and tools in the right format) is the main factor in agent reliability. Guardrails add safety checks at key points in execution, and human-in-the-loop patterns put a person in front of sensitive operations.
 
 ## Installation
 
@@ -12,9 +28,9 @@ Context engineering - supplying appropriate information and tools in suitable fo
 pip install langchain langgraph
 ```
 
-## Creating Agents
+## Creating agents
 
-### Basic Agent
+### Basic agent
 
 ```python
 from langchain.agents import create_agent
@@ -28,7 +44,7 @@ def search(query: str) -> str:
 agent = create_agent("openai:gpt-5", tools=[search])
 ```
 
-### With Model Instance
+### With a model instance
 
 ```python
 from langchain.chat_models import ChatOpenAI
@@ -37,7 +53,7 @@ model = ChatOpenAI(model="gpt-5", temperature=0.1, max_tokens=1000)
 agent = create_agent(model, tools=[search])
 ```
 
-### System Prompts
+### System prompts
 
 ```python
 agent = create_agent(model, tools,
@@ -46,7 +62,7 @@ agent = create_agent(model, tools,
 )
 ```
 
-### Dynamic System Prompts
+### Dynamic system prompts
 
 ```python
 @dynamic_prompt
@@ -77,7 +93,7 @@ for chunk in agent.stream({"messages": [...]}, stream_mode="values"):
 
 ## Tools
 
-### Static Tools
+### Static tools
 
 Defined upfront and always available:
 
@@ -95,7 +111,7 @@ def search_orders(user_id: str, status: str, limit: int = 10) -> str:
     """
 ```
 
-### Dynamic Tools
+### Dynamic tools
 
 Filtered based on state, permissions, or feature flags at runtime:
 
@@ -108,7 +124,7 @@ def state_based_tools(request: ModelRequest, handler):
     return handler(request)
 ```
 
-## Structured Output
+## Structured output
 
 ### ToolStrategy (any tool-calling model)
 
@@ -134,7 +150,7 @@ class CustomerSupportTicket(BaseModel):
     customer_sentiment: str = Field(description="'frustrated', 'neutral', or 'satisfied'")
 ```
 
-## Custom State
+## Custom state
 
 ```python
 from langchain.agents import AgentState
@@ -145,7 +161,7 @@ class CustomState(AgentState):
 agent = create_agent(model, tools, state_schema=CustomState)
 ```
 
-## Dynamic Model Selection
+## Dynamic model selection
 
 ```python
 @wrap_model_call
@@ -157,9 +173,9 @@ def dynamic_model_selection(request, handler):
     return handler(request.override(model=model))
 ```
 
-## Middleware & Error Handling
+## Middleware and error handling
 
-### Error Handling
+### Error handling
 
 ```python
 @wrap_tool_call
@@ -171,7 +187,7 @@ def handle_tool_errors(request, handler):
                           tool_call_id=request.tool_call["id"])
 ```
 
-### Message Injection (Transient)
+### Message injection (transient)
 
 ```python
 @wrap_model_call
@@ -183,11 +199,11 @@ def inject_context(request: ModelRequest, handler):
 
 ---
 
-## Context Engineering
+## Context engineering
 
-Context engineering is "the number one job of AI Engineers." Agents fail primarily because the LLM lacks proper context, not due to model capability limitations.
+Context engineering is "the number one job of AI Engineers." Agents mostly fail because the LLM lacks the right context, not because the model is incapable.
 
-### Context Control Framework
+### Context control framework
 
 | Category | Control Scope | Persistence |
 |----------|---------------|-------------|
@@ -195,7 +211,7 @@ Context engineering is "the number one job of AI Engineers." Agents fail primari
 | Tool Context | Tool access, data reads/writes, runtime state modifications | Persistent (state-saved) |
 | Life-cycle Context | Inter-step operations, summarization, guardrails, logging | Persistent (state-saved) |
 
-### Three Memory Layers
+### Three memory layers
 
 | Layer | Scope | Examples |
 |-------|-------|---------|
@@ -203,9 +219,9 @@ Context engineering is "the number one job of AI Engineers." Agents fail primari
 | State | Conversation-scoped | Messages, files, authentication status, tool results |
 | Store | Cross-conversation | Preferences, insights, historical data |
 
-### Tool Context - Reading
+### Tool context: reading
 
-**State Access:**
+**State access:**
 
 ```python
 @tool
@@ -214,7 +230,7 @@ def check_auth(runtime: ToolRuntime) -> str:
     return "User authenticated" if is_authenticated else "Not authenticated"
 ```
 
-**Store Access:**
+**Store access:**
 
 ```python
 @tool
@@ -223,7 +239,7 @@ def get_preference(key: str, runtime: ToolRuntime[Context]) -> str:
     return prefs.value.get(key) if prefs else "Not found"
 ```
 
-**Runtime Context Access:**
+**Runtime context access:**
 
 ```python
 @tool
@@ -236,9 +252,9 @@ def fetch_data(query: str, runtime: ToolRuntime[Context]) -> str:
     return f"Found {len(results)} results"
 ```
 
-### Tool Context - Writing
+### Tool context: writing
 
-**State Updates:**
+**State updates:**
 
 ```python
 @tool
@@ -247,7 +263,7 @@ def authenticate_user(password: str, runtime: ToolRuntime) -> Command:
     return Command(update={"authenticated": is_valid})
 ```
 
-**Store Persistence:**
+**Store persistence:**
 
 ```python
 @tool
@@ -259,7 +275,7 @@ def save_preference(key: str, value: str, runtime: ToolRuntime[Context]) -> str:
     return f"Saved {key} = {value}"
 ```
 
-### Summarization Middleware
+### Summarization middleware
 
 ```python
 agent = create_agent(
@@ -279,7 +295,7 @@ agent = create_agent(
 
 ## Guardrails
 
-### Built-in: PII Detection
+### Built-in: PII detection
 
 ```python
 from langchain.agents.middleware import PIIMiddleware
@@ -296,7 +312,7 @@ agent = create_agent(
 )
 ```
 
-**PII Handling Strategies:**
+**PII handling strategies:**
 
 | Strategy | Behavior |
 |----------|----------|
@@ -305,7 +321,7 @@ agent = create_agent(
 | `hash` | Replace with deterministic hash |
 | `block` | Raise exception when detected |
 
-**Configuration Parameters:**
+**Configuration parameters:**
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
@@ -316,7 +332,7 @@ agent = create_agent(
 | `apply_to_output` | Check AI messages | `False` |
 | `apply_to_tool_results` | Check tool results | `False` |
 
-### Custom: Before Agent Guardrail
+### Custom: before-agent guardrail
 
 ```python
 from langchain.agents.middleware import AgentMiddleware, AgentState, hook_config
@@ -347,7 +363,7 @@ class ContentFilterMiddleware(AgentMiddleware):
         return None
 ```
 
-### Custom: After Agent Guardrail
+### Custom: after-agent guardrail
 
 ```python
 from langchain.agents.middleware import AgentMiddleware, AgentState, hook_config
@@ -373,7 +389,7 @@ class SafetyGuardrailMiddleware(AgentMiddleware):
         return None
 ```
 
-### Combining Multiple Guardrails
+### Combining multiple guardrails
 
 ```python
 agent = create_agent(
@@ -391,9 +407,9 @@ agent = create_agent(
 
 ---
 
-## Human-in-the-Loop (HITL)
+## Human-in-the-loop (HITL)
 
-HITL middleware pauses execution when agent actions require human review, using LangGraph's persistence layer to save state and resume later.
+HITL middleware pauses execution when an agent action needs human review. It saves state through LangGraph's persistence layer so the run can resume later.
 
 ### Configuration
 
@@ -422,7 +438,7 @@ The `interrupt_on` parameter accepts:
 - `False` - auto-approve
 - `InterruptOnConfig` object with `allowed_decisions` and custom `description`
 
-### Human Decision Types
+### Human decision types
 
 | Decision | Description |
 |----------|-------------|
@@ -430,7 +446,7 @@ The `interrupt_on` parameter accepts:
 | `edit` | Modify tool arguments before execution |
 | `reject` | Decline with explanatory feedback |
 
-### Responding to Interrupts
+### Responding to interrupts
 
 ```python
 from langgraph.types import Command
@@ -445,7 +461,7 @@ result = agent.invoke(
 )
 ```
 
-### Execution Flow
+### Execution flow
 
 1. Agent invokes the model
 2. Middleware inspects tool calls against policy
@@ -455,13 +471,13 @@ result = agent.invoke(
 
 ---
 
-## Best Practices
+## Best practices
 
 - Start with static components; introduce dynamics only when justified
 - Add one context engineering feature per iteration
 - Track model calls, token consumption, and latency metrics
 - Use built-in middleware (`SummarizationMiddleware`, `PIIMiddleware`, `HumanInTheLoopMiddleware`) before building custom
-- Document which context gets passed and why
-- Remember transient (per-call) vs. persistent (state-saved) behavior distinctions
+- Document which context is passed and why
+- Keep the transient (per-call) and persistent (state-saved) distinction in mind
 - Use well-defined tool names, descriptions, and parameter specifications
 - Keep agent names in snake_case for cross-provider compatibility
