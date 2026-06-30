@@ -181,20 +181,28 @@ backlog_get_config_json() {
   jq -c --arg key "$key" '.config[$key] // empty' "$file"
 }
 
-# Always includes the backlog file's own path, expressed the same
-# cwd-relative way callers express every other path here (".delivery-loop/
-# backlog.json") -- an earlier version passed $file through as-is, which was
-# whatever absolute/relative form the caller happened to resolve it to, and
-# silently never matched the relative paths it was being compared against.
-# This alone is not the real backlog-tampering defense -- see
-# verify_gate_initial_checkpoint's sibling, the snapshot check in
-# verify-gate.sh, for why a glob match on a path string was never going to be
-# enough against a worker that edits the file's *content*.
+# Always includes the backlog file's own path and its sibling teams.json,
+# expressed the same cwd-relative way callers express every other path here
+# (".delivery-loop/backlog.json") -- an earlier version passed $file through
+# as-is, which was whatever absolute/relative form the caller happened to
+# resolve it to, and silently never matched the relative paths it was being
+# compared against.
+#
+# This closes the Edit/Write vector for both files (layer 1, real time) and
+# the git-diff-audit vector for anything outside the loop's own excluded
+# directory (layer 2). It does NOT close the content-tamper vector on its
+# own -- a worker with a bare-interpreter Bash grant can rewrite either
+# file's content without ever calling Edit/Write or touching a path outside
+# the excluded loop directory. That's what verify-gate.sh's snapshot-based
+# tamper check is for, and why it matters more than this glob ever could.
 backlog_protected_paths() {
   local file="$1"
-  local self_rel
-  self_rel="$(basename "$(dirname "$file")")/$(basename "$file")"
-  jq -c --arg self "$self_rel" '(.config.protectedPaths // []) + [$self]' "$file"
+  local loop_dir backlog_rel teams_rel
+  loop_dir="$(basename "$(dirname "$file")")"
+  backlog_rel="${loop_dir}/$(basename "$file")"
+  teams_rel="${loop_dir}/teams.json"
+  jq -c --arg self "$backlog_rel" --arg teams "$teams_rel" \
+    '(.config.protectedPaths // []) + [$self, $teams]' "$file"
 }
 
 # backlog_path_is_protected <path> <protected_paths_json_array>

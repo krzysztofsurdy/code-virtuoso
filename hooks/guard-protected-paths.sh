@@ -31,13 +31,41 @@ TOOL_NAME=$(echo "$HOOK_INPUT" | jq -r '.tool_name // empty')
 FILE_PATH=$(echo "$HOOK_INPUT" | jq -r '.tool_input.file_path // empty')
 [[ -n "$FILE_PATH" ]] || exit 0
 
-# Resolve both sides through the same physical-path normalization before
-# comparing. Comparing raw strings broke whenever Claude Code resolved one of
-# cwd/file_path through a symlink (e.g. macOS /tmp -> /private/tmp) and not
-# the other -- it doesn't matter which one, both land on the same form here.
-CWD_RESOLVED="$(cd "$CWD" 2>/dev/null && pwd -P || echo "$CWD")"
-FILE_DIR_RESOLVED="$(cd "$(dirname "$FILE_PATH")" 2>/dev/null && pwd -P || dirname "$FILE_PATH")"
-FILE_PATH_RESOLVED="$FILE_DIR_RESOLVED/$(basename "$FILE_PATH")"
+# _guard_resolve_path <path>
+# Resolves the longest EXISTING prefix of <path> via `pwd -P`, re-appending
+# whatever trailing segments don't exist yet unresolved -- a path that isn't
+# there yet can't itself be a symlink, so there's nothing to resolve in it.
+# A brand-new file inside a not-yet-created directory (e.g. Write creating
+# the first file under a fresh tests/ dir) used to fall straight back to the
+# fully-unresolved path when `cd` failed outright, which broke the
+# comparison below whenever an ancestor ABOVE the missing directory was
+# itself a symlink (macOS's /tmp -> /private/tmp, the same case already
+# handled for existing paths) -- walking up to the nearest real ancestor
+# closes that gap for missing paths too.
+_guard_resolve_path() {
+  local path="$1"
+  if [[ -d "$path" ]]; then
+    (cd "$path" 2>/dev/null && pwd -P) || echo "$path"
+    return
+  fi
+  local dir base suffix=""
+  dir="$(dirname "$path")"
+  base="$(basename "$path")"
+  while [[ ! -d "$dir" && "$dir" != "/" ]]; do
+    suffix="$(basename "$dir")/${suffix}"
+    dir="$(dirname "$dir")"
+  done
+  local resolved_dir
+  resolved_dir="$(cd "$dir" 2>/dev/null && pwd -P || echo "$dir")"
+  echo "${resolved_dir}/${suffix}${base}"
+}
+
+# Resolve both sides through the same normalization before comparing.
+# Comparing raw strings broke whenever Claude Code resolved one of
+# cwd/file_path through a symlink and not the other -- it doesn't matter
+# which one, both land on the same form here.
+CWD_RESOLVED="$(_guard_resolve_path "$CWD")"
+FILE_PATH_RESOLVED="$(_guard_resolve_path "$FILE_PATH")"
 
 REL_PATH="$FILE_PATH_RESOLVED"
 case "$FILE_PATH_RESOLVED" in

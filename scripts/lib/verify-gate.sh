@@ -34,14 +34,17 @@ verify_gate_run() {
   # verify_gate_snapshot_path), relying on Claude Code's own file-tool
   # scoping to the project directory as the actual boundary, not a
   # convention the worker happens to follow.
+  local loop_dir_label
+  loop_dir_label="$(basename "$(dirname "$backlog_file")")"
+
   if _verify_gate_check_tamper "$backlog_file"; then
-    echo '{"verdict":"violation","paths":[".delivery-loop/backlog.json (content tampered, restored)"]}'
+    echo "{\"verdict\":\"violation\",\"paths\":[\"${loop_dir_label}/$(basename "$backlog_file") (content tampered, restored)\"]}"
     return 0
   fi
   local teams_file
   teams_file="$(dirname "$backlog_file")/teams.json"
   if [[ -f "$teams_file" ]] && _verify_gate_check_tamper "$teams_file"; then
-    echo '{"verdict":"violation","paths":[".delivery-loop/teams.json (content tampered, restored)"]}'
+    echo "{\"verdict\":\"violation\",\"paths\":[\"${loop_dir_label}/teams.json (content tampered, restored)\"]}"
     return 0
   fi
 
@@ -67,7 +70,7 @@ verify_gate_run() {
     {
       git -C "$repo_dir" diff --name-only "$start_sha" 2>/dev/null
       git -C "$repo_dir" ls-files --others --exclude-standard 2>/dev/null
-    } | sort -u | grep -v "^${loop_dir_name}/" || true
+    } | sort -u | _verify_gate_drop_loop_dir "$loop_dir_name"
   )
 
   if [[ -z "$changed_files" ]]; then
@@ -116,6 +119,23 @@ verify_gate_run() {
     output_json=$(echo "$output" | tail -n 40 | jq -Rs .)
     echo "{\"verdict\":\"fail\",\"exitCode\":$exit_code,\"output\":$output_json}"
   fi
+}
+
+# _verify_gate_drop_loop_dir <loop_dir_name>
+# Reads paths on stdin, drops anything under <loop_dir_name>/, prints the
+# rest. A plain `case` inside a `$(...)` command substitution does not parse
+# on bash 3.2 (macOS's default /bin/bash) -- it's a real, documented parser
+# bug in that version, not a style issue -- so this filtering lives in its
+# own function instead of inline where verify_gate_run needs it.
+_verify_gate_drop_loop_dir() {
+  local loop_dir_name="$1" f
+  while IFS= read -r f; do
+    [[ -z "$f" ]] && continue
+    case "$f" in
+      "${loop_dir_name}"/*) ;;
+      *) echo "$f" ;;
+    esac
+  done
 }
 
 # _verify_gate_checkpoint <repo_dir> <loop_dir_name> <message>
