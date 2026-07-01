@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-07-01
+
+### Fixed
+
+- Mode A's delegation prompt for `agent`-kind participants now warns that the subagent may work in an isolated git worktree (e.g. `agents-virtuoso`'s `backend-dev`/`frontend-dev`/`implementer`, which declare `isolation: worktree`) and instructs the delegating session to merge that worktree back into the checkout before ending its turn. Without this, the verify gate always grades the real checkout, never the subagent's worktree, so a correctly-implemented step could exhaust all attempts and land `blocked` for looking like nothing happened. Mode B's `--agent` flag has the same underlying issue with no verified fix yet — see the new callout in `teams-and-participants.md`.
+- The verify gate no longer assumes the project directory (the parent of `.delivery-loop/`) is the git repo root. When the project sits inside a bigger repo (a monorepo), `verifyCommand` now runs from the project directory instead of the repo root, and `git diff`/`ls-files` output — always repo-root-relative — is normalized back to project-relative paths before matching `protectedPaths` or excluding the loop's own directory. A step's diff scope stays repo-wide (a sibling directory a step legitimately touches, e.g. `--cwd ../other-package`, is still seen and correctly path-checked), only the frame of reference for matching changed.
+
 ## [1.1.0] - 2026-07-01
 
 ### Added

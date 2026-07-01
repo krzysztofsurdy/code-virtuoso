@@ -48,9 +48,22 @@ verify_gate_run() {
     return 0
   fi
 
-  local repo_dir
-  repo_dir="$(git -C "$(dirname "$backlog_file")" rev-parse --show-toplevel 2>/dev/null || true)"
-  [[ -z "$repo_dir" ]] && repo_dir="$(cd "$(dirname "$backlog_file")" && pwd)"
+  # The project directory (parent of the loop's own .delivery-loop/) is the
+  # frame of reference every backlog is authored against -- verifyCommand's
+  # relative paths, protectedPaths globs, all of it. That's only the same
+  # directory as the git repo root when the project isn't nested inside a
+  # bigger repo (a monorepo). When it is, `git diff`/`ls-files` still need to
+  # run repo-wide (a step legitimately touching a sibling directory, e.g.
+  # `--cwd ../other-package`, must still be seen) but their output comes back
+  # relative to the repo root, not the project directory -- project_prefix is
+  # how far below the repo root the project directory sits, used below to
+  # translate those paths back to the frame everything else assumes.
+  local project_dir repo_dir project_prefix
+  project_dir="$(cd "$(dirname "$(dirname "$backlog_file")")" && pwd)"
+  repo_dir="$(git -C "$project_dir" rev-parse --show-toplevel 2>/dev/null || true)"
+  [[ -z "$repo_dir" ]] && repo_dir="$project_dir"
+  project_prefix="$(git -C "$project_dir" rev-parse --show-prefix 2>/dev/null || true)"
+  project_prefix="${project_prefix%/}"
 
   # `git diff` alone misses brand-new files -- a worker that only creates a
   # file (no existing file touched) would otherwise read as a stall. Union it
@@ -70,7 +83,7 @@ verify_gate_run() {
     {
       git -C "$repo_dir" diff --name-only "$start_sha" 2>/dev/null
       git -C "$repo_dir" ls-files --others --exclude-standard 2>/dev/null
-    } | sort -u | _verify_gate_drop_loop_dir "$loop_dir_name"
+    } | sort -u | _verify_gate_to_project_relative "$project_prefix" | _verify_gate_drop_loop_dir "$loop_dir_name"
   )
 
   if [[ -z "$changed_files" ]]; then
@@ -101,7 +114,7 @@ verify_gate_run() {
   step=$(backlog_get_step "$backlog_file" "$item_id" "$step_id")
   verify_cmd=$(echo "$step" | jq -r '.verifyCommand')
 
-  output=$(cd "$repo_dir" && bash -c "$verify_cmd" 2>&1)
+  output=$(cd "$project_dir" && bash -c "$verify_cmd" 2>&1)
   exit_code=$?
 
   # Checkpoint commit on pass or fail (not violation -- those changes get left
@@ -111,7 +124,7 @@ verify_gate_run() {
   # would both mask a true stall forever after the first real change, and let
   # leftover untracked files keep re-triggering the union check above. One
   # checkpoint per iteration keeps `start_sha` meaningful for the next one.
-  _verify_gate_checkpoint "$repo_dir" "$loop_dir_name" "loop-virtuoso: ${item_id}/${step_id}"
+  _verify_gate_checkpoint "$repo_dir" "${project_prefix:+$project_prefix/}${loop_dir_name}" "loop-virtuoso: ${item_id}/${step_id}"
 
   if [[ $exit_code -eq 0 ]]; then
     echo '{"verdict":"pass"}'
@@ -138,14 +151,49 @@ _verify_gate_drop_loop_dir() {
   done
 }
 
-# _verify_gate_checkpoint <repo_dir> <loop_dir_name> <message>
-# Stages everything except the loop's own directory and commits if there's
-# anything staged. Best-effort: a failed commit (e.g. no git identity
-# configured) doesn't fail the gate, it just leaves start_sha stale for one
-# more iteration.
+# _verify_gate_to_project_relative <project_prefix>
+# Reads repo-root-relative paths on stdin (what `git diff`/`ls-files` always
+# produce, regardless of which directory you ran them from) and rewrites
+# each to be relative to the project directory instead -- the frame every
+# backlog is authored against for protectedPaths globs and the loop-dir
+# exclusion below. <project_prefix> is the project directory's own path
+# relative to the repo root ("" if they're the same directory). A path
+# outside the project directory (a sibling a step legitimately touches, e.g.
+# `--cwd ../other-package`) is escaped with the matching number of `../`
+# rather than dropped -- it's real, in-scope work, just not underneath the
+# project directory.
+_verify_gate_to_project_relative() {
+  local prefix="$1" f
+  while IFS= read -r f; do
+    [[ -z "$f" ]] && continue
+    if [[ -z "$prefix" ]]; then
+      echo "$f"
+      continue
+    fi
+    case "$f" in
+      "${prefix}"/*) echo "${f#"${prefix}"/}" ;;
+      "${prefix}") echo "." ;;
+      *)
+        local depth up="" i
+        depth=$(awk -F'/' '{print NF}' <<< "$prefix")
+        for ((i = 0; i < depth; i++)); do up="../${up}"; done
+        echo "${up}${f}"
+        ;;
+    esac
+  done
+}
+
+# _verify_gate_checkpoint <repo_dir> <exclude_pathspec> <message>
+# Stages everything except the loop's own directory (matched by
+# <exclude_pathspec>, expressed relative to <repo_dir> -- the loop
+# directory's bare name when the project directory IS the repo root, or that
+# name prefixed with the project's own path within the repo otherwise) and
+# commits if there's anything staged. Best-effort: a failed commit (e.g. no
+# git identity configured) doesn't fail the gate, it just leaves start_sha
+# stale for one more iteration.
 _verify_gate_checkpoint() {
-  local repo_dir="$1" loop_dir_name="$2" message="$3"
-  git -C "$repo_dir" add -A -- . ":!${loop_dir_name}" 2>/dev/null || true
+  local repo_dir="$1" exclude_pathspec="$2" message="$3"
+  git -C "$repo_dir" add -A -- . ":!${exclude_pathspec}" 2>/dev/null || true
   if ! git -C "$repo_dir" diff --cached --quiet 2>/dev/null; then
     git -C "$repo_dir" commit -q -m "$message" --no-verify 2>/dev/null || true
   fi
@@ -158,11 +206,14 @@ _verify_gate_checkpoint() {
 # -- the per-iteration checkpoint above only protects iteration 2 onward.
 verify_gate_initial_checkpoint() {
   local backlog_file="$1"
-  local repo_dir loop_dir_name
-  repo_dir="$(git -C "$(dirname "$backlog_file")" rev-parse --show-toplevel 2>/dev/null || true)"
-  [[ -z "$repo_dir" ]] && repo_dir="$(cd "$(dirname "$backlog_file")" && pwd)"
+  local project_dir repo_dir project_prefix loop_dir_name
+  project_dir="$(cd "$(dirname "$(dirname "$backlog_file")")" && pwd)"
+  repo_dir="$(git -C "$project_dir" rev-parse --show-toplevel 2>/dev/null || true)"
+  [[ -z "$repo_dir" ]] && repo_dir="$project_dir"
+  project_prefix="$(git -C "$project_dir" rev-parse --show-prefix 2>/dev/null || true)"
+  project_prefix="${project_prefix%/}"
   loop_dir_name="$(basename "$(dirname "$backlog_file")")"
-  _verify_gate_checkpoint "$repo_dir" "$loop_dir_name" "loop-virtuoso: run start"
+  _verify_gate_checkpoint "$repo_dir" "${project_prefix:+$project_prefix/}${loop_dir_name}" "loop-virtuoso: run start"
 }
 
 # verify_gate_snapshot_path <file>

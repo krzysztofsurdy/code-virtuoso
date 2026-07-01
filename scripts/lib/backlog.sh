@@ -243,7 +243,7 @@ backlog_build_step_prompt() {
     if [[ "$kind" == "agent" ]]; then
       local agent_name
       agent_name=$(echo "$participant_json" | jq -r '.agent')
-      framing=$'\n'"For this step, delegate to the \`${agent_name}\` subagent via the Task tool and wait for its result before continuing."
+      framing=$'\n'"For this step, delegate to the \`${agent_name}\` subagent via the Task tool and wait for its result before continuing. That subagent may work in an isolated git worktree -- check its final report for a worktree branch name, and if so, merge that branch into this checkout and remove the worktree before you end your turn. The verification command below always grades this checkout, never an isolated worktree."
     elif [[ "$kind" == "persona" ]]; then
       local system_prompt
       system_prompt=$(echo "$participant_json" | jq -r '.systemPrompt // empty')
