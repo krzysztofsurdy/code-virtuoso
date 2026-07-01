@@ -86,28 +86,37 @@ verify_gate_run() {
     } | sort -u | _verify_gate_to_project_relative "$project_prefix" | _verify_gate_drop_loop_dir "$loop_dir_name"
   )
 
-  if [[ -z "$changed_files" ]]; then
-    echo '{"verdict":"stall"}'
-    return 0
-  fi
+  # An empty diff does NOT mean skip straight to a stall verdict -- it only
+  # means "no tracked-file changes this iteration," which is also exactly
+  # what a worker sees after fixing something outside git's view entirely
+  # (a corrupted gitignored vendor/ autoloader, a stale build cache) while
+  # the real, already-committed implementation from an earlier iteration
+  # was correct all along. verifyCommand is the sole arbiter of done, so it
+  # always runs; an empty diff only changes how a *failure* gets classified
+  # below (stall vs. fail), never whether a pass gets reported as one.
+  local has_changes=1
+  [[ -z "$changed_files" ]] && has_changes=0
 
   # Layer 2 of the write-boundary guard -- checks the resulting tree state,
   # not which tool produced it, so it catches what PreToolUse's Edit/Write
-  # coverage misses.
-  local protected violations=()
-  protected=$(backlog_protected_paths "$backlog_file")
-  while IFS= read -r f; do
-    [[ -z "$f" ]] && continue
-    if backlog_path_is_protected "$f" "$protected"; then
-      violations+=("$f")
-    fi
-  done <<< "$changed_files"
+  # coverage misses. Only meaningful when something actually changed; skip
+  # it on an empty diff rather than iterating zero lines for no reason.
+  if [[ "$has_changes" -eq 1 ]]; then
+    local protected violations=()
+    protected=$(backlog_protected_paths "$backlog_file")
+    while IFS= read -r f; do
+      [[ -z "$f" ]] && continue
+      if backlog_path_is_protected "$f" "$protected"; then
+        violations+=("$f")
+      fi
+    done <<< "$changed_files"
 
-  if [[ ${#violations[@]} -gt 0 ]]; then
-    local violated_json
-    violated_json=$(printf '%s\n' "${violations[@]}" | jq -R . | jq -sc .)
-    echo "{\"verdict\":\"violation\",\"paths\":$violated_json}"
-    return 0
+    if [[ ${#violations[@]} -gt 0 ]]; then
+      local violated_json
+      violated_json=$(printf '%s\n' "${violations[@]}" | jq -R . | jq -sc .)
+      echo "{\"verdict\":\"violation\",\"paths\":$violated_json}"
+      return 0
+    fi
   fi
 
   local step verify_cmd exit_code output output_json
@@ -117,18 +126,21 @@ verify_gate_run() {
   output=$(cd "$project_dir" && bash -c "$verify_cmd" 2>&1)
   exit_code=$?
 
-  # Checkpoint commit on pass or fail (not violation -- those changes get left
-  # uncommitted for inspection, not preserved). Without this, an iteration's
-  # uncommitted diff persists into every later iteration's `git diff
-  # $start_sha`, since nothing the worker does is required to commit -- which
-  # would both mask a true stall forever after the first real change, and let
-  # leftover untracked files keep re-triggering the union check above. One
-  # checkpoint per iteration keeps `start_sha` meaningful for the next one.
-  _verify_gate_checkpoint "$repo_dir" "${project_prefix:+$project_prefix/}${loop_dir_name}" "loop-virtuoso: ${item_id}/${step_id}"
-
   if [[ $exit_code -eq 0 ]]; then
+    # Checkpoint commit on pass or fail (not violation -- those changes get
+    # left uncommitted for inspection, not preserved). Without this, an
+    # iteration's uncommitted diff persists into every later iteration's
+    # `git diff $start_sha`, since nothing the worker does is required to
+    # commit -- which would both mask a true stall forever after the first
+    # real change, and let leftover untracked files keep re-triggering the
+    # union check above. One checkpoint per iteration keeps `start_sha`
+    # meaningful for the next one.
+    _verify_gate_checkpoint "$repo_dir" "${project_prefix:+$project_prefix/}${loop_dir_name}" "loop-virtuoso: ${item_id}/${step_id}"
     echo '{"verdict":"pass"}'
+  elif [[ "$has_changes" -eq 0 ]]; then
+    echo '{"verdict":"stall"}'
   else
+    _verify_gate_checkpoint "$repo_dir" "${project_prefix:+$project_prefix/}${loop_dir_name}" "loop-virtuoso: ${item_id}/${step_id}"
     output_json=$(echo "$output" | tail -n 40 | jq -Rs .)
     echo "{\"verdict\":\"fail\",\"exitCode\":$exit_code,\"output\":$output_json}"
   fi

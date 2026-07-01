@@ -1,6 +1,6 @@
 {
   "name": "loop-virtuoso",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Deterministic, backlog-driven autonomous execution loop. Feeds an agent one small backlog item at a time and gates completion on objective verify-command exit codes and a write-boundary guard, never on the agent's own self-report.",
   "author": {
     "name": "Krzysztof Surdy"

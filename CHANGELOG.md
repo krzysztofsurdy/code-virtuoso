@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-07-01
+
+### Fixed
+
+- The verify gate no longer reports `stall` just because no *tracked* file changed. `verifyCommand` now always runs; an empty diff only affects how a failure gets classified afterward (`stall` if it still fails, `fail` if it doesn't). Previously, a turn that fixed something outside git's view entirely (a corrupted gitignored `vendor/` autoloader, a stale build cache) while the real implementation from an earlier iteration's checkpoint was already correct and committed would report `stall` forever — `verifyCommand` never even ran, because `start_sha` and `HEAD` were identical (the previous iteration's own checkpoint commit), so the diff came back empty by construction. Climbed toward `maxStallIterations` despite the step being genuinely done.
+
 ## [1.1.1] - 2026-07-01
 
 ### Fixed
