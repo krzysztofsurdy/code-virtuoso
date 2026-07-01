@@ -186,6 +186,44 @@ else
       else
         emit_check ok "step participants present ($unresolved unresolved, see warnings)"
       fi
+
+      # A malformed participant definition doesn't fail until runtime --
+      # kind other than agent/persona, an agent with no .agent, or a persona
+      # with no .systemPrompt each produce a broken CLI invocation
+      # (`--agent null`, `--append-system-prompt null`) that's easy to miss
+      # by eye. Hard errors, not warnings: these are never valid.
+      #
+      # The check itself lives entirely in jq, one complete message per
+      # output line -- an earlier version split a jq @tsv row in the shell
+      # via `IFS=$'\t' read`, which silently collapsed a persona's always-
+      # empty "agent" field (tab is IFS *whitespace*, so bash treats
+      # consecutive tabs as one delimiter, not an empty field between two),
+      # shifting every later field left and flagging every valid persona as
+      # broken. jq has no such footgun: each line below is already the full,
+      # correctly-attributed message, nothing left to mis-split.
+      bad_participants=0
+      while IFS= read -r problem_line; do
+        [[ -z "$problem_line" ]] && continue
+        problems+=("$problem_line")
+        bad_participants=$((bad_participants + 1))
+      done < <(jq -r '
+        .participants // {} | to_entries[] |
+        .key as $pid | .value as $p | ($p.kind // "") as $kind |
+        if $kind == "agent" then
+          (if (($p.agent // "") | length) > 0 then empty
+           else "teams.json participant \"" + $pid + "\" is kind=agent but has no non-empty \"agent\" field" end)
+        elif $kind == "persona" then
+          (if (($p.systemPrompt // "") | length) > 0 then empty
+           else "teams.json participant \"" + $pid + "\" is kind=persona but has no non-empty \"systemPrompt\" field" end)
+        else
+          "teams.json participant \"" + $pid + "\" has kind \"" + $kind + "\", must be \"agent\" or \"persona\""
+        end
+      ' "$teams_file" 2>/dev/null)
+      if [[ "$bad_participants" -eq 0 ]]; then
+        emit_check ok "teams.json participants are well-formed"
+      else
+        emit_check fail "teams.json participants are well-formed ($bad_participants problem(s))"
+      fi
     fi
   fi
 fi

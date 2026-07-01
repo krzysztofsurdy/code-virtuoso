@@ -18,3 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-step backlog items: each item is an ordered sequence of `steps`, each step carrying its own `participant`, `instructions`, `verifyCommand`, `status`, `attempts`, and `notes`. Item status is derived from its steps, never stored separately; a single-step item is the common case.
 - Reusable participants and teams via `.delivery-loop/teams.json`: a participant is either an `agent` (delegate to an existing Claude Code subagent) or an inline `persona` (own system prompt and tool list); a team is a named, ordered group of participants used as a compile-time template that the engine expands into steps but never runs as a unit.
 - Structured event log at `.delivery-loop/events.jsonl` — one JSON object per state transition (step verdict, item verified/blocked, loop stopped) — alongside the human-readable `progress.log`.
+- `REVIEW.md` — the record of five rounds of adversarial review this design went through, including a critical finding (a worker could rewrite its own `verifyCommand`) and the two real, documented trade-offs that remain.
+
+### Fixed
+
+- Default `allowedTools` for every stack no longer include bare general-purpose interpreters (`Bash(php *)`, `Bash(python *)`, `Bash(node *)`) — each was an unconditional arbitrary-file-write grant that defeated the tamper-detection guarantee entirely; package-manager installs narrowed to specific subcommands, with their remaining lifecycle-script risk documented rather than silently present.
+- `backlog_protected_paths` now also protects `teams.json`, not only `backlog.json`, at the real-time `PreToolUse` layer.
+- `scripts/validate-backlog.sh`'s participant-structure check rewritten to run entirely in `jq` after a bash `IFS`-splitting bug caused it to falsely reject every valid `persona` participant.
+- `hooks/guard-protected-paths.sh`'s path resolution now walks up to the nearest existing ancestor directory before resolving symlinks, closing a gap where a brand-new file in a not-yet-created directory fell back to an unresolved path and could bypass the real-time guard.
+- A `case` statement nested directly inside a `$(...)` command substitution in `scripts/lib/verify-gate.sh` did not parse on bash 3.2 (macOS's default `/bin/bash`) — moved into its own function.
