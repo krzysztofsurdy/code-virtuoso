@@ -11,7 +11,7 @@ claude plugin install loop-virtuoso@loop-virtuoso
 
 ## Quickstart
 
-1. **Compile a backlog.** Run the `backlog-compiler` skill on a PRD, ticket, or freeform feature description. It produces `.delivery-loop/backlog.json` — each item is one or more steps, each step sized to a single context window, ordered by dependency, with a literal `verifyCommand` per step.
+1. **Compile a backlog.** Run `/loop-virtuoso:backlog-compiler` (or just describe the work and let Claude reach for the skill) on a PRD, ticket, or freeform feature description. It produces `.delivery-loop/backlog.json` — each item is one or more steps, each step sized to a single context window, ordered by dependency, with a literal `verifyCommand` per step.
 2. **Run the loop.** Either:
    - `/loop-virtuoso:start` — session-supervised (Mode A), inside your current Claude Code session.
    - `scripts/run-batch.sh .delivery-loop/backlog.json` — unattended batch (Mode B), a fresh process per iteration.
@@ -25,6 +25,7 @@ An agent that can write the files grading its own work will sometimes game the c
 
 | Command | What it does |
 |---|---|
+| `/loop-virtuoso:backlog-compiler [source]` | Compile a PRD, ticket, or feature description into `.delivery-loop/backlog.json`. Implemented as a skill, not a `commands/*.md` file, but invokable the same way. |
 | `/loop-virtuoso:start [backlog]` | Start the session-supervised loop (Mode A) over the backlog (default `.delivery-loop/backlog.json`). |
 | `/loop-virtuoso:status [backlog]` | Report verified/pending/blocked counts (item and step level), iteration vs. max, stall/violation counts, and the progress-log/events tail. Cost is Mode B-only, tracked in its own run output, not shown here. |
 | `/loop-virtuoso:cancel` | Remove the session-local file to stop the loop; the backlog is left untouched. |
