@@ -19,7 +19,7 @@
     "protectedPaths": ["tests/**", "phpunit.xml*"],
     "permissionMode": "acceptEdits",
     "allowedTools": ["Read", "Edit", "Write", "Glob", "Grep",
-      "Bash(composer *)", "Bash(vendor/bin/* *)", "Bash(bin/console *)", "Bash(php *)",
+      "Bash(composer install*)", "Bash(composer dump-autoload*)", "Bash(vendor/bin/* *)", "Bash(bin/console *)",
       "Bash(git status*)", "Bash(git diff*)", "Bash(git log*)", "Bash(git add *)", "Bash(git commit *)"],
     "totalBudgetUsd": null,
     "perIterationBudgetUsd": null,

@@ -103,7 +103,7 @@ If `.delivery-loop/teams.json` is absent, steps simply carry no `participant` an
   "protectedPaths": ["tests/**", "spec/**", "phpunit.xml*", ".github/workflows/**"],
   "permissionMode": "acceptEdits",
   "allowedTools": ["Read", "Edit", "Write", "Glob", "Grep",
-    "Bash(composer *)", "Bash(vendor/bin/* *)", "Bash(bin/console *)", "Bash(php *)",
+    "Bash(composer install*)", "Bash(composer dump-autoload*)", "Bash(vendor/bin/* *)", "Bash(bin/console *)",
     "Bash(git status*)", "Bash(git diff*)", "Bash(git log*)", "Bash(git add *)", "Bash(git commit *)"],
   "totalBudgetUsd": null,
   "perIterationBudgetUsd": null,
@@ -111,7 +111,7 @@ If `.delivery-loop/teams.json` is absent, steps simply carry no `participant` an
 }
 ```
 
-Adjust `protectedPaths` to the project's real test/fixture/CI locations from Step 0. Adjust `allowedTools` to the project's real stack — see `references/allowed-tools-by-stack.md` for Node and Python base sets.
+Adjust `protectedPaths` to the project's real test/fixture/CI locations from Step 0. Adjust `allowedTools` to the project's real stack — see `references/allowed-tools-by-stack.md` for Node and Python base sets. Never add a bare interpreter pattern (`Bash(php *)`, `Bash(python *)`, `Bash(node *)`) — that reference explains why one of those defeats the tamper-detection guarantee entirely, not just widens the surface a little.
 
 **Do not weaken this by reaching for `bypassPermissions`.** The protected-paths guard (enforced by `iteration-loop`'s hooks), not a narrow allowlist, is what actually keeps the loop from touching its own grading files — a broad-but-still-bounded Bash allowlist is safe under that guard. Only suggest `bypassPermissions` if the project genuinely needs shell access beyond what any reasonable allowlist can enumerate (e.g. Docker, package installs requiring network), and even then only with the sandboxing note in `references/permission-modes.md`.
 

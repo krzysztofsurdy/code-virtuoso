@@ -58,8 +58,8 @@ Every state transition is recorded by scripts, never the model:
 
 ## Safety defaults
 
-- **`acceptEdits` + a scoped `allowedTools` allowlist — not `bypassPermissions`.** Auto-approve edits; name exactly which Bash commands the worker may run. `bypassPermissions` is opt-in only, for builds that need commands no allowlist can enumerate, and only inside a disposable sandbox.
-- **Write-boundary guard, three parts.** A content-tamper check compares `backlog.json`/`teams.json` against a snapshot taken before each step, restoring and flagging any edit — including a rewritten `verifyCommand` — before anything else runs; the snapshot itself lives outside the project directory, not as a sibling file the same access could launder. A `PreToolUse` hook denies `Edit`/`Write` to `config.protectedPaths` before the edit happens. A post-iteration `git diff` audit checks every changed file against `protectedPaths` regardless of which tool changed it. Together these are what let `allowedTools` stay broad — the guard, not the allowlist, keeps the agent off its own grading files.
+- **`acceptEdits` + a scoped `allowedTools` allowlist of specific binaries — not `bypassPermissions`, and not a bare interpreter.** Auto-approve edits; name exactly which commands the worker may run, each one a specific tool or subcommand (`vendor/bin/phpunit`, `npm run test`), never a general-purpose interpreter (`Bash(php *)`, `Bash(python *)`, `Bash(node *)`). That distinction is the actual boundary, not the list's length — see `allowed-tools-by-stack.md`'s "Why no bare interpreters" for why one interpreter grant undoes everything below.
+- **Write-boundary guard, three parts.** A content-tamper check compares `backlog.json`/`teams.json` against a snapshot taken before each step, restoring and flagging any edit — including a rewritten `verifyCommand` — before anything else runs; the snapshot lives outside the project directory, unreachable by the worker's Edit/Write tools. A `PreToolUse` hook denies `Edit`/`Write` to `config.protectedPaths` before the edit happens. A post-iteration `git diff` audit checks every changed file against `protectedPaths` regardless of which tool changed it. None of this defends against a worker with a bare interpreter in its `allowedTools` — Bash isn't sandboxed to the project directory the way Edit/Write are, so arbitrary code execution reaches anywhere the OS user can, snapshot location included. A curated, interpreter-free allowlist is what makes these three parts a real guarantee rather than a convention; broadening past that requires running the worker in an OS-level sandbox instead (see `permission-modes.md`).
 - **Six stop reasons, plus two Mode-B-only additions** — the loop ends via exactly one, written to `.delivery-loop/progress.log`:
   - `complete` — no pending items remain and none are blocked; every item reached `verified`.
   - `blocked_out` — no pending items remain, but at least one is `blocked` (it exhausted `maxAttemptsPerItem` without its `verifyCommand` passing).
@@ -71,6 +71,10 @@ Every state transition is recorded by scripts, never the model:
   - `invocation_failed` *(Mode B only)* — a `claude -p` call returned no usable result. The most common real-world cause under a subscription is the plan's own usage/rate limit, which doesn't show up as a cost at all; rerun once the window resets.
 
 For the authoritative detail on stop reasons, the write-boundary guard, and the backlog schema, see the `iteration-loop` and `backlog-compiler` skills shipped with this plugin.
+
+## Self-review
+
+This design went through five rounds of independent adversarial review before shipping, including a critical finding (a worker could rewrite its own `verifyCommand`) and its own fix's own bypass, both closed. See [`REVIEW.md`](REVIEW.md) for the honest account — what was found, what's fixed, and the two remaining trade-offs stated plainly rather than hidden.
 
 ## License
 
