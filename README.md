@@ -49,6 +49,8 @@ Steps are the default unit, and an item is usually a single step. When a backlog
 
 A `team` is a named, ordered group of participants that `backlog-compiler` expands into steps; the engine only ever runs participants. With no `teams.json`, steps carry no participant and run with no role framing — the simple default. The `backlog-compiler` skill walks through producing both. Note the fidelity difference: Mode B honors a participant with real per-step CLI flags; Mode A can only role-play it within one session (see the `iteration-loop` skill).
 
+`teams.json` can live in two places, checked in that order: project-local (`.delivery-loop/teams.json`) first, then a shared global library at `~/.claude/loop-virtuoso/teams.json`. Define your usual roles once globally and reference them from any project's backlog; a project-local entry with the same name overrides the global one. See `references/teams-and-participants.md` in the `backlog-compiler` skill.
+
 ## Visibility
 
 Every state transition is recorded by scripts, never the model:

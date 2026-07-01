@@ -55,7 +55,7 @@ FIRST_STEP_ID=$(echo "$FIRST_STEP" | jq -r '.id')
 FIRST_ITEM_JSON=$(backlog_get_item "$BACKLOG_PATH" "$FIRST_ITEM_ID")
 
 PARTICIPANT_ID=$(echo "$FIRST_STEP" | jq -r '.participant // empty')
-PARTICIPANT_JSON=$(teams_get_participant "$(teams_path_for "$BACKLOG_PATH")" "$PARTICIPANT_ID")
+PARTICIPANT_JSON=$(teams_get_participant "$BACKLOG_PATH" "$PARTICIPANT_ID")
 
 BACKLOG_DIR=$(dirname "$BACKLOG_PATH")
 REPO_DIR=$(git -C "$BACKLOG_DIR" rev-parse --show-toplevel 2>/dev/null || true)

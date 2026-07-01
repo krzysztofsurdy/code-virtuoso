@@ -143,7 +143,7 @@ NEXT_ITEM_JSON=$(backlog_get_item "$BACKLOG_ABS" "$NEXT_ITEM_ID")
 
 # Resolve the step's participant (if any) from teams.json for role framing.
 PARTICIPANT_ID=$(echo "$NEXT_STEP" | jq -r '.participant // empty')
-PARTICIPANT_JSON=$(teams_get_participant "$(teams_path_for "$BACKLOG_ABS")" "$PARTICIPANT_ID")
+PARTICIPANT_JSON=$(teams_get_participant "$BACKLOG_ABS" "$PARTICIPANT_ID")
 
 NEXT_ITERATION=$(( ITERATION + 1 ))
 NEXT_START_SHA=$(git -C "$CWD" rev-parse HEAD 2>/dev/null || true)

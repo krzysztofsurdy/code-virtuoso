@@ -122,7 +122,7 @@ while true; do
   step_id="$(echo "$step_json" | jq -r '.id')"
   item_json="$(backlog_get_item "$backlog_file" "$item_id")"
   participant_id="$(echo "$step_json" | jq -r '.participant // empty')"
-  participant_json="$(teams_get_participant "$(teams_path_for "$backlog_file")" "$participant_id")"
+  participant_json="$(teams_get_participant "$backlog_file" "$participant_id")"
   participant_kind="$(echo "$participant_json" | jq -r '.kind // empty')"
   prompt="$(backlog_build_step_prompt "$item_json" "$step_json" "$participant_json")"
   start_sha="$(git -C "$repo_dir" rev-parse HEAD 2>/dev/null || echo "4b825dc642cb6eb9a060e54bf8d69288fbee4904")"

@@ -25,6 +25,7 @@ dir="$(cd "$(dirname "$file")" && pwd)"
 session_file="${dir}/session.local.json"
 progress_log="${dir}/progress.log"
 teams_file="$(teams_path_for "$file")"
+global_teams_file="$(teams_global_path)"
 events_file="$(events_path_for "$file")"
 
 project="$(jq -r '.project // "(unnamed)"' "$file")"
@@ -55,10 +56,13 @@ s_verified="$(echo "$step_counts" | jq -r '.verified')"
 s_blocked="$(echo "$step_counts" | jq -r '.blocked')"
 echo "  Steps: $s_total total | $s_pending pending | $s_verified verified | $s_blocked blocked"
 
-if [[ -f "$teams_file" ]]; then
-  n_participants="$(teams_list_participants "$teams_file" | jq -r 'length')"
-  n_teams="$(teams_list_teams "$teams_file" | jq -r 'length')"
-  echo "  Teams: $n_participants participant(s), $n_teams team(s) defined"
+if [[ -f "$teams_file" || -f "$global_teams_file" ]]; then
+  n_participants="$(teams_list_participants "$file" | jq -r 'length')"
+  n_teams="$(teams_list_teams "$file" | jq -r 'length')"
+  source_note="project"
+  [[ -f "$global_teams_file" ]] && source_note="project + global"
+  [[ ! -f "$teams_file" && -f "$global_teams_file" ]] && source_note="global"
+  echo "  Teams: $n_participants participant(s), $n_teams team(s) defined ($source_note)"
 fi
 echo
 

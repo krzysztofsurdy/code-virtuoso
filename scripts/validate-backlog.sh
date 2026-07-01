@@ -164,25 +164,36 @@ else
       done <<< "$bad_ids"
     fi
 
-    # Step participant references resolve against teams.json -- warn only.
-    # No teams.json, or steps with no participant, is fine. An unparseable
-    # teams.json is not fine -- without this check, teams_get_participant's
-    # jq call fails silently and every reference looks "resolved" by accident.
+    # Step participant references resolve against teams.json -- project-local
+    # layer first, then the shared global layer (teams_get_participant checks
+    # both). No teams.json at either layer, or steps with no participant, is
+    # fine. An unparseable teams.json at either layer is not fine -- without
+    # this check, teams_get_participant's jq call fails silently and every
+    # reference at that layer looks "resolved" by accident.
     teams_file="$(teams_path_for "$file")"
-    if [[ -f "$teams_file" ]] && ! jq empty "$teams_file" >/dev/null 2>&1; then
-      emit_check fail "teams.json is valid JSON"
-      problems+=("teams.json exists but is not valid JSON: $teams_file")
-    elif [[ -f "$teams_file" ]]; then
+    global_teams_file="$(teams_global_path)"
+    teams_json_ok=1
+    for f in "$teams_file" "$global_teams_file"; do
+      if [[ -f "$f" ]] && ! jq empty "$f" >/dev/null 2>&1; then
+        emit_check fail "$f is valid JSON"
+        problems+=("teams.json exists but is not valid JSON: $f")
+        teams_json_ok=0
+      fi
+    done
+
+    if [[ "$teams_json_ok" -eq 1 ]] && { [[ -f "$teams_file" ]] || [[ -f "$global_teams_file" ]]; }; then
       unresolved=0
+      referenced_participants=()
       while IFS=$'\t' read -r iid sid pid; do
         [[ -z "$pid" ]] && continue
-        if [[ "$(teams_get_participant "$teams_file" "$pid")" == "null" ]]; then
-          warnings+=("step ${iid}/${sid} references participant \"$pid\" not found in teams.json")
+        referenced_participants+=("$pid")
+        if [[ "$(teams_get_participant "$file" "$pid")" == "null" ]]; then
+          warnings+=("step ${iid}/${sid} references participant \"$pid\" not found in project or global teams.json")
           unresolved=$((unresolved + 1))
         fi
       done < <(jq -r '.items[] | .id as $iid | (.steps // [])[] | select((.participant // "") != "") | [$iid, .id, .participant] | @tsv' "$file" 2>/dev/null)
       if [[ "$unresolved" -eq 0 ]]; then
-        emit_check ok "step participants resolve against teams.json"
+        emit_check ok "step participants resolve against teams.json (project or global)"
       else
         emit_check ok "step participants present ($unresolved unresolved, see warnings)"
       fi
@@ -193,6 +204,12 @@ else
       # (`--agent null`, `--append-system-prompt null`) that's easy to miss
       # by eye. Hard errors, not warnings: these are never valid.
       #
+      # Only participants this backlog's steps actually reference are
+      # checked, resolved through the same project-then-global lookup the
+      # engine uses at run time -- not "every participant in whichever file
+      # happens to exist", which would mean every project's validate run
+      # re-checking the whole shared global library on every invocation.
+      #
       # The check itself lives entirely in jq, one complete message per
       # output line -- an earlier version split a jq @tsv row in the shell
       # via `IFS=$'\t' read`, which silently collapsed a persona's always-
@@ -202,27 +219,30 @@ else
       # broken. jq has no such footgun: each line below is already the full,
       # correctly-attributed message, nothing left to mis-split.
       bad_participants=0
-      while IFS= read -r problem_line; do
-        [[ -z "$problem_line" ]] && continue
-        problems+=("$problem_line")
-        bad_participants=$((bad_participants + 1))
-      done < <(jq -r '
-        .participants // {} | to_entries[] |
-        .key as $pid | .value as $p | ($p.kind // "") as $kind |
-        if $kind == "agent" then
-          (if (($p.agent // "") | length) > 0 then empty
-           else "teams.json participant \"" + $pid + "\" is kind=agent but has no non-empty \"agent\" field" end)
-        elif $kind == "persona" then
-          (if (($p.systemPrompt // "") | length) > 0 then empty
-           else "teams.json participant \"" + $pid + "\" is kind=persona but has no non-empty \"systemPrompt\" field" end)
-        else
-          "teams.json participant \"" + $pid + "\" has kind \"" + $kind + "\", must be \"agent\" or \"persona\""
-        end
-      ' "$teams_file" 2>/dev/null)
+      for pid in "${referenced_participants[@]+"${referenced_participants[@]}"}"; do
+        participant_json="$(teams_get_participant "$file" "$pid")"
+        [[ "$participant_json" == "null" ]] && continue
+        while IFS= read -r problem_line; do
+          [[ -z "$problem_line" ]] && continue
+          problems+=("$problem_line")
+          bad_participants=$((bad_participants + 1))
+        done < <(echo "$participant_json" | jq -r --arg pid "$pid" '
+          . as $p | ($p.kind // "") as $kind |
+          if $kind == "agent" then
+            (if (($p.agent // "") | length) > 0 then empty
+             else "participant \"" + $pid + "\" is kind=agent but has no non-empty \"agent\" field" end)
+          elif $kind == "persona" then
+            (if (($p.systemPrompt // "") | length) > 0 then empty
+             else "participant \"" + $pid + "\" is kind=persona but has no non-empty \"systemPrompt\" field" end)
+          else
+            "participant \"" + $pid + "\" has kind \"" + $kind + "\", must be \"agent\" or \"persona\""
+          end
+        ')
+      done
       if [[ "$bad_participants" -eq 0 ]]; then
-        emit_check ok "teams.json participants are well-formed"
+        emit_check ok "referenced participants are well-formed"
       else
-        emit_check fail "teams.json participants are well-formed ($bad_participants problem(s))"
+        emit_check fail "referenced participants are well-formed ($bad_participants problem(s))"
       fi
     fi
   fi
