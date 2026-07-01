@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-07-01
+
+### Added
+
+- Global teams library at `~/.claude/loop-virtuoso/teams.json`, shared across every project on the machine. A project's own `.delivery-loop/teams.json` is still checked first and overrides the global library by name; anything not defined locally falls back to it. `validate-backlog.sh` and `status.sh` both resolve participants/teams through both layers.
+
 ## [1.0.0] - 2026-07-01
 
 ### Added
