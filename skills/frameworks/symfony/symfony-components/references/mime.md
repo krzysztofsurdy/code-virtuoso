@@ -1,5 +1,19 @@
 # Symfony Mime Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Creating email messages](#creating-email-messages)
+- [Email class methods](#email-class-methods)
+- [Twig integration](#twig-integration)
+- [Creating raw email messages](#creating-raw-email-messages)
+- [Message parts](#message-parts)
+- [Serializing messages](#serializing-messages)
+- [MIME types utilities](#mime-types-utilities)
+- [MIME structure reference](#mime-structure-reference)
+- [Integration with other components](#integration-with-other-components)
+
 ## Overview
 
 The Mime component provides APIs for creating and manipulating MIME (Multipurpose Internet Mail Extensions) messages used in email systems. It extends email format to support non-ASCII characters in headers, multi-part message bodies, and non-text attachments. Two APIs are available: a high-level `Email` class for common email features and a low-level `Message` class for complete control.
@@ -12,7 +26,7 @@ Install the Mime component:
 composer require symfony/mime
 ```
 
-## Creating Email Messages
+## Creating email messages
 
 Use the chainable `Email` class to create emails with common features:
 
@@ -39,9 +53,9 @@ $email = (new Email())
 - `Email::PRIORITY_LOW` (numeric: 4)
 - `Email::PRIORITY_LOWEST` (numeric: 5)
 
-## Email Class Methods
+## Email class methods
 
-### Recipients & Headers
+### Recipients and headers
 
 - `from(string|Address|AddressInterface)` - Set sender address
 - `to(string|Address|AddressInterface|array)` - Add recipient
@@ -57,22 +71,22 @@ $email = (new Email())
 - `textTemplate(string $template)` - Set plain text template (requires Twig bridge)
 - `htmlTemplate(string $template)` - Set HTML template (requires Twig bridge)
 
-### Message Properties
+### Message properties
 
 - `subject(string $subject)` - Set email subject
 - `priority(int $priority)` - Set priority level
 - `date(\DateTimeImmutable $date)` - Set sending date
 - `sender(string|Address|AddressInterface)` - Set explicit sender (different from From header)
 
-### Attachments & Embedded Content
+### Attachments and embedded content
 
 - `attach(string|SplFileInfo|DataPart)` - Attach file
 - `attachFromPath(string $path, string $name = null, string $contentType = null)` - Attach file from path
 - `embed(string|SplFileInfo|DataPart)` - Embed file inline (returns Content-ID for referencing)
 
-## Twig Integration
+## Twig integration
 
-### Setup for Standalone Usage
+### Setup for standalone usage
 
 Render templates outside of Symfony framework using `BodyRenderer`:
 
@@ -96,7 +110,7 @@ $email = (new Email())
 $renderer->render($email);
 ```
 
-### CSS Inlining
+### CSS inlining
 
 Install the CSS inliner extension:
 
@@ -114,11 +128,11 @@ $twig->addExtension(new CssInlinerExtension());
 
 Use in templates with `{% apply inline_css %}...{% endapply %}` block.
 
-## Creating Raw Email Messages
+## Creating raw email messages
 
 For advanced control over MIME structure, use the low-level `Message` class with proper multipart hierarchy.
 
-### Basic Structure
+### Basic structure
 
 ```php
 use Symfony\Component\Mime\Header\Headers;
@@ -139,7 +153,7 @@ $body = new AlternativePart($textPart, $htmlPart);
 $message = new Message($headers, $body);
 ```
 
-### With Attachments & Embedded Images
+### With attachments and embedded images
 
 ```php
 use Symfony\Component\Mime\Part\DataPart;
@@ -175,7 +189,7 @@ $mixed = new MixedPart($related, $pdf);
 $message = new Message($headers, $mixed);
 ```
 
-### Headers Class Methods
+### Headers class methods
 
 - `addMailboxListHeader(string $name, array $addresses)` - Set mailbox list header
 - `addTextHeader(string $name, string $value)` - Set text header
@@ -183,7 +197,7 @@ $message = new Message($headers, $mixed);
 - `addIdHeader(string $name, string $id)` - Set ID header
 - `addPathHeader(string $name, string|array $path)` - Set path header
 
-## Message Parts
+## Message parts
 
 ### TextPart
 
@@ -218,7 +232,7 @@ Methods:
 - `getFilename()` - Get filename
 - `getMediaType()` - Get MIME type
 
-### Multipart Classes
+### Multipart classes
 
 - `AlternativePart` - Offer multiple representations (text vs HTML)
 - `RelatedPart` - Container with embedded resources
@@ -226,7 +240,7 @@ Methods:
 - `DigestPart` - Digest format for multiple messages
 - `FormDataPart` - Multipart form data
 
-## Serializing Messages
+## Serializing messages
 
 Serialize email messages as simple data objects for storage or async processing:
 
@@ -249,9 +263,9 @@ $message = new RawMessage(unserialize($serialized));
 
 This is useful for storing messages in databases or queuing with the Messenger component.
 
-## MIME Types Utilities
+## MIME types utilities
 
-### Convert Between MIME Types and Extensions
+### Convert between MIME types and extensions
 
 ```php
 use Symfony\Component\Mime\MimeTypes;
@@ -270,7 +284,7 @@ $types = $mimeTypes->getMimeTypes('js');
 // Returns: ['application/javascript', 'application/x-javascript', 'text/javascript']
 ```
 
-### Guess MIME Type
+### Guess MIME type
 
 Detect MIME type by file contents:
 
@@ -282,7 +296,7 @@ $type = $mimeTypes->guessMimeType('/path/to/image.gif');
 
 **Tip:** Install PHP `fileinfo` extension for better performance and accuracy.
 
-### Custom MIME Type Guesser
+### Custom MIME type guesser
 
 Implement custom guessing logic:
 
@@ -307,7 +321,7 @@ class CustomMimeTypeGuesser implements MimeTypeGuesserInterface
 
 Register as service with `mime.mime_type_guesser` tag (auto-configured with autoconfiguration enabled).
 
-## MIME Structure Reference
+## MIME structure reference
 
 Standard MIME message hierarchy for email with embedded images and attachments:
 
@@ -323,7 +337,7 @@ multipart/mixed
 
 Use this structure when manually building complex messages with the low-level API.
 
-## Integration with Other Components
+## Integration with other components
 
 - **Mailer Component** - Use `MailerInterface` to send `Email` or `RawMessage` objects
 - **Messenger Component** - Serialize and queue messages for async sending

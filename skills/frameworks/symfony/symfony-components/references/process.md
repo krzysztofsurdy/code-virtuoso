@@ -1,8 +1,26 @@
 # Symfony Process Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core classes and interfaces](#core-classes-and-interfaces)
+- [Execution methods](#execution-methods)
+- [Output management](#output-management)
+- [Input and environment management](#input-and-environment-management)
+- [Timeout and duration control](#timeout-and-duration-control)
+- [Process control and status](#process-control-and-status)
+- [Terminal and TTY modes](#terminal-and-tty-modes)
+- [Shell command execution](#shell-command-execution)
+- [Platform-specific options](#platform-specific-options)
+- [Working directory](#working-directory)
+- [Common use cases](#common-use-cases)
+- [Error handling](#error-handling)
+- [Key features summary](#key-features-summary)
+
 ## Overview
 
-The Process component executes external commands and system processes in sub-processes, providing a secure and flexible alternative to PHP's built-in functions like `exec()`, `passthru()`, `shell_exec()`, and `system()`. It handles cross-platform OS differences automatically and prevents security vulnerabilities through proper argument escaping.
+The Process component executes external commands and system processes in sub-processes, as an alternative to PHP's built-in functions like `exec()`, `passthru()`, `shell_exec()`, and `system()`. It handles OS differences and escapes arguments to prevent command injection.
 
 ## Installation
 
@@ -10,9 +28,9 @@ The Process component executes external commands and system processes in sub-pro
 composer require symfony/process
 ```
 
-## Core Classes and Interfaces
+## Core classes and interfaces
 
-### Process Class
+### Process class
 
 Main class for executing commands.
 
@@ -24,7 +42,7 @@ $process = new Process(['command', 'arg1', 'arg2'], '/working/dir');
 $process = new Process(['command'], null, ['ENV_VAR' => 'value']);
 ```
 
-### PhpProcess Class
+### PhpProcess class
 
 Execute PHP code in an isolated process.
 
@@ -35,7 +53,7 @@ $process = new PhpProcess('<?= "Hello World" ?>');
 $process->run();
 ```
 
-### PhpSubprocess Class
+### PhpSubprocess class
 
 Execute PHP scripts as child processes with inherited configuration.
 
@@ -46,7 +64,7 @@ $process = new PhpSubprocess(['bin/console', 'cache:clear']);
 $process->run();
 ```
 
-### ProcessBuilder Class
+### ProcessBuilder class
 
 Fluent interface for building processes.
 
@@ -80,7 +98,7 @@ $finder = new PhpExecutableFinder();
 $phpPath = $finder->find();
 ```
 
-### InputStream Class
+### InputStream class
 
 Handle standard input for interactive processes.
 
@@ -110,7 +128,7 @@ try {
 }
 ```
 
-## Execution Methods
+## Execution methods
 
 ### run()
 
@@ -190,7 +208,7 @@ $process->waitUntil(function ($type, $output): bool {
 // Process emitted "Ready", continue execution
 ```
 
-## Output Management
+## Output management
 
 ### getOutput()
 
@@ -260,7 +278,7 @@ if ($process->isOutputDisabled()) {
 }
 ```
 
-### Iterator Interface
+### Iterator interface
 
 Iterate through process output as it streams.
 
@@ -277,7 +295,7 @@ foreach ($process as $type => $data) {
 }
 ```
 
-## Input/Environment Management
+## Input and environment management
 
 ### setInput()
 
@@ -352,7 +370,7 @@ $process->setEnv([
 ]);
 ```
 
-## Timeout and Duration Control
+## Timeout and duration control
 
 ### setTimeout()
 
@@ -395,7 +413,7 @@ Get Unix timestamp of last output.
 $lastTime = $process->getLastOutputTime();
 ```
 
-## Process Control and Status
+## Process control and status
 
 ### getPid()
 
@@ -482,7 +500,7 @@ Set signals that the process should ignore.
 $process->setIgnoredSignals([SIGKILL, SIGUSR1]);
 ```
 
-## Terminal and TTY Modes
+## Terminal and TTY modes
 
 ### setTty()
 
@@ -532,7 +550,7 @@ if (Process::isTtySupported()) {
 }
 ```
 
-## Shell Command Execution
+## Shell command execution
 
 ### fromShellCommandline()
 
@@ -554,7 +572,7 @@ $process = Process::fromShellCommandline('echo "${:MESSAGE}"');
 $process->run(null, ['MESSAGE' => 'Hello']);
 ```
 
-## Platform-Specific Options
+## Platform-specific options
 
 ### setOptions()
 
@@ -566,7 +584,7 @@ $process->setOptions([
 ]);
 ```
 
-## Working Directory
+## Working directory
 
 Set working directory for process execution.
 
@@ -587,9 +605,9 @@ Get working directory:
 $dir = $process->getWorkingDirectory();
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Execute Git Command
+### Execute Git command
 
 ```php
 $process = new Process(['git', 'status']);
@@ -606,7 +624,7 @@ $process = new Process(['composer', 'install', '--no-dev']);
 $process->run();
 ```
 
-### Database Migration with Timeout
+### Database migration with timeout
 
 ```php
 $process = new Process(['php', 'bin/console', 'doctrine:migrations:migrate']);
@@ -614,7 +632,7 @@ $process->setTimeout(300); // 5 minutes
 $process->mustRun();
 ```
 
-### Background Task with Output Streaming
+### Background task with output streaming
 
 ```php
 $process = new Process(['php', 'bin/console', 'process:emails']);
@@ -629,7 +647,7 @@ while ($process->isRunning()) {
 }
 ```
 
-### Concurrent Process Management
+### Concurrent process management
 
 ```php
 $processes = [
@@ -650,7 +668,7 @@ foreach ($processes as $process) {
 }
 ```
 
-### Secure Command Execution with Arguments
+### Secure command execution with arguments
 
 ```php
 // Arguments are automatically escaped
@@ -665,7 +683,7 @@ $process = new Process([
 $process->run();
 ```
 
-## Error Handling
+## Error handling
 
 ```php
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -685,15 +703,15 @@ try {
 }
 ```
 
-## Key Features Summary
+## Key features summary
 
-- **Secure argument handling** - Prevents command injection
-- **Real-time output** - Stream output as process runs
-- **Asynchronous execution** - Non-blocking process start
-- **Timeout control** - Total and idle timeout support
-- **Signal handling** - POSIX signals (SIGTERM, SIGKILL, etc.)
-- **TTY/PTY modes** - Interactive program support
-- **Environment variables** - Set and inherit environment
-- **Cross-platform** - Windows, Linux, macOS support
-- **Memory efficient** - Optional output disabling
-- **Standard input** - Support for interactive input streams
+- Secure argument handling: Prevents command injection
+- Real-time output: Stream output as process runs
+- Asynchronous execution: Non-blocking process start
+- Timeout control: Total and idle timeout support
+- Signal handling: POSIX signals (SIGTERM, SIGKILL, etc.)
+- TTY/PTY modes: Interactive program support
+- Environment variables: Set and inherit environment
+- Cross-platform: Windows, Linux, macOS support
+- Memory efficient: Optional output disabling
+- Standard input: Support for interactive input streams

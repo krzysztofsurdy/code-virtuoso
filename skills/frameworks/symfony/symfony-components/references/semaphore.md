@@ -1,8 +1,19 @@
 # Symfony Semaphore Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core classes and interfaces](#core-classes-and-interfaces)
+- [Available stores](#available-stores)
+- [Common use cases and examples](#common-use-cases-and-examples)
+- [Important considerations](#important-considerations)
+- [Store comparison](#store-comparison)
+- [References](#references)
+
 ## Overview
 
-The Semaphore Component provides a mechanism to manage semaphores — synchronization primitives that allow **multiple processes to access a shared resource concurrently up to a specified limit**. Unlike locks which restrict access to a single process, semaphores enable controlled concurrent access.
+The Semaphore Component provides a mechanism to manage semaphores: synchronization primitives that allow **multiple processes to access a shared resource concurrently up to a specified limit**. Unlike a lock, which restricts access to a single process, a semaphore allows concurrent access up to a limit.
 
 **Key Difference:**
 - **Semaphore**: Multiple processes can access a resource (up to limit)
@@ -16,13 +27,13 @@ Install the Semaphore component via Composer:
 composer require symfony/semaphore
 ```
 
-For standalone use outside Symfony applications, ensure Composer autoloading is included:
+For standalone use outside Symfony applications, include Composer autoloading:
 
 ```php
 require_once 'vendor/autoload.php';
 ```
 
-## Core Classes and Interfaces
+## Core classes and interfaces
 
 ### SemaphoreFactory
 
@@ -54,7 +65,7 @@ Main interface for semaphore instances.
 - `__destruct(): void`
   - Automatically releases the semaphore if auto-release is enabled
 
-## Available Stores
+## Available stores
 
 ### RedisStore
 
@@ -97,9 +108,9 @@ $store = new DynamoDbStore($client, 'semaphores-table');
 $factory = new SemaphoreFactory($store);
 ```
 
-## Common Use Cases and Examples
+## Common use cases and examples
 
-### Basic Semaphore Usage
+### Basic semaphore usage
 
 Limit concurrent access to a resource to a maximum of N processes:
 
@@ -126,7 +137,7 @@ if ($semaphore->acquire()) {
 }
 ```
 
-### Rate Limiting with Semaphores
+### Rate limiting with semaphores
 
 Control the rate of resource-intensive operations:
 
@@ -143,7 +154,7 @@ if ($semaphore->acquire()) {
 }
 ```
 
-### Non-Blocking Acquisition
+### Non-blocking acquisition
 
 Try to acquire without waiting:
 
@@ -161,7 +172,7 @@ if ($semaphore->acquire(blocking: false)) {
 }
 ```
 
-### With Timeout
+### With timeout
 
 Limit the wait time for acquisition:
 
@@ -178,7 +189,7 @@ if ($semaphore->acquire(timeout: 5.0)) {
 }
 ```
 
-### Disabling Auto-Release (Persistent Locking)
+### Disabling auto-release (persistent locking)
 
 For cross-request or persistent locking:
 
@@ -196,7 +207,7 @@ if ($semaphore->acquire()) {
 }
 ```
 
-### Shared Semaphore Instances
+### Shared semaphore instances
 
 Share the same semaphore instance across multiple services:
 
@@ -222,16 +233,16 @@ class ApiService {
 }
 ```
 
-## Important Considerations
+## Important considerations
 
-### Instance Distinction
+### Instance distinction
 
 Semaphore instances are distinct objects even when created for the same resource and limit. For shared coordination:
 - Store the semaphore instance in a service or container
 - Pass the same instance to all code that needs it
 - Avoid creating multiple semaphore instances for the same resource
 
-### Automatic Release
+### Automatic release
 
 By default, semaphores are automatically released when the instance is destroyed:
 
@@ -246,9 +257,9 @@ function processWithSemaphore($factory) {
 }
 ```
 
-### Manual Release
+### Manual release
 
-Always explicitly release in try-finally blocks to ensure release on exceptions:
+Release explicitly in try-finally blocks so the semaphore is freed when an exception is thrown:
 
 ```php
 $semaphore = $factory->createSemaphore('resource', 2);
@@ -262,7 +273,7 @@ if ($semaphore->acquire()) {
 }
 ```
 
-### Blocking Behavior
+### Blocking behavior
 
 The `$blocking` parameter controls behavior when the semaphore limit is reached:
 
@@ -274,7 +285,7 @@ $semaphore->acquire(blocking: true);
 $semaphore->acquire(blocking: false);
 ```
 
-## Store Comparison
+## Store comparison
 
 | Store | Type | Distribution | Best For |
 |-------|------|--------------|----------|

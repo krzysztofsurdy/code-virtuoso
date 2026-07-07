@@ -1,8 +1,23 @@
 # Symfony PSR-7 Bridge
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core interfaces](#core-interfaces)
+- [Core classes](#core-classes)
+- [Converting HttpFoundation to PSR-7](#converting-httpfoundation-to-psr-7)
+- [Converting PSR-7 to HttpFoundation](#converting-psr-7-to-httpfoundation)
+- [Common use cases](#common-use-cases)
+- [Supported PSR standards](#supported-psr-standards)
+- [Important notes](#important-notes)
+- [Related components](#related-components)
+- [Integration points](#integration-points)
+- [Version compatibility](#version-compatibility)
+
 ## Overview
 
-The PSR-7 Bridge component bridges Symfony's HttpFoundation with PSR-7 HTTP message interfaces, enabling seamless integration with PSR-7 compatible libraries and middleware. It provides bidirectional conversion between Symfony's native objects and standardized PSR-7/PSR-17 implementations.
+The PSR-7 Bridge converts between Symfony's HttpFoundation objects and PSR-7 HTTP messages, so Symfony applications can use PSR-7 compatible libraries and middleware. Conversion works in both directions and supports any PSR-7/PSR-17 implementation.
 
 ## Installation
 
@@ -13,7 +28,7 @@ composer require nyholm/psr7
 
 The `nyholm/psr7` package is recommended as a PSR-7 and PSR-17 implementation. Alternatively, use any PSR-7 and PSR-17 compliant library.
 
-## Core Interfaces
+## Core interfaces
 
 ### HttpMessageFactoryInterface
 
@@ -35,7 +50,7 @@ Converts PSR-7 objects back to Symfony HttpFoundation objects.
 
 **Location:** `Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface`
 
-## Core Classes
+## Core classes
 
 ### PsrHttpFactory
 
@@ -169,9 +184,9 @@ echo $symfonyRequest->getPathInfo();
 echo $symfonyResponse->getContent();
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Using PSR-7 Middleware in Symfony
+### Using PSR-7 middleware in Symfony
 
 ```php
 $psrHttpFactory = new PsrHttpFactory($factory1, $factory2, $factory3, $factory4);
@@ -187,7 +202,7 @@ $psrRequest = $middleware->process($psrRequest, $handler);
 $symfonyResponse = $httpFoundationFactory->createResponse($psrResponse);
 ```
 
-### Third-Party PSR-7 Library Integration
+### Third-party PSR-7 library integration
 
 ```php
 use Some\ThirdParty\PsrProcessor;
@@ -204,13 +219,13 @@ $psrResponse = $processor->process($psrRequest);
 return $httpFoundationFactory->createResponse($psrResponse);
 ```
 
-### Bridging HttpFoundation Request/Response Properties
+### Bridging HttpFoundation request/response properties
 
 The bridge preserves:
 - **Request:** Query parameters, POST data, cookies, files, headers, server variables, request body
 - **Response:** Status code, headers, body content, content type
 
-## Supported PSR Standards
+## Supported PSR standards
 
 - **PSR-7** - HTTP message interfaces specification
   - `Psr\Http\Message\RequestInterface`
@@ -225,21 +240,21 @@ The bridge preserves:
   - `Psr\Http\Message\StreamFactoryInterface`
   - `Psr\Http\Message\UploadedFileFactoryInterface`
 
-## Important Notes
+## Important notes
 
 1. **HTTP_HOST Required** - Set the `HTTP_HOST` server parameter when creating Symfony Request objects to avoid errors
 2. **Factory Compatibility** - Use any PSR-7 and PSR-17 compliant implementation (nyholm/psr7, guzzlehttp/psr7, slim/http, etc.)
 3. **Bidirectional** - The bridge supports conversion in both directions
 4. **Immutability** - PSR-7 objects are immutable; conversions create new instances
-5. **Content Handling** - Stream bodies are properly converted between Symfony and PSR-7
+5. **Content Handling** - Stream bodies are converted between Symfony and PSR-7
 
-## Related Components
+## Related components
 
 - **HttpFoundation** - Symfony's native request/response abstraction
 - **HttpKernel** - Core HTTP kernel that uses HttpFoundation
 - **Contracts** - Framework contracts including PSR-7 compatibility interfaces
 
-## Integration Points
+## Integration points
 
 Use the PSR-7 Bridge when:
 - Integrating PSR-7 middleware into Symfony applications
@@ -248,7 +263,7 @@ Use the PSR-7 Bridge when:
 - Requiring standards-based HTTP message handling
 - Implementing middleware stacks with PSR-7 compliance
 
-## Version Compatibility
+## Version compatibility
 
 - Works with Symfony 4.0+
 - Supports PHP 7.1 or higher

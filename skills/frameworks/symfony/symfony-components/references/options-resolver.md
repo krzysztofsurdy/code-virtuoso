@@ -1,6 +1,15 @@
 # Symfony OptionsResolver Component
 
-Provide a robust solution for managing configuration options in your applications. The OptionsResolver component enables creation of flexible option systems with validation, normalization, and dependency management between options.
+The OptionsResolver component manages configuration options. It handles validation, normalization, and dependencies between options.
+
+## Contents
+
+- [Installation](#installation)
+- [Core classes and interfaces](#core-classes-and-interfaces)
+- [Essential methods](#essential-methods)
+- [Common use cases](#common-use-cases)
+- [Best practices](#best-practices)
+- [Exception handling](#exception-handling)
 
 ## Installation
 
@@ -8,7 +17,7 @@ Provide a robust solution for managing configuration options in your application
 composer require symfony/options-resolver
 ```
 
-## Core Classes & Interfaces
+## Core classes and interfaces
 
 ### OptionsResolver
 Main class for resolving and validating options.
@@ -40,9 +49,9 @@ $introspector = new OptionsResolverIntrospector($resolver);
 $default = $introspector->getDefault('host');
 ```
 
-## Essential Methods
+## Essential methods
 
-### Setting Defaults
+### Setting defaults
 
 Set default values for options:
 
@@ -71,7 +80,7 @@ $resolver->setDefault('host', function (Options $options, string $previous): str
 });
 ```
 
-### Marking Required Options
+### Marking required options
 
 Define options that must be provided:
 
@@ -86,7 +95,7 @@ $resolver->isMissing('username');
 $resolver->getMissingOptions();
 ```
 
-### Type Validation
+### Type validation
 
 Validate option types using `setAllowedTypes()`:
 
@@ -107,7 +116,7 @@ In subclasses, add types without erasing existing ones:
 $resolver->addAllowedTypes('port', 'string');
 ```
 
-### Value Validation
+### Value validation
 
 Restrict options to specific values:
 
@@ -134,7 +143,7 @@ Add values in subclasses:
 $resolver->addAllowedValues('transport', 'custom-transport');
 ```
 
-### Option Normalization
+### Option normalization
 
 Transform option values after validation:
 
@@ -166,7 +175,7 @@ $resolver->addNormalizer('host', function (Options $options, string $value): str
 });
 ```
 
-### Options Without Defaults
+### Options without defaults
 
 Define options that only exist if provided:
 
@@ -184,7 +193,7 @@ if (array_key_exists('port', $resolved)) {
 }
 ```
 
-### Nested Options
+### Nested options
 
 Define sub-options for complex configurations:
 
@@ -218,7 +227,7 @@ $resolver->setOptions('profiling', function (Options $options): void {
 });
 ```
 
-### Prototype Options
+### Prototype options
 
 Define repeating option structures using prototypes:
 
@@ -247,7 +256,7 @@ $resolver->resolve([
 ]);
 ```
 
-### Deprecating Options
+### Deprecating options
 
 Mark options as deprecated:
 
@@ -283,7 +292,7 @@ $resolver
     });
 ```
 
-### Ignoring Undefined Options
+### Ignoring undefined options
 
 Allow undefined options instead of throwing exception:
 
@@ -299,7 +308,7 @@ $resolved = $resolver->resolve([
 ]);
 ```
 
-### Chainable Configuration (define Method)
+### Chainable configuration (define method)
 
 Use `define()` for fluent, readable configuration:
 
@@ -323,7 +332,7 @@ $resolver->define('port')
     });
 ```
 
-### Resolving Options
+### Resolving options
 
 Resolve and validate user-provided options:
 
@@ -338,9 +347,9 @@ $options = $resolver->resolve([
 // Throws MissingOptionsException if required options missing
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Creating Flexible APIs
+### Creating flexible APIs
 
 ```php
 class EmailSender
@@ -371,7 +380,7 @@ class EmailSender
 }
 ```
 
-### Subclass Configuration Extension
+### Subclass configuration extension
 
 ```php
 class SecureEmailSender extends EmailSender
@@ -388,7 +397,7 @@ class SecureEmailSender extends EmailSender
 }
 ```
 
-### Performance-Optimized Configuration
+### Performance-optimized configuration
 
 ```php
 class MailerFactory
@@ -411,7 +420,7 @@ class MailerFactory
 }
 ```
 
-### Inspecting Configuration
+### Inspecting configuration
 
 ```php
 use Symfony\Component\OptionsResolver\Debug\OptionsResolverIntrospector;
@@ -423,7 +432,7 @@ $introspector = new OptionsResolverIntrospector($resolver);
 $default = $introspector->getDefault('host'); // 'localhost'
 ```
 
-## Best Practices
+## Best practices
 
 1. Extract configuration into dedicated methods for maintainability.
 2. Use closures for dynamic defaults instead of pre-computing values.
@@ -434,9 +443,9 @@ $default = $introspector->getDefault('host'); // 'localhost'
 7. Document default values and allowed values for API clarity.
 8. Use nested options for complex configurations with many related settings.
 9. Mark deprecated options early to guide users to alternatives.
-10. Combine type and value validation for maximum option safety.
+10. Combine type and value validation to catch bad options early.
 
-## Exception Handling
+## Exception handling
 
 - `InvalidOptionsException`: Thrown when invalid options provided.
 - `MissingOptionsException`: Thrown when required options missing.

@@ -1,8 +1,22 @@
 # Symfony PropertyAccess Component
 
+## Contents
+
+- [Overview](#overview)
+- [Core API](#core-api)
+- [Reading values](#reading-values)
+- [Writing values](#writing-values)
+- [Checking property accessibility](#checking-property-accessibility)
+- [Mixing objects and arrays](#mixing-objects-and-arrays)
+- [Configuration options](#configuration-options)
+- [Exception handling](#exception-handling)
+- [Common use cases](#common-use-cases)
+- [Key classes](#key-classes)
+- [Related components](#related-components)
+
 ## Overview
 
-The PropertyAccess component provides a utility to read and write from/to objects or arrays using simple string notation. It abstracts property access patterns and supports multiple access mechanisms through reflection and method discovery.
+The PropertyAccess component reads and writes values on objects and arrays using a string path. It supports several access mechanisms through reflection and method discovery.
 
 ### Installation
 
@@ -34,9 +48,9 @@ $accessor = new PropertyAccessor(
 );
 ```
 
-## Reading Values
+## Reading values
 
-### From Arrays
+### From arrays
 
 ```php
 $data = ['first_name' => 'John', 'age' => 30];
@@ -52,11 +66,11 @@ $accessor->getValue($data, '[address][city]');
 $accessor->getValue($data, '[address?][city]');
 ```
 
-### From Objects
+### From objects
 
-The component automatically tries multiple access patterns in order:
+The component tries these access patterns in order:
 
-#### 1. Public Properties
+#### 1. Public properties
 ```php
 class Person {
     public $firstName = 'John';
@@ -79,7 +93,7 @@ class Person {
 $accessor->getValue($person, 'first_name');  // 'John'
 ```
 
-#### 3. Hassers/Issers
+#### 3. Hassers/issers
 ```php
 class Person {
     private bool $isAuthor = true;
@@ -97,7 +111,7 @@ $accessor->getValue($person, 'author');      // true (calls isAuthor())
 $accessor->getValue($person, 'children');    // true (calls hasChildren())
 ```
 
-#### 4. Magic Methods
+#### 4. Magic methods
 ```php
 class Person {
     private $data = [];
@@ -129,7 +143,7 @@ class Service {
 }
 ```
 
-### Null-Safe Property Paths
+### Null-safe property paths
 
 ```php
 // Prevent UnexpectedTypeException when intermediate value is null
@@ -139,9 +153,9 @@ $accessor->getValue($comment, 'person?.author?.name');
 $accessor->getValue($data, '[person?][name]');
 ```
 
-## Writing Values
+## Writing values
 
-### To Arrays
+### To arrays
 
 ```php
 $data = [];
@@ -150,7 +164,7 @@ $accessor->setValue($data, '[first_name]', 'John');
 $accessor->setValue($data, '[address][city]', 'New York');
 ```
 
-### To Objects
+### To objects
 
 #### 1. Setters
 ```php
@@ -166,7 +180,7 @@ class Person {
 $accessor->setValue($person, 'first_name', 'John');
 ```
 
-#### 2. Adders/Removers (Array Properties)
+#### 2. Adders/removers (array properties)
 
 When setting an array property, use adder/remover methods instead of direct setters:
 
@@ -192,7 +206,7 @@ $accessor->setValue($person, 'children', ['alice', 'bob', 'eve']);
 
 Adder/remover methods have priority over setters.
 
-#### 3. Custom Adder/Remover Methods
+#### 3. Custom adder/remover methods
 
 Configure non-standard method names via ReflectionExtractor:
 
@@ -216,7 +230,7 @@ class Team {
 $accessor->setValue($team, 'members', ['alice', 'bob']);
 ```
 
-#### 4. Magic Methods
+#### 4. Magic methods
 ```php
 class Person {
     public function __set($name, $value): void {
@@ -225,7 +239,7 @@ class Person {
 }
 ```
 
-## Checking Property Accessibility
+## Checking property accessibility
 
 ### isReadable()
 
@@ -247,9 +261,9 @@ if ($accessor->isWritable($person, 'firstName')) {
 }
 ```
 
-## Mixing Objects and Arrays
+## Mixing objects and arrays
 
-Seamlessly combine object and array access in single property paths:
+Combine object and array access in a single property path:
 
 ```php
 class Company {
@@ -274,9 +288,9 @@ $accessor->setValue($company, 'employees[1].firstName', 'Bob');
 $name = $accessor->getValue($company, 'employees[0].firstName');  // 'Alice'
 ```
 
-## Configuration Options
+## Configuration options
 
-### PropertyAccessorBuilder Methods
+### PropertyAccessorBuilder methods
 
 ```php
 $builder = PropertyAccess::createPropertyAccessorBuilder();
@@ -293,7 +307,7 @@ $builder->disableExceptionOnInvalidPropertyPath();  // Return null instead of ex
 $accessor = $builder->getPropertyAccessor();
 ```
 
-### Check Configuration Status
+### Check configuration status
 
 ```php
 $accessor->isMagicCallEnabled();
@@ -301,7 +315,7 @@ $accessor->isMagicGetEnabled();
 $accessor->isMagicSetEnabled();
 ```
 
-## Exception Handling
+## Exception handling
 
 ### NoSuchIndexException
 Thrown when accessing missing array index (if enabled):
@@ -345,9 +359,9 @@ $accessor->getValue($comment, 'author.firstName');
 $accessor->getValue($comment, 'author?.firstName');  // null
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Form Data Binding
+### Form data binding
 Extract and set values from user input:
 
 ```php
@@ -356,7 +370,7 @@ $accessor->setValue($person, 'email', $formData['email']);
 $accessor->setValue($person, 'profile.bio', $formData['bio']);
 ```
 
-### Dynamic Object Hydration
+### Dynamic object hydration
 Populate object from array:
 
 ```php
@@ -368,7 +382,7 @@ foreach ($data as $key => $value) {
 }
 ```
 
-### Nested Collection Handling
+### Nested collection handling
 Work with deeply nested structures:
 
 ```php
@@ -379,7 +393,7 @@ $accessor->setValue(
 );
 ```
 
-### Conditional Access
+### Conditional access
 Check before reading or writing:
 
 ```php
@@ -392,14 +406,14 @@ if ($accessor->isReadable($data, $path)) {
 }
 ```
 
-## Key Classes
+## Key classes
 
 - **PropertyAccessor**: Main class for reading/writing properties
 - **PropertyAccessorBuilder**: Builder for creating configured instances
 - **ReflectionExtractor**: Handles property discovery and custom method prefixes
 - **PropertyAccessorInterface**: Interface for custom implementations
 
-## Related Components
+## Related components
 
 - **String Component**: Used for converting property names (snake_case to camelCase)
 - **Form Component**: Uses PropertyAccessor for data binding in forms

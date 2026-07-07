@@ -1,6 +1,22 @@
 # Symfony PHPUnit Bridge
 
-Test your Symfony applications and components with enhanced PHPUnit utilities. This component provides tools for deprecation reporting, mocking system functions, and managing test execution across multiple PHPUnit versions.
+The PHPUnit Bridge adds utilities for testing Symfony applications and components: deprecation reporting, mocking of system functions, and test execution across multiple PHPUnit versions.
+
+## Contents
+
+- [Installation](#installation)
+- [Quick start](#quick-start)
+- [Core features](#core-features)
+- [Mark tests as legacy](#mark-tests-as-legacy)
+- [Time-sensitive tests](#time-sensitive-tests)
+- [DNS-sensitive tests](#dns-sensitive-tests)
+- [Class existence based tests](#class-existence-based-tests)
+- [Configuration](#configuration)
+- [Parallel test execution](#parallel-test-execution)
+- [Code coverage listener](#code-coverage-listener)
+- [Multi-PHPUnit version support](#multi-phpunit-version-support)
+- [Common patterns](#common-patterns)
+- [Best practices](#best-practices)
 
 ## Installation
 
@@ -8,7 +24,7 @@ Test your Symfony applications and components with enhanced PHPUnit utilities. T
 composer require --dev symfony/phpunit-bridge
 ```
 
-## Quick Start
+## Quick start
 
 Run tests with the enhanced PHPUnit wrapper:
 
@@ -16,17 +32,16 @@ Run tests with the enhanced PHPUnit wrapper:
 ./vendor/bin/simple-phpunit
 ```
 
-## Core Features
+## Core features
 
-### Consistent Testing Environment
+### Consistent testing environment
 
-Automatically sets up a standardized test environment:
+Sets up a standard test environment:
 
 - Default locale set to `C` for all tests
 - Class existence checks auto-registered for Doctrine annotations
-- Consistent behavior across test suites
 
-### Deprecation Reporting
+### Deprecation reporting
 
 Track deprecated code usage across your test suite:
 
@@ -67,7 +82,7 @@ SYMFONY_DEPRECATIONS_HELPER='baselineFile=./tests/allowed.json' ./vendor/bin/sim
 - `max[direct]` - Direct dependency deprecations
 - `max[indirect]` - Indirect dependency deprecations
 
-### Trigger Deprecation Notices
+### Trigger deprecation notices
 
 Emit deprecation notices in your code:
 
@@ -78,7 +93,7 @@ trigger_deprecation('vendor-name/package-name', '1.3', 'Your deprecation message
 trigger_deprecation('vendor-name/package-name', '1.3', 'Value "%s" is deprecated.', $value);
 ```
 
-### Assert on Deprecations
+### Assert on deprecations
 
 Test that deprecated code triggers expected notices:
 
@@ -102,7 +117,7 @@ class MyTest extends TestCase
 }
 ```
 
-## Mark Tests as Legacy
+## Mark tests as legacy
 
 Indicate that tests validate legacy functionality using any of these methods:
 
@@ -114,17 +129,17 @@ Indicate that tests validate legacy functionality using any of these methods:
 class MyTest extends TestCase { }
 ```
 
-### Class Name Prefix
+### Class name prefix
 ```php
 class LegacyMyTest extends TestCase { }
 ```
 
-### Method Name Prefix
+### Method name prefix
 ```php
 public function testLegacyFeature() { }
 ```
 
-## Time-Sensitive Tests
+## Time-sensitive tests
 
 Mock time functions to make tests deterministic and prevent flakiness:
 
@@ -148,14 +163,14 @@ class MyTest extends TestCase
 }
 ```
 
-### Mocked Functions
+### Mocked functions
 
 Time advances instantly without actual delays:
 
 - `time()`, `microtime()`, `sleep()`, `usleep()`
 - `gmdate()`, `date()`, `hrtime()`, `strtotime()`
 
-### Manual Registration
+### Manual registration
 
 For older PHPUnit versions or specific namespaces:
 
@@ -168,7 +183,7 @@ ClockMock::withClockMock(true);
 ClockMock::withClockMock(false);
 ```
 
-### PHPUnit 10+ Configuration
+### PHPUnit 10+ configuration
 
 ```xml
 <extensions>
@@ -178,7 +193,7 @@ ClockMock::withClockMock(false);
 </extensions>
 ```
 
-### Legacy PHPUnit Configuration
+### Legacy PHPUnit configuration
 
 ```xml
 <listeners>
@@ -186,9 +201,9 @@ ClockMock::withClockMock(false);
 </listeners>
 ```
 
-## DNS-Sensitive Tests
+## DNS-sensitive tests
 
-Mock DNS lookups to avoid network calls and ensure test reliability:
+Mock DNS lookups to avoid network calls and keep tests reliable:
 
 ```php
 use PHPUnit\Framework\TestCase;
@@ -215,14 +230,14 @@ class DomainValidatorTest extends TestCase
 }
 ```
 
-### Mocked Functions
+### Mocked functions
 
 - `checkdnsrr()`, `dns_check_record()`
 - `getmxrr()`, `dns_get_mx()`
 - `gethostbyaddr()`, `gethostbyname()`, `gethostbynamel()`
 - `dns_get_record()`
 
-### PHPUnit 10+ Configuration
+### PHPUnit 10+ configuration
 
 ```xml
 <extensions>
@@ -232,7 +247,7 @@ class DomainValidatorTest extends TestCase
 </extensions>
 ```
 
-## Class Existence Based Tests
+## Class existence based tests
 
 Mock class/interface/trait/enum existence checks:
 
@@ -255,19 +270,19 @@ class MyClassTest extends TestCase
 }
 ```
 
-### Mock Enumerations
+### Mock enumerations
 
 ```php
 ClassExistsMock::withMockedEnums([EnumClass::class => true]);
 ```
 
-### Mocked Functions
+### Mocked functions
 
 - `class_exists()`, `interface_exists()`, `trait_exists()`, `enum_exists()`
 
 ## Configuration
 
-### Environment Variables
+### Environment variables
 
 | Variable | Purpose |
 |----------|---------|
@@ -278,7 +293,7 @@ ClassExistsMock::withMockedEnums([EnumClass::class => true]);
 | `SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT` | Remove void return types for legacy PHP |
 | `SYMFONY_PHPUNIT_SKIPPED_TESTS` | File for storing and replaying skipped tests |
 
-### Namespace Detection
+### Namespace detection
 
 The bridge automatically detects tested class namespaces:
 
@@ -310,7 +325,7 @@ if ('test' === $_SERVER['APP_ENV']) {
 }
 ```
 
-## Parallel Test Execution
+## Parallel test execution
 
 Execute tests in parallel by organizing them into separate test suites:
 
@@ -326,9 +341,9 @@ tests/
 ./vendor/bin/simple-phpunit tests/
 ```
 
-## Code Coverage Listener
+## Code coverage listener
 
-Automatically add `@covers` annotations to improve coverage accuracy:
+Adds `@covers` annotations automatically to improve coverage accuracy:
 
 ```xml
 <listeners>
@@ -336,7 +351,7 @@ Automatically add `@covers` annotations to improve coverage accuracy:
 </listeners>
 ```
 
-### Custom System Under Test Solver
+### Custom system under test solver
 
 ```xml
 <listeners>
@@ -348,7 +363,7 @@ Automatically add `@covers` annotations to improve coverage accuracy:
 </listeners>
 ```
 
-### Enable Coverage Warnings
+### Enable coverage warnings
 
 ```xml
 <listeners>
@@ -361,11 +376,11 @@ Automatically add `@covers` annotations to improve coverage accuracy:
 </listeners>
 ```
 
-## Multi-PHPUnit Version Support
+## Multi-PHPUnit version support
 
 Use a single test suite across multiple PHPUnit versions:
 
-### Automatic Polyfills
+### Automatic polyfills
 
 The bridge provides polyfills for:
 
@@ -374,7 +389,7 @@ The bridge provides polyfills for:
 - Namespaced test case aliases
 - Other version-specific methods
 
-### Remove Void Return Types
+### Remove void return types
 
 For compatibility with older PHP versions:
 
@@ -382,13 +397,13 @@ For compatibility with older PHP versions:
 SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT=1 ./vendor/bin/simple-phpunit
 ```
 
-### Namespace Compatibility
+### Namespace compatibility
 
 Use `PHPUnit\Framework\TestCase` in all versions; the bridge provides automatic aliases.
 
-## Common Patterns
+## Common patterns
 
-### Skip Tests Based on Optional Dependencies
+### Skip tests based on optional dependencies
 
 ```php
 class MyTest extends TestCase
@@ -402,7 +417,7 @@ class MyTest extends TestCase
 }
 ```
 
-### Test with Different Locales
+### Test with different locales
 
 ```php
 class LocaleAwareTest extends TestCase
@@ -423,7 +438,7 @@ class LocaleAwareTest extends TestCase
 }
 ```
 
-### Assert Environment Isolation
+### Assert environment isolation
 
 ```php
 class EnvironmentTest extends TestCase
@@ -435,7 +450,7 @@ class EnvironmentTest extends TestCase
 }
 ```
 
-## Best Practices
+## Best practices
 
 1. Use `@group legacy` annotation to mark tests for deprecated features
 2. Set reasonable deprecation limits with `SYMFONY_DEPRECATIONS_HELPER`

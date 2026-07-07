@@ -1,8 +1,26 @@
 # Symfony PropertyInfo Component
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core setup](#core-setup)
+- [Extraction methods](#extraction-methods)
+- [Built-in types](#built-in-types)
+- [Available extractors](#available-extractors)
+- [Type objects methods](#type-objects-methods)
+- [Type examples](#type-examples)
+- [Custom extractor implementation](#custom-extractor-implementation)
+- [Framework integration](#framework-integration)
+- [Best practices](#best-practices)
+- [Common use cases](#common-use-cases)
+- [Related components](#related-components)
+- [Key interfaces](#key-interfaces)
+- [Configuration notes](#configuration-notes)
+
 ## Overview
 
-The PropertyInfo component extracts metadata about class properties from various sources. Unlike PropertyAccess (which reads/writes values), PropertyInfo discovers property types, descriptions, visibility, and accessibility from class definitions. It's essential for building frameworks, serializers, and type-aware tools.
+The PropertyInfo component extracts metadata about class properties from various sources. Unlike PropertyAccess (which reads/writes values), PropertyInfo discovers property types, descriptions, visibility, and accessibility from class definitions. Serializers, form builders, and other type-aware tools rely on it.
 
 ## Installation
 
@@ -10,7 +28,7 @@ The PropertyInfo component extracts metadata about class properties from various
 composer require symfony/property-info
 ```
 
-## Core Setup
+## Core setup
 
 Create a PropertyInfoExtractor with appropriate extractors in order of precedence:
 
@@ -31,18 +49,18 @@ $propertyInfo = new PropertyInfoExtractor(
 );
 ```
 
-**Important:** Pass extractors in separate arrays even if they provide multiple information types. The first non-null result is returned.
+Pass extractors in separate arrays even if they provide multiple information types. The first non-null result is returned.
 
-## Extraction Methods
+## Extraction methods
 
-### List Properties
+### List properties
 ```php
 // Get all property names for a class
 $properties = $propertyInfo->getProperties(MyClass::class);
 // Returns: ['username', 'email', 'roles', ...]
 ```
 
-### Type Information
+### Type information
 ```php
 $type = $propertyInfo->getType(MyClass::class, 'username');
 if ($type) {
@@ -61,19 +79,19 @@ $title = $propertyInfo->getShortDescription(MyClass::class, 'username');
 $paragraph = $propertyInfo->getLongDescription(MyClass::class, 'username');
 ```
 
-### Access Information
+### Access information
 ```php
 $propertyInfo->isReadable(MyClass::class, 'username');  // bool
 $propertyInfo->isWritable(MyClass::class, 'username');  // bool
 ```
 
-### Initializable Information
+### Initializable information
 ```php
 // Returns true if constructor parameter matches property name
 $propertyInfo->isInitializable(MyClass::class, 'username');
 ```
 
-## Built-in Types
+## Built-in types
 
 PropertyInfo supports these built-in types from `Type::getBuiltinType()`:
 
@@ -88,7 +106,7 @@ PropertyInfo supports these built-in types from `Type::getBuiltinType()`:
 - `resource` - PHP resources
 - `string` - Text strings
 
-## Available Extractors
+## Available extractors
 
 ### ReflectionExtractor
 Uses PHP reflection for discovering properties, types from typed properties, access information, and initializable information.
@@ -108,7 +126,7 @@ $extractor = new PhpDocExtractor();
 ```
 
 ### PhpStanExtractor
-Uses PHPStan parser for @var, @param, and @return annotations with enhanced type support.
+Uses PHPStan parser for @var, @param, and @return annotations with support for more precise types.
 
 ```php
 $extractor = new PhpStanExtractor();
@@ -144,7 +162,7 @@ $extractor = new ConstructorExtractor([$phpStanExtractor]);
 // Use when: Constructor parameters define properties
 ```
 
-## Type Objects Methods
+## Type objects methods
 
 The `Type` object returned by `getType()` provides six key methods:
 
@@ -157,9 +175,9 @@ The `Type` object returned by `getType()` provides six key methods:
 | `getCollectionKeyTypes()` | Type[] | Types for collection keys |
 | `getCollectionValueTypes()` | Type[] | Types for collection values |
 
-## Type Examples
+## Type examples
 
-### Simple Types
+### Simple types
 ```php
 class User {
     private string $username;
@@ -172,7 +190,7 @@ class User {
 // - $active: builtin='bool', nullable=false
 ```
 
-### Collection Types
+### Collection types
 ```php
 class Team {
     /** @var User[] */
@@ -183,7 +201,7 @@ class Team {
 // - getCollectionValueTypes() = [Type(object, User)]
 ```
 
-### Nullable Collections
+### Nullable collections
 ```php
 class Team {
     /** @var User[]|null */
@@ -195,7 +213,7 @@ class Team {
 // - getCollectionValueTypes() = [Type(object, User)]
 ```
 
-## Custom Extractor Implementation
+## Custom extractor implementation
 
 Implement one or more extractor interfaces:
 
@@ -232,7 +250,7 @@ Register with service tags:
 - `property_info.initializable_extractor` - PropertyInitializableExtractorInterface
 - `property_info.constructor_extractor` - ConstructorArgumentTypeExtractorInterface
 
-## Framework Integration
+## Framework integration
 
 ### With Serializer
 ```php
@@ -258,9 +276,9 @@ $accessor = new PropertyAccessor(
 // PropertyAccessor uses PropertyInfo to discover custom adder/remover methods
 ```
 
-## Best Practices
+## Best practices
 
-### Always Use Class Names
+### Always use class names
 ```php
 // Good - Pass fully qualified class name
 $propertyInfo->getProperties(MyClass::class);
@@ -270,7 +288,7 @@ $propertyInfo->getType(MyClass::class, 'property');
 // $propertyInfo->getProperties($object);
 ```
 
-### Order Extractors by Precedence
+### Order extractors by precedence
 ```php
 // More specific extractors first, general fallbacks last
 $propertyInfo = new PropertyInfoExtractor(
@@ -286,7 +304,7 @@ $propertyInfo = new PropertyInfoExtractor(
 );
 ```
 
-### Handle Nullable Returns
+### Handle nullable returns
 ```php
 // All extraction methods can return null
 if ($type = $propertyInfo->getType($class, $property)) {
@@ -296,7 +314,7 @@ if ($type = $propertyInfo->getType($class, $property)) {
 }
 ```
 
-### Leverage Multiple Sources
+### Combine multiple sources
 ```php
 // Use multiple extractors to get complete information
 $propertyInfo = new PropertyInfoExtractor(
@@ -308,9 +326,9 @@ $propertyInfo = new PropertyInfoExtractor(
 );
 ```
 
-## Common Use Cases
+## Common use cases
 
-### 1. Build a Form from Class Properties
+### 1. Build a form from class properties
 ```php
 foreach ($propertyInfo->getProperties(User::class) as $property) {
     $type = $propertyInfo->getType(User::class, $property);
@@ -322,7 +340,7 @@ foreach ($propertyInfo->getProperties(User::class) as $property) {
 }
 ```
 
-### 2. Create API Documentation
+### 2. Create API documentation
 ```php
 $properties = $propertyInfo->getProperties(User::class);
 foreach ($properties as $property) {
@@ -331,7 +349,7 @@ foreach ($properties as $property) {
 }
 ```
 
-### 3. Type-Aware Serialization
+### 3. Type-aware serialization
 ```php
 $type = $propertyInfo->getType(User::class, 'roles');
 if ($type && $type->isCollection()) {
@@ -342,7 +360,7 @@ if ($type && $type->isCollection()) {
 }
 ```
 
-### 4. Constructor Validation
+### 4. Constructor validation
 ```php
 $initializableProps = [];
 foreach ($propertyInfo->getProperties(User::class) as $prop) {
@@ -352,14 +370,14 @@ foreach ($propertyInfo->getProperties(User::class) as $prop) {
 }
 ```
 
-## Related Components
+## Related components
 
 - **PropertyAccess** - Read/write object values dynamically
 - **Serializer** - Normalize/denormalize objects using PropertyInfo for type hints
-- **Form** - Build forms leveraging PropertyInfo for field generation
+- **Form** - Build forms using PropertyInfo to generate fields
 - **Validator** - Validate properties using type information
 
-## Key Interfaces
+## Key interfaces
 
 All interfaces in `Symfony\Component\PropertyInfo`:
 
@@ -371,7 +389,7 @@ All interfaces in `Symfony\Component\PropertyInfo`:
 - `PropertyInitializableExtractorInterface` - Check constructor initialization
 - `ConstructorArgumentTypeExtractorInterface` - Extract constructor argument types
 
-## Configuration Notes
+## Configuration notes
 
 - **phpdocumentor/reflection-docblock** - Required for PhpDocExtractor
 - **phpstan/phpdoc-parser** - Required for PhpStanExtractor (more precise types)

@@ -1,12 +1,29 @@
 # Symfony Runtime Component
 
+## Contents
+
+- [Installation](#installation)
+- [Core concepts](#core-concepts)
+- [Basic HTTP application](#basic-http-application)
+- [Basic console application](#basic-console-application)
+- [Runtime selection](#runtime-selection)
+- [Resolvable arguments](#resolvable-arguments)
+- [Resolvable applications](#resolvable-applications)
+- [Runtime options configuration](#runtime-options-configuration)
+- [SymfonyRuntime configuration options](#symfonyruntime-configuration-options)
+- [Generic and SymfonyRuntime shared options](#generic-and-symfonyruntime-shared-options)
+- [Creating custom runtimes](#creating-custom-runtimes)
+- [Key interfaces](#key-interfaces)
+- [Common use cases](#common-use-cases)
+- [Best practices](#best-practices)
+
 ## Installation
 
 ```bash
 composer require symfony/runtime
 ```
 
-## Core Concepts
+## Core concepts
 
 The Runtime Component uses a 6-step execution model:
 
@@ -19,7 +36,7 @@ The Runtime Component uses a 6-step execution model:
 
 This decoupling enables applications to run on FPM, PHP-PM, ReactPHP, Swoole, FrankenPHP, and other runtimes without code changes.
 
-## Basic HTTP Application
+## Basic HTTP application
 
 ```php
 // public/index.php
@@ -32,7 +49,7 @@ return function (array $context): Kernel {
 };
 ```
 
-## Basic Console Application
+## Basic console application
 
 ```php
 #!/usr/bin/env php
@@ -48,7 +65,7 @@ return function (array $context): Application {
 };
 ```
 
-## Runtime Selection
+## Runtime selection
 
 ### Default Runtime: SymfonyRuntime
 Optimized for FPM-based servers. Use for standard Symfony applications.
@@ -68,7 +85,7 @@ Uses PHP superglobals directly. Use for non-Symfony applications or custom runti
 }
 ```
 
-### Custom Autoload Template
+### Custom autoload template
 
 ```json
 {
@@ -80,11 +97,11 @@ Uses PHP superglobals directly. Use for non-Symfony applications or custom runti
 }
 ```
 
-## Resolvable Arguments
+## Resolvable arguments
 
 The closure can receive these arguments (type and name matter):
 
-### Arguments Specific to SymfonyRuntime
+### Arguments specific to SymfonyRuntime
 
 | Argument | Type | Description |
 |----------|------|-------------|
@@ -94,7 +111,7 @@ The closure can receive these arguments (type and name matter):
 | Application | `Symfony\Component\Console\Application` | Console application builder |
 | Command | `Symfony\Component\Console\Command\Command` | Single command CLI application |
 
-### Arguments Supported by Both Runtimes
+### Arguments supported by both runtimes
 
 | Argument | Type | Description |
 |----------|------|-------------|
@@ -102,7 +119,7 @@ The closure can receive these arguments (type and name matter):
 | argv | `array` | Command arguments ($_SERVER['argv']) |
 | request | `array` | Keys: query, body, files, session |
 
-### Example Usage
+### Example usage
 
 ```php
 use Symfony\Component\HttpFoundation\Request;
@@ -113,7 +130,7 @@ return function (Request $request, OutputInterface $output): Kernel {
 };
 ```
 
-## Resolvable Applications
+## Resolvable applications
 
 ### Symfony HttpKernelInterface
 Standard Symfony application:
@@ -124,7 +141,7 @@ return static function (): Kernel {
 };
 ```
 
-### Symfony Response
+### Symfony response
 Direct HTTP response:
 
 ```php
@@ -135,7 +152,7 @@ return static function (): Response {
 };
 ```
 
-### Single Command CLI
+### Single command CLI
 Command-based CLI application:
 
 ```php
@@ -151,7 +168,7 @@ return static function (Command $command): Command {
 };
 ```
 
-### Multi-Command Console Application
+### Multi-command console application
 Complete console application:
 
 ```php
@@ -211,11 +228,11 @@ return function (): void {
 };
 ```
 
-## Runtime Options Configuration
+## Runtime options configuration
 
 Set options via environment variable or composer.json.
 
-### Via Environment Variable
+### Via environment variable
 
 ```php
 $_SERVER['APP_RUNTIME_OPTIONS'] = [
@@ -237,7 +254,7 @@ $_SERVER['APP_RUNTIME_OPTIONS'] = '{"project_dir":"\/var\/task"}';
 }
 ```
 
-## SymfonyRuntime Configuration Options
+## SymfonyRuntime configuration options
 
 | Option | Default | Description |
 |--------|---------|-------------|
@@ -249,7 +266,7 @@ $_SERVER['APP_RUNTIME_OPTIONS'] = '{"project_dir":"\/var\/task"}';
 | `prod_envs` | ["prod"] | Production environment names |
 | `test_envs` | ["test"] | Test environment names |
 
-## Generic & SymfonyRuntime Shared Options
+## Generic and SymfonyRuntime shared options
 
 | Option | Default | Description |
 |--------|---------|-------------|
@@ -259,9 +276,9 @@ $_SERVER['APP_RUNTIME_OPTIONS'] = '{"project_dir":"\/var\/task"}';
 | `env_var_name` | "APP_ENV" | Environment variable name |
 | `debug_var_name` | "APP_DEBUG" | Debug flag variable name |
 
-## Creating Custom Runtimes
+## Creating custom runtimes
 
-### Step 1: Create a Custom Runner
+### Step 1: Create a custom runner
 
 Implement `RunnerInterface` for your specific runtime:
 
@@ -334,7 +351,7 @@ class ReactPHPRuntime extends GenericRuntime
 }
 ```
 
-### Step 3: Use in Application
+### Step 3: Use in application
 
 ```php
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
@@ -357,7 +374,7 @@ return function (array $context): SomeCustomPsr15Application {
 }
 ```
 
-## Key Interfaces
+## Key interfaces
 
 ### RuntimeInterface
 Defines the contract for runtime implementations:
@@ -383,7 +400,7 @@ Symfony HTTP kernel contract:
 PSR-15 HTTP request handler contract:
 - `handle(ServerRequestInterface $request): ResponseInterface`
 
-## Common Use Cases
+## Common use cases
 
 ### Deploy to FrankenPHP
 Use SymfonyRuntime with FrankenPHP for automatic request handling:
@@ -400,13 +417,13 @@ Use the ReactPHP custom runtime example above to run with ReactPHP.
 ### Deploy to PHP-PM
 SymfonyRuntime is compatible with PHP-PM's process manager.
 
-## Best Practices
+## Best practices
 
 - Return a callable from your entry point script
 - Use type hints for argument resolution
 - Handle APP_ENV and APP_DEBUG consistently
 - Load .env files in development via SymfonyRuntime
-- Implement proper error handlers for production
+- Implement an error handler for production
 - Test with different runtimes to ensure compatibility
 - Use `composer install --no-dev` in production
-- Configure appropriate `prod_envs` and `test_envs`
+- Set `prod_envs` and `test_envs` to match your environment names

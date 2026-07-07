@@ -1,6 +1,30 @@
 # Symfony Messenger Component
 
-Implement robust message-based communication patterns for synchronous execution, asynchronous queuing, and event-driven workflows.
+Message-based communication for synchronous execution, asynchronous queuing, and event-driven workflows.
+
+## Contents
+
+- [Installation](#installation)
+- [Core concepts](#core-concepts)
+- [Creating messages and handlers](#creating-messages-and-handlers)
+- [Asynchronous message routing](#asynchronous-message-routing)
+- [Transport configuration](#transport-configuration)
+- [Consuming messages](#consuming-messages)
+- [Message retry and failure handling](#message-retry-and-failure-handling)
+- [Envelope stamps](#envelope-stamps)
+- [Custom middleware](#custom-middleware)
+- [Custom senders and receivers](#custom-senders-and-receivers)
+- [Custom transports](#custom-transports)
+- [Priority message handling](#priority-message-handling)
+- [Message batching](#message-batching)
+- [Getting handler results](#getting-handler-results)
+- [Message statistics](#message-statistics)
+- [Multiple buses (command and event buses)](#multiple-buses-command-and-event-buses)
+- [Doctrine integration](#doctrine-integration)
+- [State management](#state-management)
+- [Encoding custom message formats](#encoding-custom-message-formats)
+- [Common configuration](#common-configuration)
+- [Environment variables](#environment-variables)
 
 ## Installation
 
@@ -8,7 +32,7 @@ Implement robust message-based communication patterns for synchronous execution,
 composer require symfony/messenger
 ```
 
-## Core Concepts
+## Core concepts
 
 - **Bus**: Dispatches messages through an ordered middleware stack
 - **Sender**: Serializes and sends messages to message brokers/APIs
@@ -18,7 +42,7 @@ composer require symfony/messenger
 - **Stamp**: Metadata attached to messages (DelayStamp, SentStamp, ReceivedStamp, etc.)
 - **Middleware**: Cross-cutting concerns (logging, validation, transactions) in message flow
 
-## Creating Messages & Handlers
+## Creating messages and handlers
 
 Define a simple serializable message class:
 
@@ -61,7 +85,7 @@ class NotificationService {
 }
 ```
 
-## Asynchronous Message Routing
+## Asynchronous message routing
 
 Route messages to transports using attributes, YAML, or PHP configuration.
 
@@ -89,9 +113,9 @@ framework:
       'App\Message\EmailNotification': ['async', 'audit']
 ```
 
-## Transport Configuration
+## Transport configuration
 
-### Doctrine Transport
+### Doctrine transport
 
 ```bash
 composer require symfony/doctrine-messenger
@@ -110,7 +134,7 @@ framework:
           auto_setup: true
 ```
 
-### Redis Transport
+### Redis transport
 
 ```bash
 composer require symfony/redis-messenger
@@ -130,7 +154,7 @@ framework:
           delete_after_ack: true
 ```
 
-### AMQP Transport
+### AMQP transport
 
 ```bash
 composer require symfony/amqp-messenger
@@ -147,7 +171,7 @@ framework:
           vhost: /
 ```
 
-### Beanstalkd Transport
+### Beanstalkd transport
 
 ```bash
 composer require symfony/beanstalkd-messenger
@@ -175,7 +199,7 @@ $bus->dispatch(new SomeMessage(), [
 ]);
 ```
 
-## Consuming Messages
+## Consuming messages
 
 Run the worker to process asynchronous messages:
 
@@ -199,7 +223,7 @@ php bin/console messenger:consume async --keepalive --failure-limit=5
 php bin/console messenger:consume my_transport --queues=fasttrack
 ```
 
-### Production Configuration
+### Production configuration
 
 **Supervisor configuration:**
 
@@ -230,7 +254,7 @@ User=www-data
 WantedBy=multi-user.target
 ```
 
-## Message Retry & Failure Handling
+## Message retry and failure handling
 
 Configure automatic retries with exponential backoff:
 
@@ -285,7 +309,7 @@ php bin/console messenger:failed:retry -vv
 php bin/console messenger:failed:remove 20
 ```
 
-## Envelope Stamps
+## Envelope stamps
 
 Attach metadata to messages via stamps:
 
@@ -319,7 +343,7 @@ $bus->dispatch(
 - `ErrorDetailsStamp(exception)` - Contains FlattenException on handler failure
 - `ScheduledStamp` - Marks messages from scheduler
 
-## Custom Middleware
+## Custom middleware
 
 Implement `MiddlewareInterface` to add cross-cutting concerns:
 
@@ -354,7 +378,7 @@ framework:
           - App\Messenger\LoggingMiddleware
 ```
 
-## Custom Senders & Receivers
+## Custom senders and receivers
 
 Implement `SenderInterface` for custom message sending:
 
@@ -392,7 +416,7 @@ class CsvReceiver implements ReceiverInterface {
 }
 ```
 
-## Custom Transports
+## Custom transports
 
 Create a custom transport factory implementing `TransportFactoryInterface`:
 
@@ -465,7 +489,7 @@ framework:
       yours: 'your-transport://...'
 ```
 
-## Priority Message Handling
+## Priority message handling
 
 Route messages to different queues/transports with priorities:
 
@@ -492,7 +516,7 @@ Consume with priorities:
 php bin/console messenger:consume async_priority_high async_priority_low
 ```
 
-## Message Batching
+## Message batching
 
 Process multiple messages in a single operation:
 
@@ -516,7 +540,7 @@ class BatchPdfGeneratorHandler {
 }
 ```
 
-## Getting Handler Results
+## Getting handler results
 
 Retrieve return values from synchronous message handling:
 
@@ -529,7 +553,7 @@ $handledStamp = $envelope->last(HandledStamp::class);
 $result = $handledStamp->getResult();
 ```
 
-## Message Statistics
+## Message statistics
 
 View transport statistics:
 
@@ -544,7 +568,7 @@ php bin/console messenger:stats my_transport
 php bin/console messenger:stats --format=json
 ```
 
-## Multiple Buses (Command & Event Buses)
+## Multiple buses (command and event buses)
 
 Configure separate buses for commands and events:
 
@@ -579,7 +603,7 @@ Debug registered buses and handlers:
 php bin/console debug:messenger
 ```
 
-## Doctrine Integration
+## Doctrine integration
 
 Transactional message handling - process new messages only after handler completes:
 
@@ -610,7 +634,7 @@ class UpdateUserHandler {
 }
 ```
 
-## State Management
+## State management
 
 Prevent memory leaks in worker processes - implement `ResetInterface`:
 
@@ -633,7 +657,7 @@ php bin/console messenger:consume async  # Default: reset after each message
 php bin/console messenger:consume async --no-reset  # Skip reset
 ```
 
-## Encoding Custom Message Formats
+## Encoding custom message formats
 
 Implement custom serializer for alternate formats (JSON, XML, etc.):
 
@@ -657,7 +681,7 @@ class JsonSerializerStamp implements SerializerInterface {
 }
 ```
 
-## Common Configuration
+## Common configuration
 
 Full messenger configuration example:
 
@@ -679,7 +703,7 @@ framework:
           - validation
 ```
 
-## Environment Variables
+## Environment variables
 
 ```env
 MESSENGER_TRANSPORT_DSN=redis://localhost:6379/messages
