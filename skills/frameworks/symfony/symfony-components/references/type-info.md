@@ -1,8 +1,22 @@
-# Symfony TypeInfo Component
+# Symfony TypeInfo component
+
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core type creation](#core-type-creation)
+- [Type resolution](#type-resolution)
+- [PHPDoc type resolution](#phpdoc-type-resolution)
+- [Type aliases](#type-aliases)
+- [Array shapes](#array-shapes)
+- [Type identification](#type-identification)
+- [Advanced type checking](#advanced-type-checking)
+- [Common use cases](#common-use-cases)
+- [Type identifiers](#type-identifiers)
 
 ## Overview
 
-The TypeInfo component extracts and manipulates type information from PHP elements like properties, arguments, and return types. It provides a powerful `Type` definition system that handles unions, intersections, generics, and array shapes with the ability to resolve types from PHP elements or raw strings.
+The TypeInfo component extracts and manipulates type information from PHP elements such as properties, arguments, and return types. Its `Type` classes cover unions, intersections, generics, and array shapes, and types can be resolved from PHP elements or from raw strings.
 
 ## Installation
 
@@ -10,14 +24,15 @@ The TypeInfo component extracts and manipulates type information from PHP elemen
 composer require symfony/type-info
 ```
 
-For PHPDoc parsing support, also require:
+For PHPDoc parsing, also require:
+
 ```bash
 composer require phpstan/phpdoc-parser
 ```
 
-## Core Type Creation
+## Core type creation
 
-### Static Type Creation
+### Static type creation
 
 Create types using static factory methods on the `Type` class:
 
@@ -60,9 +75,9 @@ Type::arrayShape([
 ], false, Type::string(), Type::bool());
 ```
 
-### Auto-detect Types from Values
+### Detect types from values
 
-Automatically determine types from PHP values:
+Determine types from PHP values:
 
 ```php
 Type::fromValue(1.1);           // Type::float()
@@ -73,9 +88,9 @@ Type::fromValue([]);            // Type::array()
 Type::fromValue(new \stdClass); // Type::object()
 ```
 
-## Type Resolution
+## Type resolution
 
-### Resolving from Reflection
+### Resolving from reflection
 
 Use `TypeResolver` to extract types from PHP reflection elements:
 
@@ -107,9 +122,9 @@ $typeResolver->resolve($method);
 // Returns: Type::bool()
 ```
 
-### Resolving from Strings
+### Resolving from strings
 
-Parse string type definitions:
+Parse type definitions written as strings:
 
 ```php
 $typeResolver = TypeResolver::create();
@@ -127,7 +142,7 @@ $typeResolver->resolve('Collection<int>');
 $typeResolver->resolve('list<string>');
 ```
 
-## PHPDoc Type Resolution
+## PHPDoc type resolution
 
 Extract types from PHPDoc annotations:
 
@@ -146,11 +161,11 @@ $typeResolver->resolve(new \ReflectionProperty(Dummy::class, 'tags'));
 // Resolves to collection type with int keys and string values
 ```
 
-## Type Aliases
+## Type aliases
 
-### Define Type Aliases
+### Define type aliases
 
-Create reusable complex type definitions using PHPDoc:
+Define reusable complex types with PHPDoc:
 
 ```php
 /**
@@ -170,7 +185,7 @@ class UserService
 }
 ```
 
-### Import Type Aliases
+### Import type aliases
 
 Import aliases from other classes:
 
@@ -187,7 +202,7 @@ class Company
 }
 ```
 
-### Global Type Alias Configuration
+### Global type alias configuration
 
 Define reusable aliases in framework configuration (YAML):
 
@@ -201,9 +216,9 @@ framework:
             CustomCollection: 'Collection<Item>'
 ```
 
-## Array Shapes
+## Array shapes
 
-### Array Shape Definition
+### Array shape definition
 
 Describe array structures with specific key-value relationships:
 
@@ -214,9 +229,9 @@ Describe array structures with specific key-value relationships:
 public array $person;
 ```
 
-### Sealed vs. Unsealed Arrays
+### Sealed and unsealed arrays
 
-Control whether extra keys are allowed:
+A sealed shape rejects extra keys; an unsealed shape allows them:
 
 ```php
 // Sealed: only accepts specified keys
@@ -229,9 +244,9 @@ Control whether extra keys are allowed:
 // @var array{id: int, ...<string, bool>}
 ```
 
-### Manual Array Shape Creation
+### Manual array shape creation
 
-Programmatically create array shapes:
+Build array shapes in code:
 
 ```php
 use Symfony\Component\TypeInfo\Type;
@@ -259,9 +274,9 @@ $type = Type::arrayShape([
 ], false, Type::string(), Type::bool());
 ```
 
-## Type Identification
+## Type identification
 
-### Check Type Identity
+### Check type identity
 
 Identify types using `TypeIdentifier`:
 
@@ -277,9 +292,9 @@ $type = Type::union(Type::string(), Type::int());
 $type->isIdentifiedBy(TypeIdentifier::INT);    // true
 ```
 
-### Check Value Acceptance
+### Check value acceptance
 
-Validate if values match a type:
+Check whether a value matches a type:
 
 ```php
 $type = Type::int();
@@ -291,9 +306,9 @@ $stringType->accepts('hello');  // true
 $stringType->accepts(123);      // false
 ```
 
-### Check Nullability
+### Check nullability
 
-Determine if a type accepts null:
+Check whether a type accepts null:
 
 ```php
 $type = Type::nullable(Type::string());
@@ -303,11 +318,11 @@ $type = Type::int();
 $type->isNullable();  // false
 ```
 
-## Advanced Type Checking
+## Advanced type checking
 
-### Satisfy Custom Predicates
+### Satisfy custom predicates
 
-Use callables to validate types against custom logic:
+Pass a callable to test a type against custom logic:
 
 ```php
 $isNonNullableNumber = function (Type $type): bool {
@@ -325,9 +340,9 @@ $nullableInt = Type::nullable(Type::int());
 $nullableInt->isSatisfiedBy($isNonNullableNumber); // false
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Extract and Validate Reflection Types
+### Extract and validate reflection types
 
 ```php
 $typeResolver = TypeResolver::create();
@@ -339,7 +354,7 @@ if ($type->isIdentifiedBy(TypeIdentifier::STRING)) {
 }
 ```
 
-### Handle Union and Optional Types
+### Handle union and optional types
 
 ```php
 $type = Type::union(Type::string(), Type::int(), Type::null());
@@ -349,7 +364,7 @@ if ($type->accepts($value)) {
 }
 ```
 
-### Work with Generic Collections
+### Work with generic collections
 
 ```php
 $listType = Type::list(Type::object(User::class));
@@ -357,7 +372,7 @@ $listType = Type::list(Type::object(User::class));
 // Process list of User objects
 ```
 
-### Validate Array Structures
+### Validate array structures
 
 ```php
 $schema = Type::arrayShape([
@@ -371,9 +386,9 @@ if ($schema->accepts($data)) {
 }
 ```
 
-## Type Identifiers
+## Type identifiers
 
-Common type identifiers available via `TypeIdentifier` class:
+Common identifiers on the `TypeIdentifier` class:
 
 - `INT` - Integer type
 - `FLOAT` - Float type

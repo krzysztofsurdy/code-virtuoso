@@ -7,37 +7,37 @@ user-invocable: false
 
 # Symfony Framework Upgrade
 
-Symfony's upgrade model is built on one core insight: a new major version is identical to the last minor version of the previous branch, minus deprecated code. Fix all deprecations first, then the major upgrade is trivial.
+Symfony's upgrade model rests on one fact: a new major version is the last minor of the previous branch with the deprecated code removed. Fix all deprecations first and the major upgrade becomes a small step.
 
 ## Core Principles
 
 | Principle | Meaning |
 |---|---|
-| **Changelog first** | Before any upgrade, search the web for the actual UPGRADE-X.Y.md file or ask the user for the changelog - never rely on static knowledge alone |
-| **Deprecation-first** | Fix every deprecation on the current version before upgrading to the next major - Symfony 8.0 is 7.4 minus deprecations |
-| **Incremental minor upgrades** | Upgrade 6.2 -> 6.3 -> 6.4, never skip minors - each surfaces new deprecations |
+| **Changelog first** | Before any upgrade, search the web for the actual UPGRADE-X.Y.md file or ask the user for the changelog. Never rely on built-in knowledge alone |
+| **Deprecation-first** | Fix every deprecation on the current version before upgrading to the next major. Symfony 8.0 is 7.4 minus deprecations |
+| **Incremental minor upgrades** | Upgrade 6.2 -> 6.3 -> 6.4 and do not skip minors, because each one surfaces new deprecations |
 | **Recipes keep config current** | Run `composer recipes:update` after every upgrade to sync configuration files |
 | **Test deprecation count** | Use `SYMFONY_DEPRECATIONS_HELPER` to fail builds when direct deprecations appear |
 | **Update bundles first** | Third-party bundles are the most common blocker - update them before bumping Symfony |
 
 ---
 
-## Critical First Step: Read the Changelog
+## First step: read the changelog
 
-Before touching any code or running any command, you MUST obtain the actual changelog for the target version:
+Before touching any code or running any command, obtain the changelog for the target version:
 
 1. **Search the web** for `Symfony UPGRADE-X.Y.md` (e.g., `Symfony UPGRADE-7.0.md github`)
 2. **Or ask the user** to provide the changelog / release notes
 3. **Read the UPGRADE file** in the Symfony repository: `https://github.com/symfony/symfony/blob/X.Y/UPGRADE-X.Y.md`
 4. **Check the Symfony blog** for the release announcement with highlighted changes
 
-This is non-negotiable. Each version has unique changes that static skill knowledge cannot fully capture. The changelog tells you exactly what broke, what was deprecated, and what was removed.
+Do not skip this. Each version has its own changes that this skill cannot capture in full. The changelog lists exactly what broke, what was deprecated, and what was removed.
 
 ---
 
-## Symfony Release Model
+## Symfony release model
 
-| Release Type | Cycle | Support | Example |
+| Release type | Cycle | Support | Example |
 |---|---|---|---|
 | **Patch** (X.Y.Z) | Monthly | Bug fixes only | 7.4.1 -> 7.4.2 |
 | **Minor** (X.Y) | Every 6 months (May + November) | May add deprecations, no BC breaks | 7.3 -> 7.4 |
@@ -48,11 +48,11 @@ Each major branch has exactly 5 minor versions: X.0, X.1, X.2, X.3, X.4 (LTS).
 
 ---
 
-## Minor Version Upgrade (e.g., 7.3 -> 7.4)
+## Minor version upgrade (for example 7.3 -> 7.4)
 
-### Step 1: Read the Changelog
+### Step 1: Read the changelog
 
-Search the web for `UPGRADE-7.4.md` in the Symfony repository. Identify new deprecations and any changes that affect your code.
+Search the web for `UPGRADE-7.4.md` in the Symfony repository. Note the new deprecations and any changes that affect your code.
 
 ### Step 2: Update composer.json
 
@@ -70,7 +70,7 @@ With Symfony Flex (recommended):
 
 Without Flex, update each `symfony/*` constraint manually.
 
-### Step 3: Run Composer Update
+### Step 3: Run composer update
 
 ```bash
 composer update "symfony/*"
@@ -82,13 +82,13 @@ If dependency conflicts arise:
 composer update "symfony/*" --with-all-dependencies
 ```
 
-### Step 4: Update Recipes
+### Step 4: Update recipes
 
 ```bash
 composer recipes:update
 ```
 
-### Step 5: Run Tests
+### Step 5: Run tests
 
 ```bash
 vendor/bin/phpunit
@@ -96,23 +96,23 @@ vendor/bin/phpunit
 
 ---
 
-## Major Version Upgrade (e.g., 6.4 -> 7.0)
+## Major version upgrade (for example 6.4 -> 7.0)
 
-### Phase 1: Read the Changelog
+### Phase 1: Read the changelog
 
-Search the web for `UPGRADE-7.0.md` in the Symfony repository. This file lists every backward-compatibility break and every removed deprecation. Read it completely before starting.
+Search the web for `UPGRADE-7.0.md` in the Symfony repository. It lists every backward-compatibility break and every removed deprecation. Read all of it before starting.
 
-### Phase 2: Eliminate All Deprecations
+### Phase 2: Eliminate all deprecations
 
-This is the bulk of the work. Do this while still on the current major version.
+This is most of the work. Do it while still on the current major version.
 
-**A. Detect deprecations via tests:**
+A. Detect deprecations through tests:
 
 ```bash
 composer require --dev symfony/phpunit-bridge
 ```
 
-Configure strict deprecation handling in `phpunit.xml.dist`:
+Set strict deprecation handling in `phpunit.xml.dist`:
 
 ```xml
 <php>
@@ -126,11 +126,11 @@ Run tests and fix every direct deprecation:
 vendor/bin/phpunit
 ```
 
-**B. Detect deprecations in browser:**
+B. Detect deprecations in the browser:
 
-Visit the app in dev environment, check the Symfony Profiler's deprecation panel in the web debug toolbar.
+Open the app in the dev environment and check the deprecation panel of the Symfony Profiler in the web debug toolbar.
 
-**C. Automate fixes with Rector:**
+C. Automate fixes with Rector:
 
 ```bash
 composer require --dev rector/rector rector/rector-symfony
@@ -151,16 +151,16 @@ vendor/bin/rector process --dry-run
 vendor/bin/rector process
 ```
 
-**D. Handle indirect deprecations:**
+D. Handle indirect deprecations:
 
-Indirect deprecations come from third-party bundles. Update them to versions that support the target Symfony version:
+Indirect deprecations come from third-party bundles. Update those bundles to versions that support the target Symfony version:
 
 ```bash
 composer outdated
 composer update vendor/bundle-name
 ```
 
-### Phase 3: Bump Symfony Version
+### Phase 3: Bump the Symfony version
 
 With Flex:
 
@@ -179,18 +179,18 @@ composer update "symfony/*" --with-all-dependencies
 rm -rf var/cache/*
 ```
 
-Note: packages like `symfony/polyfill-*`, `symfony/ux-*`, and some `symfony/*-bundle` follow their own versioning - do not force them to the new major.
+Packages such as `symfony/polyfill-*`, `symfony/ux-*`, and some `symfony/*-bundle` follow their own versioning. Do not force them to the new major.
 
-### Phase 4: Update Recipes
+### Phase 4: Update recipes
 
 ```bash
 composer recipes              # list all, see which have updates
 composer recipes:update       # interactive update, one at a time
 ```
 
-The command generates a diff between your installed recipe version and the latest, applies it as a git patch. Resolve conflicts like normal git conflicts. Commit your work before running this.
+The command generates a diff between your installed recipe version and the latest one and applies it as a git patch. Resolve conflicts as you would any git conflict. Commit your work before running it.
 
-### Phase 5: Test Thoroughly
+### Phase 5: Test
 
 ```bash
 vendor/bin/phpunit
@@ -199,39 +199,39 @@ vendor/bin/phpstan analyse
 
 Deploy to staging before production.
 
-See [Upgrade Workflow Reference](references/upgrade-workflow.md) for detailed deprecation handling, SYMFONY_DEPRECATIONS_HELPER options, and bundle compatibility strategies.
+See [Upgrade Workflow Reference](references/upgrade-workflow.md) for deprecation handling, SYMFONY_DEPRECATIONS_HELPER options, and bundle compatibility strategies.
 
 ---
 
-## SYMFONY_DEPRECATIONS_HELPER Options
+## SYMFONY_DEPRECATIONS_HELPER options
 
 | Configuration | Effect |
 |---|---|
 | `max[direct]=0` | Fail on any deprecation caused by your code |
 | `max[indirect]=999` | Tolerate deprecations from vendor code during transition |
-| `max[total]=0` | Fail on any deprecation from any source (strictest) |
+| `max[total]=0` | Fail on any deprecation from any source (strictest setting) |
 | `disabled=1` | Disable deprecation tracking entirely (not recommended) |
 | `generateBaseline=true&baselineFile=./tests/allowed.json` | Snapshot current deprecations to a baseline file |
 | `baselineFile=./tests/allowed.json` | Ignore deprecations already in the baseline (ratchet approach) |
 
 ---
 
-## Handling Third-Party Bundles
+## Handling third-party bundles
 
-Bundles are the most common upgrade blocker. Follow this order:
+Bundles are the most common upgrade blocker. Work in this order:
 
-1. **Check compatibility** - look at each bundle's `composer.json` for Symfony version constraints
-2. **Update bundles first** - `composer update` before bumping Symfony version
-3. **Check for forks** - if a bundle is abandoned, look for maintained forks on Packagist
-4. **Wrap risky dependencies** - use adapter pattern to isolate bundles that may not keep up
+1. **Check compatibility**: read each bundle's `composer.json` for Symfony version constraints
+2. **Update bundles first**: run `composer update` before bumping the Symfony version
+3. **Check for forks**: if a bundle is abandoned, look for maintained forks on Packagist
+4. **Wrap risky dependencies**: put an adapter in front of bundles that may not keep up
 
 For bundle maintainers, use feature detection instead of version checks:
 
 ```php
-// Bad - version-based check
+// Bad: version-based check
 if (Kernel::VERSION_ID <= 60400) { ... }
 
-// Good - feature-based check
+// Good: feature-based check
 if (!method_exists(OptionsResolver::class, 'setDefined')) { ... }
 ```
 
@@ -247,10 +247,10 @@ Support multiple versions with flexible constraints:
 
 ---
 
-## Quick Reference: Major Upgrade Checklist
+## Quick reference: major upgrade checklist
 
 - [ ] Search the web for `UPGRADE-X.0.md` and read it completely
-- [ ] Upgrade to the last minor of current major (e.g., 6.4)
+- [ ] Upgrade to the last minor of current major (for example 6.4)
 - [ ] Update all third-party bundles to latest versions
 - [ ] Configure `SYMFONY_DEPRECATIONS_HELPER` with `max[direct]=0`
 - [ ] Run test suite and fix all direct deprecations
@@ -271,7 +271,7 @@ Support multiple versions with flexible constraints:
 
 | Reference | Contents |
 |---|---|
-| [Upgrade Workflow](references/upgrade-workflow.md) | Detailed deprecation handling workflow, recipes:update deep dive, CI pipeline integration, and version-specific migration notes |
+| [Upgrade Workflow](references/upgrade-workflow.md) | Deprecation handling workflow, `recipes:update` in detail, CI pipeline integration, and version-specific migration notes |
 
 ---
 

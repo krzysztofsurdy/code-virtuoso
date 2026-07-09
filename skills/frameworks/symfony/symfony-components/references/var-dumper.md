@@ -1,19 +1,34 @@
-# Symfony VarDumper Component
+# Symfony VarDumper component
 
-Debug and inspect PHP variables with powerful alternatives to var_dump(). VarDumper provides formatted output, reference tracking, custom object representation, and integration with dump servers for non-intrusive debugging.
+Debug and inspect PHP variables with replacements for `var_dump()`. VarDumper gives formatted output, reference tracking, custom object representation, and dump servers that keep debug output out of the page.
+
+## Contents
+
+- [Installation](#installation)
+- [Core functions](#core-functions)
+- [Output formats](#output-formats)
+- [Core classes](#core-classes)
+- [Dumper flags](#dumper-flags)
+- [Custom casters](#custom-casters)
+- [Capture output as a string](#capture-output-as-a-string)
+- [PHPUnit integration](#phpunit-integration)
+- [Symfony DebugBundle integration](#symfony-debugbundle-integration)
+- [Configuration](#configuration)
+- [Common use cases](#common-use-cases)
+- [Implementation details](#implementation-details)
 
 ## Installation
 
-Install via Composer as a development dependency:
+Install it as a development dependency:
 
 ```bash
 composer require --dev symfony/var-dumper
 ```
 
-## Core Functions
+## Core functions
 
 ### dump()
-Output variable state with automatic format selection:
+Outputs a variable and picks the format automatically:
 
 ```php
 require __DIR__.'/vendor/autoload.php';
@@ -25,22 +40,23 @@ dump($obj)->someMethod();    // Method chaining support
 // CLI outputs to STDOUT; other SAPIs output HTML
 ```
 
-**Features:**
-- Per-object and resource-type specialized views
+Behavior:
+
+- Specialized views per object and resource type
 - Reference tracking (soft and hard references)
-- Output buffering compatible
-- Returns the dumped variable for chainable operations
+- Works with output buffering
+- Returns the dumped variable, so calls can be chained
 
 ### dd()
-Dump and die - equivalent to dump() followed by exit:
+Dump and die, equivalent to `dump()` followed by `exit`:
 
 ```php
 dd($variable); // Dumps and terminates execution
 ```
 
-## Output Formats
+## Output formats
 
-Control format via environment variable or code:
+Set the format with an environment variable:
 
 ```bash
 VAR_DUMPER_FORMAT=html php script.php    # Force HTML output
@@ -48,10 +64,10 @@ VAR_DUMPER_FORMAT=cli php script.php     # Force colored CLI
 VAR_DUMPER_FORMAT=server php script.php  # Send to dump server
 ```
 
-## Core Classes
+## Core classes
 
 ### VarCloner
-Creates intermediate `Data` representations of PHP variables:
+Turns a PHP variable into an intermediate `Data` representation:
 
 ```php
 use Symfony\Component\VarDumper\Cloner\VarCloner;
@@ -59,14 +75,15 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
 $cloner = new VarCloner();
 $data = $cloner->cloneVar($myVariable);  // Returns Data object
 
-// Configuration methods
+// Configuration
 $cloner->setMaxItems(1000);              // -1 for unlimited
 $cloner->setMinDepth(1);                 // Depth before item limit
 $cloner->setMaxString(1000);             // Character limit per string
 $cloner->addCasters($myCasters);         // Register custom casters
 ```
 
-**Data object methods:**
+`Data` object methods:
+
 ```php
 $data->withMaxDepth(2);                  // Limit output depth
 $data->withMaxItemsPerDepth(50);         // Items per level
@@ -75,7 +92,7 @@ $data->seek('key1', 'key2');             // Select sub-parts
 ```
 
 ### HtmlDumper
-Outputs formatted HTML for browser display:
+Renders HTML for browser display:
 
 ```php
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
@@ -92,7 +109,7 @@ $dumper->setOutput($resource_or_callable);
 ```
 
 ### CliDumper
-Outputs optionally colored command-line format:
+Renders command-line output, optionally colored:
 
 ```php
 use Symfony\Component\VarDumper\Dumper\CliDumper;
@@ -108,7 +125,7 @@ $output = $dumper->dump($cloner->cloneVar($var), true);
 ```
 
 ### ServerDumper
-Send dumps to a remote dump server instead of displaying locally:
+Sends dumps to a remote dump server instead of displaying them locally:
 
 ```php
 use Symfony\Component\VarDumper\Dumper\ServerDumper;
@@ -129,15 +146,16 @@ VarDumper::setHandler(function (mixed $var) use ($cloner, $dumper): ?string {
 ```
 
 Start the dump server:
+
 ```bash
 ./vendor/bin/var-dump-server        # Standalone
 php bin/console server:dump         # Symfony console (formats CLI)
 php bin/console server:dump --format=html > dump.html  # HTML format
 ```
 
-## Dumper Flags
+## Dumper flags
 
-Combine using bitwise OR to control output formatting:
+Combine flags with bitwise OR to control output formatting:
 
 ```php
 use Symfony\Component\VarDumper\Dumper\AbstractDumper;
@@ -149,11 +167,11 @@ $dumper = new CliDumper(null, null,
 );
 ```
 
-## Custom Casters
+## Custom casters
 
-Customize object and resource representation during cloning:
+Casters change how objects and resources are represented during cloning.
 
-### Caster Signature
+### Caster signature
 
 ```php
 use Symfony\Component\VarDumper\Cloner\Stub;
@@ -170,7 +188,7 @@ function myCaster(
 }
 ```
 
-### Register Casters
+### Register casters
 
 ```php
 $casters = [
@@ -184,25 +202,28 @@ $cloner = new VarCloner($casters);
 $cloner->addCasters($casters);
 ```
 
-### Stub Types for Semantics
+### Stub types
 
-Wrap values to add meaning and formatting:
+Wrap values in a stub to add meaning and formatting.
 
-**ConstStub** - PHP constants:
+`ConstStub` for PHP constants:
+
 ```php
 use Symfony\Component\VarDumper\Caster\ConstStub;
 
 $array['error_level'] = new ConstStub('E_WARNING', E_WARNING);
 ```
 
-**ClassStub** - Class/method identifiers:
+`ClassStub` for class and method identifiers:
+
 ```php
 use Symfony\Component\VarDumper\Caster\ClassStub;
 
 $array['class_name'] = new ClassStub('MyClass');
 ```
 
-**LinkStub** - Clickable URLs and file paths:
+`LinkStub` for clickable URLs and file paths:
+
 ```php
 use Symfony\Component\VarDumper\Caster\LinkStub;
 
@@ -210,7 +231,8 @@ $array['documentation'] = new LinkStub('https://example.com/docs');
 $array['file'] = new LinkStub('/path/to/file.txt');
 ```
 
-**CutStub** - Ellipsis replacement for large objects:
+`CutStub` replaces large values with an ellipsis:
+
 ```php
 use Symfony\Component\VarDumper\Caster\CutStub;
 
@@ -219,35 +241,39 @@ if (strlen($largeString) > 1000) {
 }
 ```
 
-**CutArrayStub** - Keep only specific array keys:
+`CutArrayStub` keeps only the listed array keys:
+
 ```php
 use Symfony\Component\VarDumper\Caster\CutArrayStub;
 
 $array['config'] = new CutArrayStub($largeConfig, ['key1', 'key2']);
 ```
 
-**ImgStub** - Embed images:
+`ImgStub` embeds images:
+
 ```php
 use Symfony\Component\VarDumper\Caster\ImgStub;
 
 $array['thumbnail'] = new ImgStub('path/to/image.jpg');
 ```
 
-**EnumStub** - Virtual computed values:
+`EnumStub` shows virtual computed values:
+
 ```php
 use Symfony\Component\VarDumper\Caster\EnumStub;
 
 $array['computed'] = new EnumStub(['virtual_prop' => 'result']);
 ```
 
-**TraceStub/FrameStub/ArgsStub** - Stack traces:
+`TraceStub`, `FrameStub`, and `ArgsStub` for stack traces:
+
 ```php
 use Symfony\Component\VarDumper\Caster\TraceStub;
 
 $array['trace'] = new TraceStub(debug_backtrace());
 ```
 
-### Caster Example
+### Caster example
 
 ```php
 use Symfony\Component\VarDumper\Caster\LinkStub;
@@ -280,7 +306,7 @@ $cloner = new VarCloner(['Product' => 'ProductCaster']);
 dump($product);  // Uses custom caster
 ```
 
-## Capture Output as String
+## Capture output as a string
 
 ```php
 use Symfony\Component\VarDumper\Cloner\VarCloner;
@@ -307,9 +333,9 @@ $output = stream_get_contents($stream, -1, 0);
 fclose($stream);
 ```
 
-## PHPUnit Integration
+## PHPUnit integration
 
-Test dumped output with assertions:
+Assert on dumped output:
 
 ```php
 use Symfony\Component\VarDumper\Test\VarDumperTestTrait;
@@ -344,14 +370,15 @@ class ExampleTest extends TestCase
 }
 ```
 
-**Available assertion methods:**
+Assertion methods:
+
 - `assertDumpEquals(string $expected, mixed $var)` - Exact match
 - `assertDumpMatchesFormat(string $pattern, mixed $var)` - Pattern matching
 - `setUpVarDumper()` / `tearDownVarDumper()` - Manual setup/teardown
 
-## Symfony DebugBundle Integration
+## Symfony DebugBundle integration
 
-When used in Symfony with DebugBundle:
+With DebugBundle installed:
 
 ```php
 // In controllers or services
@@ -365,14 +392,14 @@ dump($variable);  // Appears in web debug toolbar
 
 ## Configuration
 
-Set via environment variables:
+Set these environment variables:
 
 ```bash
 VAR_DUMPER_FORMAT=html          # html, cli, or server
 VAR_DUMPER_SERVER=127.0.0.1:9912  # Dump server address
 ```
 
-Or configure in Symfony:
+Or configure it in Symfony:
 
 ```yaml
 # config/packages/debug.yaml
@@ -381,29 +408,33 @@ debug:
     dump_format: "%env(VAR_DUMPER_FORMAT)%"
 ```
 
-## Common Use Cases
+## Common use cases
 
-**Debug in API responses:**
+Debug in API responses:
+
 ```php
 dump($data);
 // Appears in web toolbar, not in JSON output
 ```
 
-**Custom object inspection:**
+Custom object inspection:
+
 ```php
 $cloner = new VarCloner(['MyClass' => 'customCaster']);
 $dumper = new CliDumper();
 $output = $dumper->dump($cloner->cloneVar($obj), true);
 ```
 
-**Remote debugging:**
+Remote debugging:
+
 ```bash
 php bin/console server:dump
 # In another terminal:
 VAR_DUMPER_FORMAT=server php your-script.php
 ```
 
-**Test output verification:**
+Test output verification:
+
 ```php
 $this->assertDumpMatchesFormat(
     "array:%d [\n  'status' => %s\n]",
@@ -411,7 +442,7 @@ $this->assertDumpMatchesFormat(
 );
 ```
 
-## Key Implementation Details
+## Implementation details
 
 - **Property prefixes**: Protected: `\0*\0`, Private: classname, Virtual: `\0~\0`, Dynamic: `\0+\0`
 - **Resource types**: Prefix with `:` when registering casters (e.g., `:curl resource`)

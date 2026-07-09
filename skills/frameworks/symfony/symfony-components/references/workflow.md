@@ -1,6 +1,21 @@
-# Symfony Workflow Component
+# Symfony Workflow component
 
-The Workflow component manages complex business processes by modeling them as a series of places (states) and transitions (actions). Use this skill to implement approval workflows, publishing pipelines, order processing, and state-driven domain logic.
+The Workflow component models a business process as places (states) and transitions (actions). Use it for approval flows, publishing pipelines, order processing, and other state-driven domain logic.
+
+## Contents
+
+- [Installation](#installation)
+- [Core concepts](#core-concepts)
+- [Configuration](#configuration)
+- [Core classes and methods](#core-classes-and-methods)
+- [Usage in services and controllers](#usage-in-services-and-controllers)
+- [Workflow events](#workflow-events)
+- [Guard events and blocking transitions](#guard-events-and-blocking-transitions)
+- [Metadata](#metadata)
+- [Custom marking stores](#custom-marking-stores)
+- [Programmatic workflow definition](#programmatic-workflow-definition)
+- [Weighted transitions (multiple tokens)](#weighted-transitions-multiple-tokens)
+- [Best practices](#best-practices)
 
 ## Installation
 
@@ -8,23 +23,24 @@ The Workflow component manages complex business processes by modeling them as a 
 composer require symfony/workflow
 ```
 
-## Core Concepts
+## Core concepts
 
-### Places and Transitions
-- **Places**: Named steps or states an object can occupy (e.g., `draft`, `reviewed`, `published`)
-- **Transitions**: Named actions that move objects between places
-- **Marking**: Current location(s) of an object in the workflow
-- **Definition**: Complete specification of places, transitions, and initial marking
+### Places and transitions
+- **Places**: named steps or states an object can occupy (for example `draft`, `reviewed`, `published`)
+- **Transitions**: named actions that move objects between places
+- **Marking**: the current place or places of an object
+- **Definition**: the places, transitions, and initial marking of a workflow
 
-### Workflow vs State Machine
-- **Workflow**: Object can exist in multiple places simultaneously (multiple tokens)
-- **State Machine**: Object can only occupy one place at a time (single token)
+### Workflow vs state machine
+- **Workflow**: an object can be in several places at once (multiple tokens)
+- **State machine**: an object occupies exactly one place at a time (single token)
 
-Use workflows for parallel processes (e.g., document review + layout approval). Use state machines for sequential processes (e.g., article: draft → review → published).
+Use a workflow for parallel processes, such as document review plus layout approval. Use a state machine for sequential ones, such as an article going draft, review, published.
 
 ## Configuration
 
-### YAML Configuration
+### YAML configuration
+
 ```yaml
 # config/packages/workflow.yaml
 framework:
@@ -58,7 +74,8 @@ framework:
                     to: rejected
 ```
 
-### Entity Setup
+### Entity setup
+
 ```php
 namespace App\Entity;
 
@@ -89,9 +106,10 @@ class BlogPost
 }
 ```
 
-## Core Classes and Methods
+## Core classes and methods
 
-### WorkflowInterface / StateMachineInterface
+### WorkflowInterface and StateMachineInterface
+
 - `can(object $subject, string $transitionName): bool` - Check if transition allowed
 - `apply(object $subject, string $transitionName, array $context = []): Marking` - Execute transition
 - `getMarking(object $subject): Marking` - Get current marking
@@ -102,28 +120,33 @@ class BlogPost
 - `getMetadataStore(): MetadataStoreInterface` - Access workflow metadata
 
 ### Definition
+
 - `getPlaces(): array` - List all places
 - `getTransitions(): array` - List all transitions
 - `getInitialPlaces(): array` - Get initial marking
 - `getMetadataStore(): MetadataStoreInterface` - Access definition metadata
 
 ### Transition
+
 - `getName(): string` - Get transition name
 - `getFroms(): array` - Get source places
 - `getTos(): array` - Get destination places
 - `getMetadata(string $key, mixed $default = null): mixed` - Get transition metadata
 
 ### Marking
+
 - `getPlaces(): array` - Get places as keys with marking counts as values
 - `has(string $place): bool` - Check if place is marked
 
-### MarkingStore Interface
+### MarkingStore interface
+
 - `getMarking(object $subject): Marking` - Retrieve current marking
 - `setMarking(object $subject, Marking $marking, array $context = []): void` - Persist marking
 
-## Usage in Services and Controllers
+## Usage in services and controllers
 
-### Dependency Injection
+### Dependency injection
+
 ```php
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
@@ -146,7 +169,8 @@ class ArticlePublisher
 }
 ```
 
-### Common Operations
+### Common operations
+
 ```php
 $post = new BlogPost();
 
@@ -184,23 +208,26 @@ $this->workflow->apply($post, 'publish', [
 ]);
 ```
 
-## Workflow Events
+## Workflow events
 
-### Event Dispatch Order
-1. **workflow.guard** - Validate if transition allowed (can block)
-2. **workflow.leave** - Leaving source place(s)
-3. **workflow.transition** - Transition in progress
-4. **workflow.enter** - Entering destination place(s) before marking update
-5. **workflow.entered** - Entering destination place(s) after marking update
-6. **workflow.completed** - Transition fully completed
-7. **workflow.announce** - Available transitions announced
+### Event dispatch order
 
-### Event Naming Patterns
+1. `workflow.guard` - Checks whether the transition is allowed (can block it)
+2. `workflow.leave` - Leaving the source place(s)
+3. `workflow.transition` - Transition in progress
+4. `workflow.enter` - Entering the destination place(s), before the marking is updated
+5. `workflow.entered` - Entering the destination place(s), after the marking is updated
+6. `workflow.completed` - Transition finished
+7. `workflow.announce` - Newly available transitions announced
+
+### Event naming patterns
+
 - `workflow.{event_type}` - All workflows
 - `workflow.{workflow_name}.{event_type}` - Specific workflow
 - `workflow.{workflow_name}.{event_type}.{place_or_transition}` - Specific place/transition
 
-### Event Subscriber
+### Event subscriber
+
 ```php
 namespace App\EventSubscriber;
 
@@ -241,7 +268,8 @@ class WorkflowAuditSubscriber implements EventSubscriberInterface
 }
 ```
 
-### Attribute-Based Listeners
+### Attribute-based listeners
+
 ```php
 use Symfony\Component\Workflow\Attribute\AsGuardListener;
 use Symfony\Component\Workflow\Attribute\AsTransitionListener;
@@ -266,11 +294,12 @@ class ArticleEventListener
 }
 ```
 
-## Guard Events and Blocking Transitions
+## Guard events and blocking transitions
 
-Guard events validate if a transition should be blocked. Block with explanation for better UX.
+Guard events decide whether a transition is blocked. Attach a reason to the block so the user sees why.
 
-### Configuration-Based Guards
+### Configuration-based guards
+
 ```yaml
 framework:
     workflows:
@@ -282,7 +311,8 @@ framework:
                     guard: "is_granted('ROLE_ADMIN') and subject.isDraft()"
 ```
 
-### Programmatic Guards
+### Programmatic guards
+
 ```php
 use Symfony\Component\Workflow\Event\GuardEvent;
 use Symfony\Component\Workflow\TransitionBlocker;
@@ -318,6 +348,7 @@ class ReviewGuardSubscriber implements EventSubscriberInterface
 ## Metadata
 
 ### Configuration
+
 ```yaml
 framework:
     workflows:
@@ -340,7 +371,8 @@ framework:
                         hour_limit: 22
 ```
 
-### Access Metadata
+### Access metadata
+
 ```php
 // Workflow metadata
 $title = $workflow->getMetadataStore()
@@ -360,7 +392,8 @@ $title = $workflow->getMetadataStore()->getMetadata('title');
 $maxWords = $workflow->getMetadataStore()->getMetadata('max_words', 'draft');
 ```
 
-### Twig Functions
+### Twig functions
+
 ```twig
 {# Check if transition allowed #}
 {% if workflow_can(post, 'publish') %}
@@ -390,9 +423,9 @@ $maxWords = $workflow->getMetadataStore()->getMetadata('max_words', 'draft');
 {% endfor %}
 ```
 
-## Custom Marking Stores
+## Custom marking stores
 
-Implement custom storage logic by creating a MarkingStore.
+Implement `MarkingStoreInterface` to store markings your own way.
 
 ```php
 namespace App\Workflow\MarkingStore;
@@ -431,7 +464,8 @@ final class DatabaseMarkingStore implements MarkingStoreInterface
 }
 ```
 
-Register in configuration:
+Register it in configuration:
+
 ```yaml
 framework:
     workflows:
@@ -440,9 +474,9 @@ framework:
                 service: 'App\Workflow\MarkingStore\DatabaseMarkingStore'
 ```
 
-## Programmatic Workflow Definition
+## Programmatic workflow definition
 
-Define workflows entirely in PHP without configuration.
+A workflow can be defined entirely in PHP, without configuration.
 
 ```php
 use Symfony\Component\Workflow\Definition;
@@ -464,9 +498,9 @@ $marking = new MethodMarkingStore(true, 'state');
 $workflow = new Workflow($definition, $marking);
 ```
 
-## Weighted Transitions (Multiple Tokens)
+## Weighted transitions (multiple tokens)
 
-For workflows with multiple tokens in a single place, use weighted transitions.
+When a place can hold several tokens, use weighted transitions.
 
 ```yaml
 framework:
@@ -496,13 +530,13 @@ framework:
                     to: finished
 ```
 
-## Best Practices
+## Best practices
 
-- **Validate in Guards**: Use guard events to prevent invalid transitions with clear blockers
-- **Store Metadata**: Keep workflow labels, icons, and descriptions as metadata, not in code
-- **Use Events**: Subscribe to workflow events for audit logging and notifications
-- **Separate Concerns**: Keep workflow logic separate from entity business logic
-- **Document Transitions**: Add metadata describing why transitions exist and their side effects
-- **Use State Machines**: Default to state machines; use workflows only when parallel states needed
-- **Enum Places**: Use PHP enums for type-safe place references
-- **Service Locator**: For multiple workflows, inject via ServiceLocator instead of individual services
+- Block invalid transitions in guard events and give each blocker a clear message
+- Keep workflow labels, icons, and descriptions in metadata, not in code
+- Subscribe to workflow events for audit logging and notifications
+- Keep workflow logic separate from the entity's business logic
+- Add metadata describing why each transition exists and its side effects
+- Default to a state machine; use a workflow only when parallel states are needed
+- Use PHP enums for type-safe place references
+- With several workflows, inject a ServiceLocator instead of individual services

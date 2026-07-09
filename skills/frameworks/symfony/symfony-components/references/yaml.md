@@ -1,20 +1,34 @@
-# Symfony Yaml Component
+# Symfony Yaml component
 
-Parse and dump YAML configuration files efficiently with full support for data types, references, aliases, and merge keys.
+Parse and dump YAML files, including data types, references, aliases, and merge keys.
+
+## Contents
+
+- [Installation](#installation)
+- [Core classes](#core-classes)
+- [Basic Usage](#basic-usage)
+- [Data types](#data-types)
+- [Advanced flags and options](#advanced-flags-and-options)
+- [References, aliases, and merge keys](#references-aliases-and-merge-keys)
+- [Symfony-specific features](#symfony-specific-features)
+- [Error handling](#error-handling)
+- [Syntax validation (CLI)](#syntax-validation-cli)
+- [Common use cases](#common-use-cases)
+- [Limitations](#limitations)
 
 ## Installation
 
-Install the Yaml component:
+Install the component:
 
 ```bash
 composer require symfony/yaml
 ```
 
-## Core Classes
+## Core classes
 
-### Yaml (Wrapper Class)
+### Yaml (wrapper class)
 
-Primary interface for parsing and dumping YAML:
+The main entry point for parsing and dumping YAML:
 
 ```php
 use Symfony\Component\Yaml\Yaml;
@@ -34,7 +48,7 @@ file_put_contents('/path/to/file.yaml', $yaml);
 
 ### Parser
 
-Direct class for parsing YAML:
+The underlying parser class:
 
 ```php
 use Symfony\Component\Yaml\Parser;
@@ -45,7 +59,7 @@ $array = $parser->parse($yaml);
 
 ### Dumper
 
-Direct class for dumping YAML:
+The underlying dumper class:
 
 ```php
 use Symfony\Component\Yaml\Dumper;
@@ -56,7 +70,7 @@ $yaml = $dumper->dump(['foo' => 'bar']);
 
 ## Basic Usage
 
-### Parse YAML Strings
+### Parse YAML strings
 
 ```php
 use Symfony\Component\Yaml\Yaml;
@@ -72,13 +86,13 @@ $data = Yaml::parse($yaml);
 // ['foo' => 'bar', 'items' => ['item1', 'item2']]
 ```
 
-### Parse YAML Files
+### Parse YAML files
 
 ```php
 $data = Yaml::parseFile('/path/to/config.yaml');
 ```
 
-### Dump Arrays to YAML
+### Dump arrays to YAML
 
 ```php
 $array = [
@@ -90,14 +104,14 @@ $array = [
 ];
 
 $yaml = Yaml::dump($array);
-// Outputs formatted YAML
+// Produces formatted YAML
 ```
 
-## Data Types
+## Data types
 
 ### Strings
 
-Three styles supported:
+Three styles are supported:
 
 ```yaml
 unquoted: A string in YAML
@@ -105,9 +119,9 @@ single_quoted: 'A single-quoted string'
 double_quoted: "A double-quoted string\n"
 ```
 
-Strings require quotes when containing special characters: `: { } [ ] , & * # ? | - < > = ! % @`
+Quote a string that contains special characters: `: { } [ ] , & * # ? | - < > = ! % @`
 
-### Multi-line Strings
+### Multi-line strings
 
 Literal style (preserves newlines):
 
@@ -143,7 +157,7 @@ enabled: true
 disabled: false
 ```
 
-### Null Values
+### Null values
 
 ```yaml
 nullable: null
@@ -157,7 +171,7 @@ timestamp: 2001-12-14T21:59:43.10-05:00
 date: 2002-12-14
 ```
 
-### Collections - Sequences (Arrays)
+### Collections: sequences (arrays)
 
 Block style:
 
@@ -174,7 +188,7 @@ Flow style:
 items: [PHP, Perl, Python]
 ```
 
-### Collections - Mappings (Associative Arrays)
+### Collections: mappings (associative arrays)
 
 Block style:
 
@@ -191,7 +205,7 @@ Flow style:
 versions: { PHP: 5.2, MySQL: 5.1, Apache: 2.2.20 }
 ```
 
-### Nested Collections
+### Nested collections
 
 ```yaml
 projects:
@@ -203,11 +217,11 @@ projects:
     Propel: 1.3
 ```
 
-## Advanced Flags and Options
+## Advanced flags and options
 
-### Parsing Flags
+### Parsing flags
 
-Use flags as bitmask or pass as parameter:
+Pass flags as a parameter, or combine them as a bitmask:
 
 ```php
 Yaml::parse($yaml, Yaml::PARSE_CONSTANT);
@@ -217,7 +231,7 @@ Yaml::parse($yaml, Yaml::PARSE_CUSTOM_TAGS);
 
 #### PARSE_CONSTANT
 
-Parse PHP constants (`!php/const` tag):
+Resolves PHP constants (`!php/const` tag):
 
 ```php
 Yaml::parse('value: !php/const App\Pagination\Paginator::PAGE_LIMIT',
@@ -225,13 +239,14 @@ Yaml::parse('value: !php/const App\Pagination\Paginator::PAGE_LIMIT',
 ```
 
 YAML:
+
 ```yaml
 value: !php/const App\Pagination\Paginator::PAGE_LIMIT
 ```
 
 #### PARSE_DATETIME
 
-Convert ISO-8601 dates to DateTime objects:
+Converts ISO-8601 dates to DateTime objects:
 
 ```php
 Yaml::parse('date: 2001-12-14T21:59:43.10-05:00',
@@ -241,7 +256,7 @@ Yaml::parse('date: 2001-12-14T21:59:43.10-05:00',
 
 #### PARSE_OBJECT
 
-Parse PHP objects (`!php/object` tag):
+Parses PHP objects (`!php/object` tag):
 
 ```php
 $yaml = <<<'YAML'
@@ -254,7 +269,7 @@ Yaml::parse($yaml, Yaml::PARSE_OBJECT);
 
 #### PARSE_OBJECT_FOR_MAP
 
-Parse objects as associative arrays:
+Parses objects as associative arrays:
 
 ```php
 Yaml::parse($yaml, Yaml::PARSE_OBJECT_FOR_MAP);
@@ -262,7 +277,7 @@ Yaml::parse($yaml, Yaml::PARSE_OBJECT_FOR_MAP);
 
 #### PARSE_EXCEPTION_ON_INVALID_TYPE
 
-Throw exception on invalid type instead of silently converting:
+Throws an exception on an invalid type instead of silently converting it:
 
 ```php
 Yaml::parse($yaml, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
@@ -270,17 +285,17 @@ Yaml::parse($yaml, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
 
 #### PARSE_CUSTOM_TAGS
 
-Enable custom tag parsing:
+Enables custom tag parsing:
 
 ```php
 Yaml::parse($yaml, Yaml::PARSE_CUSTOM_TAGS);
 ```
 
-### Dumping Flags
+### Dumping flags
 
 #### DUMP_OBJECT
 
-Dump PHP objects as serialized:
+Dumps PHP objects in serialized form:
 
 ```php
 $obj = new stdClass();
@@ -292,7 +307,7 @@ Yaml::dump(['obj' => $obj], inline: 2, indent: 4, flags: Yaml::DUMP_OBJECT);
 
 #### DUMP_OBJECT_AS_MAP
 
-Dump objects as YAML maps:
+Dumps objects as YAML maps:
 
 ```php
 Yaml::dump(['obj' => $obj], flags: Yaml::DUMP_OBJECT_AS_MAP);
@@ -302,7 +317,7 @@ Yaml::dump(['obj' => $obj], flags: Yaml::DUMP_OBJECT_AS_MAP);
 
 #### DUMP_EXCEPTION_ON_INVALID_TYPE
 
-Throw exception on invalid type during dump:
+Throws an exception on an invalid type during a dump:
 
 ```php
 Yaml::dump($array, flags: Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE);
@@ -310,7 +325,7 @@ Yaml::dump($array, flags: Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE);
 
 #### DUMP_MULTI_LINE_LITERAL_BLOCK
 
-Use literal blocks for multi-line strings:
+Uses literal blocks for multi-line strings:
 
 ```php
 $yaml = Yaml::dump(
@@ -325,7 +340,7 @@ $yaml = Yaml::dump(
 
 #### DUMP_NULL_AS_TILDE
 
-Dump null values as `~`:
+Dumps null values as `~`:
 
 ```php
 Yaml::dump(['key' => null], flags: Yaml::DUMP_NULL_AS_TILDE);
@@ -334,7 +349,7 @@ Yaml::dump(['key' => null], flags: Yaml::DUMP_NULL_AS_TILDE);
 
 #### DUMP_NULL_AS_EMPTY
 
-Dump null values as empty:
+Dumps null values as empty:
 
 ```php
 Yaml::dump(['key' => null], flags: Yaml::DUMP_NULL_AS_EMPTY);
@@ -343,7 +358,7 @@ Yaml::dump(['key' => null], flags: Yaml::DUMP_NULL_AS_EMPTY);
 
 #### DUMP_NUMERIC_KEY_AS_STRING
 
-Dump numeric keys as strings:
+Dumps numeric keys as strings:
 
 ```php
 Yaml::dump([0 => 'item1', 1 => 'item2'], flags: Yaml::DUMP_NUMERIC_KEY_AS_STRING);
@@ -351,7 +366,7 @@ Yaml::dump([0 => 'item1', 1 => 'item2'], flags: Yaml::DUMP_NUMERIC_KEY_AS_STRING
 
 #### DUMP_FORCE_DOUBLE_QUOTES_ON_VALUES
 
-Force all values to use double quotes:
+Forces double quotes on all values:
 
 ```php
 Yaml::dump(['key' => 'value'], flags: Yaml::DUMP_FORCE_DOUBLE_QUOTES_ON_VALUES);
@@ -359,18 +374,18 @@ Yaml::dump(['key' => 'value'], flags: Yaml::DUMP_FORCE_DOUBLE_QUOTES_ON_VALUES);
 
 #### DUMP_COMPACT_NESTED_MAPPING
 
-Compact output for nested collections:
+Produces compact output for nested collections:
 
 ```php
 Yaml::dump(['items' => [['id' => 1], ['id' => 2]]],
     flags: Yaml::DUMP_COMPACT_NESTED_MAPPING);
 ```
 
-### Formatting Options
+### Formatting options
 
-#### Indentation Level
+#### Indentation level
 
-Control when output switches from inline to expanded (default: 2):
+Sets the nesting level at which output switches from inline to expanded (default: 2):
 
 ```php
 Yaml::dump($array, 1);  // Switch at level 1
@@ -378,7 +393,7 @@ Yaml::dump($array, 2);  // Switch at level 2
 Yaml::dump($array, 4);  // Switch at level 4
 ```
 
-#### Custom Indentation Spaces
+#### Custom indentation spaces
 
 Set indentation width (default: 4):
 
@@ -386,11 +401,11 @@ Set indentation width (default: 4):
 Yaml::dump($array, inline: 2, indent: 8);  // Use 8 spaces for indentation
 ```
 
-## References, Aliases, and Merge Keys
+## References, aliases, and merge keys
 
-### Anchors and Aliases
+### Anchors and aliases
 
-Define a value once and reference it multiple times:
+Define a value once and reference it in several places:
 
 ```yaml
 defaults: &defaults
@@ -402,7 +417,7 @@ development:
   database: dev_db
 ```
 
-### Merge Keys
+### Merge keys
 
 Merge one mapping into another:
 
@@ -416,9 +431,9 @@ development:
   database: dev_db
 ```
 
-## Symfony-Specific Features
+## Symfony-specific features
 
-### PHP Constants
+### PHP constants
 
 ```php
 // Enable with PARSE_CONSTANT flag
@@ -430,7 +445,7 @@ YAML;
 $config = Yaml::parse($yaml, Yaml::PARSE_CONSTANT);
 ```
 
-### PHP Enums
+### PHP enums
 
 ```yaml
 # Single enum case
@@ -443,15 +458,15 @@ operator_value: !php/enum App\Operator\Enum\Type::Or->value
 operators: !php/enum App\Operator\Enum\Type
 ```
 
-Parse with:
+Parse it with:
 
 ```php
 Yaml::parse($yaml, Yaml::PARSE_CONSTANT);
 ```
 
-### Binary Data
+### Binary data
 
-Base64-encoded non-UTF-8 data:
+Base64-encoded data that is not valid UTF-8:
 
 ```yaml
 image: !!binary |
@@ -459,11 +474,11 @@ image: !!binary |
   Pz8/f39//z8//v7+/r6+v3+/v///
 ```
 
-## Error Handling
+## Error handling
 
 ### ParseException
 
-Handle parsing errors with filename and line numbers:
+Parsing errors carry the filename and line number:
 
 ```php
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -479,9 +494,9 @@ try {
 }
 ```
 
-## Syntax Validation (CLI)
+## Syntax validation (CLI)
 
-Validate YAML files from command line:
+Validate YAML files from the command line:
 
 ```bash
 # Validate single file
@@ -496,9 +511,9 @@ cat file.yaml | php lint.php
 php lint.php file.yaml --format=json
 ```
 
-## Common Use Cases
+## Common use cases
 
-### Configuration Files
+### Configuration files
 
 ```yaml
 database:
@@ -516,13 +531,13 @@ cache:
     port: 6379
 ```
 
-Parse with:
+Parse it with:
 
 ```php
 $config = Yaml::parseFile('.env.yaml');
 ```
 
-### Service Definitions
+### Service definitions
 
 ```yaml
 services:
@@ -535,7 +550,7 @@ services:
     class: App\Logger\Handler
 ```
 
-### Mixed Complex Structures
+### Mixed complex structures
 
 ```yaml
 app_config: &app_config
@@ -562,4 +577,4 @@ The Symfony Yaml component does not support:
 - TAG directives and tag references
 - Sequence-like syntax for mappings (use `{foo: ~, bar: ~}`)
 
-Use standard YAML syntax within these constraints. For advanced use cases, consider the full YAML specification parsers.
+Stay within standard YAML syntax. If you need these features, use a parser that implements the full YAML specification.

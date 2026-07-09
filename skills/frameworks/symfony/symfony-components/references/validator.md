@@ -1,24 +1,43 @@
-# Symfony Validator Component
+# Symfony Validator component
+
+## Contents
+
+- [Installation](#installation)
+- [Core concepts](#core-concepts)
+- [Creating and using validators](#creating-and-using-validators)
+- [Defining constraints](#defining-constraints)
+- [Loading validation resources](#loading-validation-resources)
+- [Built-in constraints](#built-in-constraints)
+- [Creating custom constraints](#creating-custom-constraints)
+- [Validation groups](#validation-groups)
+- [Sequential group validation](#sequential-group-validation)
+- [Validation by metadata](#validation-by-metadata)
+- [Validating arrays](#validating-arrays)
+- [Error severity levels](#error-severity-levels)
+- [Translating constraint messages](#translating-constraint-messages)
+- [Handling constraint violations](#handling-constraint-violations)
+- [Common constraint options](#common-constraint-options)
+- [Best practices](#best-practices)
 
 ## Installation
 
-Install the Validator component via Composer:
+Install the component with Composer:
 
 ```bash
 composer require symfony/validator
 ```
 
-## Core Concepts
+## Core concepts
 
-The Validator component validates values against **Constraints** (rules) using **Validators** (logic):
+The component validates values against constraints (the rules) using validators (the logic that checks them):
 
-- **Constraints**: Define validation rules applied to properties, getters, or entire classes
-- **Validators**: Execute constraint logic and report violations
-- **ConstraintViolationList**: Collects and provides access to validation errors
+- **Constraints** define rules applied to properties, getters, or entire classes
+- **Validators** run the constraint logic and report violations
+- **ConstraintViolationList** collects the violations and gives access to them
 
-## Creating and Using Validators
+## Creating and using validators
 
-### Create a Basic Validator
+### Create a basic validator
 
 ```php
 use Symfony\Component\Validator\Validation;
@@ -26,7 +45,7 @@ use Symfony\Component\Validator\Validation;
 $validator = Validation::createValidator();
 ```
 
-### Validate Simple Values
+### Validate simple values
 
 ```php
 use Symfony\Component\Validator\Constraints as Assert;
@@ -42,7 +61,7 @@ if (count($violations) > 0) {
 }
 ```
 
-### Validate Objects
+### Validate objects
 
 Define constraints using attributes, YAML, XML, or PHP mapping:
 
@@ -64,9 +83,9 @@ $user = new User();
 $violations = $validator->validate($user);
 ```
 
-## Defining Constraints
+## Defining constraints
 
-### Using Attributes (Recommended)
+### Using attributes (recommended)
 
 ```php
 class Author
@@ -80,7 +99,7 @@ class Author
 }
 ```
 
-### Using YAML Mapping
+### Using YAML mapping
 
 ```yaml
 App\Entity\Author:
@@ -92,7 +111,7 @@ App\Entity\Author:
             - Email: ~
 ```
 
-### Using PHP Mapping with loadValidatorMetadata
+### Using PHP mapping with loadValidatorMetadata
 
 ```php
 use Symfony\Component\Validator\Constraints as Assert;
@@ -109,7 +128,7 @@ class Author
 }
 ```
 
-Enable this loader:
+Enable this loader with:
 
 ```php
 $validator = Validation::createValidatorBuilder()
@@ -117,9 +136,9 @@ $validator = Validation::createValidatorBuilder()
     ->getValidator();
 ```
 
-## Loading Validation Resources
+## Loading validation resources
 
-Configure the validator builder to load constraints from multiple sources:
+The validator builder can load constraints from several sources:
 
 ```php
 use Symfony\Component\Validator\Validation;
@@ -132,7 +151,7 @@ $validator = Validation::createValidatorBuilder()
     ->getValidator();
 ```
 
-Add PSR-6 caching for performance:
+Add PSR-6 caching to avoid re-parsing the mapping on every request:
 
 ```php
 $validator = Validation::createValidatorBuilder()
@@ -140,18 +159,18 @@ $validator = Validation::createValidatorBuilder()
     ->getValidator();
 ```
 
-## Built-In Constraints
+## Built-in constraints
 
-### Basic Constraints
+### Basic constraints
 - `NotBlank` - Value must not be blank
 - `NotNull` - Value must not be null
 - `IsNull` - Value must be null
 - `IsTrue` - Value must be true
 - `IsFalse` - Value must be false
 - `Blank` - Value must be blank
-- `Type(type: 'string')` - Value must be of specified type
+- `Type(type: 'string')` - Value must be of the given type
 
-### String Constraints
+### String constraints
 - `Email` - Valid email address
 - `Url` - Valid URL
 - `Uuid` - Valid UUID
@@ -168,12 +187,12 @@ $validator = Validation::createValidatorBuilder()
 - `Twig` - Valid Twig syntax
 - `Yaml` - Valid YAML syntax
 - `ExpressionSyntax` - Valid expression syntax
-- `PasswordStrength(minScore: 4)` - Strong password validation
+- `PasswordStrength(minScore: 4)` - Password meets a minimum strength score
 - `NotCompromisedPassword` - Password not in breach databases
 - `WordCount(max: 100)` - Word count validation
 - `NoSuspiciousCharacters` - No suspicious Unicode characters
 
-### Comparison Constraints
+### Comparison constraints
 - `EqualTo(value: 5)` - Equal to a value
 - `NotEqualTo(value: 5)` - Not equal to a value
 - `IdenticalTo(value: 5)` - Identical to a value
@@ -186,31 +205,31 @@ $validator = Validation::createValidatorBuilder()
 - `DivisibleBy(value: 5)` - Divisible by a number
 - `Unique` - Unique value
 
-### Number Constraints
+### Number constraints
 - `Positive` - Must be positive
 - `PositiveOrZero` - Must be positive or zero
 - `Negative` - Must be negative
 - `NegativeOrZero` - Must be negative or zero
 
-### Date/Time Constraints
+### Date and time constraints
 - `Date` - Valid date format
 - `DateTime` - Valid datetime format
 - `Time` - Valid time format
 - `Timezone` - Valid timezone
 - `Week` - Valid week format
 
-### Choice Constraints
+### Choice constraints
 - `Choice(choices: ['a', 'b'])` - Value from predefined choices
 - `Country` - Valid country code
 - `Language` - Valid language code
 - `Locale` - Valid locale
 
-### File Constraints
-- `File(maxSize: '5M')` - Valid file validation
+### File constraints
+- `File(maxSize: '5M')` - Valid file, optionally capped by size
 - `Image(maxWidth: 800)` - Valid image file
 - `Video` - Valid video file
 
-### Financial Constraints
+### Financial constraints
 - `Iban` - Valid IBAN
 - `Bic` - Valid BIC code
 - `CardScheme(schemes: ['VISA'])` - Valid card scheme
@@ -220,14 +239,14 @@ $validator = Validation::createValidatorBuilder()
 - `Isin` - Valid ISIN
 - `Luhn` - Valid Luhn checksum
 
-### Collection Constraints
+### Collection constraints
 - `Collection(fields: ['name' => ...])` - Validate array structures
 - `Count(min: 1, max: 10)` - Collection size validation
 - `All(constraints: [...])` - All items must pass constraints
 - `Valid` - Validate nested objects
-- `Cascade` - Cascade validation to nested objects
+- `Cascade` - Cascade validation to the object's nested properties
 
-### Composite Constraints
+### Composite constraints
 - `AtLeastOneOf(constraints: [...])` - At least one constraint must pass
 - `When(expression: '...', then: [...])` - Conditional constraint validation
 - `Compound` - Combine multiple constraints
@@ -235,18 +254,18 @@ $validator = Validation::createValidatorBuilder()
 - `Traverse` - Traverse nested structures
 - `GroupSequence` - Define validation sequence
 
-### Custom Logic Constraints
+### Custom logic constraints
 - `Callback(callback: 'validate')` - Custom callback validation
 - `Expression(expression: '...')` - Expression-based validation
 
-### Doctrine Constraints (with DoctrineBundle)
+### Doctrine constraints (with DoctrineBundle)
 - `UniqueEntity(fields: ['email'])` - Unique database entity
 - `EnableAutoMapping` - Enable automatic mapping
 - `DisableAutoMapping` - Disable automatic mapping
 
-## Creating Custom Constraints
+## Creating custom constraints
 
-### Create the Constraint Class
+### Create the constraint class
 
 ```php
 use Symfony\Component\Validator\Constraint;
@@ -270,9 +289,9 @@ class ContainsAlphanumeric extends Constraint
 }
 ```
 
-### Create the Validator Class
+### Create the validator class
 
-Auto-discovered by appending `Validator` to the constraint name:
+Symfony finds the validator by appending `Validator` to the constraint class name:
 
 ```php
 use Symfony\Component\Validator\Constraint;
@@ -307,16 +326,16 @@ class ContainsAlphanumericValidator extends ConstraintValidator
 }
 ```
 
-### Use Custom Constraints
+### Use custom constraints
 
 ```php
 #[ContainsAlphanumeric(mode: 'loose')]
 private string $username;
 ```
 
-## Validation Groups
+## Validation groups
 
-Validate specific groups of constraints instead of all constraints:
+Validate only the constraints in specific groups instead of all of them:
 
 ```php
 class User
@@ -332,7 +351,7 @@ class User
 $violations = $validator->validate($user, null, ['registration']);
 ```
 
-## Sequential Group Validation
+## Sequential group validation
 
 Stop validation at the first failed group:
 
@@ -362,9 +381,9 @@ class User implements GroupSequenceProviderInterface
 }
 ```
 
-## Validation by Metadata
+## Validation by metadata
 
-Validate using property, getter, or class-level constraints:
+Constraints can sit on properties, getters, or the class itself:
 
 ```php
 class Author
@@ -386,7 +405,7 @@ class Author
 }
 ```
 
-## Validating Arrays
+## Validating arrays
 
 ```php
 use Symfony\Component\Validator\Constraints as Assert;
@@ -408,9 +427,9 @@ $constraint = new Assert\Collection(fields: [
 $violations = $validator->validate($data, $constraint);
 ```
 
-## Error Severity Levels
+## Error severity levels
 
-Assign different severity levels to constraints:
+Use `payload` to give constraints different severity levels:
 
 ```php
 class User
@@ -429,7 +448,7 @@ foreach ($violations as $violation) {
 }
 ```
 
-## Translation of Constraint Messages
+## Translating constraint messages
 
 Create translation files in the `validators` domain:
 
@@ -438,7 +457,7 @@ Create translation files in the `validators` domain:
 author.name.not_blank: Please enter an author name.
 ```
 
-Use custom message keys in constraints:
+Reference the message key in a constraint:
 
 ```php
 #[Assert\NotBlank(message: 'author.name.not_blank')]
@@ -456,7 +475,7 @@ public function validate($value, Constraint $constraint): void
 }
 ```
 
-## Handling Constraint Violations
+## Handling constraint violations
 
 ```php
 $violations = $validator->validate($object);
@@ -471,7 +490,7 @@ if (count($violations) > 0) {
 $errors = $violations->findByCodes(['SOME_ERROR_CODE']);
 ```
 
-## Common Configuration Options for Constraints
+## Common constraint options
 
 - `message` - Error message (supports parameter placeholders like `{{ value }}`)
 - `groups` - Validation groups this constraint belongs to
@@ -483,13 +502,13 @@ $errors = $violations->findByCodes(['SOME_ERROR_CODE']);
 - `charset` - Character set validation
 - `mode` - Validation mode (e.g., 'strict', 'loose')
 
-## Best Practices
+## Best practices
 
-- Always allow `null` and empty values in custom validators; let `NotBlank` and `NotNull` handle them
-- Use validation groups to organize constraints logically
-- Use custom constraints for business logic that can't be expressed with built-in constraints
+- Let custom validators accept `null` and empty values; `NotBlank` and `NotNull` handle those
+- Use validation groups to separate constraints by context (registration, profile edit, and so on)
+- Write a custom constraint for business rules the built-in constraints cannot express
 - Apply constraints at the property level when validating individual fields
 - Use class-level validation (Callback) for cross-field validation
-- Leverage `payload` for metadata like severity levels or custom error handling
-- Cache validator metadata with PSR-6 caching for production performance
+- Use `payload` for metadata such as severity levels or custom error handling
+- Cache validator metadata with PSR-6 in production
 - Test custom constraints with `ConstraintValidatorTestCase`

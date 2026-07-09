@@ -1,22 +1,30 @@
 # Symfony Upgrade Workflow
 
-## Deprecation Handling Deep Dive
+## Contents
 
-### Understanding Deprecation Categories
+- [Deprecation handling](#deprecation-handling)
+- [recipes:update in detail](#recipesupdate-in-detail)
+- [CI pipeline integration](#ci-pipeline-integration)
+- [Version-specific migration notes](#version-specific-migration-notes)
+- [Troubleshooting](#troubleshooting)
 
-The Symfony PHPUnit Bridge categorizes deprecations into:
+## Deprecation handling
 
-| Category | Source | Your Responsibility |
+### Deprecation categories
+
+The Symfony PHPUnit Bridge sorts deprecations into three categories:
+
+| Category | Source | Your responsibility |
 |---|---|---|
 | **Direct** | Your code triggers the deprecation | Fix before upgrading |
 | **Indirect** | Vendor code triggers the deprecation | Update the package or report upstream |
 | **Self** | The deprecated class/method is in your code | Refactor the API |
 
-### The Ratchet Approach
+### The ratchet approach
 
-Use a deprecation baseline to prevent regressions while fixing incrementally:
+A deprecation baseline stops regressions while you fix deprecations a batch at a time.
 
-**Step 1: Generate baseline (snapshot current state):**
+**Step 1: Generate the baseline (snapshot the current state):**
 
 ```xml
 <!-- phpunit.xml.dist -->
@@ -41,17 +49,17 @@ This creates `tests/deprecation-baseline.json` with all current deprecations.
 </php>
 ```
 
-Now tests fail only on NEW deprecations. Existing ones are tolerated.
+Tests now fail only on new deprecations. Existing ones are tolerated.
 
 **Step 3: Fix deprecations incrementally:**
 
-After fixing a batch, regenerate the baseline to lock in progress:
+After each batch of fixes, regenerate the baseline to lock in the progress:
 
 ```bash
 SYMFONY_DEPRECATIONS_HELPER="generateBaseline=true&baselineFile=./tests/deprecation-baseline.json" vendor/bin/phpunit
 ```
 
-**Step 4: When baseline is empty, switch to strict mode:**
+**Step 4: When the baseline is empty, switch to strict mode:**
 
 ```xml
 <php>
@@ -59,9 +67,10 @@ SYMFONY_DEPRECATIONS_HELPER="generateBaseline=true&baselineFile=./tests/deprecat
 </php>
 ```
 
-### Common Deprecation Patterns and Fixes
+### Common deprecation patterns and fixes
 
 **Service configuration (YAML to PHP):**
+
 ```yaml
 # Before (deprecated in some versions)
 services:
@@ -76,7 +85,8 @@ services:
         arguments: ['@doctrine.orm.default_entity_manager']
 ```
 
-**Annotations to Attributes:**
+**Annotations to attributes:**
+
 ```php
 // Before (deprecated)
 use Symfony\Component\Routing\Annotation\Route;
@@ -95,13 +105,13 @@ public function list(): Response { }
 
 **Security configuration (authenticator system):**
 
-The old `guard` and `security.interactive_login` patterns were deprecated. Use the new authenticator system introduced in Symfony 5.3+.
+The old `guard` and `security.interactive_login` patterns are deprecated. Use the authenticator system, available since Symfony 5.3.
 
 ---
 
-## recipes:update Deep Dive
+## recipes:update in detail
 
-### How It Works
+### How it works
 
 1. Compares the recipe version you installed against the latest version
 2. Generates a git-format patch of the differences
@@ -124,17 +134,17 @@ composer recipes:update
 composer recipes:update symfony/framework-bundle
 ```
 
-### After Each Recipe Update
+### After each recipe update
 
 1. Review the changes with `git diff`
 2. Resolve any merge conflicts
 3. Test: `vendor/bin/phpunit`
 4. Commit: `git add -A && git commit -m "Update symfony/framework-bundle recipe"`
-5. Repeat for next recipe
+5. Repeat for the next recipe
 
-### Common Recipe Changes
+### Common recipe changes
 
-| Recipe | Typical Changes |
+| Recipe | Typical changes |
 |---|---|
 | `symfony/framework-bundle` | New framework.yaml defaults, new environment variables, updated Docker configs |
 | `symfony/security-bundle` | Security configuration structure changes, new authenticator defaults |
@@ -144,9 +154,9 @@ composer recipes:update symfony/framework-bundle
 
 ---
 
-## CI Pipeline Integration
+## CI pipeline integration
 
-### Deprecation Gate in CI
+### Deprecation gate in CI
 
 Add a CI step that fails when direct deprecations appear:
 
@@ -163,9 +173,9 @@ symfony-deprecation-check:
       run: vendor/bin/phpunit
 ```
 
-### Multi-Version Testing
+### Multi-version testing
 
-During transition between Symfony versions, test against both:
+While moving between Symfony versions, test against both:
 
 ```yaml
 strategy:
@@ -184,41 +194,44 @@ steps:
 
 ---
 
-## Version-Specific Migration Notes
+## Version-specific migration notes
 
 ### Symfony 5.4 -> 6.0
 
 Key areas:
+
 - PHP 8.0 minimum requirement
 - Return type declarations required on all controller methods
-- Security component: new authenticator-based system mandatory
+- Security component: the authenticator-based system is mandatory
 - Removed `enable_authenticator_manager` setting (always enabled)
-- `AbstractController::getDoctrine()` removed - inject `ManagerRegistry` instead
+- `AbstractController::getDoctrine()` removed; inject `ManagerRegistry` instead
 
 ### Symfony 6.4 -> 7.0
 
 Key areas:
+
 - PHP 8.2 minimum requirement
 - Attributes replace annotations entirely (routing, validation, serialization)
 - `MapQueryParameter`, `MapRequestPayload` attributes for controller argument mapping
-- Scheduler component graduated from experimental
-- AssetMapper as alternative to Webpack Encore
+- Scheduler component is no longer experimental
+- AssetMapper is available as an alternative to Webpack Encore
 - Removed deprecated `TreeBuilder::root()` method
 - Removed deprecated security configuration options
 
 ### Symfony 7.4 -> 8.0
 
 Key areas:
+
 - PHP 8.4 minimum requirement expected
-- TypeInfo component graduated
-- Further removal of annotation support remnants
-- Check `UPGRADE-8.0.md` when available for complete list
+- TypeInfo component is no longer experimental
+- Remaining annotation support removed
+- Check `UPGRADE-8.0.md` for the complete list
 
 ---
 
 ## Troubleshooting
 
-### Dependency Conflicts During Update
+### Dependency conflicts during update
 
 ```bash
 # See what blocks an upgrade
@@ -231,17 +244,17 @@ composer why vendor/some-bundle
 composer update "symfony/*" --with-all-dependencies
 ```
 
-### Cache Issues After Upgrade
+### Cache issues after upgrade
 
-Always clear cache manually after a major upgrade:
+After a major upgrade, clear the cache by hand:
 
 ```bash
 rm -rf var/cache/*
 ```
 
-Do not rely on `bin/console cache:clear` - it may fail if the container cannot compile with the new version.
+Do not rely on `bin/console cache:clear`. It can fail if the container cannot compile with the new version.
 
-### Recipe Conflicts
+### Recipe conflicts
 
 If `composer recipes:update` produces conflicts you cannot resolve:
 
@@ -253,7 +266,7 @@ git checkout - .
 composer recipes symfony/framework-bundle  # shows diff details
 ```
 
-### Bundle Not Compatible
+### Bundle not compatible
 
 ```bash
 # Check if a newer version exists

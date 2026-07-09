@@ -1,4 +1,16 @@
-# Symfony UID Component
+# Symfony UID component
+
+Generates, converts, and stores UUIDs and ULIDs, with Doctrine types, factories, and console commands.
+
+## Contents
+
+- [Installation](#installation)
+- [UUIDs](#uuids)
+- [ULIDs](#ulids)
+- [Doctrine integration](#doctrine-integration)
+- [Console commands](#console-commands)
+- [Testing with MockUuidFactory](#testing-with-mockuuidfactory)
+- [UUID version recommendations](#uuid-version-recommendations)
 
 ## Installation
 
@@ -10,7 +22,7 @@ composer require symfony/uid
 
 UUIDs are 128-bit numbers represented as `xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx` (M = version, N = variant).
 
-### UUID Versions
+### UUID versions
 
 ```php
 use Symfony\Component\Uid\Uuid;
@@ -30,16 +42,16 @@ $uuid = Uuid::v5(Uuid::fromString(Uuid::NAMESPACE_DNS), 'example.com');
 // v6: Reordered time-based (lexicographically sortable)
 $uuid = Uuid::v6();
 
-// v7: UNIX Timestamp (RECOMMENDED - time-ordered, better entropy)
+// v7: UNIX timestamp (recommended: time-ordered, better entropy)
 $uuid = Uuid::v7();
 
 // v8: Custom/experimental
 $uuid = Uuid::v8('d9e7a184-5d5b-11ea-a62a-3499710062d0');
 ```
 
-**Named UUID Namespaces:** `Uuid::NAMESPACE_DNS`, `Uuid::NAMESPACE_URL`, `Uuid::NAMESPACE_OID`, `Uuid::NAMESPACE_X500`
+**Name-based UUID namespaces:** `Uuid::NAMESPACE_DNS`, `Uuid::NAMESPACE_URL`, `Uuid::NAMESPACE_OID`, `Uuid::NAMESPACE_X500`
 
-### Creating from Existing Values
+### Creating UUIDs from existing values
 
 ```php
 $uuid = Uuid::fromString('d9e7a184-5d5b-11ea-a62a-3499710062d0');
@@ -49,7 +61,7 @@ $uuid = Uuid::fromBase58('TuetYWNHhmuSQ3xPoVLv9M');
 $uuid = Uuid::fromRfc4122('d9e7a184-5d5b-11ea-a62a-3499710062d0');
 ```
 
-### Converting UUIDs
+### Converting UUIDs to other formats
 
 ```php
 $uuid = Uuid::fromString('d9e7a184-5d5b-11ea-a62a-3499710062d0');
@@ -62,7 +74,7 @@ $uuid->toHex();      // "0xd9e7a1845d5b11eaa62a3499710062d0"
 $uuid->toString();   // "d9e7a184-5d5b-11ea-a62a-3499710062d0"
 ```
 
-### Converting Between UUID Versions
+### Converting between UUID versions
 
 ```php
 $uuid = Uuid::v1();
@@ -73,7 +85,7 @@ $uuid = Uuid::v6();
 $uuid->toV7(); // returns UuidV7
 ```
 
-### Validating and Comparing
+### Validating and comparing
 
 ```php
 // Validate
@@ -98,7 +110,7 @@ $uuid instanceof \Symfony\Component\Uid\NilUuid; // false
 
 **Format constants:** `FORMAT_BINARY`, `FORMAT_BASE_32`, `FORMAT_BASE_58`, `FORMAT_RFC_4122`, `FORMAT_RFC_9562`, `FORMAT_ALL`
 
-### UUID Factory
+### UUID factory
 
 ```php
 use Symfony\Component\Uid\Factory\UuidFactory;
@@ -117,7 +129,7 @@ class FooService
 }
 ```
 
-**Configure factory defaults:**
+Configure factory defaults:
 
 ```yaml
 # config/packages/uid.yaml
@@ -142,7 +154,7 @@ use Symfony\Component\Uid\Ulid;
 $ulid = new Ulid(); // e.g. 01AN4Z07BY79KA1307SR9X4MV3
 ```
 
-### Creating from Existing Values
+### Creating ULIDs from existing values
 
 ```php
 $ulid = Ulid::fromString('01E439TP9XJZ9RPFH3T1PYBCR8');
@@ -152,7 +164,7 @@ $ulid = Ulid::fromBase58('1BKocMc5BnrVcuq2ti4Eqm');
 $ulid = Ulid::fromRfc4122('0171069d-593d-97d3-8b3e-23d06de5b308');
 ```
 
-### Converting ULIDs
+### Converting ULIDs to other formats
 
 ```php
 $ulid = Ulid::fromString('01E439TP9XJZ9RPFH3T1PYBCR8');
@@ -164,7 +176,7 @@ $ulid->toRfc4122();  // "0171069d-593d-97d3-8b3e-23d06de5b308"
 $ulid->toHex();      // "0x0171069d593d97d38b3e23d06de5b308"
 ```
 
-### Working with ULIDs
+### Validating and comparing ULIDs
 
 ```php
 Ulid::isValid($value);       // bool
@@ -173,7 +185,7 @@ $ulid1->equals($ulid2);     // bool
 $ulid1->compare($ulid2);    // int
 ```
 
-### ULID Factory
+### ULID factory
 
 ```php
 use Symfony\Component\Uid\Factory\UlidFactory;
@@ -189,9 +201,9 @@ class FooService
 }
 ```
 
-## Doctrine Integration
+## Doctrine integration
 
-### UUID Column
+### UUID column
 
 ```php
 use Doctrine\ORM\Mapping as ORM;
@@ -206,7 +218,7 @@ class Product
 }
 ```
 
-### UUID Primary Key (Auto-generated)
+### UUID primary key (auto-generated)
 
 ```php
 use Doctrine\ORM\Mapping as ORM;
@@ -226,7 +238,7 @@ class User
 }
 ```
 
-### ULID Column and Primary Key
+### ULID column and primary key
 
 ```php
 use Doctrine\ORM\Mapping as ORM;
@@ -247,7 +259,7 @@ class Product
 }
 ```
 
-### Using UIDs in Doctrine Queries
+### Using UIDs in Doctrine queries
 
 ```php
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -257,7 +269,7 @@ $qb = $this->createQueryBuilder('p')
     ->setParameter('user', $user->getUuid(), UuidType::NAME);
 ```
 
-## Console Commands
+## Console commands
 
 ```bash
 # Generate UUIDs
@@ -291,7 +303,7 @@ $service->createUserId(); // "11111111-1111-4111-8111-111111111111"
 $service->createUserId(); // "22222222-2222-4222-8222-222222222222"
 ```
 
-## UUID Version Recommendations
+## UUID version recommendations
 
 | Version | Type | Sortable | Recommended |
 |---------|------|----------|-------------|

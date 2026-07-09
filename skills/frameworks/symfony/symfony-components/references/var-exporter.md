@@ -1,22 +1,35 @@
-# Symfony VarExporter Component
+# Symfony VarExporter component
+
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Core features](#core-features)
+- [Common use cases](#common-use-cases)
+- [Key classes and methods](#key-classes-and-methods)
+- [Property access syntax](#property-access-syntax)
+- [Generated code](#generated-code)
+- [Error handling](#error-handling)
+- [Performance](#performance)
+- [PHP version requirements](#php-version-requirements)
 
 ## Overview
 
-The VarExporter component serializes PHP data structures to executable PHP code, enabling instantiation and population of objects without invoking their constructors. It provides superior performance over `serialize()` through OPcache optimization while preserving object semantics.
+The VarExporter component serializes PHP data structures to executable PHP code and can instantiate and populate objects without calling their constructors. Because the output is plain PHP, OPcache can cache it, which makes loading faster than `unserialize()` while object semantics are preserved.
 
 ## Installation
 
-Install the component via Composer:
+Install the component with Composer:
 
 ```bash
 composer require symfony/var-exporter
 ```
 
-## Core Features
+## Core features
 
-### 1. Export Variables to PHP Code
+### 1. Export variables to PHP code
 
-Use `VarExporter::export()` to convert any PHP variable to executable PHP code:
+`VarExporter::export()` converts a PHP variable to executable PHP code:
 
 ```php
 use Symfony\Component\VarExporter\VarExporter;
@@ -31,17 +44,17 @@ file_put_contents('cache.php', '<?php return ' . $exported . ';');
 $regenerated = require 'cache.php';
 ```
 
-**Advantages over `serialize()`:**
+Advantages over `serialize()`:
 
-- **Performance**: OPcache optimization yields faster, more memory-efficient results than `unserialize()`
-- **Semantic Preservation**: Honors `__wakeup()`, `__sleep()`, and `Serializable` interface semantics
-- **Reference Integrity**: Preserves references in `SplObjectStorage`, `ArrayObject`, `ArrayIterator`
-- **Safe Errors**: Throws `ClassNotFoundException` for missing classes (no incomplete objects)
-- **Type Safety**: Rejects unsupported types like `Reflection*`, `IteratorIterator`, `RecursiveIteratorIterator`
+- **Performance**: OPcache makes loading faster and more memory-efficient than `unserialize()`
+- **Semantics**: Honors `__wakeup()`, `__sleep()`, and `Serializable`
+- **References**: Preserves references in `SplObjectStorage`, `ArrayObject`, `ArrayIterator`
+- **Errors**: Throws `ClassNotFoundException` for missing classes instead of producing incomplete objects
+- **Types**: Rejects unsupported types such as `Reflection*`, `IteratorIterator`, `RecursiveIteratorIterator`
 
-### 2. Instantiate Objects Without Constructors
+### 2. Instantiate objects without constructors
 
-The `Instantiator` class creates objects and sets properties bypassing constructors:
+`Instantiator` creates objects and sets their properties without calling the constructor:
 
 ```php
 use Symfony\Component\VarExporter\Instantiator;
@@ -55,7 +68,7 @@ $object = Instantiator::instantiate(MyClass::class, [
 ]);
 ```
 
-**Set Parent Class Properties:**
+Set parent class properties:
 
 ```php
 // MyClass extends ParentClass with private properties
@@ -66,7 +79,7 @@ $object = Instantiator::instantiate(MyClass::class, [], [
 ]);
 ```
 
-**Handle Special Collections:**
+Handle special collections:
 
 ```php
 // SplObjectStorage with object-info associations
@@ -85,9 +98,9 @@ $iterator = Instantiator::instantiate(ArrayIterator::class, [
 ]);
 ```
 
-### 3. Hydrate Existing Objects
+### 3. Hydrate existing objects
 
-The `Hydrator` populates properties of already-instantiated objects:
+`Hydrator` populates the properties of objects that already exist:
 
 ```php
 use Symfony\Component\VarExporter\Hydrator;
@@ -98,7 +111,7 @@ $object = new MyClass();
 Hydrator::hydrate($object, ['propertyName' => $value]);
 ```
 
-**Set Parent Class Properties:**
+Set parent class properties:
 
 ```php
 // Method 1: Using nested class specification
@@ -112,7 +125,7 @@ Hydrator::hydrate($object, [
 ]);
 ```
 
-**Hydrate Special Collections:**
+Hydrate special collections:
 
 ```php
 $storage = new SplObjectStorage();
@@ -126,9 +139,9 @@ Hydrator::hydrate($arrayObj, [
 ]);
 ```
 
-### 4. Create Lazy Proxy Objects
+### 4. Create lazy proxy objects
 
-Generate lazy proxy decorators for deferred initialization (works with abstracts, interfaces, and internal classes):
+Generate lazy proxy decorators for deferred initialization. This works with abstract classes, interfaces, and internal classes:
 
 ```php
 use Symfony\Component\VarExporter\ProxyHelper;
@@ -153,16 +166,16 @@ $proxy = ProxyDecorator::createLazyProxy(
 );
 ```
 
-**Benefits:**
+Benefits:
 
-- Defer expensive object initialization until actually needed
+- Expensive initialization is deferred until the object is used
 - Works with abstract classes, interfaces, and internal classes
-- Transparent proxy behaves like real instance after initialization
-- Superior to native PHP 8.4 lazy objects for complex scenarios
+- After initialization the proxy behaves like the real instance
+- Handles more complex cases than native PHP 8.4 lazy objects
 
-## Common Use Cases
+## Common use cases
 
-### Cache Serialization
+### Cache serialization
 
 ```php
 use Symfony\Component\VarExporter\VarExporter;
@@ -178,7 +191,7 @@ file_put_contents("/tmp/$cacheKey.php", '<?php return ' . $code . ';');
 $cachedData = require "/tmp/$cacheKey.php";
 ```
 
-### Dependency Injection Setup
+### Dependency injection setup
 
 ```php
 use Symfony\Component\VarExporter\Instantiator;
@@ -190,7 +203,7 @@ class ServiceFactory {
 }
 ```
 
-### Object Cloning Without Side Effects
+### Object cloning without side effects
 
 ```php
 use Symfony\Component\VarExporter\VarExporter;
@@ -201,7 +214,7 @@ $exported = VarExporter::export($original);
 $cloned = Instantiator::instantiate(MyClass::class, eval('return ' . $exported . ';'));
 ```
 
-## Key Classes and Methods
+## Key classes and methods
 
 | Class | Method | Purpose |
 |-------|--------|---------|
@@ -210,21 +223,21 @@ $cloned = Instantiator::instantiate(MyClass::class, eval('return ' . $exported .
 | `Hydrator` | `hydrate($object, $properties = [], $parentProperties = [])` | Populate existing object properties |
 | `ProxyHelper` | `generateLazyProxy(ReflectionClass $reflectionClass)` | Generate lazy proxy decorator code |
 
-## Property Access Syntax
+## Property access syntax
 
-- **Public properties**: Use property name directly: `['propertyName' => value]`
-- **Private/protected**: Use nested class notation: `[ClassName::class => ['propertyName' => value]]`
-- **Special values**: Use `"\0"` for internal collection data: `["\0" => [data]]`
-- **Parent class private**: Use notation: `"\0ParentClass\0propertyName"`
+- **Public properties**: use the property name directly: `['propertyName' => value]`
+- **Private and protected**: use nested class notation: `[ClassName::class => ['propertyName' => value]]`
+- **Special values**: use `"\0"` for internal collection data: `["\0" => [data]]`
+- **Parent class private**: use the notation `"\0ParentClass\0propertyName"`
 
-## Generated Code Characteristics
+## Generated code
 
 Exported code is:
 
-- **PSR-2 compliant** for consistency and readability
-- **OPcache-compatible** for optimal performance
-- **Reference-preserving** across object hierarchies
-- **Self-contained** with no external dependencies
+- PSR-2 compliant
+- OPcache-compatible
+- Reference-preserving across object hierarchies
+- Self-contained, with no external dependencies
 
 Example generated structure:
 
@@ -239,21 +252,21 @@ return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
 );
 ```
 
-## Error Handling
+## Error handling
 
-- **`ClassNotFoundException`**: Thrown when exported class doesn't exist on deserialization
-- **`ExceptionInterface`**: Check for unsupported types or serialization issues
-- Invalid types like `Reflection*` automatically throw exceptions
+- `ClassNotFoundException`: thrown when an exported class does not exist at load time
+- `ExceptionInterface`: thrown for unsupported types or serialization issues
+- Invalid types such as `Reflection*` always throw
 
-## Performance Considerations
+## Performance
 
-- **VarExporter** excels with configuration and static data caching
-- **OPcache** dramatically improves performance over `unserialize()`
-- **Lazy proxies** reduce initialization overhead for heavy objects
-- **Instantiator** avoids constructor side effects for faster object creation
+- VarExporter suits configuration and static data caches
+- OPcache makes loading exported code much faster than `unserialize()`
+- Lazy proxies cut initialization cost for heavy objects
+- `Instantiator` skips constructor side effects, which speeds up object creation
 
-## PHP Version Requirements
+## PHP version requirements
 
-- Component works with PHP 7.4+
-- Lazy proxy features optimized for PHP 8.4+
+- The component works with PHP 7.4+
+- Lazy proxy features are tuned for PHP 8.4+
 - No external dependencies beyond autoloading
