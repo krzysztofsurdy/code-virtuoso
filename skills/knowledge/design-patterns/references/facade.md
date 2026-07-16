@@ -1,22 +1,38 @@
+# Facade Pattern
+
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation (PHP 8.3+)](#implementation-php-83)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Additional considerations](#additional-considerations)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Facade pattern is a structural design pattern that interposes a simplified interface between callers and a complex subsystem. Instead of requiring every consumer to understand and orchestrate multiple interdependent classes, the facade provides a single entry point that handles coordination internally, allowing the subsystem's internals to change without affecting outside code.
+The Facade pattern is a structural design pattern that puts a simplified interface between callers and a complex subsystem. Instead of every consumer having to understand and coordinate several interdependent classes, the facade provides a single entry point that handles coordination internally, so the subsystem's internals can change without affecting outside code.
 
 ## Intent
 
-The Facade pattern addresses subsystem complexity by providing:
+The Facade pattern addresses subsystem complexity by giving you:
 
-- A unified entry point that manages multi-step internal workflows on the caller's behalf
-- Simplified access to functionality that would otherwise demand coordination across several objects
-- A boundary that prevents internal implementation details from leaking into client code
-- Reduced cognitive load for developers who consume the subsystem
-- A stable contract that absorbs internal restructuring without propagating changes outward
+- A single entry point that runs multi-step internal workflows on the caller's behalf
+- Simple access to functionality that would otherwise need coordination across several objects
+- A boundary that keeps internal implementation details out of client code
+- Less to learn for developers who consume the subsystem
+- A stable contract that absorbs internal restructuring
 
-## Problem and Solution
+## Problem and solution
 
-**Problem:** A subsystem comprises many cooperating classes, and every consumer must learn their individual roles, mutual dependencies, and invocation order. This coupling makes client code verbose, fragile, and expensive to maintain.
+**Problem:** A subsystem consists of many cooperating classes, and every consumer must learn their roles, dependencies, and invocation order. This coupling makes client code verbose, fragile, and expensive to maintain.
 
-**Solution:** Place a facade class in front of the subsystem that offers a curated set of high-level operations. The facade delegates internally to the correct subsystem objects and manages their sequencing, so callers interact with a clean, narrow API and remain unaware of the machinery behind it.
+**Solution:** Place a facade class in front of the subsystem that offers a small set of high-level operations. The facade delegates to the right subsystem objects and manages their sequencing, so callers use a narrow API and never see the machinery behind it.
 
 ## Structure
 
@@ -29,16 +45,16 @@ The Facade pattern involves these participants:
 Key characteristics:
 - One-way dependency: Facade depends on subsystems, not vice versa
 - Facade is optional (subsystems can still be used directly if needed)
-- Often reduces the number of classes client needs to know about
+- Often reduces the number of classes the client needs to know about
 
-## When to Use
+## When to use
 
 Use the Facade pattern when:
 
 - A subsystem's internal complexity should not leak into calling code
 - Multiple consumers need to perform similar multi-step interactions with a subsystem
 - You are integrating modern code on top of a legacy system and want a clean boundary
-- You need clear layer boundaries - for example, between presentation and business logic
+- You need clear layer boundaries, for example between presentation and business logic
 - The subsystem's internal structure is likely to change while clients should remain stable
 - You want to reduce the number of types that appear in a client's import list
 
@@ -138,50 +154,50 @@ $repository->saveUser(2, 'John Doe');
 $repository->clearCache();
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Travel Agent**: Instead of separately booking flights, hotels, car rentals, and excursions through different agencies, a travel agent handles all the coordination and gives you a single itinerary.
-- **Hospital Reception Desk**: A patient checks in at the front desk, which routes them to the correct department, schedules tests, and coordinates with insurance - the patient never contacts each department individually.
-- **Smartphone Home Screen**: Tapping an app icon launches a complex chain of OS services - memory allocation, network access, GPU rendering - but the user only sees a single tap-to-open gesture.
+- **Travel Agent**: Instead of booking flights, hotels, car rentals, and excursions separately through different agencies, you ask a travel agent, who does the coordination and gives you a single itinerary.
+- **Hospital Reception Desk**: A patient checks in at the front desk, which routes them to the right department, schedules tests, and coordinates with insurance. The patient never contacts each department individually.
+- **Smartphone Home Screen**: Tapping an app icon starts a chain of OS services (memory allocation, network access, GPU rendering), but the user sees a single tap.
 - **API Gateway**: A single endpoint aggregates calls to multiple backend services, translating between external consumers and internal microservices.
 
-## Pros and Cons
+## Pros and cons
 
 **Pros:**
-- Client code becomes shorter and easier to reason about
+- Client code is shorter and easier to reason about
 - Consumers depend on the facade's stable interface, not on internal subsystem classes
 - Internal restructuring stays invisible to callers as long as the facade contract holds
 - Complex multi-step workflows are encapsulated in one place
-- Establishes natural architectural boundaries between layers
+- Creates natural architectural boundaries between layers
 - Tests can mock one facade interface instead of many subsystem collaborators
 
 **Cons:**
-- A facade that tries to cover every subsystem operation risks becoming an oversized god object
-- Simplification may hide useful subsystem features that power users need
-- Trivial subsystems gain no benefit from an extra abstraction layer
-- The facade itself becomes a maintenance bottleneck - every subsystem change may require a facade update
-- If the facade goes down, all clients that depend on it are affected
-- Developers still need subsystem knowledge for edge cases that the facade does not cover
+- A facade that tries to cover every subsystem operation can become an oversized god object
+- Simplification may hide subsystem features that power users need
+- Trivial subsystems gain nothing from an extra abstraction layer
+- The facade itself becomes a maintenance bottleneck, since every subsystem change may require a facade update
+- If the facade fails, every client that depends on it is affected
+- Developers still need subsystem knowledge for edge cases the facade does not cover
 
-## Relations with Other Patterns
+## Relations with other patterns
 
-- **Adapter:** Adapter reconciles mismatched interfaces; Facade condenses a complex subsystem behind a simpler one
+- **Adapter:** Adapter reconciles mismatched interfaces; Facade puts a simpler interface in front of a complex subsystem
 - **Decorator:** Decorator augments a single object's behavior; Facade simplifies access to an entire group of objects
 - **Strategy:** A facade can offer different strategy implementations for varying subsystem configurations
 - **Factory Method:** Facades often use factories internally to instantiate the subsystem objects they coordinate
 - **Singleton:** A facade is frequently a singleton when system-wide access to the subsystem is needed
 - **Abstract Factory:** Can sit behind a facade to produce families of subsystem objects transparently
 - **Command:** Commands can be queued through a facade to schedule subsystem operations
-- **Observer:** A facade can surface event subscriptions from the subsystem to external listeners
+- **Observer:** A facade can expose event subscriptions from the subsystem to external listeners
 
-## Additional Considerations
+## Additional considerations
 
 **When Designing Facades:**
 - Keep the facade interface simple and focused
 - Delegate to subsystem classes, don't duplicate logic
 - Consider providing multiple facades for different use cases
 - Use dependency injection for subsystem components
-- Document the facade's interface thoroughly
+- Document the facade's interface
 - Allow direct subsystem access if advanced users need it
 
 **Common Pitfalls:**
@@ -189,9 +205,9 @@ $repository->clearCache();
 - Tightly coupling the facade to client code
 - Making the facade responsible for subsystem creation (use factories instead)
 - Preventing clients from accessing subsystem classes when needed
-- Over-engineering simple systems with unnecessary facades
+- Adding facades to simple systems that don't need them
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -447,7 +463,6 @@ class Facade:
         self._subsystem_2.operation1()
         self._subsystem_2.operation2()
 
-
 class Subsystem1:
     """
     Implement subsystem functionality.
@@ -460,7 +475,6 @@ class Subsystem1:
 
     def operation2(self):
         pass
-
 
 class Subsystem2:
     """
@@ -475,11 +489,9 @@ class Subsystem2:
     def operation2(self):
         pass
 
-
 def main():
     facade = Facade()
     facade.operation()
-
 
 if __name__ == "__main__":
     main()

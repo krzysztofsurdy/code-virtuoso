@@ -1,47 +1,47 @@
 ---
 name: design-patterns
-description: Comprehensive skill for all 26 Gang of Four design patterns with practical implementations and real-world examples. Use when the user asks to apply a design pattern, refactor code using patterns, choose between competing patterns, or review existing pattern usage. Covers creational (Abstract Factory, Builder, Factory Method, Prototype, Singleton, Object Pool), structural (Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy, Private Class Data), and behavioral patterns (Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor, Null Object) with real-world examples, trade-offs, and anti-patterns.
+description: Reference for 26 design patterns (Gang of Four plus Object Pool, Private Class Data, and Null Object) with practical implementations and real-world examples. Use when the user asks to apply a design pattern, refactor code using patterns, choose between competing patterns, or review existing pattern usage. Covers creational (Abstract Factory, Builder, Factory Method, Prototype, Singleton, Object Pool), structural (Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy, Private Class Data), and behavioral patterns (Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor, Null Object) with real-world examples, trade-offs, and anti-patterns.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---
 
 # Design Patterns
 
-A thorough reference covering 26 design patterns organized by intent — creational, structural, and behavioral — featuring PHP 8.3+ implementations, UML guidance, and practical use cases.
+Reference for 26 design patterns organized by intent (creational, structural, behavioral), with PHP 8.3+ implementations, UML guidance, and practical use cases.
 
 ## Pattern Index
 
 ### Creational Patterns
-- **Abstract Factory** — Produce families of related objects without specifying their concrete classes → [reference](references/abstract-factory.md)
-- **Builder** — Assemble complex objects through a step-by-step process → [reference](references/builder.md)
-- **Factory Method** — Declare an interface for object creation, letting subclasses determine the concrete type → [reference](references/factory-method.md)
-- **Prototype** — Duplicate existing objects without coupling to their concrete classes → [reference](references/prototype.md)
-- **Singleton** — Guarantee that a class has exactly one instance → [reference](references/singleton.md)
-- **Object Pool** — Recycle expensive-to-create objects for repeated use → [reference](references/object-pool.md)
+- **Abstract Factory** - Produce families of related objects without specifying their concrete classes → [reference](references/abstract-factory.md)
+- **Builder** - Assemble complex objects through a step-by-step process → [reference](references/builder.md)
+- **Factory Method** - Declare an interface for object creation, letting subclasses determine the concrete type → [reference](references/factory-method.md)
+- **Prototype** - Duplicate existing objects without coupling to their concrete classes → [reference](references/prototype.md)
+- **Singleton** - Guarantee that a class has exactly one instance → [reference](references/singleton.md)
+- **Object Pool** - Recycle expensive-to-create objects for repeated use → [reference](references/object-pool.md)
 
 ### Structural Patterns
-- **Adapter** — Translate one interface into another that clients expect → [reference](references/adapter.md)
-- **Bridge** — Separate an abstraction from its implementation so both can evolve independently → [reference](references/bridge.md)
-- **Composite** — Arrange objects into tree structures for uniform treatment → [reference](references/composite.md)
-- **Decorator** — Layer new behaviors onto objects dynamically through wrapping → [reference](references/decorator.md)
-- **Facade** — Offer a streamlined interface to a complex subsystem → [reference](references/facade.md)
-- **Flyweight** — Minimize memory usage by sharing common state across many objects → [reference](references/flyweight.md)
-- **Proxy** — Manage access to an object through a surrogate → [reference](references/proxy.md)
-- **Private Class Data** — Limit access to class attributes → [reference](references/private-class-data.md)
+- **Adapter** - Translate one interface into another that clients expect → [reference](references/adapter.md)
+- **Bridge** - Separate an abstraction from its implementation so both can evolve independently → [reference](references/bridge.md)
+- **Composite** - Arrange objects into tree structures for uniform treatment → [reference](references/composite.md)
+- **Decorator** - Layer new behaviors onto objects dynamically through wrapping → [reference](references/decorator.md)
+- **Facade** - Offer a simple interface to a complex subsystem → [reference](references/facade.md)
+- **Flyweight** - Minimize memory usage by sharing common state across many objects → [reference](references/flyweight.md)
+- **Proxy** - Manage access to an object through a surrogate → [reference](references/proxy.md)
+- **Private Class Data** - Limit access to class attributes → [reference](references/private-class-data.md)
 
 ### Behavioral Patterns
-- **Chain of Responsibility** — Route requests through a chain of handlers → [reference](references/chain-of-responsibility.md)
-- **Command** — Represent requests as standalone objects → [reference](references/command.md)
-- **Interpreter** — Establish a grammar representation and an interpreter for it → [reference](references/interpreter.md)
-- **Iterator** — Walk through elements without revealing the underlying structure → [reference](references/iterator.md)
-- **Mediator** — Tame chaotic dependencies through a central coordinator → [reference](references/mediator.md)
-- **Memento** — Snapshot and restore object state without breaking encapsulation → [reference](references/memento.md)
-- **Null Object** — Supply a do-nothing default to eliminate null checks → [reference](references/null-object.md)
-- **Observer** — Automatically inform dependents when state changes → [reference](references/observer.md)
-- **State** — Change behavior when internal state transitions → [reference](references/state.md)
-- **Strategy** — Make algorithms interchangeable at runtime → [reference](references/strategy.md)
-- **Template Method** — Outline an algorithm skeleton and let subclasses fill in specific steps → [reference](references/template-method.md)
-- **Visitor** — Introduce operations to objects without altering their classes → [reference](references/visitor.md)
+- **Chain of Responsibility** - Route requests through a chain of handlers → [reference](references/chain-of-responsibility.md)
+- **Command** - Represent requests as standalone objects → [reference](references/command.md)
+- **Interpreter** - Establish a grammar representation and an interpreter for it → [reference](references/interpreter.md)
+- **Iterator** - Walk through elements without revealing the underlying structure → [reference](references/iterator.md)
+- **Mediator** - Untangle dependencies through a central coordinator → [reference](references/mediator.md)
+- **Memento** - Snapshot and restore object state without breaking encapsulation → [reference](references/memento.md)
+- **Null Object** - Supply a do-nothing default to eliminate null checks → [reference](references/null-object.md)
+- **Observer** - Automatically inform dependents when state changes → [reference](references/observer.md)
+- **State** - Change behavior when internal state transitions → [reference](references/state.md)
+- **Strategy** - Make algorithms interchangeable at runtime → [reference](references/strategy.md)
+- **Template Method** - Outline an algorithm skeleton and let subclasses fill in specific steps → [reference](references/template-method.md)
+- **Visitor** - Introduce operations to objects without altering their classes → [reference](references/visitor.md)
 
 ## When to Use Which Pattern
 
@@ -73,8 +73,8 @@ A thorough reference covering 26 design patterns organized by intent — creatio
 
 ## Best Practices
 
-- Favor **composition over inheritance** — reach for Decorator, Strategy, or Bridge before resorting to deep class hierarchies
-- Apply patterns to address **real problems**, not hypothetical ones
-- Leverage PHP 8.3+ features: **enums** for State, **readonly classes** for Value Objects, **first-class callables** for Strategy
-- Combine patterns when it makes sense (e.g., Builder + Fluent Interface, Strategy + Factory Method)
-- Keep pattern implementations **minimal** — if the pattern introduces more complexity than it resolves, reconsider the approach
+- Favor **composition over inheritance**: reach for Decorator, Strategy, or Bridge before building deep class hierarchies
+- Apply patterns to **real problems**, not hypothetical ones
+- Use PHP 8.3+ features: **enums** for State, **readonly classes** for Value Objects, **first-class callables** for Strategy
+- Combine patterns when it makes sense (for example, Builder + Fluent Interface, Strategy + Factory Method)
+- Keep pattern implementations **minimal**. If the pattern adds more complexity than it removes, reconsider it

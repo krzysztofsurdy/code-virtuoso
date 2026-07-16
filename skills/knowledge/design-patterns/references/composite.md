@@ -1,35 +1,52 @@
+# Composite Pattern
+
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation (PHP 8.3+)](#implementation-php-83)
+- [Real-world analogies](#real-world-analogies)
+- [Advantages](#advantages)
+- [Disadvantages](#disadvantages)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Variations](#variations)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Composite pattern is a structural design pattern that organizes objects into tree hierarchies where leaves and branches conform to a shared interface. Because individual elements and groups of elements expose the same operations, client code treats both uniformly - there is no need to ask whether a node is a single item or an entire subtree before operating on it.
+The Composite pattern is a structural design pattern that organizes objects into tree hierarchies where leaves and branches conform to a shared interface. Because individual elements and groups of elements expose the same operations, client code treats both uniformly and never needs to ask whether a node is a single item or a whole subtree.
 
 ## Intent
 
 - Model whole-part relationships as recursive tree structures with a uniform component interface
 - Allow clients to handle individual objects and nested collections through identical method calls
-- Eliminate type-checking conditionals in client code by making leaf and composite nodes polymorphically interchangeable
+- Remove type-checking conditionals from client code by making leaf and composite nodes interchangeable
 
-## Problem and Solution
+## Problem and solution
 
-**Problem:** Tree-shaped data - file systems, organizational hierarchies, nested UI menus - compels client code to distinguish between individual items and containers at every operation. This type-checking logic multiplies as the hierarchy deepens and becomes a maintenance burden whenever the structure evolves.
+**Problem:** Tree-shaped data (file systems, organizational hierarchies, nested UI menus) forces client code to distinguish individual items from containers in every operation. That type-checking spreads as the hierarchy deepens and becomes a maintenance burden whenever the structure changes.
 
-**Solution:** Define a common component interface that both leaf and container classes implement. Containers forward operations to their children recursively, so clients traverse and manipulate the entire tree through one consistent API without ever inspecting the type of a node.
+**Solution:** Define a common component interface that both leaf and container classes implement. Containers forward operations to their children recursively, so clients traverse and manipulate the whole tree through one API without inspecting node types.
 
 ## Structure
 
-### Key Components
+### Key components
 
 - **Component**: Abstract interface defining common operations for both leaf and composite objects
 - **Leaf**: Represents leaf objects with no children; implements component operations
 - **Composite**: Represents container objects that can hold children (leaves or other composites); implements component operations by delegating to children
 - **Client**: Works with objects through the component interface
 
-## When to Use
+## When to use
 
-1. **Hierarchical structures** - File systems, organizational charts, menu systems
-2. **Tree representations** - DOM trees, widget hierarchies, menu trees
-3. **Recursive composition** - Objects composed of similar objects in tree structure
-4. **Uniform treatment** - Need to treat single objects and compositions identically
-5. **Reduce client complexity** - Avoid if-else logic to determine object type
+1. **Hierarchical structures**: file systems, organizational charts, menu systems
+2. **Tree representations**: DOM trees, widget hierarchies, menu trees
+3. **Recursive composition**: objects composed of similar objects in a tree
+4. **Uniform treatment**: single objects and compositions must be handled identically
+5. **Simpler clients**: avoid if-else logic that checks object type
 
 ## Implementation (PHP 8.3+)
 
@@ -138,44 +155,44 @@ echo $root->getOperation();
 echo "Total children: " . $root->getChildCount(); // Output: Total children: 4
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Military Chain of Command**: A division comprises brigades, brigades comprise battalions, and battalions comprise soldiers. An order issued at the division level cascades down through every tier, and each level executes through the same command interface.
+- **Military Chain of Command**: A division comprises brigades, brigades comprise battalions, and battalions comprise soldiers. An order issued at division level cascades down through every tier, and each level acts on it through the same command interface.
 - **Nested Shipping Containers**: A cargo ship carries containers, some filled with individual crates and others holding smaller containers packed with goods. Computing total weight follows the same recursive logic regardless of nesting depth.
 - **Corporate Budget Aggregation**: Each department totals the budgets of its teams, each team totals the budgets of its projects, and each project carries a fixed amount. The summation operation is identical at every level of the hierarchy.
 
 ## Advantages
 
-- Clients operate on the tree through a single interface, whether they reach a leaf or an entire subtree
-- New node types integrate seamlessly without modifying existing traversal or processing logic
-- Mirrors recursive, tree-shaped data structures with minimal boilerplate
-- Handles arbitrarily deep nesting without requiring extra branching in client code
-- Tree-wide algorithms reduce to clean recursive calls
+- Clients operate on the tree through a single interface, whether they reach a leaf or a whole subtree
+- New node types need no changes to existing traversal or processing logic
+- Maps directly onto recursive, tree-shaped data with little boilerplate
+- Handles arbitrarily deep nesting without extra branching in client code
+- Tree-wide algorithms reduce to simple recursive calls
 
 ## Disadvantages
 
-- The shared interface may force leaves to expose methods that carry no meaningful behavior for them
-- Compile-time safety weakens because the component interface cannot constrain which child types a composite accepts
-- Full traversals of deep or wide trees carry a cumulative performance cost
-- An overly broad component interface risks mixing unrelated responsibilities into a single contract
+- The shared interface may force leaves to expose methods that mean nothing for them
+- Compile-time safety is weaker, because the component interface cannot restrict which child types a composite accepts
+- Full traversals of deep or wide trees add up in cost
+- An overly broad component interface can mix unrelated responsibilities into one contract
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 - **Iterator**: Commonly used to traverse composite trees without exposing their internal structure
 - **Visitor**: Introduces new operations to composite hierarchies without touching existing node classes
 - **Factory Method**: Helps construct complex composite trees programmatically
 - **Singleton**: The root node of a globally shared composite tree is sometimes a singleton
-- **Decorator**: Both use recursive composition, but Decorator adds behavior to a single object while Composite models containment hierarchies
+- **Decorator**: Both use recursive composition, but Decorator adds behavior to a single object while Composite models containment
 - **Strategy**: Alternate traversal or aggregation algorithms can be plugged in via Strategy
 
 ## Variations
 
-- **Type-Safe Composite**: Generic composite restricting child types
-- **File System Model**: With operations like `getSize()`, `getPath()`
-- **UI Component Model**: With rendering operations and event handling
-- **Tree Iterator**: Integrated iteration strategies (preorder, postorder, levelorder)
+- **Type-safe composite**: generic composite that restricts child types
+- **File system model**: operations like `getSize()` and `getPath()`
+- **UI component model**: rendering operations and event handling
+- **Tree iterator**: built-in iteration strategies (preorder, postorder, levelorder)
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -288,7 +305,6 @@ int main() {
 ```python
 import abc
 
-
 class Component(metaclass=abc.ABCMeta):
     """
     Declare the interface for objects in the composition.
@@ -296,7 +312,6 @@ class Component(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def operation(self):
         pass
-
 
 class Composite(Component):
     """
@@ -316,7 +331,6 @@ class Composite(Component):
     def remove(self, component):
         self._children.discard(component)
 
-
 class Leaf(Component):
     """
     Represent leaf objects in the composition. A leaf has no children.
@@ -324,13 +338,11 @@ class Leaf(Component):
     def operation(self):
         pass
 
-
 def main():
     leaf = Leaf()
     composite = Composite()
     composite.add(leaf)
     composite.operation()
-
 
 if __name__ == "__main__":
     main()

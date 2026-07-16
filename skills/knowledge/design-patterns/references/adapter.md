@@ -1,21 +1,37 @@
+# Adapter Pattern
+
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation (PHP 8.3+)](#implementation-php-83)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Additional considerations](#additional-considerations)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Adapter is a structural pattern that reconciles two interfaces that were never designed to work together. It places a thin wrapper around an existing class, exposing a new interface that matches what the client expects. The wrapper acts as a translator - converting calls, parameters, and return values so that both sides communicate without either needing to change.
+The Adapter is a structural pattern that reconciles two interfaces that were never designed to work together. It places a thin wrapper around an existing class, exposing a new interface that matches what the client expects. The wrapper acts as a translator, converting calls, parameters, and return values so that neither side has to change.
 
 ## Intent
 
-The Adapter pattern targets scenarios where a class has the right behavior but the wrong interface for your context. It enables you to:
+The Adapter pattern targets scenarios where a class has the right behavior but the wrong interface for your context. It lets you:
 
 - Make independently developed interfaces cooperate without modifying either one
 - Integrate third-party or legacy libraries into an application through a stable internal contract
-- Insulate client code from the details and quirks of external APIs
+- Keep client code away from the details and quirks of external APIs
 - Reuse proven classes whose method signatures differ from what your system demands
 
-## Problem and Solution
+## Problem and solution
 
 **Problem:** A class or library provides exactly the functionality you need, but its interface does not match the contract your application relies on. Modifying the library is either impractical or out of your control.
 
-**Solution:** Create an adapter class that satisfies the interface your application depends on and internally delegates every call to the incompatible class. The adapter absorbs all the translation work - mapping method names, reshaping parameters, and converting return values - so both the client and the adaptee remain unaware of each other.
+**Solution:** Create an adapter class that satisfies the interface your application depends on and internally delegates every call to the incompatible class. The adapter does all the translation (mapping method names, reshaping parameters, converting return values), so the client and the adaptee never know about each other.
 
 ## Structure
 
@@ -27,18 +43,18 @@ The Adapter pattern involves these participants:
 - **Adaptee:** The pre-existing class with a different interface
 
 Two main flavors:
-1. **Class Adapter:** Leverages inheritance (requires multiple inheritance support)
-2. **Object Adapter:** Leverages composition (the standard approach in PHP)
+1. **Class Adapter:** Uses inheritance (requires multiple inheritance support)
+2. **Object Adapter:** Uses composition (the standard approach in PHP)
 
-## When to Use
+## When to use
 
 Use the Adapter pattern when:
 
 - You need to integrate legacy code or third-party libraries whose interfaces differ from your application's expectations
 - You want to repurpose existing classes without altering them
 - You are building a common abstraction over multiple systems with varying APIs
-- Connecting disparate subsystems that were developed independently
-- You want to honor the Open/Closed Principle by extending behavior without modifying source
+- You are connecting subsystems that were developed independently
+- You want to extend behavior without modifying source (Open/Closed Principle)
 
 ## Implementation (PHP 8.3+)
 
@@ -96,14 +112,14 @@ if ($adapter->process(99.99)) {
 }
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Travel Power Adapter:** An international plug adapter reshapes your device's prongs to fit a foreign socket. The electricity is identical - only the physical interface differs.
-- **Conference Interpreter:** A human interpreter translates between two speakers with different native languages, enabling a conversation that neither could hold directly.
-- **Database Abstraction Libraries:** ORMs and DBAL layers normalize vendor-specific SQL dialects behind a single query interface that the application uses uniformly across database engines.
-- **Video Codecs:** A media player relies on codecs to bridge different encoding formats with its internal rendering pipeline, playing any file through the same playback API.
+- **Travel Power Adapter:** An international plug adapter reshapes your device's prongs to fit a foreign socket. The electricity is identical; only the physical interface differs.
+- **Conference Interpreter:** A human interpreter translates between two speakers with different native languages, so two people can hold a conversation they could not have held directly.
+- **Database Abstraction Libraries:** ORMs and DBAL layers hide vendor-specific SQL dialects behind a single query interface that works the same across database engines.
+- **Video Codecs:** A media player relies on codecs to bridge different encoding formats with its internal rendering pipeline, so any file plays through the same playback API.
 
-## Pros and Cons
+## Pros and cons
 
 **Pros:**
 - Interface translation lives in a dedicated class, isolated from business logic (Single Responsibility)
@@ -113,12 +129,12 @@ if ($adapter->process(99.99)) {
 - Client code programs against abstractions rather than concrete dependencies
 
 **Cons:**
-- Each adapted interface requires at least one new class, expanding the project's file count
+- Each adapted interface needs at least one new class, which adds files
 - The extra delegation layer introduces a small runtime cost
-- For trivial integrations, a full adapter adds ceremony that a simple wrapper would avoid
+- For trivial integrations, a full adapter is more ceremony than a simple wrapper
 - Deeper call stacks make stack traces harder to follow during debugging
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 - **Decorator:** Both wrap an object, but Decorator layers new behavior onto it while Adapter converts its interface to a different one.
 - **Facade:** Facade presents a simplified view of a complex subsystem; Adapter makes an incompatible interface conform to an expected contract.
@@ -126,19 +142,19 @@ if ($adapter->process(99.99)) {
 - **Strategy:** Both allow swappable behavior behind an interface; Adapter is frequently paired with Strategy for pluggable third-party integrations.
 - **Factory Method:** A factory can choose and instantiate the correct adapter at runtime based on configuration or context.
 
-## Additional Considerations
+## Additional considerations
 
 **When Designing Adapters:**
 - Keep adapters thin - avoid adding business logic
-- Use type hints and strict types for clarity
+- Use type hints and strict types
 - Consider using inheritance for minimal adapters
 - Document the adapted interface clearly
-- Use dependency injection for flexibility
+- Use dependency injection
 
 **Common Pitfall:**
-Don't use Adapter to patch poor design. If you need adapters everywhere, reconsider your architecture design.
+Don't use Adapter to patch poor design. If you need adapters everywhere, reconsider the architecture.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -291,7 +307,6 @@ int main() {
 ```python
 import abc
 
-
 class Target(metaclass=abc.ABCMeta):
     """
     Define the domain-specific interface that Client uses.
@@ -303,14 +318,12 @@ class Target(metaclass=abc.ABCMeta):
     def request(self):
         pass
 
-
 class Adapter(Target):
     """
     Adapt the interface of Adaptee to the Target interface.
     """
     def request(self):
         self._adaptee.specific_request()
-
 
 class Adaptee:
     """
@@ -319,11 +332,9 @@ class Adaptee:
     def specific_request(self):
         pass
 
-
 def main():
     adapter = Adapter()
     adapter.request()
-
 
 if __name__ == "__main__":
     main()

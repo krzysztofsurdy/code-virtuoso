@@ -1,31 +1,44 @@
 # Chain of Responsibility Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Chain of Responsibility pattern is a behavioral design pattern that passes requests along an ordered series of handler objects until one of them takes action. Each handler inspects the incoming request independently, either processing it or forwarding it to the next link in the chain. This arrangement severs the direct connection between whoever issues a request and whoever ultimately fulfills it.
+The Chain of Responsibility pattern is a behavioral design pattern that passes requests along an ordered series of handler objects until one of them takes action. Each handler inspects the incoming request independently, either processing it or forwarding it to the next link in the chain. The sender of a request is no longer directly connected to the handler that fulfills it.
 
 ## Intent
 
-- Channel requests through an ordered pipeline of candidate handlers
-- Give each handler full autonomy to process a request or pass it along to its successor
-- Eliminate hard-coded dependencies between the request originator and its eventual processor
-- Allow handler chains to be constructed, reordered, or extended at runtime without code changes
-- Offer a uniform dispatching mechanism that scales naturally as new request categories appear
+- Pass requests through an ordered pipeline of candidate handlers
+- Let each handler decide whether to process a request or pass it to its successor
+- Remove hard-coded dependencies between the request originator and its eventual processor
+- Allow handler chains to be built, reordered, or extended at runtime without code changes
+- Provide a uniform dispatching mechanism that grows as new request categories appear
 
-## Problem & Solution
+## Problem and solution
 
 ### Problem
 
-When several objects are capable of servicing a request, a set of recurring design issues surfaces:
+When several objects can service a request, the same design problems keep coming up:
 
-1. **Hard-Wired Dispatch**: Client code that calls specific handlers directly creates brittle, tightly coupled relationships
-2. **Inflexible Ordering**: Adding, removing, or resequencing handlers requires modifications to the calling code
-3. **Sprawling Conditionals**: Selecting the right handler through if-else or switch blocks produces fragile logic that resists change
-4. **Runtime Resolution**: The correct handler may depend on properties of the request that are only known at execution time
+1. **Hard-wired dispatch**: Client code that calls specific handlers directly is brittle and tightly coupled
+2. **Inflexible ordering**: Adding, removing, or reordering handlers requires changes to the calling code
+3. **Sprawling conditionals**: Selecting the right handler through if-else or switch blocks produces fragile logic that is hard to change
+4. **Runtime resolution**: The correct handler may depend on properties of the request that are only known at execution time
 
 ### Solution
 
-Link handler objects into a sequence where each one holds a reference to its successor. When a request enters the chain, each handler decides whether to handle it or delegate downstream. This decentralized structure makes adding or rearranging handlers straightforward and keeps the dispatch logic out of client code.
+Link handler objects into a sequence where each one holds a reference to its successor. When a request enters the chain, each handler decides whether to handle it or delegate downstream. With no central dispatcher, adding or rearranging handlers is easy and client code stays free of dispatch logic.
 
 ## Structure
 
@@ -38,19 +51,19 @@ Handler (interface/abstract)
 └── Can be configured dynamically at runtime
 ```
 
-## When to Use
+## When to use
 
 - Several objects might handle a request, but the specific handler is unknown until runtime
 - You want to submit a request without designating a particular receiver
 - Requests need to be routed dynamically based on priority levels, permissions, or other criteria
 - Building approval workflows, logging pipelines, or event processing systems
-- Constructing authentication or authorization layers
+- Building authentication or authorization layers
 - Filtering or validating events through multiple stages
 - Implementing tiered logging with different output targets
 
 ## Implementation
 
-### PHP 8.3+ Example: Support Ticket Handler Chain
+### PHP 8.3+ example: support ticket handler chain
 
 ```php
 <?php
@@ -153,7 +166,7 @@ $basic->handle($ticket2);
 $basic->handle($ticket3);
 ```
 
-### Request Logging Chain Example
+### Request logging chain example
 
 ```php
 <?php
@@ -238,43 +251,43 @@ $console->log(new LogEntry('Low disk space', 'WARNING'));
 $console->log(new LogEntry('Database connection failed', 'CRITICAL'));
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Emergency Room Triage**: A patient entering an ER is assessed by a triage nurse who routes minor complaints to a general practitioner, moderate injuries to a specialist, and life-threatening cases to the trauma team. Each tier handles what falls within its competence and escalates the rest.
+**Emergency Room Triage**: A triage nurse assesses each patient entering an ER and sends minor complaints to a general practitioner, moderate injuries to a specialist, and life-threatening cases to the trauma team. Each tier handles what is within its competence and escalates the rest.
 
 **Expense Approval Workflow**: A purchase request lands on a team lead's desk first. If the amount exceeds their signing authority, the request advances to a department head, then possibly to the finance director. Each approver acts within their limit or passes the request upward.
 
 **DOM Event Bubbling**: A click on a deeply nested HTML element propagates upward through its ancestor nodes. Each node in the hierarchy may intercept and handle the event or let it continue rising to the parent.
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
-- **Sender Ignorance**: The originator of a request has no visibility into which handler ultimately services it
-- **Runtime Reconfiguration**: Chains can be assembled, extended, or reshuffled without modifying source code
-- **Single-Purpose Handlers**: Each handler owns exactly one concern, keeping logic focused
-- **Non-Intrusive Extension**: New handlers plug into the chain without affecting existing ones
-- **Open/Closed Compliance**: The system evolves through addition, not modification
+- **Sender ignorance**: The originator of a request does not know which handler services it
+- **Runtime reconfiguration**: Chains can be assembled, extended, or reshuffled without modifying source code
+- **Single-purpose handlers**: Each handler owns one concern
+- **Non-intrusive extension**: New handlers plug into the chain without affecting existing ones
+- **Open/Closed compliance**: The system grows by addition, not modification
 
 ### Disadvantages
-- **Silent Drops**: A request may pass through every handler without any of them acting on it
-- **Cumulative Latency**: Each link in the chain adds a processing hop, which compounds in long pipelines
-- **Difficult Tracing**: Identifying which handler actually processed a request requires logging or debugging
-- **Hidden Pipeline Shape**: The full processing sequence is only visible by inspecting how the chain was wired together
-- **Memory Overhead**: Every handler stores a reference to its successor, adding a small per-node cost
+- **Silent drops**: A request may pass through every handler without any of them acting on it
+- **Cumulative latency**: Each link in the chain adds a hop, which adds up in long pipelines
+- **Difficult tracing**: Finding out which handler processed a request requires logging or debugging
+- **Hidden pipeline shape**: The full processing sequence is visible only by inspecting how the chain was wired
+- **Memory overhead**: Every handler stores a reference to its successor, a small per-node cost
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 - **Command**: Requests can be packaged as command objects before entering the chain, enabling queuing and logging alongside routing
-- **Observer**: Both facilitate event-driven architectures, but Observer broadcasts to all subscribers while Chain of Responsibility routes to one handler
-- **Strategy**: Strategy picks an algorithm upfront at configuration time; Chain of Responsibility discovers the right handler dynamically per request
+- **Observer**: Both support event-driven designs, but Observer broadcasts to all subscribers while Chain of Responsibility routes to one handler
+- **Strategy**: Strategy picks an algorithm up front at configuration time; Chain of Responsibility finds the right handler per request
 - **Composite**: Often combined when requests must propagate through tree-shaped hierarchies
-- **Decorator**: Shares the linked-wrapper structure, but Decorator layers additional behavior while Chain of Responsibility selects a handler
+- **Decorator**: Shares the linked-wrapper structure, but Decorator layers on behavior while Chain of Responsibility selects a handler
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
-Before and after comparison showing how the Chain of Responsibility pattern eliminates explicit handler selection logic:
+Before and after comparison showing how Chain of Responsibility removes explicit handler selection logic:
 
 ```java
 // After: handlers are linked in a chain and delegate automatically
@@ -331,7 +344,6 @@ public class ChainDemo {
 ```python
 import abc
 
-
 class Handler(metaclass=abc.ABCMeta):
     """
     Define an interface for handling requests.
@@ -345,7 +357,6 @@ class Handler(metaclass=abc.ABCMeta):
     def handle_request(self):
         pass
 
-
 class ConcreteHandler1(Handler):
     """
     Handle request, otherwise forward it to the successor.
@@ -356,7 +367,6 @@ class ConcreteHandler1(Handler):
             pass
         elif self._successor is not None:
             self._successor.handle_request()
-
 
 class ConcreteHandler2(Handler):
     """
@@ -369,12 +379,10 @@ class ConcreteHandler2(Handler):
         elif self._successor is not None:
             self._successor.handle_request()
 
-
 def main():
     concrete_handler_1 = ConcreteHandler1()
     concrete_handler_2 = ConcreteHandler2(concrete_handler_1)
     concrete_handler_2.handle_request()
-
 
 if __name__ == "__main__":
     main()

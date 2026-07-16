@@ -1,16 +1,31 @@
+# Bridge Pattern
+
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Bridge is a structural pattern that decomposes a monolithic class hierarchy into two orthogonal dimensions - abstraction and implementation - joined by composition instead of inheritance. By separating what an object does from how it does it, the pattern avoids the combinatorial class explosion that occurs when both dimensions evolve independently, and allows each side to vary without disturbing the other.
+The Bridge is a structural pattern that splits a monolithic class hierarchy into two orthogonal dimensions, abstraction and implementation, joined by composition instead of inheritance. Separating what an object does from how it does it avoids the combinatorial class explosion that happens when both dimensions evolve independently, and each side can vary without disturbing the other.
 
 ## Intent
 
 The pattern aims to:
-- Sever the tight coupling between an abstraction and its implementation so neither constrains the other's evolution
-- Substitute rigid inheritance trees with a flexible composition-based link
+- Break the tight coupling between an abstraction and its implementation so neither constrains the other's evolution
+- Replace rigid inheritance trees with a composition-based link
 - Keep the total class count linear rather than multiplicative when two dimensions of variation exist
-- Permit implementations to be selected or replaced at runtime without touching the abstraction layer
+- Allow implementations to be selected or replaced at runtime without touching the abstraction layer
 
-## Problem & Solution
+## Problem and solution
 
 ### Problem
 
@@ -23,16 +38,16 @@ When a design involves two independent axes of variation (for example, Shape and
     - RectangleWindows (implementation)
     - RectangleLinux (implementation)
 
-Each additional shape or rendering platform multiplies the total number of classes, quickly making the hierarchy unwieldy.
+Each additional shape or rendering platform multiplies the total number of classes, which quickly makes the hierarchy unwieldy.
 
 ### Solution
 
-The Bridge pattern resolves this by:
+The Bridge pattern fixes this by:
 1. Factoring the hierarchy into two separate trees: one for the abstraction, one for the implementation
-2. Connecting them via composition - the abstraction holds a reference to an implementor object
+2. Connecting them via composition: the abstraction holds a reference to an implementor object
 3. Letting each tree grow at its own pace without creating cross-product classes
 
-The abstraction forwards platform-dependent work to the implementor, keeping both hierarchies focused and independent.
+The abstraction forwards platform-dependent work to the implementor, so both hierarchies stay focused and independent.
 
 ## Structure
 
@@ -45,10 +60,10 @@ The abstraction forwards platform-dependent work to the implementor, keeping bot
 
 **Relationship:** Abstraction → (has-a) → Implementor ← ConcreteImplementor
 
-## When to Use
+## When to use
 
 Apply the Bridge pattern when:
-- You need to avoid a permanent lock between an abstraction and its implementation
+- You want to avoid binding an abstraction permanently to its implementation
 - Implementation changes should be invisible to consuming code
 - You want to share a single implementation across multiple abstraction instances
 - Class hierarchies are growing in two dimensions simultaneously
@@ -57,7 +72,7 @@ Apply the Bridge pattern when:
 
 ## Implementation
 
-### PHP 8.3+ Example with Strict Types
+### PHP 8.3+ example with strict types
 
 ```php
 <?php
@@ -171,9 +186,9 @@ $rect->draw(); // Output: Drawing rectangle on Windows...
 ?>
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-1. **Remote Controls and Devices**: The remote defines the user-facing buttons (abstraction), while the communication protocol - Bluetooth, IR, or RF - handles signal transmission (implementation). Swapping protocols requires no redesign of the remote's button layout.
+1. **Remote Controls and Devices**: The remote defines the user-facing buttons (abstraction), while the communication protocol (Bluetooth, IR, or RF) handles signal transmission (implementation). Swapping protocols requires no redesign of the remote's button layout.
 
 2. **Application Code and Database Drivers**: Business logic (the abstraction) formulates queries, while MySQL, PostgreSQL, or SQLite drivers (the implementations) translate them into vendor-specific calls. Switching database engines leaves the application layer unchanged.
 
@@ -181,30 +196,30 @@ $rect->draw(); // Output: Drawing rectangle on Windows...
 
 4. **UI Widgets and Platform Renderers**: Buttons and dialogs (abstractions) declare what to display, while OS-specific renderers (implementations) control how those elements appear on Windows, macOS, or Linux.
 
-## Pros & Cons
+## Pros and cons
 
 ### Pros
-- Draws a clear boundary between what an object does and how it accomplishes it
+- Draws a clear boundary between what an object does and how it does it
 - Keeps the class count linear instead of multiplicative as dimensions grow
-- Simplifies extension and maintenance on both the abstraction and implementation sides
-- Supports hot-swapping implementations at runtime
-- Naturally adheres to the Open/Closed and Single Responsibility principles
+- Makes extension and maintenance easier on both the abstraction and implementation sides
+- Supports swapping implementations at runtime
+- Fits the Open/Closed and Single Responsibility principles
 
 ### Cons
-- Introduces additional classes and indirection layers, raising architectural complexity
-- Feels disproportionate when the design involves only a single dimension of variation
+- Adds classes and indirection layers, which raises complexity
+- Is disproportionate when the design has only one dimension of variation
 - Delegation through the bridge adds a minor runtime cost
-- Requires deliberate upfront analysis to correctly identify the two orthogonal dimensions
+- Requires upfront analysis to identify the two orthogonal dimensions correctly
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 - **Adapter**: Adapter is applied retroactively to make incompatible interfaces work together; Bridge is an intentional upfront separation of abstraction from implementation
-- **Abstract Factory**: Often paired with Bridge - Abstract Factory can supply the correct implementor objects for a given abstraction
+- **Abstract Factory**: Often paired with Bridge: Abstract Factory can supply the correct implementor objects for a given abstraction
 - **Strategy**: Structurally alike (both vary behavior via composition), but Strategy swaps interchangeable algorithms while Bridge decouples an abstraction from its implementation
-- **Decorator**: Both leverage composition, but toward different ends - Decorator stacks additional behavior, Bridge partitions two independent dimensions of variation
-- **Facade**: Facade conceals subsystem complexity behind a simplified interface; Bridge provides a principled separation between abstraction and implementation layers
+- **Decorator**: Both use composition, but for different ends. Decorator stacks additional behavior, Bridge splits two independent dimensions of variation
+- **Facade**: Facade hides subsystem complexity behind a simpler interface; Bridge separates abstraction and implementation layers by design
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -356,7 +371,6 @@ int main() {
 ```python
 import abc
 
-
 class Abstraction:
     """
     Define the abstraction's interface.
@@ -368,7 +382,6 @@ class Abstraction:
     def operation(self):
         self._imp.operation_imp()
 
-
 class Implementor(metaclass=abc.ABCMeta):
     """
     Define the interface for implementation classes. This interface
@@ -379,22 +392,18 @@ class Implementor(metaclass=abc.ABCMeta):
     def operation_imp(self):
         pass
 
-
 class ConcreteImplementorA(Implementor):
     def operation_imp(self):
         pass
-
 
 class ConcreteImplementorB(Implementor):
     def operation_imp(self):
         pass
 
-
 def main():
     concrete_implementor_a = ConcreteImplementorA()
     abstraction = Abstraction(concrete_implementor_a)
     abstraction.operation()
-
 
 if __name__ == "__main__":
     main()

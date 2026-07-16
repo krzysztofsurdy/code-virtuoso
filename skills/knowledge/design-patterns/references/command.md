@@ -1,26 +1,41 @@
+# Command Pattern
+
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation (PHP 8.3+)](#implementation-php-83)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Command pattern is a behavioral design pattern that encapsulates operations as standalone objects, making them storable, transferable, queueable, loggable, and reversible. By reifying a request into an object, it draws a clean line between the code that initiates an action and the code that performs it.
+The Command pattern is a behavioral design pattern that encapsulates operations as standalone objects, so they can be stored, passed around, queued, logged, and reversed. Turning a request into an object separates the code that initiates an action from the code that performs it.
 
 ## Intent
 
 - Turn an operation into a first-class object that can be passed, stored, or serialized like any other value
 - Let callers issue, defer, or enqueue operations without knowing who ultimately executes them
 - Support undo and redo by keeping a trail of executed command objects
-- Provide a natural foundation for operation logging, auditing, and transactional rollback
-- Decouple the responsibility of requesting work from the responsibility of carrying it out
+- Give operation logging, auditing, and transactional rollback a natural foundation
+- Separate requesting work from carrying it out
 
-## Problem/Solution
+## Problem and solution
 
 ### Problem
-Many applications share a common set of needs:
+Many applications need the same things:
 - Deferring or scheduling operations for later execution
 - Providing undo and redo capabilities for user actions
 - Maintaining a complete audit log of every operation performed
 - Transmitting requests across process or network boundaries
 - Routing operations between loosely coupled subsystems
 
-Wiring clients directly to the business logic that fulfills these requests makes all of these requirements difficult to retrofit and painful to maintain.
+If clients call the business logic directly, each of these is hard to add later and painful to maintain.
 
 ### Solution
 Define a Command interface that represents a request as an object. Each concrete command bundles together:
@@ -55,22 +70,22 @@ Define a Command interface that represents a request as an object. Each concrete
    undo()
 ```
 
-### Key Components
+### Key components
 
 - **Command**: Interface defining execute() and optional undo() methods
 - **ConcreteCommand**: Implements Command, holds receiver reference and parameters
 - **Invoker**: Requests command execution, may queue or schedule commands
 - **Receiver**: Performs actual work; command knows how to invoke receiver methods
 
-## When to Use
+## When to use
 
 - You need to parameterize objects with operations
-- Queue, schedule, or execute operations at different times
-- Support undo/redo functionality
-- Log and audit all operations performed
-- Support transactional operations (all-or-nothing)
-- Build macro commands from simpler commands
-- Decouple command senders from executors
+- You need to queue, schedule, or execute operations at different times
+- You need undo/redo
+- You need to log and audit all operations
+- You need transactional operations (all-or-nothing)
+- You want to build macro commands from simpler commands
+- You want to decouple command senders from executors
 
 ## Implementation (PHP 8.3+)
 
@@ -229,41 +244,41 @@ $invoker->redo();
 echo $document->getContent(); // "Hello World"
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Diner Order Ticket**: A customer scribbles their order on a slip and passes it to the counter. The slip waits in a queue until a cook picks it up and prepares the meal. The ticket is the command - it records what to make, who asked, and can be tracked or cancelled before cooking starts.
+**Diner Order Ticket**: A customer scribbles their order on a slip and passes it to the counter. The slip waits in a queue until a cook picks it up and prepares the meal. The ticket is the command: it records what to make and who asked, and it can be tracked or cancelled before cooking starts.
 
 **Air Traffic Control Clearances**: A controller issues takeoff and landing clearances as discrete instructions. Each instruction is logged, can be revoked, and is carried out by the pilot independently of the controller's subsequent decisions.
 
 **Spreadsheet Macro Recording**: Recording a macro captures each user action as an individual command object. Playback re-executes the sequence in order, and the user can edit, reorder, or delete individual steps afterward.
 
-## Pros and Cons
+## Pros and cons
 
 ### Pros
-- Draws a sharp boundary between the requester and the executor, so neither depends on the other
-- Makes undo and redo natural by preserving a history stack of executed command objects
-- Lends itself to batching, scheduling, and deferred execution without additional infrastructure
-- New command types slot in without modifying existing invoker or receiver code
-- Produces a built-in audit trail of every operation the system has performed
-- Commands are portable values - they can be serialized, persisted, or transmitted across process boundaries
+- Separates the requester from the executor, so neither depends on the other
+- Undo and redo follow from keeping a history stack of executed command objects
+- Batching, scheduling, and deferred execution need no extra infrastructure
+- New command types need no changes to existing invoker or receiver code
+- Gives a built-in audit trail of every operation the system has performed
+- Commands are portable values: they can be serialized, persisted, or sent across process boundaries
 
 ### Cons
-- Generates a high number of small classes, one per operation, which can fragment a codebase
-- The extra indirection layer between invoker and receiver adds abstraction overhead and memory use
-- Excessive for simple method calls that need neither queuing nor reversal
-- Reliable undo requires disciplined state tracking or snapshot management that complicates implementation
+- Produces many small classes, one per operation, which can fragment a codebase
+- The extra indirection between invoker and receiver adds overhead and memory use
+- Too much for simple method calls that need neither queuing nor reversal
+- Reliable undo requires careful state tracking or snapshots, which complicates the implementation
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 - **Prototype**: Commands can be cloned to produce copies for batch processing or deferred execution
 - **Chain of Responsibility**: Commands can travel through a handler chain where each link decides whether to act or delegate
-- **Observer**: The invoker can notify subscribers when a command completes, enabling reactive workflows
+- **Observer**: The invoker can notify subscribers when a command completes
 - **Memento**: Captures the receiver's state before execution, letting commands undo changes without deep-copying entire object graphs
 - **Composite**: Several commands can be assembled into a macro command that executes them as a single unit
-- **Template Method**: Provides a fixed execution skeleton while individual command subclasses override specific steps
+- **Template Method**: Gives commands a fixed execution skeleton while subclasses override specific steps
 - **Strategy**: Both objectify behavior, but Strategy swaps interchangeable algorithms while Command encapsulates discrete requests
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -319,7 +334,6 @@ public class CommandDemo {
 ```python
 import abc
 
-
 class Invoker:
     """
     Ask the command to carry out the request.
@@ -335,7 +349,6 @@ class Invoker:
         for command in self._commands:
             command.execute()
 
-
 class Command(metaclass=abc.ABCMeta):
     """
     Declare an interface for executing an operation.
@@ -348,7 +361,6 @@ class Command(metaclass=abc.ABCMeta):
     def execute(self):
         pass
 
-
 class ConcreteCommand(Command):
     """
     Define a binding between a Receiver object and an action.
@@ -359,7 +371,6 @@ class ConcreteCommand(Command):
     def execute(self):
         self._receiver.action()
 
-
 class Receiver:
     """
     Know how to perform the operations associated with carrying out a
@@ -369,14 +380,12 @@ class Receiver:
     def action(self):
         pass
 
-
 def main():
     receiver = Receiver()
     concrete_command = ConcreteCommand(receiver)
     invoker = Invoker()
     invoker.store_command(concrete_command)
     invoker.execute_commands()
-
 
 if __name__ == "__main__":
     main()

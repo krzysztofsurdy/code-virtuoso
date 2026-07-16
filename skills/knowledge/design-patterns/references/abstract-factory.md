@@ -1,17 +1,30 @@
 # Abstract Factory Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Abstract Factory is a creational pattern that provides an interface for manufacturing entire families of related objects without specifying their concrete classes. Rather than scattering `new` calls throughout the codebase, it channels all instantiation through a factory abstraction, so replacing one product family with another requires changing only the factory instance - not the code that consumes the products.
+The Abstract Factory is a creational pattern that provides an interface for manufacturing entire families of related objects without specifying their concrete classes. Instead of scattering `new` calls through the codebase, all instantiation goes through a factory abstraction, so replacing one product family with another means changing only the factory instance, not the code that consumes the products.
 
 ## Intent
 
 - Define a creation contract that produces cohesive sets of related objects in lockstep
-- Centralize variant management behind a factory hierarchy, keeping product details out of client code
-- Shield consuming code from knowing which concrete product classes it operates on
-- Enforce compatibility within a product family by construction, preventing accidental cross-family mixing
+- Centralize variant management behind a factory hierarchy
+- Keep consuming code unaware of which concrete product classes it uses
+- Enforce compatibility within a product family by construction, so products from different families cannot be mixed by accident
 
-## Problem & Solution
+## Problem and solution
 
 ### Problem
 
@@ -42,17 +55,17 @@ AbstractProductB (interface)
 └── ConcreteProductB2
 ```
 
-## When to Use
+## When to use
 
 - Your application needs to work with several distinct families of related objects
 - You want to ship a toolkit of products while hiding their concrete implementations
-- Consistency within a family is essential and must be enforced at the structural level
+- Products in a family must be consistent with each other, and the structure should enforce it
 - You anticipate adding new families later and want to avoid touching existing client code
 - Client code should never reference concrete product classes directly
 
 ## Implementation
 
-### PHP 8.3+ Example: UI Theme Factory
+### PHP 8.3+ example: UI theme factory
 
 ```php
 <?php
@@ -152,7 +165,7 @@ $app = new Application($factory);
 echo $app->render();
 ```
 
-### Database Connection Factory Example
+### Database connection factory example
 
 ```php
 <?php
@@ -241,16 +254,16 @@ $connection = $factory->createConnection();
 $migration = $factory->createMigration();
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Furniture Showroom by Style**: Picture a showroom organized into curated collections - Mid-Century Modern, Industrial, Scandinavian. Choosing a collection determines every piece you receive (sofa, table, lamp), and the showroom guarantees aesthetic coherence across the set.
+**Furniture Showroom by Style**: Picture a showroom organized into collections such as Mid-Century Modern, Industrial, and Scandinavian. Choosing a collection determines every piece you receive (sofa, table, lamp), and the showroom guarantees aesthetic coherence across the set.
 
 **Operating System Widget Toolkits**: Each desktop OS bundles its own control library. The same "create dialog" call yields Windows-native widgets on Windows and macOS-native widgets on macOS, while the application logic remains identical on both platforms.
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
-- **Isolates client code from concrete classes**: All instantiation flows through abstract interfaces, so business logic never references specific product implementations
+- **Isolates client code from concrete classes**: All instantiation goes through abstract interfaces, so business logic never references specific product implementations
 - **Enforces family coherence**: A single factory produces every related product, eliminating accidental mismatches between incompatible parts
 - **Simplifies family extension**: Supporting a new product family means adding one factory class - existing client code stays untouched
 - **Localizes construction logic**: Object creation is consolidated in factory implementations rather than spread across consumers
@@ -258,11 +271,11 @@ $migration = $factory->createMigration();
 
 ### Disadvantages
 - **Increases class count**: Every new family requires a factory class plus one concrete class per product type
-- **Overkill for single-family systems**: When only one product family exists, the abstraction layer adds complexity without payoff
+- **Overkill for single-family systems**: With only one product family, the abstraction layer adds complexity and nothing else
 - **Painful to expand the product set**: Adding a new product type to the family means modifying every existing factory implementation
-- **Limited configuration flexibility**: When individual products need multi-step setup, Abstract Factory alone falls short - Builder is the better companion
+- **Limited configuration flexibility**: When individual products need multi-step setup, Abstract Factory alone falls short, and Builder is the better companion
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 - **Factory Method**: Abstract Factory commonly delegates each creation call to an internal Factory Method
 - **Singleton**: Concrete factories are frequently singletons, since a single instance per family is usually sufficient
@@ -270,7 +283,7 @@ $migration = $factory->createMigration();
 - **Builder**: Builder handles complex, multi-step construction; Abstract Factory handles coordinated creation of simple products across a family
 - **Strategy**: Both swap implementations behind an interface, but at different scales - Strategy replaces algorithms, Abstract Factory replaces entire object families
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -432,7 +445,6 @@ int main() {
 ```python
 import abc
 
-
 class AbstractFactory(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
@@ -443,7 +455,6 @@ class AbstractFactory(metaclass=abc.ABCMeta):
     def create_product_b(self):
         pass
 
-
 class ConcreteFactory1(AbstractFactory):
 
     def create_product_a(self):
@@ -451,7 +462,6 @@ class ConcreteFactory1(AbstractFactory):
 
     def create_product_b(self):
         return ConcreteProductB1()
-
 
 class ConcreteFactory2(AbstractFactory):
 
@@ -461,23 +471,19 @@ class ConcreteFactory2(AbstractFactory):
     def create_product_b(self):
         return ConcreteProductB2()
 
-
 class AbstractProductA(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def interface_a(self):
         pass
 
-
 class ConcreteProductA1(AbstractProductA):
     def interface_a(self):
         pass
 
-
 class ConcreteProductA2(AbstractProductA):
     def interface_a(self):
         pass
-
 
 class AbstractProductB(metaclass=abc.ABCMeta):
 
@@ -485,16 +491,13 @@ class AbstractProductB(metaclass=abc.ABCMeta):
     def interface_b(self):
         pass
 
-
 class ConcreteProductB1(AbstractProductB):
     def interface_b(self):
         pass
 
-
 class ConcreteProductB2(AbstractProductB):
     def interface_b(self):
         pass
-
 
 def main():
     for factory in (ConcreteFactory1(), ConcreteFactory2()):
@@ -502,7 +505,6 @@ def main():
         product_b = factory.create_product_b()
         product_a.interface_a()
         product_b.interface_b()
-
 
 if __name__ == "__main__":
     main()

@@ -1,25 +1,40 @@
+# Builder Pattern
+
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Builder pattern is a creational design pattern that separates the construction of a complex object from its representation. Instead of funneling dozens of parameters into a single constructor call or juggling overloaded variants, it hands the assembly work to a dedicated builder that configures the target step by step through clearly named methods.
+The Builder pattern is a creational design pattern that separates the construction of a complex object from its representation. Instead of passing dozens of parameters to one constructor or juggling overloaded variants, you give the assembly work to a dedicated builder that configures the target step by step through named methods.
 
 ## Intent
 
 - Decouple how a complex object is assembled from what the finished object looks like
-- Enable multiple representations of the same product by reusing identical construction steps
-- Eliminate the "telescoping constructor" problem where parameter lists grow unwieldy with every new option
-- Provide a fluent, self-documenting API for setting up objects that carry many required and optional attributes
+- Produce multiple representations of the same product by reusing the same construction steps
+- Avoid the "telescoping constructor" problem, where parameter lists grow with every new option
+- Give objects with many required and optional attributes a fluent, self-documenting setup API
 
-## Problem & Solution
+## Problem and solution
 
 **Problem:**
-Objects that require many parameters - particularly optional ones - create persistent difficulties:
+Objects that need many parameters, especially optional ones, cause recurring problems:
 - Long positional argument lists are fragile and opaque to callers
-- Constructor overloads proliferate rapidly and blur the distinction between variants
-- Post-construction mutation to set optional fields breaks immutability guarantees
-- Call sites packed with unnamed arguments resist comprehension and review
+- Constructor overloads multiply and blur the distinction between variants
+- Setting optional fields after construction breaks immutability
+- Call sites full of unnamed arguments are hard to read and review
 
 **Solution:**
-The Builder pattern supplies a separate builder class whose named setter methods accumulate configuration incrementally. The final object is produced only when the caller invokes `build()`, which validates all accumulated state and returns a fully initialized, consistent product.
+The Builder pattern supplies a separate builder class whose named setter methods accumulate configuration incrementally. The final object is produced only when the caller invokes `build()`, which validates the accumulated state and returns a fully initialized, consistent product.
 
 ## Structure
 
@@ -40,13 +55,13 @@ The Builder pattern supplies a separate builder class whose named setter methods
 - **ConcreteBuilder:** Implements the builder interface; constructs and assembles parts
 - **Director:** (Optional) Orchestrates the building process with a defined algorithm
 
-## When to Use
+## When to use
 
 Use the Builder pattern when:
 - An object has more than a handful of constructor parameters, especially when many are optional
 - You need to produce different variants or representations of the same type of object
 - The assembly process must remain independent from the components that form the final product
-- You want immutable objects but still need a flexible way to set them up
+- You want immutable objects but still need a flexible way to configure them
 - Construction involves validation or multi-step initialization logic
 - You are designing fluent or method-chaining APIs
 
@@ -220,7 +235,7 @@ enum SSLMode: string
 }
 
 /**
- * Modern builder leveraging PHP 8.3+ features
+ * Modern builder using PHP 8.3+ features
  */
 class QueryBuilder
 {
@@ -317,40 +332,40 @@ $sql = (new QueryBuilder())
     ->build();
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Deli Sandwich Counter:** You specify bread, filling, toppings, and sauce one selection at a time. The sandwich maker assembles everything according to your choices, and only when you confirm "that's all" does the finished sandwich get wrapped and handed over.
+**Deli Sandwich Counter:** You specify bread, filling, toppings, and sauce one selection at a time. The sandwich maker assembles everything to your choices, and the finished sandwich is wrapped and handed over only when you say "that's all".
 
-**Custom PC Configuration:** When building a custom workstation, you pick the processor, memory, storage, and graphics card independently. The technician follows the same assembly process regardless of which specific parts you selected, and the machine is not powered on until every component is in place.
+**Custom PC Configuration:** When building a custom workstation, you pick the processor, memory, storage, and graphics card independently. The technician follows the same assembly process whichever parts you picked, and the machine is not powered on until every component is in place.
 
-## Pros and Cons
+## Pros and cons
 
 **Advantages:**
-- Yields readable, self-documenting call sites through fluent method chaining
-- Accommodates many object configurations without spawning constructor overloads
-- Complements readonly or immutable classes naturally - the product is finalized in one shot
-- Concentrates all construction logic in the builder, away from the product class itself
-- Runs validation at build time, before the object exists, catching invalid state early
+- Call sites read well through fluent method chaining
+- Many object configurations are possible without constructor overloads
+- Works well with readonly or immutable classes, since the product is finalized in one step
+- Construction logic lives in the builder, not in the product class
+- Validation runs at build time, before the object exists, so invalid state is caught early
 - New optional fields can be added to the builder without breaking existing callers
 
 **Disadvantages:**
-- Requires an extra class per product type, increasing the project's class count
-- Adds unnecessary ceremony when the product has only a handful of straightforward parameters
-- Builder instances occupy memory until they go out of scope or are garbage collected
+- Needs an extra class per product type
+- Adds ceremony when the product has only a few simple parameters
+- Builder instances hold memory until they go out of scope or are garbage collected
 - Shared or reused builder instances need synchronization in concurrent environments
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 **Composite:** Builder can orchestrate the assembly of complex composite tree structures
-**Abstract Factory:** Both create objects, but Factory coordinates families of products while Builder focuses on incremental, step-by-step construction of a single product
+**Abstract Factory:** Both create objects, but Abstract Factory produces families of products while Builder constructs a single product step by step
 **Strategy:** Different construction strategies can be injected into a builder to produce distinct product variants
-**Prototype:** Both address object creation, but Builder offers finer control when construction involves multiple configurable steps
+**Prototype:** Both address object creation, but Builder gives finer control when construction has multiple configurable steps
 
 ---
 
-**Key Takeaway:** Use the Builder pattern when constructing complex objects with multiple parameters or configuration options. It improves readability, maintainability, and provides a clear separation between construction logic and the product itself.
+**Key takeaway:** Use Builder for complex objects with many parameters or configuration options. It keeps construction logic out of the product class and makes call sites readable.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -586,7 +601,6 @@ int main() {
 ```python
 import abc
 
-
 class Director:
     def __init__(self):
         self._builder = None
@@ -596,7 +610,6 @@ class Director:
         self._builder._build_part_a()
         self._builder._build_part_b()
         self._builder._build_part_c()
-
 
 class Builder(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -614,7 +627,6 @@ class Builder(metaclass=abc.ABCMeta):
     def _build_part_c(self):
         pass
 
-
 class ConcreteBuilder(Builder):
     def _build_part_a(self):
         pass
@@ -625,17 +637,14 @@ class ConcreteBuilder(Builder):
     def _build_part_c(self):
         pass
 
-
 class Product:
     pass
-
 
 def main():
     concrete_builder = ConcreteBuilder()
     director = Director()
     director.construct(concrete_builder)
     product = concrete_builder.product
-
 
 if __name__ == "__main__":
     main()
