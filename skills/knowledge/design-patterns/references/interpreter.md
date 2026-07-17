@@ -1,20 +1,37 @@
+# Interpreter Pattern
+
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [Key participants](#key-participants)
+- [When to use](#when-to-use)
+- [Implementation (PHP 8.3+ strict types)](#implementation-php-83-strict-types)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Additional considerations](#additional-considerations)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Interpreter pattern is a behavioral design pattern that maps grammar rules to a class hierarchy, where each class knows how to evaluate itself against a given input. It is the go-to approach for building domain-specific languages, expression evaluators, query processors, and rule engines that need to parse and execute structured input.
+Interpreter is a behavioral design pattern that maps grammar rules to a class hierarchy, where each class knows how to evaluate itself against a given input. Use it to build domain-specific languages, expression evaluators, query processors, and rule engines that parse and execute structured input.
 
 ## Intent
 
 - Model a formal grammar as a set of classes, one per rule
-- Provide a recursive evaluation mechanism that processes sentences conforming to the grammar
-- Keep grammar structure independent of the logic that interprets it
+- Provide a recursive evaluation mechanism for sentences that conform to the grammar
+- Keep the grammar structure independent of the logic that interprets it
 
-## Problem and Solution
+## Problem and solution
 
 **Problem:**
-When an application must process structured expressions - mathematical formulas, search queries, configuration directives - embedding the parsing and evaluation logic directly in procedural code results in rigid, hard-to-extend implementations that break whenever the grammar evolves.
+An application has to process structured expressions such as mathematical formulas, search queries, or configuration directives. If the parsing and evaluation logic is embedded in procedural code, the implementation is rigid and breaks whenever the grammar changes.
 
 **Solution:**
-Represent each grammar rule as its own class, and build an abstract syntax tree (AST) from those classes. Each node in the tree knows how to interpret itself by recursively delegating to its children, producing a modular and extensible evaluation pipeline.
+Represent each grammar rule as its own class and build an abstract syntax tree (AST) from those classes. Each node interprets itself by recursively delegating to its children, which gives a modular, extensible evaluation pipeline.
 
 ## Structure
 
@@ -40,23 +57,23 @@ Represent each grammar rule as its own class, and build an abstract syntax tree 
             └─────────────┘         └─────────────┘
 ```
 
-## Key Participants
+## Key participants
 
-- **AbstractExpression**: Declares the `interpret()` method
-- **TerminalExpression**: Implements interpretation for leaf nodes
-- **NonterminalExpression**: Implements interpretation for compound nodes
-- **Context**: Contains information needed for interpretation
-- **Client**: Builds the abstract syntax tree and initiates interpretation
+- **AbstractExpression**: declares the `interpret()` method
+- **TerminalExpression**: implements interpretation for leaf nodes
+- **NonterminalExpression**: implements interpretation for compound nodes
+- **Context**: holds the information needed for interpretation
+- **Client**: builds the abstract syntax tree and starts interpretation
 
-## When to Use
+## When to use
 
-- Constructing domain-specific languages where grammar rules map cleanly to classes
+- Building domain-specific languages where grammar rules map cleanly to classes
 - Evaluating mathematical expressions, search queries, or filter criteria at runtime
 - Parsing configuration files or template languages
-- Building rule engines or workflow interpreters that need to be extended without recompilation
-- Situations where the grammar itself changes infrequently but the ways it is interpreted multiply
+- Building rule engines or workflow interpreters that must be extended without recompilation
+- The grammar changes rarely, but the ways of interpreting it keep multiplying
 
-## Implementation (PHP 8.3+ Strict Types)
+## Implementation (PHP 8.3+ strict types)
 
 ```php
 <?php
@@ -163,42 +180,42 @@ $ast = new AddExpression(
 $result = $ast->interpret($context); // 50
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Legal Contract Clauses**: A contract is a structured document where each clause (expression) has defined terms (terminals) and compound conditions (nonterminals). A lawyer interprets the contract by recursively evaluating clauses in context.
-- **Assembly Instructions**: Furniture assembly guides use a symbolic language - arrows, numbered parts, action icons - that the builder interprets step by step to produce the final product.
-- **Cooking Recipes**: A recipe is a small language with ingredients (terminals) and operations like "mix," "fold," or "bake" (nonterminals) that a cook interprets to produce a dish.
+- **Legal contract clauses**: a contract is a structured document where each clause (expression) has defined terms (terminals) and compound conditions (nonterminals). A lawyer interprets it by recursively evaluating clauses in context.
+- **Assembly instructions**: furniture guides use a symbolic language of arrows, numbered parts, and action icons that the builder interprets step by step.
+- **Cooking recipes**: a recipe is a small language with ingredients (terminals) and operations like "mix," "fold," or "bake" (nonterminals) that a cook interprets to produce a dish.
 
-## Pros and Cons
+## Pros and cons
 
 **Advantages:**
-- New expression types slot into the hierarchy without altering existing classes
-- Grammar rules and their evaluation logic are cleanly separated
+- New expression types are added to the hierarchy without altering existing classes
+- Grammar rules and evaluation logic are separated
 - The same AST can be interpreted in different ways by swapping the interpretation strategy
-- The class-per-rule structure mirrors the grammar itself, making it self-documenting
-- Composite-like recursion handles arbitrarily nested expressions naturally
+- The class-per-rule structure mirrors the grammar, so the code documents itself
+- Composite-style recursion handles arbitrarily nested expressions
 
 **Disadvantages:**
-- A rich grammar spawns many classes, one per rule, which can clutter the codebase
-- Deeply nested expression trees carry evaluation overhead from recursive dispatch
-- Left-recursive grammars require special handling to avoid infinite loops
-- Large expressions consume significant memory for the tree structure
-- Tracing through a deep chain of recursive interpret calls complicates debugging
+- A rich grammar produces many classes, one per rule, which can clutter the codebase
+- Deeply nested trees pay for recursive dispatch on every evaluation
+- Left-recursive grammars need special handling to avoid infinite loops
+- Large expressions use significant memory for the tree
+- Tracing a deep chain of recursive `interpret` calls makes debugging harder
 
-## Relations with Other Patterns
+## Relations with other patterns
 
-- **Composite**: Expression trees are inherently composite structures with leaves and branches
-- **Visitor**: An alternative way to add operations to the tree without modifying expression classes
-- **Strategy**: Different interpretation algorithms can be packaged as interchangeable strategies
-- **Builder**: Frequently used to construct the abstract syntax tree from raw input
-- **Factory**: Selects and instantiates the appropriate expression class based on parsed tokens
-- **Flyweight**: Shared terminal expressions (such as common variable references) can be pooled to save memory
+- **Composite**: expression trees are composite structures with leaves and branches
+- **Visitor**: an alternative way to add operations to the tree without modifying expression classes
+- **Strategy**: different interpretation algorithms can be packaged as interchangeable strategies
+- **Builder**: often used to construct the abstract syntax tree from raw input
+- **Factory**: selects and instantiates the right expression class from parsed tokens
+- **Flyweight**: shared terminal expressions (such as common variable references) can be pooled to save memory
 
-## Additional Considerations
+## Additional considerations
 
-Use a parser generator or parsing library for complex grammars (ANTLR, Lemon). Consider caching interpretation results for frequently-evaluated expressions. For recursive descent parsing, implement proper error handling and recovery strategies. Combine with pattern matching for more elegant implementations in PHP 8.1+.
+Use a parser generator or parsing library for complex grammars (ANTLR, Lemon). Cache interpretation results for frequently evaluated expressions. For recursive descent parsing, implement error handling and recovery. In PHP 8.1+, combine the pattern with `match` expressions for more compact implementations.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

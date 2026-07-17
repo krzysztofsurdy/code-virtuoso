@@ -1,32 +1,45 @@
 # Object Pool Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Object Pool pattern is a creational design pattern that avoids the cost of repeated object construction and destruction by maintaining a reservoir of pre-built, reusable instances. When a client needs an object, it borrows one from the pool; when finished, it returns the object so the next client can use it. This recycling approach pays off most when instantiation is expensive - database connections, network sockets, heavyweight data structures, or thread handles.
+Object Pool is a creational design pattern that avoids the cost of repeated object construction and destruction by keeping a reservoir of pre-built, reusable instances. A client borrows an object from the pool and returns it when finished so the next client can use it. This pays off most when instantiation is expensive: database connections, network sockets, heavy data structures, or thread handles.
 
 ## Intent
 
-- Eliminate repeated construction and teardown costs by recycling existing instances
+- Avoid repeated construction and teardown costs by recycling existing instances
 - Lower garbage-collection pressure by keeping a stable set of long-lived objects
-- Provide a checkout/return lifecycle that lets clients share a bounded set of resources
+- Provide a checkout/return lifecycle so clients can share a bounded set of resources
 - Cap the number of concurrently active instances to stay within system resource limits
-- Deliver predictable latency by pre-allocating objects rather than building them on demand
+- Give predictable latency by pre-allocating objects instead of building them on demand
 
-## Problem & Solution
+## Problem and solution
 
 ### Problem
 
-Creating objects can be expensive in terms of:
+Creating objects can be expensive in several ways:
 
-1. **CPU Overhead**: Instantiation requires time and processing power
-2. **Memory Usage**: Creating many objects increases memory consumption and garbage collection pressure
-3. **Connection Limits**: Systems like databases have finite connection pools
-4. **Initialization Cost**: Some objects require complex initialization or setup
-5. **Performance Bottlenecks**: In high-throughput scenarios, constant object creation becomes a bottleneck
+1. **CPU overhead**: instantiation takes time and processing power
+2. **Memory usage**: creating many objects raises memory consumption and garbage-collection pressure
+3. **Connection limits**: systems such as databases have a finite number of connections
+4. **Initialization cost**: some objects need complex setup
+5. **Bottlenecks**: in high-throughput scenarios, constant object creation becomes the limiting factor
 
 ### Solution
 
-Maintain a pool of pre-created, reusable objects. When a client needs an object, instead of creating a new one, it requests an available object from the pool. After use, the object is returned to the pool for another client to use, reducing creation overhead.
+Maintain a pool of pre-created, reusable objects. A client requests an available object from the pool instead of creating a new one, and returns it after use for another client to take. This removes the creation overhead.
 
 ## Structure
 
@@ -41,19 +54,19 @@ ReusableObject (the pooled object)
 └── doWork(): void
 ```
 
-## When to Use
+## When to use
 
 - Construction cost is high (database connections, thread handles, socket connections)
-- Objects are created and discarded at a high rate throughout the application's lifetime
+- Objects are created and discarded at a high rate
 - Garbage-collection pauses are unacceptable in latency-sensitive code
-- A bounded number of instances is sufficient to serve the entire workload
-- Objects can be cleanly reset to a neutral state between uses
+- A bounded number of instances can serve the whole workload
+- Objects can be reset cleanly to a neutral state between uses
 - You need an upper bound on resource consumption
 - Multi-threaded workloads benefit from sharing a fixed set of pre-warmed instances
 
 ## Implementation
 
-### PHP 8.3+ Example: Database Connection Pool
+### PHP 8.3+ example: database connection pool
 
 ```php
 <?php
@@ -167,7 +180,7 @@ try {
 }
 ```
 
-### Thread/Worker Pool Example
+### Thread/worker pool example
 
 ```php
 <?php
@@ -230,42 +243,44 @@ echo $worker->doWork('process_image.jpg') . "\n";
 $pool->releaseWorker($worker);
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Tool Crib at a Factory**: A manufacturing plant keeps a shared inventory of expensive power tools. Workers check out the tool they need, use it, and return it to the crib for the next person. Buying a new tool for every task would be wasteful; sharing a finite set keeps costs down.
+**Tool crib at a factory**: a manufacturing plant keeps a shared inventory of expensive power tools. Workers check out the tool they need, use it, and return it to the crib for the next person. Buying a new tool for every task would be wasteful, so a finite set is shared.
 
-**City Bike-Share Program**: A network of docking stations holds bicycles that anyone can unlock, ride, and return. The system does not build a new bike per trip - it recycles a fixed fleet, rebalancing stations as needed to meet demand.
+**City bike-share program**: docking stations hold bicycles that anyone can unlock, ride, and return. The system does not build a new bike per trip. It recycles a fixed fleet and rebalances stations to meet demand.
 
-**Hotel Laundry Service**: A hotel owns a set number of towels and linens. Used items are collected, washed, and returned to the supply closet rather than discarded. The pool size is tuned so that clean inventory is always available without over-purchasing.
+**Hotel laundry service**: a hotel owns a set number of towels and linens. Used items are collected, washed, and returned to the supply closet instead of being thrown away. The pool size is tuned so clean inventory is always available without over-buying.
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
-- **Faster acquisition**: Borrowing a ready-made object is far cheaper than constructing one from scratch
-- **Lower memory churn**: A stable pool reduces allocation and deallocation traffic, easing garbage-collection load
-- **Bounded resource use**: The pool enforces a hard cap on how many instances exist at any time
-- **Predictable capacity**: Pre-allocation guarantees that peak demand can be served without construction delays
-- **Reduced startup latency**: Objects are warmed up once and ready to go on first request
-- **Throughput-friendly**: High-volume workloads avoid the serialization bottleneck of repeated instantiation
+
+- **Faster acquisition**: borrowing a ready-made object is far cheaper than constructing one
+- **Lower memory churn**: a stable pool reduces allocation and deallocation traffic, which eases garbage-collection load
+- **Bounded resource use**: the pool enforces a hard cap on how many instances exist
+- **Predictable capacity**: pre-allocation means peak demand can be served without construction delays
+- **Lower startup latency**: objects are warmed up once and ready on the first request
+- **Throughput**: high-volume workloads avoid the bottleneck of repeated instantiation
 
 ### Disadvantages
-- **Management overhead**: Pool lifecycle, validation, and eviction logic add code complexity
-- **Concurrency hazards**: Multi-threaded access requires synchronization to avoid double-checkouts
-- **Reset discipline**: Every returned object must be scrubbed to a clean state or stale data leaks between clients
-- **Idle memory cost**: All pooled objects occupy memory even during low-traffic periods
-- **Harder debugging**: Shared, recycled instances make it trickier to trace which client caused a problem
-- **Leak risk**: A client that forgets to return an object silently drains the pool until it is exhausted
 
-## Relations with Other Patterns
+- **Management overhead**: pool lifecycle, validation, and eviction logic add code
+- **Concurrency hazards**: multi-threaded access needs synchronization to avoid double checkouts
+- **Reset discipline**: every returned object must be reset to a clean state, or stale data leaks between clients
+- **Idle memory cost**: pooled objects occupy memory even during low traffic
+- **Harder debugging**: shared, recycled instances make it harder to trace which client caused a problem
+- **Leak risk**: a client that forgets to return an object silently drains the pool until it is exhausted
 
-- **Singleton**: The pool manager itself is frequently a singleton to ensure one global pool
-- **Factory Method**: The pool uses a factory to create the initial batch of objects
-- **Strategy**: Eagerly pre-allocating versus lazily creating on demand are two pool strategies that can be swapped
-- **Flyweight**: Both share objects, but Flyweight shares immutable intrinsic state while Object Pool lends mutable instances
-- **Proxy**: A proxy can wrap pooled objects to automatically track acquisition and return
-- **Observer**: Interested parties can subscribe to pool events like exhaustion or replenishment
+## Relations with other patterns
 
-## Examples in Other Languages
+- **Singleton**: the pool manager is often a singleton so there is one global pool
+- **Factory Method**: the pool uses a factory to create the initial batch of objects
+- **Strategy**: eager pre-allocation and lazy creation on demand are two pool strategies that can be swapped
+- **Flyweight**: both share objects, but Flyweight shares immutable intrinsic state while Object Pool lends mutable instances
+- **Proxy**: a proxy can wrap pooled objects to track acquisition and return automatically
+- **Observer**: interested parties can subscribe to pool events such as exhaustion or replenishment
+
+## Examples in other languages
 
 ### Java
 

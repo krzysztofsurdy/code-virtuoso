@@ -1,31 +1,44 @@
 # Mediator Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Mediator pattern is a behavioral design pattern that funnels all communication between a group of collaborating objects through a single coordinator. Instead of each object maintaining direct references to every peer it talks to, objects notify the mediator, which decides how to route and handle the interaction. This replaces a tangled mesh of point-to-point connections with a clean hub-and-spoke topology.
+Mediator is a behavioral design pattern that routes all communication between a group of collaborating objects through a single coordinator. Instead of holding references to every peer it talks to, each object notifies the mediator, which decides how to route and handle the interaction. A tangled mesh of point-to-point connections becomes a hub-and-spoke layout.
 
 ## Intent
 
-- Centralize the rules governing how a group of objects interact into one dedicated object
-- Eliminate direct references between collaborating objects so they remain independent
-- Consolidate scattered interaction logic into a single, inspectable location
-- Make individual components reusable in different contexts by removing peer dependencies
+- Centralize the rules governing how a group of objects interact in one dedicated object
+- Remove direct references between collaborating objects so they stay independent
+- Consolidate scattered interaction logic in one inspectable place
+- Make components reusable in other contexts by removing peer dependencies
 - Simplify testing by isolating coordination logic from component behavior
 
-## Problem & Solution
+## Problem and solution
 
 ### Problem
 
-When multiple objects need to communicate with each other, direct references between them create tight coupling:
+When several objects need to communicate, direct references between them create tight coupling:
 
-1. **Tight Coupling**: Every object knows about every other object it needs to communicate with
-2. **Difficult Reuse**: Objects cannot be reused in different contexts because they depend on specific communication partners
-3. **Complex Logic**: Communication logic is scattered across multiple classes, making it hard to understand and modify
-4. **Maintenance Nightmare**: Changes to how objects communicate require modifications to multiple classes
+1. **Tight coupling**: every object knows about every other object it talks to
+2. **Difficult reuse**: objects cannot be reused elsewhere because they depend on specific communication partners
+3. **Scattered logic**: communication logic is spread across several classes, which makes it hard to understand and modify
+4. **Costly changes**: changing how objects communicate means modifying several classes
 
 ### Solution
 
-Create a mediator class that encapsulates all the communication logic between objects. Instead of objects communicating directly with each other, they communicate through the mediator. The mediator becomes responsible for coordinating interactions, allowing individual objects to be independent and reusable.
+Create a mediator class that encapsulates all communication logic between the objects. The objects talk to the mediator instead of to each other, and the mediator coordinates the interactions. Individual objects stay independent and reusable.
 
 ## Structure
 
@@ -55,17 +68,17 @@ Create a mediator class that encapsulates all the communication logic between ob
    (base)      impl               (base)    impl
 ```
 
-## When to Use
+## When to use
 
-- A cluster of objects communicates in intricate ways that produce dependencies difficult to follow or modify
-- Reusing a single component proves impractical because it carries references to many specific peers
-- Interaction behavior that is spread across several classes needs to be customizable without deep subclassing
+- A cluster of objects communicates in ways that produce dependencies that are hard to follow or modify
+- A component cannot be reused because it carries references to many specific peers
+- Interaction behavior spread across several classes must be customizable without deep subclassing
 - You want a single place to inspect and adjust how components coordinate
 - Components should be testable in isolation, without wiring up all their communication partners
 
 ## Implementation
 
-### PHP 8.3+ Example: Chat Room Mediator
+### PHP 8.3+ example: chat room mediator
 
 ```php
 <?php
@@ -147,7 +160,7 @@ $user2->send('Hi Alice!');
 $user3->send('Hey there!');
 ```
 
-### Real-World Example: Dialog Box with Controls
+### Real-world example: dialog box with controls
 
 ```php
 <?php
@@ -232,43 +245,45 @@ class Button extends DialogElement {
 }
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Airport Control Tower**: Pilots never negotiate runway access directly with other aircraft. Every request goes through the tower, which has the full picture of traffic, weather, and runway status to coordinate safe movements.
+**Airport control tower**: pilots never negotiate runway access directly with other aircraft. Every request goes through the tower, which has the full picture of traffic, weather, and runway status.
 
-**Stock Exchange Trading Floor**: Buyers and sellers do not find each other individually. The exchange acts as a mediator that matches orders, enforces rules, and settles trades on behalf of all participants.
+**Stock exchange trading floor**: buyers and sellers do not find each other individually. The exchange acts as mediator, matching orders, enforcing rules, and settling trades on behalf of all participants.
 
-**Event Coordinator at a Conference**: Speakers, sponsors, and attendees do not organize sessions among themselves. The event coordinator schedules talks, assigns rooms, and relays changes, keeping every party informed through a single point of contact.
+**Event coordinator at a conference**: speakers, sponsors, and attendees do not organize sessions among themselves. The coordinator schedules talks, assigns rooms, and relays changes, so everyone has a single point of contact.
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
-- **Loose coupling**: Components interact without holding references to one another
-- **Single coordination point**: All interaction rules live in one class, making them easy to audit and change
-- **Simplified relationships**: A web of many-to-many links collapses into a star of one-to-many links
-- **Portable components**: Individual objects can be dropped into a different mediator without modification
-- **Focused responsibilities**: Each object handles its own behavior while the mediator handles coordination
+
+- **Loose coupling**: components interact without holding references to one another
+- **Single coordination point**: all interaction rules live in one class, so they are easy to audit and change
+- **Simpler relationships**: a web of many-to-many links becomes a star of one-to-many links
+- **Portable components**: an object can be moved to a different mediator without modification
+- **Focused responsibilities**: each object handles its own behavior while the mediator handles coordination
 
 ### Disadvantages
-- **Bloated mediator**: A mediator managing too many interactions can turn into a monolithic god object
-- **Testing complexity**: A mediator with elaborate routing logic can be difficult to unit test in isolation
-- **Indirection cost**: An additional hop through the mediator adds latency in performance-sensitive paths
-- **Premature abstraction**: Simple two-object interactions do not warrant a mediator
-- **Rigid evolution**: Changing the coordination rules may require significant rework inside the mediator
 
-## Relations with Other Patterns
+- **Bloated mediator**: a mediator that manages too many interactions can turn into a god object
+- **Testing complexity**: a mediator with elaborate routing logic can be hard to unit test in isolation
+- **Indirection cost**: the extra hop through the mediator adds latency on performance-sensitive paths
+- **Premature abstraction**: a simple two-object interaction does not warrant a mediator
+- **Rigid evolution**: changing the coordination rules may require significant rework inside the mediator
 
-- **Observer**: Both decouple communicating objects, but Observer uses a broadcast model while Mediator uses a centralized routing model
-- **Command**: Mediators can receive command objects rather than raw messages, making interactions storable and undoable
+## Relations with other patterns
+
+- **Observer**: both decouple communicating objects, but Observer broadcasts while Mediator routes centrally
+- **Command**: mediators can receive command objects instead of raw messages, which makes interactions storable and undoable
 - **Facade**: Facade simplifies a subsystem's interface for external callers; Mediator coordinates internal interactions among peers
-- **State**: Mediator and State are often combined so that state transitions trigger coordinated behaviors across colleagues
+- **State**: often combined so that state transitions trigger coordinated behavior across colleagues
 - **Strategy**: Strategy swaps algorithms within a single object; Mediator swaps coordination rules across a group of objects
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
-Producer-Consumer coordination through a mediator with synchronized slot:
+Producer-consumer coordination through a mediator with a synchronized slot:
 
 ```java
 class Mediator {

@@ -1,30 +1,44 @@
 # Factory Method Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Tips for implementation](#tips-for-implementation)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Factory Method is a creational design pattern that delegates object instantiation to specialized methods rather than having client code call constructors directly. A base creator defines the contract for producing objects, while concrete subclasses determine which specific class gets instantiated. This indirection keeps client code decoupled from the concrete types it consumes.
+Factory Method is a creational design pattern that moves object instantiation into dedicated methods instead of having client code call constructors directly. A base creator defines the contract for producing objects, and concrete subclasses decide which class gets instantiated. Client code never depends on the concrete types it consumes.
 
 ## Intent
 
 - Declare a creation interface and let subclasses choose the concrete class to build
 - Move instantiation logic out of client code and into dedicated factory methods
-- Free callers from needing to reference or import concrete product classes
-- Make it straightforward to introduce new product variants without touching existing consumers
+- Free callers from referencing or importing concrete product classes
+- Allow new product variants without touching existing consumers
 
-## Problem & Solution
+## Problem and solution
 
-### The Problem
+### The problem
 
-When you have multiple related classes and the client needs to instantiate them conditionally, direct instantiation leads to:
+When several related classes must be instantiated conditionally, direct instantiation leads to:
 
-- **Tight coupling**: Client code depends on concrete classes
-- **Code duplication**: Multiple `if/else` or `switch` statements checking types
-- **Difficult extension**: Adding new types requires changing client code
-- **Violation of Open/Closed Principle**: Open for extension but closed for modification
+- **Tight coupling**: client code depends on concrete classes
+- **Code duplication**: repeated `if/else` or `switch` statements checking types
+- **Difficult extension**: adding a type means changing client code
+- **Open/Closed violation**: the code cannot be extended without modification
 
-### The Solution
+### The solution
 
-Create factory methods that encapsulate object creation logic. The client uses these methods instead of directly instantiating classes, delegating the "what type to create" decision to the factory.
+Create factory methods that encapsulate object creation. The client calls these methods instead of instantiating classes, and the factory decides which type to create.
 
 ## Structure
 
@@ -60,25 +74,25 @@ Create factory methods that encapsulate object creation logic. The client uses t
                             └────────────────┘
 ```
 
-## When to Use
+## When to use
 
-Use the Factory Method pattern when:
+Use Factory Method when:
 
-- The exact type of object needed cannot be predicted until runtime
-- Subclasses should be the ones deciding which product class to instantiate
-- Object construction logic differs meaningfully across product types
+- The exact type of object needed is not known until runtime
+- Subclasses should decide which product class to instantiate
+- Construction logic differs meaningfully across product types
 - New product variants should be addable without modifying callers
-- You want client code to program against abstractions, not concrete classes
-- Scattered conditional instantiation is creating maintenance headaches
+- Client code should program against abstractions, not concrete classes
+- Conditional instantiation is scattered across the codebase
 
 Avoid when:
 
-- Creation logic is simple and you only have one implementation
-- Adding factory methods adds unnecessary complexity for the use case
+- Creation logic is simple and there is only one implementation
+- The factory adds more complexity than the use case needs
 
 ## Implementation
 
-### Basic Example: Database Connection Factory
+### Basic example: database connection factory
 
 ```php
 <?php declare(strict_types=1);
@@ -164,7 +178,7 @@ $connection->query('SELECT * FROM users');
 $connection->disconnect();
 ```
 
-### Advanced Example: Payment Gateway Factory with Readonly Classes
+### Advanced example: payment gateway factory with readonly classes
 
 ```php
 <?php declare(strict_types=1);
@@ -298,50 +312,50 @@ $response = PaymentGatewayProvider::process(
 echo $response->message;
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Staffing Agency**: A company tells an agency it needs a software engineer. The agency (factory) selects and sends the right candidate (concrete product) without the company managing the recruitment process or knowing which individual will arrive.
+- **Staffing agency**: a company tells an agency it needs a software engineer. The agency (factory) picks and sends the right candidate (concrete product), and the company neither runs the recruitment nor knows in advance who will arrive.
 
-- **Vending Machine**: You press a button for "hot beverage." The machine's internal mechanism (factory method) decides whether to brew coffee, tea, or hot chocolate based on the selection, dispensing the result through the same slot.
+- **Vending machine**: you press the "hot beverage" button. The machine's internals (factory method) decide whether to brew coffee, tea, or hot chocolate, and the result comes out of the same slot.
 
-- **Print Shop**: A customer submits a document and selects the output format. The shop's production line (factory) routes the job to the right printer - laser, inkjet, or large-format - without the customer knowing which machine handles it.
+- **Print shop**: a customer submits a document and selects the output format. The production line (factory) routes the job to a laser, inkjet, or large-format printer without the customer knowing which machine handles it.
 
-## Pros and Cons
+## Pros and cons
 
 ### Pros
 
-- **Loose Coupling**: Client code programs against interfaces, not concrete implementations
-- **Open/Closed Principle**: New product types slot in by adding new factory subclasses, not editing existing code
-- **Single Responsibility**: Construction logic lives in one dedicated place, separate from usage
-- **Code Reusability**: Multiple consumers share the same factory without duplicating creation logic
-- **Centralized Configuration**: All instantiation decisions are consolidated in one location
+- **Loose coupling**: client code programs against interfaces, not concrete implementations
+- **Open/Closed Principle**: new product types are added with new factory subclasses, without editing existing code
+- **Single Responsibility**: construction logic lives in one place, separate from usage
+- **Reuse**: several consumers share one factory without duplicating creation logic
+- **Central configuration**: instantiation decisions are consolidated in one location
 
 ### Cons
 
-- **Added Complexity**: The pattern introduces additional interfaces and classes beyond direct construction
-- **Overhead**: When only one product type exists, the factory layer adds ceremony with no payoff
-- **Learning Curve**: Developers unfamiliar with the pattern may find the indirection confusing at first
-- **Maintenance**: Each new product type requires a corresponding factory class
+- **Extra classes**: the pattern adds interfaces and classes beyond direct construction
+- **Overhead**: with only one product type, the factory layer buys nothing
+- **Indirection**: developers unfamiliar with the pattern may find it confusing at first
+- **Maintenance**: each new product type needs a matching factory class
 
-## Relations with Other Patterns
+## Relations with other patterns
 
-- **Singleton**: Factories often manage singleton instances to ensure one product per type
-- **Strategy**: Frequently paired with Factory Method to select algorithms at runtime
-- **Template Method**: Factory Method can be seen as a specialized form of Template Method focused on creation
-- **Abstract Factory**: Abstract Factory typically uses Factory Methods internally for each product it creates
-- **Dependency Injection**: Modern DI containers serve a similar purpose, automating object wiring at the composition root
-- **Builder**: Builder handles multi-step construction of complex objects; Factory Method handles straightforward single-step creation
+- **Singleton**: factories often manage singleton instances so there is one product per type
+- **Strategy**: often paired with Factory Method to select algorithms at runtime
+- **Template Method**: Factory Method is a specialization of Template Method focused on creation
+- **Abstract Factory**: usually implemented with a Factory Method for each product it creates
+- **Dependency Injection**: DI containers serve a similar purpose by wiring objects at the composition root
+- **Builder**: Builder handles multi-step construction of complex objects; Factory Method handles simple single-step creation
 
-## Tips for Implementation
+## Tips for implementation
 
-1. **Use type hints**: Declare return types and parameter types explicitly
-2. **Leverage modern PHP features**: Use match expressions, readonly classes, enums for variants
-3. **Implement both Creator and Product interfaces**: Provides flexibility for variations
-4. **Consider a simple factory class**: When you only have one factory, use a static factory method or simple factory class
-5. **Prefer composition over inheritance**: Use factory interface implementations rather than factory base classes when possible
-6. **Document the creation strategy**: Make it clear why different implementations exist
+1. **Use type hints**: declare return types and parameter types explicitly
+2. **Use modern PHP features**: match expressions, readonly classes, and enums for variants
+3. **Implement both Creator and Product interfaces**: this keeps variations flexible
+4. **Start with a simple factory class**: when there is only one factory, a static factory method or simple factory class is enough
+5. **Prefer composition over inheritance**: use factory interface implementations rather than factory base classes where possible
+6. **Document the creation strategy**: make clear why different implementations exist
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

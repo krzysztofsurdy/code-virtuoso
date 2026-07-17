@@ -1,18 +1,35 @@
+# Null Object Pattern
+
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation (PHP 8.3+ strict types)](#implementation-php-83-strict-types)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Example: notification service](#example-notification-service)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Null Object pattern is a behavioral design pattern that replaces absent or missing references with a concrete object that implements the expected interface but performs no meaningful work. Instead of scattering `null` checks throughout the codebase, callers receive a benign stand-in that responds to every method call with safe, do-nothing defaults.
+Null Object is a behavioral design pattern that replaces absent references with a concrete object that implements the expected interface but does no meaningful work. Instead of scattering `null` checks through the codebase, callers receive a harmless stand-in that answers every method call with a safe default.
 
 ## Intent
 
 - Remove the need for defensive null checks and conditional guards
 - Represent the absence of a real collaborator as a legitimate, polymorphic object
-- Streamline client code by guaranteeing that every reference points to a usable object
-- Encapsulate the concept of "nothing to do" behind the same interface as the real thing
+- Simplify client code by guaranteeing that every reference points to a usable object
+- Hide the "nothing to do" case behind the same interface as the real thing
 
-## Problem/Solution
+## Problem and solution
 
 ### Problem
-In many applications, you need to handle cases where an object reference might be absent:
+
+An object reference might be absent, so callers have to guard against it:
 
 ```php
 $user = $userRepository->find($id);
@@ -24,9 +41,10 @@ if ($user !== null) {
 }
 ```
 
-This leads to scattered null checks throughout the codebase, making code harder to maintain and more prone to null reference errors.
+The result is null checks scattered across the codebase, which are hard to maintain and easy to forget.
 
 ### Solution
+
 Create a special object that implements the same interface as the real object but performs no-op operations:
 
 ```php
@@ -37,11 +55,11 @@ $user->updateLastLogin();    // Safe to call, does nothing if null
 
 ## Structure
 
-The Null Object pattern consists of:
+Null Object has three parts:
 
-1. **Abstract Component** - Interface defining the contract
-2. **Concrete Component** - Real object with actual behavior
-3. **Null Object** - Implements the same interface with no-op methods
+1. **Abstract Component** - the interface that defines the contract
+2. **Concrete Component** - the real object with actual behavior
+3. **Null Object** - implements the same interface with no-op methods
 
 ```php
 // Abstract Component
@@ -85,16 +103,16 @@ readonly class NullUser implements User {
 }
 ```
 
-## When to Use
+## When to use
 
-- When defensive null checks are spreading across the codebase and cluttering the logic
-- When you want a safe fallback that satisfies the interface contract without side effects
-- When composite or collection structures need "empty" nodes that participate in traversal without special handling
-- When external libraries or APIs may return null and you want a clean boundary
-- When dependency injection containers should always provide a working collaborator, even when the real one is absent
-- When feature toggles need a way to silently disable behavior at the object level
+- Defensive null checks are spreading across the codebase and cluttering the logic
+- You want a safe fallback that satisfies the interface contract without side effects
+- Composite or collection structures need "empty" nodes that take part in traversal without special handling
+- External libraries or APIs may return null and you want a clean boundary
+- A dependency injection container should always provide a working collaborator, even when the real one is absent
+- Feature toggles need a way to silently disable behavior at the object level
 
-## Implementation (PHP 8.3+ Strict Types)
+## Implementation (PHP 8.3+ strict types)
 
 ```php
 <?php
@@ -152,38 +170,40 @@ if ($user->isActive()) {
 }
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Autopilot Disengaged**: When an aircraft's autopilot is off, the flight control system still expects inputs from the autopilot module. A "null autopilot" provides neutral, zero-correction inputs so the system continues operating normally without special-case logic.
-- **Default Ringtone**: A phone without a custom ringtone assigned does not crash when a call arrives. It falls back to a default silent or system tone - a null object for the ringtone slot.
-- **Placeholder Thumbnail**: A media gallery displays a generic grey box for images that have not loaded yet. The placeholder conforms to the same layout contract as a real thumbnail without requiring any special rendering path.
+- **Autopilot disengaged**: when an aircraft's autopilot is off, the flight control system still expects inputs from the autopilot module. A "null autopilot" supplies neutral, zero-correction inputs so the system keeps running without special-case logic.
+- **Default ringtone**: a phone with no custom ringtone does not crash when a call arrives. It falls back to a default or silent tone, a null object for the ringtone slot.
+- **Placeholder thumbnail**: a media gallery shows a generic grey box for images that have not loaded. The placeholder follows the same layout contract as a real thumbnail and needs no special rendering path.
 
-## Pros and Cons
+## Pros and cons
 
 ### Pros
-- Eliminates scattered conditional checks and the errors they cause when forgotten
-- Client code reads more naturally because every reference is guaranteed to be valid
-- The null object participates in polymorphism like any other implementation
-- Testing becomes simpler because there is no need to mock or verify null-handling branches
-- Reduces the surface area for NullPointerException-style runtime failures
+
+- Removes scattered conditional checks and the bugs that appear when one is forgotten
+- Client code reads more naturally because every reference is valid
+- The null object takes part in polymorphism like any other implementation
+- Tests are simpler because there are no null-handling branches to mock or verify
+- Fewer null-reference failures at runtime
 
 ### Cons
-- Silent no-ops can mask genuine bugs where a null return signals an error condition
+
+- Silent no-ops can mask real bugs where a null return signals an error condition
 - If the pattern is applied inconsistently, developers may still write null checks out of habit
-- Tracking down why an operation had no effect is harder when the code does not throw or log
-- Each interface requires its own null object class, which adds to the class count
-- Overly simple scenarios gain little benefit from the extra abstraction
+- It is harder to find out why an operation had no effect when the code neither throws nor logs
+- Each interface needs its own null object class, which adds to the class count
+- Simple scenarios gain little from the extra abstraction
 
-## Relations with Other Patterns
+## Relations with other patterns
 
-- **Strategy Pattern**: Null Object is similar to Strategy with a no-op strategy
-- **Composite Pattern**: Often used together - composite structures have "empty" nodes
-- **Template Method**: Null Object can implement default behaviors via template methods
-- **Decorator Pattern**: Can decorate real objects with logging/validation while null objects skip
-- **Singleton Pattern**: Null Objects are often singletons since they have no state
-- **Optional Type (Modern Alternative)**: PHP's union types or custom Optional classes can serve similar purposes
+- **Strategy**: Null Object is similar to Strategy with a no-op strategy
+- **Composite**: often used together, since composite structures have "empty" nodes
+- **Template Method**: a null object can implement default behavior through template methods
+- **Decorator**: real objects can be decorated with logging or validation while null objects skip it
+- **Singleton**: null objects are often singletons because they have no state
+- **Optional type (alternative)**: PHP union types or custom Optional classes can serve a similar purpose
 
-## Example: Notification Service
+## Example: notification service
 
 ```php
 <?php
@@ -227,13 +247,11 @@ $service = new NotificationService(
 $service->alertUser('Error occurred');  // Sends email
 ```
 
-This pattern is particularly valuable in large applications where null checks can become scattered and difficult to maintain.
-
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
-Example 1: Null output stream that silently discards debug output.
+Example 1: a null output stream that silently discards debug output.
 
 ```java
 import java.io.*;
@@ -275,7 +293,7 @@ public class NullObjectDemo {
 }
 ```
 
-Example 2: Null object with visitor pattern for list processing.
+Example 2: a null object with the Visitor pattern for list processing.
 
 ```java
 interface ListVisitor {

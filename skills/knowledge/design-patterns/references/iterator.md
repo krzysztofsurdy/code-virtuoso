@@ -1,36 +1,49 @@
 # Iterator Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Iterator pattern is a behavioral design pattern that gives callers a uniform way to step through a collection's elements one at a time without revealing how the collection stores them internally. By packaging traversal logic into a dedicated object, it decouples the collection's data structure from the code that consumes its contents.
+Iterator is a behavioral design pattern that gives callers a uniform way to step through a collection's elements one at a time without exposing how the collection stores them. Traversal logic lives in a dedicated object, so the collection's data structure is decoupled from the code that consumes its contents.
 
 ## Intent
 
-- Offer sequential access to a collection's elements through a standard interface
-- Encapsulate traversal state and logic inside a separate iterator object
-- Allow different traversal strategies without modifying the collection itself
-- Separate data storage responsibilities from data traversal responsibilities
-- Permit multiple independent iterations over the same collection simultaneously
-- Keep the collection's internal arrangement invisible to consumers
+- Provide sequential access to a collection's elements through a standard interface
+- Encapsulate traversal state and logic in a separate iterator object
+- Allow different traversal strategies without modifying the collection
+- Separate data storage from data traversal
+- Permit several independent iterations over the same collection at once
+- Keep the collection's internal layout invisible to consumers
 
-## Problem & Solution
+## Problem and solution
 
 ### Problem
 
-1. **Structural Coupling**: Client code that directly indexes arrays, follows linked-list pointers, or walks tree nodes becomes tied to a specific data structure
-2. **Duplicated Traversal Logic**: Each consumer reimplements the same stepping logic, bloating the codebase
-3. **Blurred Responsibilities**: Mixing traversal methods into the collection class dilutes its primary purpose
-4. **Inconsistent APIs**: Different collection types expose different access patterns, forcing clients to learn each one
-5. **Interference Between Traversals**: Two pieces of code iterating the same collection may corrupt each other's position
+1. **Structural coupling**: client code that indexes arrays, follows linked-list pointers, or walks tree nodes becomes tied to one data structure
+2. **Duplicated traversal logic**: each consumer reimplements the same stepping logic
+3. **Blurred responsibilities**: traversal methods mixed into the collection class dilute its main purpose
+4. **Inconsistent APIs**: different collection types expose different access patterns, and clients must learn each one
+5. **Interference between traversals**: two pieces of code iterating the same collection can corrupt each other's position
 
 ### Solution
 
-Create an iterator object that handles the traversal logic independently:
+Create an iterator object that handles traversal independently:
 1. Define an Iterator interface with common traversal methods
-2. Implement concrete iterators for each collection type
-3. Implement a collection method to create and return iterators
-4. Clients use the iterator interface regardless of collection type
-5. Collections remain focused on element management, not traversal
+2. Implement a concrete iterator for each collection type
+3. Give the collection a method that creates and returns iterators
+4. Have clients use the iterator interface regardless of collection type
+5. Keep collections focused on managing elements, not traversing them
 
 ## Structure
 
@@ -48,20 +61,20 @@ Iterator Interface (hasNext(), next(), current(), key(), valid())
     └─ ConcreteCollectionB
 ```
 
-## When to Use
+## When to use
 
-- **Multiple Collection Types**: Need uniform access to different data structures
-- **Complex Traversals**: Support various iteration strategies (forward, backward, filtered, sorted)
-- **Separation of Concerns**: Keep collection and traversal logic separate
-- **Simultaneous Iterations**: Multiple clients need to iterate independently over same collection
-- **Internal Structure Privacy**: Hide collection implementation details
-- **Lazy Loading**: Iterate large datasets without loading all into memory
-- **Graph Traversals**: Implement DFS, BFS, or other graph iteration patterns
-- **Custom Sequences**: Define custom iteration orders beyond default structure order
+- **Multiple collection types**: you need uniform access to different data structures
+- **Complex traversals**: you support several iteration strategies (forward, backward, filtered, sorted)
+- **Separation of concerns**: collection and traversal logic should stay apart
+- **Simultaneous iterations**: several clients iterate the same collection independently
+- **Hidden structure**: collection implementation details should stay private
+- **Lazy loading**: you iterate large datasets without loading everything into memory
+- **Graph traversals**: you implement DFS, BFS, or other graph iteration
+- **Custom sequences**: you need iteration orders other than the structure's default
 
 ## Implementation
 
-### PHP 8.3+ Example: File Collection Iterator
+### PHP 8.3+ example: file collection iterator
 
 ```php
 <?php
@@ -130,7 +143,7 @@ foreach ($iterator as $file) {
 }
 ```
 
-### Database Record Iterator
+### Database record iterator
 
 ```php
 <?php
@@ -196,7 +209,7 @@ foreach ($userRepo->findAllIterator() as $user) {
 }
 ```
 
-### Reverse Iterator Implementation
+### Reverse iterator
 
 ```php
 <?php
@@ -242,44 +255,46 @@ foreach ($reverseIterator as $key => $item) {
 // Output: [2] => cherry, [1] => banana, [0] => apple
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Jukebox Playlist**: A jukebox lets you skip forward and backward through songs without exposing how the tracks are stored internally - vinyl records, CDs, or digital files. The "next track" button is the iterator.
+**Jukebox playlist**: a jukebox lets you skip forward and backward through songs without exposing how the tracks are stored (vinyl, CDs, or digital files). The "next track" button is the iterator.
 
-**Museum Audio Guide**: Visitors follow a numbered tour through exhibits. The audio guide advances from one stop to the next regardless of how the museum is physically laid out, providing a consistent traversal experience.
+**Museum audio guide**: visitors follow a numbered tour through the exhibits. The guide advances from one stop to the next regardless of how the museum is physically laid out.
 
-**TV Channel Surfing**: Pressing the channel-up button on a remote cycles through available stations. The viewer does not need to know whether channels are stored in a hash map, a sorted list, or fetched from a satellite feed.
+**TV channel surfing**: the channel-up button cycles through available stations. The viewer does not need to know whether channels are stored in a hash map, a sorted list, or fetched from a satellite feed.
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
-- **Clean boundaries**: Collection classes manage storage; iterators handle navigation
-- **Focused classes**: Each side owns one responsibility, simplifying maintenance
-- **Consistent access**: The same loop construct works regardless of the underlying data structure
-- **Independent cursors**: Multiple iterations over one collection proceed without interference
-- **Hidden internals**: Clients never see arrays, trees, or linked lists directly
-- **Pluggable traversals**: New iteration strategies can be introduced without touching the collection
-- **On-demand evaluation**: Large or infinite sequences can be iterated lazily
+
+- **Clean boundaries**: collection classes manage storage; iterators handle navigation
+- **Focused classes**: each side owns one responsibility, which simplifies maintenance
+- **Consistent access**: the same loop construct works for any underlying data structure
+- **Independent cursors**: several iterations over one collection proceed without interfering
+- **Hidden internals**: clients never see arrays, trees, or linked lists directly
+- **Pluggable traversals**: new iteration strategies can be added without touching the collection
+- **On-demand evaluation**: large or infinite sequences can be iterated lazily
 
 ### Disadvantages
-- **Extra abstractions**: Iterator and aggregate interfaces add classes to the project
-- **Overhead for simple cases**: A plain array loop is faster and simpler than a custom iterator
-- **State bookkeeping**: Each iterator maintains its own position and validity tracking
+
+- **Extra abstractions**: iterator and aggregate interfaces add classes to the project
+- **Overhead for simple cases**: a plain array loop is faster and simpler than a custom iterator
+- **State bookkeeping**: each iterator tracks its own position and validity
 - **Language overlap**: PHP's built-in `foreach` and `Iterator` interface often make custom iterators redundant
-- **Harder tracing**: Abstraction layers can obscure the actual traversal path during debugging
-- **Mutation hazards**: Modifying a collection while iterating it can produce unpredictable results
+- **Harder tracing**: the abstraction layers can obscure the actual traversal path when debugging
+- **Mutation hazards**: modifying a collection while iterating it can produce unpredictable results
 
-## Relations with Other Patterns
+## Relations with other patterns
 
-- **Composite**: Iterators are the natural tool for walking composite tree structures
-- **Factory Method**: Collections act as factories for their own iterators
-- **Strategy**: Different iterator implementations represent different traversal strategies
-- **Command**: Iteration steps can be wrapped as command objects for deferred execution
-- **Memento**: An iterator's position can be captured and restored via a memento
-- **Template Method**: A base iterator can define the traversal skeleton, letting subclasses customize steps
-- **Visitor**: Works alongside iterators to process each element during traversal
+- **Composite**: iterators are the natural way to walk composite tree structures
+- **Factory Method**: collections act as factories for their own iterators
+- **Strategy**: different iterator implementations represent different traversal strategies
+- **Command**: iteration steps can be wrapped as command objects for deferred execution
+- **Memento**: an iterator's position can be captured and restored with a memento
+- **Template Method**: a base iterator can define the traversal skeleton and let subclasses customize steps
+- **Visitor**: works alongside iterators to process each element during traversal
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

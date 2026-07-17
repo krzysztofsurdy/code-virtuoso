@@ -1,37 +1,50 @@
 # Flyweight Design Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem and solution](#problem-and-solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Flyweight pattern is a structural design pattern that reduces memory consumption by factoring shared, immutable data out of individual objects and consolidating it into a small set of reusable instances. Each flyweight holds only the intrinsic state that is common across many contexts, while the extrinsic state - the part that varies per use - stays outside and is supplied at call time.
+Flyweight is a structural design pattern that reduces memory use by moving shared, immutable data out of individual objects into a small set of reusable instances. Each flyweight holds only the intrinsic state common to many contexts. The extrinsic state, the part that varies per use, stays outside and is passed in at call time.
 
 ## Intent
 
-- Sharply lower memory usage when an application manages large populations of nearly identical objects
-- Pool duplicate state into shared instances governed by a central factory
-- Improve throughput by reducing allocation volume and easing garbage-collection load
-- Make it practical to represent millions of fine-grained objects that would otherwise overwhelm available memory
-- Draw a clear boundary between state that can be shared (intrinsic) and state that must vary per context (extrinsic)
+- Cut memory usage when an application manages large populations of nearly identical objects
+- Pool duplicate state into shared instances managed by a central factory
+- Reduce allocation volume and garbage-collection load
+- Make it practical to represent millions of fine-grained objects
+- Draw a clear boundary between state that can be shared (intrinsic) and state that varies per context (extrinsic)
 
-## Problem & Solution
+## Problem and solution
 
 ### Problem
 
-When an application spawns thousands or millions of similar objects:
+When an application creates thousands or millions of similar objects:
 
-1. **Memory Bloat**: Every object carries a full copy of its data, duplicating identical fields across instances
-2. **Performance Erosion**: Allocating and tracking vast numbers of objects drains both memory and CPU
-3. **Garbage Collection Strain**: The runtime spends disproportionate time managing the lifecycle of numerous short-lived or redundant objects
-4. **Scalability Ceiling**: The application slows or crashes under load as object counts climb
-5. **Redundant State**: The same data values are replicated across many objects with no benefit
+1. **Memory bloat**: every object carries its own copy of the data, duplicating identical fields across instances
+2. **Allocation cost**: allocating and tracking that many objects drains memory and CPU
+3. **Garbage collection pressure**: the runtime spends disproportionate time managing short-lived or redundant objects
+4. **Scalability ceiling**: the application slows or crashes as object counts climb
+5. **Redundant state**: the same values are replicated across many objects for no benefit
 
 ### Solution
 
-Factor out common, immutable data (intrinsic state) into shared flyweight objects and keep context-specific data (extrinsic state) external:
+Move common, immutable data (intrinsic state) into shared flyweight objects and keep context-specific data (extrinsic state) outside:
 
 1. Identify the intrinsic state that is identical across objects and never changes after creation
-2. Store extrinsic state outside the flyweight, passing it in at call time
+2. Store extrinsic state outside the flyweight and pass it in at call time
 3. Use a flyweight factory that returns an existing instance when the requested intrinsic state has already been created
-4. Supply extrinsic state as method arguments rather than embedding it in the flyweight
+4. Supply extrinsic state as method arguments instead of embedding it in the flyweight
 
 ## Structure
 
@@ -55,25 +68,25 @@ Intrinsic State (Shared): stored in Flyweight objects
 ```
 
 Key participants:
-- **Flyweight**: Interface defining operations accepting extrinsic state
-- **ConcreteFlyweight**: Stores intrinsic state; reused across contexts
-- **FlyweightFactory**: Creates/retrieves and pools Flyweight objects
-- **Client**: Maintains extrinsic state and requests Flyweight operations
+- **Flyweight**: interface defining operations that accept extrinsic state
+- **ConcreteFlyweight**: stores intrinsic state and is reused across contexts
+- **FlyweightFactory**: creates, retrieves, and pools Flyweight objects
+- **Client**: holds extrinsic state and requests Flyweight operations
 
-## When to Use
+## When to use
 
-- **Text Editors**: Character objects sharing font/style properties across documents
-- **Game Development**: Rendering thousands of trees, particles, or enemies sharing properties
-- **Web Browsers**: DOM elements with shared CSS styles and properties
-- **Databases**: Query result sets with repeated column values
-- **Caching Systems**: Sharing expensive-to-create objects with identical configurations
-- **String Interning**: Sharing identical strings across the application
-- **Thread Pools**: Reusing thread objects with the same configuration
-- **Connection Pooling**: Sharing database connections with identical properties
+- **Text editors**: character objects sharing font and style properties across documents
+- **Game development**: rendering thousands of trees, particles, or enemies that share properties
+- **Web browsers**: DOM elements with shared CSS styles and properties
+- **Databases**: query result sets with repeated column values
+- **Caching**: sharing expensive-to-create objects that have identical configurations
+- **String interning**: sharing identical strings across the application
+- **Thread pools**: reusing thread objects with the same configuration
+- **Connection pooling**: sharing database connections with identical properties
 
 ## Implementation
 
-### PHP 8.3+ Example: Text Rendering with Flyweight Characters
+### PHP 8.3+ example: text rendering with flyweight characters
 
 ```php
 <?php
@@ -160,7 +173,7 @@ echo $charB->render(14, 'blue');     // renders 'B' in blue
 echo $factory->getFlyweightCount();  // 2 flyweight objects
 ```
 
-### Game Rendering: Particle System with Shared Properties
+### Game rendering: particle system with shared properties
 
 ```php
 <?php
@@ -351,7 +364,7 @@ echo "Particles: " . $system->getParticleCount() . "\n";  // 8000
 echo "Flyweights: " . $system->getFlyweightCount() . "\n"; // 2
 ```
 
-### String Interning: Shared String Flyweights
+### String interning: shared string flyweights
 
 ```php
 <?php
@@ -421,50 +434,52 @@ echo "Pool size: " . $pool->size() . "\n";           // 2 unique strings
 echo "Memory: " . $pool->memoryUsed() . " bytes\n";  // 10 bytes total
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Movable Type Printing**: A print shop keeps one physical block for each letter of the alphabet. To compose a page, the typesetter arranges these shared blocks in the right positions. The blocks (intrinsic state) are reused across every page, while the position on the page (extrinsic state) changes each time.
+**Movable type printing**: a print shop keeps one physical block for each letter of the alphabet. To compose a page, the typesetter arranges these shared blocks in position. The blocks (intrinsic state) are reused on every page, while the position on the page (extrinsic state) changes each time.
 
-**Emoji Keyboard**: Your phone stores each emoji graphic once. When you use the same emoji in dozens of messages, the rendering engine references that single asset and places it at different positions - it does not duplicate the image data for every occurrence.
+**Emoji keyboard**: a phone stores each emoji graphic once. When the same emoji appears in dozens of messages, the rendering engine references that single asset and places it at different positions. It does not duplicate the image data for every occurrence.
 
-**Color Swatches in a Paint Store**: The store maintains one physical swatch card per color. Customers reference these shared cards when choosing paint for their individual rooms. The swatch is shared; the room and wall it applies to are extrinsic.
+**Color swatches in a paint store**: the store keeps one physical swatch card per color. Customers refer to these shared cards when choosing paint for their own rooms. The swatch is shared; the room and wall it applies to are extrinsic.
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
-- **Significant memory savings**: Shared instances replace thousands of near-identical objects
-- **Better throughput**: Fewer allocations mean less work for the garbage collector and lower memory pressure
-- **Graceful scaling**: Applications can manage massive object counts that would otherwise be prohibitive
-- **Single source of truth**: Common data lives in one place, eliminating inconsistent duplicates
-- **Invisible to callers**: The optimization is internal; clients use flyweights through the same interface as regular objects
-- **Enables fine-grained modeling**: You can represent individual characters, pixels, or particles as objects without blowing up memory
+
+- **Memory savings**: shared instances replace thousands of near-identical objects
+- **Throughput**: fewer allocations mean less garbage collection work and lower memory pressure
+- **Scaling**: applications can handle object counts that would otherwise be prohibitive
+- **Single source of truth**: common data lives in one place, so there are no inconsistent duplicates
+- **Transparent to callers**: clients use flyweights through the same interface as regular objects
+- **Fine-grained modeling**: individual characters, pixels, or particles can be objects without exhausting memory
 
 ### Disadvantages
-- **Design complexity**: Deciding what is intrinsic versus extrinsic and managing the split adds architectural overhead
-- **CPU trade-off**: Extrinsic state must be passed or recomputed at each call, which costs CPU cycles
-- **Concurrency concerns**: Shared flyweights must be immutable or protected by synchronization
-- **Harder diagnostics**: Because many contexts share the same object, tracing a bug to a specific usage site is trickier
-- **Break-even threshold**: For small object counts, the factory and pooling machinery may cost more than it saves
-- **Immutability constraint**: Intrinsic state is frozen at creation time and cannot be updated later
 
-## Relations with Other Patterns
+- **Design complexity**: deciding what is intrinsic versus extrinsic and managing the split adds overhead
+- **CPU trade-off**: extrinsic state must be passed or recomputed at each call
+- **Concurrency**: shared flyweights must be immutable or protected by synchronization
+- **Harder debugging**: many contexts share one object, so tracing a bug to a specific usage site is trickier
+- **Break-even point**: for small object counts, the factory and pooling machinery may cost more than it saves
+- **Immutability**: intrinsic state is frozen at creation and cannot be updated later
 
-- **Factory**: The FlyweightFactory is itself a factory that manages a pool of shared instances
-- **Object Pool**: Both reuse objects, but Object Pool manages actively borrowed and returned instances while Flyweight shares immutable data
-- **Composite**: Trees of composite nodes often benefit from flyweight leaves when many leaves share the same properties
-- **Singleton**: Singleton ensures exactly one instance; Flyweight ensures one instance per unique intrinsic-state key
-- **Iterator**: Useful for traversing large collections of flyweight-backed objects efficiently
-- **Visitor**: Pairs well with Flyweight to run operations across large object graphs without modifying shared instances
-- **Facade**: A facade may use flyweights internally to keep its subsystem memory-efficient
-- **State**: State objects that are shared across contexts can be implemented as flyweights
+## Relations with other patterns
+
+- **Factory**: the FlyweightFactory is itself a factory that manages a pool of shared instances
+- **Object Pool**: both reuse objects, but Object Pool manages instances that are borrowed and returned, while Flyweight shares immutable data
+- **Composite**: trees of composite nodes often benefit from flyweight leaves when many leaves share the same properties
+- **Singleton**: Singleton guarantees exactly one instance; Flyweight guarantees one instance per unique intrinsic-state key
+- **Iterator**: useful for traversing large collections of flyweight-backed objects
+- **Visitor**: pairs well with Flyweight to run operations across large object graphs without modifying shared instances
+- **Facade**: a facade may use flyweights internally to keep its subsystem memory-efficient
+- **State**: State objects shared across contexts can be implemented as flyweights
 
 ---
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
-#### Before Refactoring
+#### Before refactoring
 
 ```java
 class Gazillion {
@@ -502,7 +517,7 @@ public class FlyweightDemo {
 }
 ```
 
-#### After Refactoring (with Flyweight Factory)
+#### After refactoring (with Flyweight Factory)
 
 ```java
 class Gazillion {
@@ -549,7 +564,7 @@ public class FlyweightDemo {
 
 ### C++
 
-#### Before Refactoring
+#### Before refactoring
 
 ```cpp
 class Gazillion {
@@ -581,7 +596,7 @@ int main() {
 }
 ```
 
-#### After Refactoring (with Flyweight Factory)
+#### After refactoring (with Flyweight Factory)
 
 ```cpp
 class Gazillion {
