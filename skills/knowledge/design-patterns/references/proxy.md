@@ -1,20 +1,33 @@
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem/Solution](#problemsolution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation (PHP 8.3+)](#implementation-php-83)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Proxy Pattern is a structural design pattern that interposes a stand-in object between clients and the real target. This intermediary shares the same interface as the target and can layer on additional behavior - such as lazy loading, permission checks, result caching, or request logging - without the client ever knowing it is not talking to the real thing.
+Proxy is a structural design pattern that places a stand-in object between clients and the real target. The proxy has the same interface as the target and can add behavior such as lazy loading, permission checks, result caching, or request logging, and the client never knows it is not talking to the real object.
 
 ## Intent
 
-The Proxy Pattern aims to:
-- Supply a stand-in for another object in order to manage access to it
-- Postpone the creation of heavyweight objects until the moment they are actually needed
-- Layer on cross-cutting concerns like authorization, caching, and auditing transparently
+Proxy aims to:
+- Provide a stand-in for another object to control access to it
+- Postpone creating heavyweight objects until they are needed
+- Add cross-cutting concerns such as authorization, caching, and auditing transparently
 - Keep these auxiliary responsibilities out of the real subject's code
 
 ## Problem/Solution
 
-**Problem:** You want to defer expensive initialization, gate access to sensitive resources, record method invocations, or cache return values - all without cluttering the target class. Embedding this logic directly in the subject breaks the Single Responsibility Principle and becomes hard to evolve.
+**Problem:** You want to defer expensive initialization, gate access to sensitive resources, record method calls, or cache return values, without cluttering the target class. Putting this logic in the subject breaks the Single Responsibility Principle and is hard to evolve.
 
-**Solution:** Create a proxy class that implements the same interface as the real subject. The proxy intercepts client requests, applies its extra logic (lazy instantiation, permission verification, logging, caching), and forwards the call to the actual subject. From the client's perspective, nothing changes.
+**Solution:** Create a proxy class that implements the same interface as the real subject. The proxy intercepts client requests, applies its extra logic (lazy instantiation, permission checks, logging, caching), and forwards the call to the real subject. From the client's perspective nothing changes.
 
 ## Structure
 
@@ -37,19 +50,19 @@ The Proxy Pattern aims to:
            RealSubject
 ```
 
-## When to Use
+## When to use
 
-- **Lazy Initialization:** Hold off on creating resource-heavy objects until the first access
-- **Access Control:** Enforce permission checks before allowing operations on the real object
-- **Logging & Auditing:** Record every interaction with the real object for tracing or compliance
-- **Caching:** Store method results to prevent redundant expensive calls
-- **Remote Objects:** Represent services running on other machines behind a local interface
-- **Copy-on-Write:** Use a lightweight wrapper that only duplicates the underlying data when a mutation occurs
-- **Smart References:** Attach reference counting or automatic cleanup logic to object access
+- **Lazy initialization:** delay creating resource-heavy objects until first access
+- **Access control:** check permissions before allowing operations on the real object
+- **Logging and auditing:** record every interaction with the real object for tracing or compliance
+- **Caching:** store method results to avoid repeated expensive calls
+- **Remote objects:** represent services running on other machines behind a local interface
+- **Copy-on-write:** use a lightweight wrapper that duplicates the underlying data only when a mutation occurs
+- **Smart references:** attach reference counting or automatic cleanup to object access
 
 ## Implementation (PHP 8.3+)
 
-### Subject Interface
+### Subject interface
 
 ```php
 <?php
@@ -64,7 +77,7 @@ interface DocumentInterface
 }
 ```
 
-### Real Subject
+### Real subject
 
 ```php
 <?php
@@ -97,7 +110,7 @@ readonly class Document implements DocumentInterface
 }
 ```
 
-### Proxy Implementation
+### Proxy implementation
 
 ```php
 <?php
@@ -167,7 +180,7 @@ readonly class DocumentProxy implements DocumentInterface
 }
 ```
 
-### Usage Example
+### Usage example
 
 ```php
 <?php
@@ -198,42 +211,42 @@ try {
 }
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Hotel Key Card (Access Control Proxy):** The card gates entry to rooms without requiring a manager to escort every guest
-- **Proxy Voting (Delegation):** A designated representative casts votes on your behalf when you cannot attend
-- **Bank Check (Protection Proxy):** A check stands in for actual currency, protecting the account holder from carrying cash
-- **Remote Control (Remote Proxy):** Lets you operate a television from across the room without touching its circuitry
-- **Library Catalog (Virtual Proxy):** Displays book metadata without physically loading the book itself
+- **Hotel key card (access control proxy):** The card gates entry to rooms without a manager escorting every guest
+- **Proxy voting (delegation):** A representative casts votes on your behalf when you cannot attend
+- **Bank check (protection proxy):** A check stands in for cash, so the account holder does not have to carry it
+- **Remote control (remote proxy):** Lets you operate a television from across the room without touching its circuitry
+- **Library catalog (virtual proxy):** Shows book metadata without fetching the book itself
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
 
-- **Separation of Concerns:** Keeps access-control logic outside the real subject
-- **Lazy Initialization:** Heavyweight objects are allocated only when first used
-- **Client Transparency:** Callers interact through the same interface and need no code changes
-- **Extensibility:** Logging, caching, and security can be added without modifying the subject
-- **Open/Closed Principle:** New proxy behaviors can be introduced without touching existing classes
+- **Separation of concerns:** access-control logic stays outside the real subject
+- **Lazy initialization:** heavyweight objects are allocated only when first used
+- **Client transparency:** callers use the same interface and need no code changes
+- **Extensibility:** logging, caching, and security can be added without modifying the subject
+- **Open/Closed Principle:** new proxy behaviors can be added without touching existing classes
 
 ### Disadvantages
 
-- **Structural Overhead:** Every proxied class requires a corresponding wrapper object
-- **Indirection Cost:** Each method call passes through an extra layer
-- **Latency Surprises:** Deferred initialization can cause unexpected pauses on first access
-- **Test Complexity:** The proxy layer adds another component to mock or stub in tests
+- **Structural overhead:** every proxied class needs a matching wrapper class
+- **Indirection cost:** each method call passes through an extra layer
+- **Latency surprises:** deferred initialization can cause a pause on first access
+- **Test complexity:** the proxy is one more component to mock or stub in tests
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 - **Adapter:** Both wrap another object, but Adapter changes the interface while Proxy preserves it
 - **Decorator:** Both use composition and delegation; Decorator enriches behavior, Proxy controls access
 - **Factory:** Factories can produce proxies, and proxies can lazily instantiate real subjects
-- **Strategy:** Can complement each other - the proxy manages access while a strategy encapsulates the algorithm
-- **Virtual Proxy vs Lazy Initialization:** A virtual proxy is one specific application of the Proxy pattern focused on deferred creation
-- **Protection Proxy vs Access Control:** A protection proxy restricts operations based on caller identity or permissions
-- **Remote Proxy:** A specialized variant for distributed systems, typically sitting in front of network services
+- **Strategy:** The two can complement each other: the proxy manages access while a strategy encapsulates the algorithm
+- **Virtual proxy vs lazy initialization:** A virtual proxy is the application of Proxy focused on deferred creation
+- **Protection proxy vs access control:** A protection proxy restricts operations based on caller identity or permissions
+- **Remote proxy:** A variant for distributed systems, usually sitting in front of network services
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -321,7 +334,7 @@ public class ProxyDemo {
 
 ### C++
 
-#### Example 1: Lazy Initialization Proxy
+#### Example 1: Lazy initialization proxy
 
 Before (all objects created eagerly):
 
@@ -403,7 +416,7 @@ int main() {
 }
 ```
 
-#### Example 2: Operator Overloading Proxy
+#### Example 2: Operator overloading proxy
 
 ```cpp
 #include <iostream>
@@ -461,7 +474,6 @@ int main() {
 ```python
 import abc
 
-
 class Subject(metaclass=abc.ABCMeta):
     """
     Define the common interface for RealSubject and Proxy so that a
@@ -471,7 +483,6 @@ class Subject(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def request(self):
         pass
-
 
 class Proxy(Subject):
     """
@@ -487,7 +498,6 @@ class Proxy(Subject):
         self._real_subject.request()
         # ...
 
-
 class RealSubject(Subject):
     """
     Define the real object that the proxy represents.
@@ -496,12 +506,10 @@ class RealSubject(Subject):
     def request(self):
         pass
 
-
 def main():
     real_subject = RealSubject()
     proxy = Proxy(real_subject)
     proxy.request()
-
 
 if __name__ == "__main__":
     main()

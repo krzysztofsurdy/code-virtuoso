@@ -1,27 +1,40 @@
 # Prototype Design Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem/Solution](#problemsolution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation (PHP 8.3+)](#implementation-php-83)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Prototype pattern is a creational design pattern that produces new objects by duplicating an existing instance rather than constructing them from scratch. It is especially valuable when object creation is resource-intensive, involves complex setup, or when you want to maintain a catalog of ready-made object templates.
+Prototype is a creational design pattern that creates new objects by copying an existing instance instead of constructing them from scratch. It is most useful when creation is expensive, setup is complex, or you want a catalog of ready-made object templates.
 
 ## Intent
 
-- Generate new objects by cloning a pre-existing prototype instance
-- Avoid the overhead of expensive or elaborate construction processes
-- Support configuring objects through prototype-based copying
-- Enable object duplication without depending on the concrete class
+- Create new objects by cloning an existing prototype instance
+- Avoid the cost of expensive or elaborate construction
+- Configure objects by copying a prototype
+- Duplicate objects without depending on their concrete class
 
 ## Problem/Solution
 
 ### Problem
 Direct instantiation becomes impractical when:
-- Building an object requires significant computation or I/O
-- The object carries numerous configuration properties
+- Building an object takes significant computation or I/O
+- The object has many configuration properties
 - You need many slight variations of the same base object
-- The concrete type to create is determined only at runtime
+- The concrete type to create is known only at runtime
 
 ### Solution
-Rather than invoking constructors directly, designate a prototype instance and clone it whenever a new object is needed. This decouples the creation logic from client code and replaces constructor calls with copy operations.
+Instead of calling constructors, keep a prototype instance and clone it whenever you need a new object. Client code no longer contains the creation logic, and constructor calls become copy operations.
 
 ## Structure
 
@@ -43,18 +56,17 @@ Key participants:
 - **ConcretePrototype**: Implements the clone method
 - **Client**: Creates new objects by cloning the prototype
 
-## When to Use
+## When to use
 
 - Object construction is costly or involves multi-step initialization
-- You want to sidestep creating parallel hierarchies of factory subclasses
-- Client code should remain independent of concrete product classes
-- Objects need to be configured and varied at runtime
-- Type-safe copying of objects is required
-- You prefer not to expose the internal structure of objects to callers
+- You want to avoid parallel hierarchies of factory subclasses
+- Client code should stay independent of concrete product classes
+- Objects must be configured and varied at runtime
+- You do not want to expose the internal structure of objects to callers
 
 ## Implementation (PHP 8.3+)
 
-### Basic Prototype Example
+### Basic Prototype example
 
 ```php
 declare(strict_types=1);
@@ -157,7 +169,7 @@ echo $originalCircle->describe(); // Circle: radius=5, color=red
 echo $clonedCircle->describe();   // Circle: radius=10, color=red
 ```
 
-### Advanced Example with Prototype Registry
+### Advanced example with a prototype registry
 
 ```php
 declare(strict_types=1);
@@ -204,7 +216,7 @@ if ($newCircle) {
 }
 ```
 
-### Complex Object with Deep Cloning
+### Complex object with deep cloning
 
 ```php
 declare(strict_types=1);
@@ -277,45 +289,41 @@ echo $doc1->describe(); // Document: title=Report, author=John Doe
 echo $doc2->describe(); // Document: title=Report, author=John Doe
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Photocopier**: You place an original document on the glass and the machine produces identical duplicates on demand
-- **DNA Replication**: Before a cell divides, it creates a full copy of its genetic material to pass along
-- **Application Templates**: Software deployment tools stamp out identical installations from a golden image
-- **Game Asset Cloning**: Game engines duplicate enemy or item prototypes at runtime instead of rebuilding each one from scratch
-- **Database Snapshots**: A snapshot captures the current configuration of a database so it can be reproduced elsewhere
+- **Photocopier**: You place an original on the glass and the machine produces identical copies on demand
+- **DNA replication**: Before a cell divides, it copies its genetic material
+- **Application templates**: Deployment tools create identical installations from a golden image
+- **Game asset cloning**: Game engines duplicate enemy or item prototypes at runtime instead of rebuilding each one
+- **Database snapshots**: A snapshot captures the current state of a database so it can be reproduced elsewhere
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
-- Cuts down the cost of creating complex, heavily initialized objects
-- Eliminates the need for parallel factory subclass hierarchies
-- Streamlines initialization when configuration is elaborate
-- Permits new object types to appear at runtime through cloning
-- Efficient reuse of pre-built object templates
-- Keeps client code independent of concrete product classes
+- Cuts the cost of creating complex, heavily initialized objects
+- No need for parallel factory subclass hierarchies
+- Simpler initialization when configuration is elaborate
+- New object types can appear at runtime through cloning
+- Pre-built object templates are reused
+- Client code stays independent of concrete product classes
 
 ### Disadvantages
-- Correctly implementing clone() is difficult when objects contain circular references
-- Deep copying can sometimes be more expensive than fresh construction
+- Implementing clone() correctly is hard when objects contain circular references
+- Deep copying can cost more than fresh construction
 - Every clone() method must be updated whenever the object's internal structure changes
-- May obscure the true dependencies between objects
-- Bugs can creep in when shallow and deep copy semantics are confused
+- Can hide the real dependencies between objects
+- Confusing shallow and deep copy semantics causes bugs
 
-## Relations with Other Patterns
+## Relations with other patterns
 
-- **Abstract Factory**: Both abstract away creation, but Prototype relies on copying while Abstract Factory calls constructors
-- **Factory Method**: Shares the goal of hiding creation details; Factory Method builds new instances, Prototype duplicates existing ones
-- **Singleton**: Conceptually opposite - Singleton restricts to one instance, Prototype encourages many copies
-- **Builder**: Both tackle complex object assembly; Builder does it step by step, Prototype does it in a single copy
-- **Composite**: Frequently combined with Prototype to clone entire tree structures
+- **Abstract Factory**: Both hide creation, but Prototype copies while Abstract Factory calls constructors
+- **Factory Method**: Both hide creation details; Factory Method builds new instances, Prototype duplicates existing ones
+- **Singleton**: Opposite goals: Singleton restricts a class to one instance, Prototype produces many copies
+- **Builder**: Both deal with complex object assembly; Builder works step by step, Prototype in a single copy
+- **Composite**: Often combined with Prototype to clone whole tree structures
 - **Decorator**: Can be paired with Prototype to clone decorated objects
 
----
-
-*Last updated: February 2026*
-
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -514,18 +522,15 @@ int main() {
 ```python
 import copy
 
-
 class Prototype:
     """
     Example class to be copied.
     """
     pass
 
-
 def main():
     prototype = Prototype()
     prototype_copy = copy.deepcopy(prototype)
-
 
 if __name__ == "__main__":
     main()

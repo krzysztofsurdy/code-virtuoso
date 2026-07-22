@@ -1,30 +1,43 @@
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem & solution](#problem--solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The State pattern is a behavioral design pattern that lets an object alter its behavior when its internal state changes. The object will appear to change its class dynamically. Instead of using large conditional statements to handle different states, this pattern encapsulates state-specific behavior into separate state classes, allowing clean state transitions.
+State is a behavioral design pattern that lets an object change its behavior when its internal state changes, so it appears to change its class. Instead of large conditionals, state-specific behavior lives in separate state classes, and transitions swap one state object for another.
 
 ## Intent
 
-- Allow an object to alter its behavior when its internal state changes
+- Let an object change its behavior when its internal state changes
 - Encapsulate state-specific behavior in separate classes
-- Simplify state management by delegating behavior to state objects
-- Eliminate conditional logic for state-dependent operations
-- Make state transitions explicit and manageable
+- Delegate behavior to state objects to simplify state management
+- Remove conditional logic for state-dependent operations
+- Make state transitions explicit
 
-## Problem & Solution
+## Problem & solution
 
 ### Problem
 
-Many objects exhibit behavior that varies based on their internal state. Typically, this leads to:
+Many objects behave differently depending on internal state. This usually leads to:
 
-1. **Complex Conditional Logic**: Large if-else or switch statements to handle different states
-2. **Tight Coupling**: State-related logic scattered throughout the class
-3. **Hard to Maintain**: Adding new states requires modifying existing code
-4. **Error-Prone State Transitions**: Inconsistent state management and invalid transitions
-5. **Violated Single Responsibility**: Class handles both core logic and state management
+1. **Complex conditional logic**: large if-else or switch statements for each state
+2. **Tight coupling**: state-related logic scattered through the class
+3. **Hard maintenance**: adding a state means modifying existing code
+4. **Error-prone transitions**: inconsistent state handling and invalid transitions
+5. **Violated Single Responsibility**: the class handles both core logic and state management
 
 ### Solution
 
-Extract state-specific behavior into separate state classes that implement a common interface. The context object delegates behavior to the current state object. When the state changes, the context switches to a different state object, automatically changing behavior without complex conditionals.
+Move state-specific behavior into separate state classes that implement a common interface. The context object delegates to its current state object. When the state changes, the context switches to a different state object and the behavior changes with it, with no conditionals.
 
 ## Structure
 
@@ -44,19 +57,18 @@ ConcreteStateB
 ├── handle(Context)
 ```
 
-## When to Use
+## When to use
 
 - An object's behavior depends on its state and must change at runtime
-- Large conditional statements in an object based on multiple states
-- Code contains switch/case statements that need to change frequently
+- An object has large conditional statements that depend on multiple states
+- Switch/case statements on state keep needing changes
 - State transitions follow a predictable pattern
-- You want to avoid long conditional chains
 - Multiple operations depend on the same state conditions
-- Object state determines what methods are valid to call
+- Object state determines which methods are valid to call
 
 ## Implementation
 
-### PHP 8.3+ Example: Document Workflow
+### PHP 8.3+ example: document workflow
 
 ```php
 <?php
@@ -174,7 +186,7 @@ $doc->publish(); // Review → Published
 echo $doc->getStatus() . "\n";
 ```
 
-### Order Processing Example
+### Order processing example
 
 ```php
 <?php
@@ -301,44 +313,44 @@ $order->receive();
 echo $order->getStatus() . "\n";
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**TCP Connection**: A TCP socket has different states (LISTEN, ESTABLISHED, CLOSE_WAIT). Each state handles the same operations differently. Sending data behaves differently depending on current state.
+**TCP connection**: A TCP socket has states such as LISTEN, ESTABLISHED, and CLOSE_WAIT. Each state handles the same operations differently. Sending data, for example, behaves differently depending on the current state.
 
-**Media Player**: A media player can be playing, paused, or stopped. The play button behaves differently in each state - it resumes from paused state but starts from beginning in stopped state.
+**Media player**: A media player can be playing, paused, or stopped. The play button behaves differently in each: it resumes when paused and starts from the beginning when stopped.
 
-**Vending Machine**: A vending machine has different states (idle, accepting coins, dispensing). Button presses have different effects depending on current state.
+**Vending machine**: A vending machine has states such as idle, accepting coins, and dispensing. A button press has a different effect in each.
 
-**Traffic Light**: A traffic light has red, yellow, and green states. Each state determines which transitions are valid and what behavior follows.
+**Traffic light**: A traffic light has red, yellow, and green states. Each state determines which transitions are valid and what happens next.
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
-- **Single Responsibility**: Each state class handles one state's logic
-- **Open/Closed Principle**: New states can be added without modifying existing state classes
-- **Eliminates Conditionals**: Replaces large if-else chains with polymorphism
-- **Explicit State Transitions**: State changes are clear and manageable
-- **Encapsulation**: State-specific logic is hidden within state classes
-- **Reusability**: States can be shared across multiple context instances
+- **Single Responsibility**: each state class handles one state's logic
+- **Open/Closed Principle**: new states can be added without modifying existing state classes
+- **No conditionals**: polymorphism replaces large if-else chains
+- **Explicit transitions**: state changes are easy to see and manage
+- **Encapsulation**: state-specific logic stays inside state classes
+- **Reusability**: states can be shared across context instances
 
 ### Disadvantages
-- **Increased Classes**: Creates many state classes, increasing overall complexity
-- **Overhead for Simple States**: Overkill if object has only one or two states
-- **Indirection**: May make code flow harder to follow with method delegation
-- **Memory Usage**: Each state instance consumes memory
-- **State Initialization**: Complex initialization logic for states with dependencies
+- **More classes**: many state classes add to overall complexity
+- **Overhead for simple cases**: overkill if the object has only one or two states
+- **Indirection**: method delegation can make the code flow harder to follow
+- **Memory usage**: each state instance takes memory
+- **State initialization**: states with dependencies need more complex initialization
 
-## Relations with Other Patterns
+## Relations with other patterns
 
-- **Strategy**: Both encapsulate behavior selection, but Strategy is chosen by client; State is changed internally
-- **Bridge**: Both vary implementation independently of abstraction
+- **Strategy**: Both encapsulate behavior selection, but the client chooses a Strategy while State changes internally
+- **Bridge**: Both vary the implementation independently of the abstraction
 - **Singleton**: Individual state instances are often Singletons
 - **Factory**: State creation can use Factory Method or Abstract Factory
 - **Template Method**: State classes can use Template Method for similar state behaviors
-- **Memento**: Useful to save/restore state transitions
-- **Builder**: Can combine to build complex state machines
+- **Memento**: Useful for saving and restoring state
+- **Builder**: Can be combined to build complex state machines
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -515,7 +527,6 @@ int main() {
 ```python
 import abc
 
-
 class Context:
     """
     Define the interface of interest to clients.
@@ -529,7 +540,6 @@ class Context:
     def request(self):
         self._state.handle()
 
-
 class State(metaclass=abc.ABCMeta):
     """
     Define an interface for encapsulating the behavior associated with a
@@ -540,7 +550,6 @@ class State(metaclass=abc.ABCMeta):
     def handle(self):
         pass
 
-
 class ConcreteStateA(State):
     """
     Implement a behavior associated with a state of the Context.
@@ -548,7 +557,6 @@ class ConcreteStateA(State):
 
     def handle(self):
         pass
-
 
 class ConcreteStateB(State):
     """
@@ -558,12 +566,10 @@ class ConcreteStateB(State):
     def handle(self):
         pass
 
-
 def main():
     concrete_state_a = ConcreteStateA()
     context = Context(concrete_state_a)
     context.request()
-
 
 if __name__ == "__main__":
     main()

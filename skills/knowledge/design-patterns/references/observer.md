@@ -1,29 +1,44 @@
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem](#problem)
+- [Solution](#solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Key takeaways](#key-takeaways)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Observer pattern is a behavioral design pattern that sets up a notification system between a subject and its dependents. Whenever the subject undergoes a state change, every registered observer is automatically informed and can react accordingly. This pattern forms the backbone of event-driven architectures and reactive programming models.
+Observer is a behavioral design pattern that sets up a notification system between a subject and its dependents. When the subject's state changes, every registered observer is told and can react. It is the basis of event-driven architectures and reactive programming.
 
 ## Intent
 
-- Establish a one-to-many relationship where changes in one object propagate to many
-- Keep communicating objects loosely coupled from one another
-- Offer a well-defined interface for broadcasting events
-- Support flexible registration and removal of observers at any time
+- Establish a one-to-many relationship where a change in one object propagates to many
+- Keep communicating objects loosely coupled
+- Provide a defined interface for broadcasting events
+- Allow observers to be registered and removed at any time
 
 ## Problem
 
-When multiple objects must stay synchronized with a changing data source:
+Several objects must stay in sync with a changing data source:
 - Direct references between objects create rigid dependencies
-- Embedding notification logic directly in classes limits extensibility
-- Introducing new listeners means rewriting existing source code
-- Coordinating numerous notifications by hand is fragile and bug-prone
+- Notification logic embedded in the source class limits extensibility
+- Adding a new listener means editing existing code
+- Coordinating many notifications by hand is fragile
 
 ## Solution
 
-Decouple the data source from its dependents through a publish-subscribe mechanism:
+Decouple the data source from its dependents with a publish-subscribe mechanism:
 - The subject holds a collection of observer references
-- All observers share a common update interface
-- On any state change, the subject iterates through its observers and calls their update method
-- Neither the subject nor the observers need knowledge of each other's internals
+- All observers share one update interface
+- On a state change, the subject iterates over its observers and calls their update method
+- Neither side needs to know the other's internals
 
 ## Structure
 
@@ -46,9 +61,9 @@ Decouple the data source from its dependents through a publish-subscribe mechani
 └─────────────────┘
 ```
 
-## When to Use
+## When to use
 
-- Event-driven applications (GUI interactions, user action handling)
+- Event-driven applications (GUI interactions, user actions)
 - Live data feeds (financial tickers, IoT sensor streams, weather updates)
 - MVC architectures where views must reflect model changes
 - Publish-subscribe messaging and event bus systems
@@ -58,7 +73,7 @@ Decouple the data source from its dependents through a publish-subscribe mechani
 
 ## Implementation
 
-### PHP 8.3+ Strict Types
+### PHP 8.3+ strict types
 
 ```php
 <?php
@@ -179,47 +194,47 @@ $subject->detach($observerA);
 $subject->setState(100); // Only observerB is notified
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Newsletter Subscription**: A publisher maintains a mailing list. Each time a new edition goes out, every subscriber on the list receives it without the publisher needing to know the details of each reader.
-- **Event Listeners**: A GUI button keeps a registry of click handlers. When the button is pressed, it fires each handler in sequence.
-- **Weather Station**: A meteorological service pushes temperature readings to all connected weather apps whenever conditions change.
-- **Stock Price Updates**: A trading platform distributes real-time price changes to brokers and automated trading systems.
+- **Newsletter subscription**: A publisher keeps a mailing list. Each new edition goes to every subscriber, and the publisher needs no details about individual readers.
+- **Event listeners**: A GUI button keeps a registry of click handlers. When the button is pressed, it calls each handler in turn.
+- **Weather station**: A meteorological service pushes temperature readings to every connected weather app when conditions change.
+- **Stock price updates**: A trading platform sends real-time price changes to brokers and automated trading systems.
 
-## Pros and Cons
+## Pros and cons
 
 ### Pros
 - Subject and observers remain decoupled; either side can evolve independently
 - Observers can subscribe or unsubscribe dynamically at runtime
 - New observer types can be introduced without altering the subject
-- Supports flexible, dynamic relationships between components
-- Natural fit for event-driven and reactive system designs
-- Adheres to the Open/Closed Principle
+- Relationships between components can change at runtime
+- Fits event-driven and reactive designs
+- Follows the Open/Closed Principle
 
 ### Cons
-- The order in which observers receive notifications is generally undefined
+- The order in which observers are notified is generally undefined
 - Forgetting to unregister observers can cause memory leaks
-- A large number of observers may degrade notification performance
-- Tracing program flow through observer chains can be challenging
-- Careless designs risk creating circular notification loops
-- Without filtering, every observer receives every event regardless of relevance
+- A large number of observers can slow down notification
+- Tracing program flow through observer chains is hard
+- A careless design can create circular notification loops
+- Without filtering, every observer receives every event, relevant or not
 
-## Relations with Other Patterns
+## Relations with other patterns
 
-- **Mediator**: Both reduce direct coupling, but a mediator actively coordinates interactions rather than passively broadcasting
-- **Pub-Sub**: Observer works at the object level; Pub-Sub typically spans processes or network boundaries
-- **Event Sourcing**: Builds on the observer concept to persist and replay event streams
+- **Mediator**: Both reduce direct coupling, but a mediator coordinates interactions while an observer subject only broadcasts
+- **Pub-Sub**: Observer works at the object level; Pub-Sub usually spans processes or network boundaries
+- **Event Sourcing**: Builds on the observer idea to persist and replay event streams
 - **Model-View-Controller**: The view layer observes and reacts to model state changes
 - **Singleton**: The subject is frequently implemented as a singleton
-- **Iterator**: Commonly used internally to walk the list of observers during notification
+- **Iterator**: Often used internally to walk the observer list during notification
 - **Command**: Commands can trigger observer notifications as a side effect
-- **Strategy**: Observers can employ different strategies to handle incoming notifications
+- **Strategy**: Observers can use different strategies to handle incoming notifications
 
-## Key Takeaways
+## Key takeaways
 
-The Observer pattern is indispensable for building decoupled, event-driven systems. It underpins MVC frameworks and reactive libraries, making it one of the most widely applied patterns in modern PHP development. Successful use requires diligent observer cleanup to avoid memory leaks, careful thought about notification ordering, and performance awareness when the observer list grows large.
+Observer underpins MVC frameworks and reactive libraries and is one of the most widely used patterns in PHP. Clean up observers you no longer need to avoid memory leaks, decide whether notification order matters, and watch performance as the observer list grows.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -532,7 +547,6 @@ int main() {
 ```python
 import abc
 
-
 class Subject:
     """
     Know its observers. Any number of Observer objects may observe a
@@ -565,7 +579,6 @@ class Subject:
         self._subject_state = arg
         self._notify()
 
-
 class Observer(metaclass=abc.ABCMeta):
     """
     Define an updating interface for objects that should be notified of
@@ -580,7 +593,6 @@ class Observer(metaclass=abc.ABCMeta):
     def update(self, arg):
         pass
 
-
 class ConcreteObserver(Observer):
     """
     Implement the Observer updating interface to keep its state
@@ -590,13 +602,11 @@ class ConcreteObserver(Observer):
     def update(self, arg):
         self._observer_state = arg
 
-
 def main():
     subject = Subject()
     concrete_observer = ConcreteObserver()
     subject.attach(concrete_observer)
     subject.subject_state = 123
-
 
 if __name__ == "__main__":
     main()

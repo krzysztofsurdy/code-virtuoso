@@ -1,35 +1,48 @@
 # Singleton Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem & solution](#problem--solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Singleton pattern is a creational design pattern that restricts a class to exactly one instance while exposing a well-known access point for it. It merges instantiation control with global reachability, guaranteeing that a single object of a given class exists for the entire lifetime of the application.
+Singleton is a creational design pattern that restricts a class to exactly one instance and gives it a well-known access point. It combines instantiation control with global access, so one object of the class exists for the lifetime of the application.
 
 ## Intent
 
 - Guarantee that only one instance of a class is ever created
-- Expose a single, globally accessible entry point to that instance
-- Centralize the management of a shared resource behind controlled instantiation
-- Defer creation of expensive resources until the moment they are first requested
-- Block uncontrolled proliferation of duplicate instances
+- Provide a single, globally accessible entry point to that instance
+- Manage a shared resource in one place behind controlled instantiation
+- Defer creation of expensive resources until first use
+- Prevent duplicate instances
 
-## Problem & Solution
+## Problem & solution
 
 ### Problem
 
-Certain application resources must exist as a single, shared object:
+Some application resources must exist as a single shared object:
 
-1. **Uncontrolled Instantiation**: Without safeguards, any part of the codebase can spin up new instances, leading to conflicting state
-2. **Resource Waste**: Duplicating expensive objects like database connections or logger instances burns memory and handles for no benefit
-3. **State Inconsistency**: When different modules hold separate instances, their internal state drifts apart, causing subtle synchronization bugs
-4. **Scattered Access**: Without a centralized accessor, code that needs the shared resource must thread it through constructors and method signatures everywhere
+1. **Uncontrolled instantiation**: without safeguards, any code can create new instances, leading to conflicting state
+2. **Resource waste**: duplicating expensive objects such as database connections or loggers wastes memory and handles
+3. **State inconsistency**: when modules hold separate instances, their state drifts apart and causes subtle synchronization bugs
+4. **Scattered access**: without a central accessor, the shared resource has to be passed through constructors and method signatures everywhere
 
 ### Solution
 
-Design the class so it manages its own instantiation:
+Make the class manage its own instantiation:
 1. Make the constructor private so external code cannot call `new`
-2. Store a static reference to the sole instance inside the class itself
-3. Provide a public static method that returns this reference, creating it on first call
-4. Optionally use lazy initialization to defer construction until first access
+2. Store a static reference to the sole instance inside the class
+3. Provide a public static method that returns this reference, creating it on the first call
+4. Optionally use lazy initialization so construction waits until first access
 
 ## Structure
 
@@ -44,19 +57,19 @@ Singleton
 └── static getInstance(): Singleton
 ```
 
-## When to Use
+## When to use
 
-- **Logging Frameworks**: A single logger shared by every component in the system
-- **Database Connections**: One connection pool or primary connection managed centrally
-- **Configuration Managers**: Application-wide settings served from a single authoritative source
-- **Caching Systems**: A unified cache that all consumers read from and write to
-- **Session Managers**: Centralized session tracking across the request lifecycle
-- **Thread Pools/Executors**: One pool governing all asynchronous task scheduling
-- **Resource Pools**: Controlled allocation of scarce resources like file handles or network sockets
+- **Logging frameworks**: a single logger shared by every component
+- **Database connections**: one connection pool or primary connection managed centrally
+- **Configuration managers**: application-wide settings served from a single source
+- **Caching systems**: one cache that all consumers read from and write to
+- **Session managers**: session tracking in one place across the request lifecycle
+- **Thread pools/executors**: one pool scheduling all asynchronous tasks
+- **Resource pools**: controlled allocation of scarce resources such as file handles or network sockets
 
 ## Implementation
 
-### PHP 8.3+ Example: Database Connection Singleton
+### PHP 8.3+ example: database connection Singleton
 
 ```php
 <?php
@@ -109,7 +122,7 @@ $db2 = DatabaseConnection::getInstance();
 $results = $db1->query('SELECT * FROM users');
 ```
 
-### Logger Singleton with Static Factory
+### Logger Singleton with static factory
 
 ```php
 <?php
@@ -162,7 +175,7 @@ Logger::getInstance()->info('Application started');
 Logger::getInstance()->error('An error occurred');
 ```
 
-### Thread-Safe Singleton with Early Initialization
+### Thread-safe Singleton with early initialization
 
 ```php
 <?php
@@ -219,44 +232,44 @@ ConfigurationManager::init();
 $dbHost = ConfigurationManager::getInstance()->get('database.host');
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Government**: A nation has one government serving as the central authority. Citizens don't create alternative governments; they interact with the one that already exists through official channels.
+**Government**: A nation has one government as its central authority. Citizens do not create alternative governments; they deal with the existing one through official channels.
 
-**Company CEO**: An organization typically operates under a single chief executive. All strategic decisions funnel through that one person rather than through competing leadership.
+**Company CEO**: An organization usually has a single chief executive. Strategic decisions go through that one person instead of competing leaders.
 
-**Printer Spooler**: An operating system runs one print spooler that queues jobs from every application. Programs submit work to the shared spooler rather than each spawning its own.
+**Printer spooler**: An operating system runs one print spooler that queues jobs from every application. Programs submit work to the shared spooler instead of each starting their own.
 
-**Bank Account Registry**: A financial institution maintains one master ledger of accounts. Every transaction references this single registry to ensure consistent balances.
+**Bank account registry**: A bank keeps one master ledger of accounts. Every transaction refers to this single registry, so balances stay consistent.
 
-## Pros and Cons
+## Pros and cons
 
 ### Advantages
-- **Controlled Instance Count**: Guarantees exactly one object, simplifying shared-resource management
-- **Convenient Global Access**: Provides a well-known entry point without threading references everywhere
-- **Lazy Initialization**: The instance is created only when it is first requested
-- **Thread Safety**: Can be implemented with synchronization primitives for concurrent environments
-- **Centralized Control**: A single point of authority over instance creation and lifecycle
-- **Memory Efficiency**: Only one instance occupies memory, no matter how many consumers exist
+- **Controlled instance count**: exactly one object, which simplifies shared-resource management
+- **Convenient global access**: a well-known entry point, no need to pass references around
+- **Lazy initialization**: the instance is created only when first requested
+- **Thread safety**: can be implemented with synchronization primitives for concurrent environments
+- **Centralized control**: one place controls instance creation and lifecycle
+- **Memory efficiency**: one instance occupies memory, however many consumers exist
 
 ### Disadvantages
-- **Global State**: Introduces hidden global state, complicating testing and debugging
-- **Implicit Dependencies**: Consumers depend on the singleton without making that dependency visible in signatures
-- **Testability Barriers**: Hard to substitute with mocks or stubs unless the design anticipates it
-- **Concurrency Pitfalls**: Requires careful locking in multi-threaded contexts to avoid race conditions
-- **Mixed Responsibilities**: The class manages both its domain logic and its own lifecycle
-- **Tight Coupling**: Client code becomes bound to the specific singleton class rather than an abstraction
+- **Global state**: introduces hidden global state, which complicates testing and debugging
+- **Implicit dependencies**: consumers depend on the singleton without showing it in their signatures
+- **Testability barriers**: hard to replace with mocks or stubs unless the design allows for it
+- **Concurrency pitfalls**: needs careful locking in multi-threaded contexts to avoid race conditions
+- **Mixed responsibilities**: the class handles both its domain logic and its own lifecycle
+- **Tight coupling**: client code is bound to the concrete singleton class instead of an abstraction
 
-## Relations with Other Patterns
+## Relations with other patterns
 
-- **Facade**: Facades frequently use singletons to present a unified interface to subsystems
+- **Facade**: Facades often use singletons to present a unified interface to subsystems
 - **Factory Method**: A factory method can return a singleton as the sole product instance
 - **Abstract Factory**: Concrete factory classes are often implemented as singletons
-- **Observer**: Singleton registries commonly manage lists of registered observers
-- **Service Locator**: This anti-pattern typically relies on a singleton to locate and return services
-- **Dependency Injection**: The modern preferred alternative, injecting the single instance through constructors instead of accessing it globally
+- **Observer**: Singleton registries often manage the list of registered observers
+- **Service Locator**: This anti-pattern usually relies on a singleton to locate and return services
+- **Dependency Injection**: The preferred alternative: inject the single instance through constructors instead of accessing it globally
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -378,19 +391,16 @@ class Singleton(type):
             cls._instance = super().__call__(*args, **kwargs)
         return cls._instance
 
-
 class MyClass(metaclass=Singleton):
     """
     Example class.
     """
     pass
 
-
 def main():
     m1 = MyClass()
     m2 = MyClass()
     assert m1 is m2
-
 
 if __name__ == "__main__":
     main()

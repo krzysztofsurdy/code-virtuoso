@@ -1,20 +1,34 @@
 # Visitor Design Pattern
 
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem/Solution](#problemsolution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation (PHP 8.3+ strict types)](#implementation-php-83-strict-types)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Key takeaways](#key-takeaways)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Visitor pattern is a behavioral design pattern that lets you separate algorithms from the objects on which they operate. It enables you to add new operations to existing object structures without modifying those structures. This is achieved by defining a visitor interface with methods for each type of element in the structure.
+Visitor is a behavioral design pattern that separates algorithms from the objects they operate on. It lets you add new operations to an existing object structure without modifying it, by defining a visitor interface with one method per element type.
 
 ## Intent
 
-- Represent an operation to be performed on elements of an object structure
-- Let you define a new operation without changing the classes of the elements on which it operates
-- Collect related operations into a single visitor object
+- Represent an operation to be performed on the elements of an object structure
+- Define a new operation without changing the classes of the elements it operates on
+- Collect related operations in a single visitor object
 
 ## Problem/Solution
 
-**Problem:** You have a complex object structure (like an AST, document tree, or report model) and need to perform various operations on it. Adding operations by modifying the element classes violates the Open/Closed Principle and creates tightly coupled code.
+**Problem:** You have a complex object structure (an AST, document tree, or report model) and need to run various operations on it. Adding the operations to the element classes violates the Open/Closed Principle and couples the code tightly.
 
-**Solution:** Define a Visitor interface with a method for each element type. Each element implements an `accept()` method that takes a visitor and calls the appropriate visit method. New operations are added by creating new visitor implementations without touching the element classes.
+**Solution:** Define a Visitor interface with a method for each element type. Each element implements an `accept()` method that takes a visitor and calls the matching visit method. New operations are new visitor implementations, and the element classes stay untouched.
 
 ## Structure
 
@@ -49,16 +63,16 @@ The Visitor pattern is a behavioral design pattern that lets you separate algori
 └──────────────────┘
 ```
 
-## When to Use
+## When to use
 
-- Complex object structures with many different element types requiring different operations
-- Need to perform many distinct operations on elements without polluting their classes
-- Object structure rarely changes but operations change frequently
+- Complex object structures with many element types that need different operations
+- Many distinct operations on elements without polluting their classes
+- The object structure rarely changes but operations change often
 - Multiple unrelated operations on the same structure
 - Processing ASTs, XML documents, or domain models
 - Implementing interpreters, compilers, or code generators
 
-## Implementation (PHP 8.3+ Strict Types)
+## Implementation (PHP 8.3+ strict types)
 
 ```php
 <?php
@@ -174,43 +188,43 @@ foreach ($elements as $element) {
 echo "Total: " . $pricer->getTotal() . "\n";
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-- **Tax System:** Different tax rules (visitors) applied to different product types (elements) without modifying the products
-- **Museum Tour Guide:** A tour guide (visitor) describes different exhibits (elements) in specific ways, with different guides having different perspectives
+- **Tax system:** Different tax rules (visitors) apply to different product types (elements) without modifying the products
+- **Museum tour guide:** A guide (visitor) describes exhibits (elements), and different guides bring different perspectives
 - **Compiler:** Different compiler phases (visitors) process the same AST without modifying the node classes
-- **Travel Agency:** Different travel itineraries (visitors) can be created for the same set of destinations (elements)
+- **Travel agency:** Different itineraries (visitors) can be built for the same set of destinations (elements)
 
-## Pros and Cons
+## Pros and cons
 
 **Pros:**
 - Adds new operations without modifying element classes (Open/Closed Principle)
 - Groups related operations in a single visitor class
 - Simplifies element classes by removing operation logic
-- Easier to add multiple unrelated operations
-- Works well with polymorphic structures
+- Multiple unrelated operations are easy to add
+- Works with polymorphic structures
 
 **Cons:**
 - Adding new element types requires modifying all visitor classes
 - Can introduce tight coupling between visitors and elements
-- May lead to violation of encapsulation if elements expose implementation details
-- Complex for simple object structures
-- Performance overhead from dynamic dispatch
+- Can break encapsulation if elements must expose implementation details
+- Too complex for simple object structures
+- Dynamic dispatch adds some overhead
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 - **Composite:** Visitor is often used with Composite to operate on element hierarchies
-- **Iterator:** Similar traversal benefits; Iterator focuses on sequential access
-- **Strategy:** Both encapsulate algorithms; Visitor is better for complex structures with multiple types
-- **Double Dispatch:** Visitor is an implementation of double dispatch pattern
+- **Iterator:** Both help with traversal; Iterator focuses on sequential access
+- **Strategy:** Both encapsulate algorithms; Visitor suits complex structures with multiple element types
+- **Double Dispatch:** Visitor is an implementation of double dispatch
 - **Template Method:** Can work together; Visitor for operation logic, Template Method for algorithm structure
-- **Interpreter:** Visitor pattern processes the parse tree generated by Interpreter
+- **Interpreter:** Visitor processes the parse tree built by Interpreter
 
-## Key Takeaways
+## Key takeaways
 
-The Visitor pattern is powerful for scenarios where you have a stable object structure but frequently need to add new operations. By separating operations from the objects themselves, it maintains clean separation of concerns and adheres to SOLID principles. However, it's most effective when element types are stable, as adding new types requires updating all visitors.
+Visitor fits a stable object structure that keeps needing new operations. Moving operations out of the elements separates concerns and follows the Open/Closed Principle for operations. It works best when the element types are stable, because adding a new element type means updating every visitor.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -296,7 +310,6 @@ public class VisitorDemo {
 ```python
 import abc
 
-
 class Element(metaclass=abc.ABCMeta):
     """Define an Accept operation that takes a visitor as an argument."""
 
@@ -304,16 +317,13 @@ class Element(metaclass=abc.ABCMeta):
     def accept(self, visitor):
         pass
 
-
 class ConcreteElementA(Element):
     def accept(self, visitor):
         visitor.visit_concrete_element_a(self)
 
-
 class ConcreteElementB(Element):
     def accept(self, visitor):
         visitor.visit_concrete_element_b(self)
-
 
 class Visitor(metaclass=abc.ABCMeta):
     """Declare a Visit operation for each class of ConcreteElement."""
@@ -326,14 +336,12 @@ class Visitor(metaclass=abc.ABCMeta):
     def visit_concrete_element_b(self, concrete_element_b):
         pass
 
-
 class ConcreteVisitor1(Visitor):
     def visit_concrete_element_a(self, concrete_element_a):
         pass
 
     def visit_concrete_element_b(self, concrete_element_b):
         pass
-
 
 class ConcreteVisitor2(Visitor):
     def visit_concrete_element_a(self, concrete_element_a):
@@ -342,12 +350,10 @@ class ConcreteVisitor2(Visitor):
     def visit_concrete_element_b(self, concrete_element_b):
         pass
 
-
 def main():
     concrete_visitor_1 = ConcreteVisitor1()
     concrete_element_a = ConcreteElementA()
     concrete_element_a.accept(concrete_visitor_1)
-
 
 if __name__ == "__main__":
     main()

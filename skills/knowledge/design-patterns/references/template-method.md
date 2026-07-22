@@ -1,27 +1,42 @@
+## Contents
+
+- [Overview](#overview)
+- [Intent](#intent)
+- [Problem](#problem)
+- [Solution](#solution)
+- [Structure](#structure)
+- [When to use](#when-to-use)
+- [Implementation](#implementation)
+- [Real-world analogies](#real-world-analogies)
+- [Pros and cons](#pros-and-cons)
+- [Relations with other patterns](#relations-with-other-patterns)
+- [Key takeaways](#key-takeaways)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Template Method pattern is a behavioral design pattern that defines the program skeleton of an algorithm in a base class but lets subclasses override specific steps without changing the algorithm's structure. It allows you to reuse the invariant parts of an algorithm and vary only the parts that change, reducing code duplication while maintaining control over the algorithm flow.
+Template Method is a behavioral design pattern that defines the skeleton of an algorithm in a base class and lets subclasses override specific steps without changing the algorithm's structure. The invariant parts are written once and only the varying parts are overridden, which reduces duplication while the base class keeps control of the flow.
 
 ## Intent
 
 - Define the skeleton of an algorithm in a method, deferring some steps to subclasses
-- Let subclasses redefine certain steps of an algorithm without changing its structure
-- Promote code reuse by extracting common algorithm structure into a base class
+- Let subclasses redefine certain steps without changing the algorithm's structure
+- Reuse code by moving the common algorithm structure into a base class
 - Enforce a template that subclasses must follow
 - Invert the control flow (Hollywood Principle: "Don't call us, we'll call you")
 
 ## Problem
 
-In applications requiring similar algorithms with minor variations:
-- Code duplication occurs when implementing similar algorithms in multiple classes
-- Changing the algorithm structure requires modifications in many places
-- It's unclear which parts of the algorithm are customizable vs. fixed
-- Subclasses might implement algorithms inconsistently
+Several classes need similar algorithms with minor variations:
+- Implementing similar algorithms in multiple classes duplicates code
+- Changing the algorithm structure means changes in many places
+- It is unclear which parts of the algorithm are customizable and which are fixed
+- Subclasses may implement the algorithm inconsistently
 - Business logic and framework logic become intertwined
 
 ## Solution
 
-Extract the common algorithm structure into a base class as a template method. Define abstract or empty methods for the steps that vary. Subclasses implement these methods to provide specific behavior while the template method orchestrates the overall flow. This enforces consistency and promotes code reuse.
+Move the common algorithm structure into a base class as a template method. Declare abstract or empty methods for the steps that vary. Subclasses implement those methods, and the template method runs the overall flow, which keeps implementations consistent and shares the common code.
 
 ## Structure
 
@@ -47,17 +62,17 @@ Extract the common algorithm structure into a base class as a template method. D
 └────────────────────┘    └─────────────────────┘
 ```
 
-**Key Components:**
+**Key components:**
 - **AbstractClass:** Defines the template method and abstract primitive operations
 - **ConcreteClass:** Implements the abstract methods (primitive operations)
 - **Hook Method:** Optional methods that subclasses may override (default behavior provided)
 - **Template Method:** Controls the algorithm flow by calling primitive operations
 
-## When to Use
+## When to use
 
 - Implementing multiple algorithms with a similar structure
 - Extracting common code from similar classes
-- Framework design where framework controls the flow
+- Framework design where the framework controls the flow
 - Algorithms with multiple variants (document processing, data export formats)
 - Implementing lifecycle hooks (initialization, processing, cleanup)
 - Data transformation pipelines with standard steps
@@ -65,7 +80,7 @@ Extract the common algorithm structure into a base class as a template method. D
 
 ## Implementation
 
-### PHP 8.3+ Strict Types
+### PHP 8.3+ strict types
 
 ```php
 <?php
@@ -241,52 +256,52 @@ $xmlProcessor = new XmlProcessor();
 echo $xmlProcessor->process($data);
 ```
 
-## Real-World Analogies
+## Real-world analogies
 
-**Document Generation Pipeline:** A document generator defines a template method that outlines: load template → fill placeholders → apply formatting → export to file. Different document types (PDF, Word, HTML) override the formatting and export steps while following the same overall process.
+**Document generation pipeline:** A document generator defines a template method with these steps: load template → fill placeholders → apply formatting → export to file. Document types (PDF, Word, HTML) override the formatting and export steps and follow the same process.
 
-**Cooking Recipe:** A recipe is a template method. The basic structure is: gather ingredients → prepare → cook → season → serve. Individual dishes override specific steps (cooking temperature, seasoning type) but follow the same general process.
+**Cooking recipe:** A recipe is a template method. The basic structure is: gather ingredients → prepare → cook → season → serve. Individual dishes override specific steps (cooking temperature, seasoning) and keep the same general process.
 
-**Software Build Process:** A build system defines steps: checkout code → compile → run tests → package → deploy. Different projects override specific steps but follow the identical pipeline structure.
+**Software build process:** A build system defines the steps: checkout code → compile → run tests → package → deploy. Projects override specific steps but keep the same pipeline structure.
 
-**Web Request Lifecycle:** Frameworks like Symfony use template methods in middleware/controllers: receive request → authenticate → validate → process → format response. Developers override process() while the framework controls the overall flow.
+**Web request lifecycle:** Frameworks such as Symfony use template methods in middleware and controllers: receive request → authenticate → validate → process → format response. Developers override process() while the framework controls the flow.
 
-## Pros and Cons
+## Pros and cons
 
 ### Pros
-- Reduces code duplication through code reuse
-- Defines a stable algorithm structure for subclasses to extend
-- Enforces consistent algorithm implementation across variations
+- Less code duplication through reuse
+- A stable algorithm structure for subclasses to extend
+- Consistent algorithm implementation across variations
 - Follows the Hollywood Principle (inversion of control)
-- Easy to add new variations without modifying existing code
-- Separates invariant code from variable code
-- Improves maintainability by centralizing algorithm logic
+- New variations can be added without modifying existing code
+- Invariant code is separated from variable code
+- Algorithm logic lives in one place, which helps maintenance
 
 ### Cons
-- Requires careful design to identify invariant vs. variable parts
-- Inheritance-based approach (rigid compared to composition)
-- Can lead to complex inheritance hierarchies
-- Subclasses limited to overriding predefined hook methods
-- Difficult to handle algorithm changes affecting multiple subclasses
-- Code visibility issues (protected methods can be fragile)
-- May violate Liskov Substitution Principle if subclasses don't respect contract
+- Needs careful design to tell invariant parts from variable ones
+- Inheritance-based, so more rigid than composition
+- Can lead to deep inheritance hierarchies
+- Subclasses can only override the predefined steps and hooks
+- Algorithm changes that affect several subclasses are hard to handle
+- Protected methods can be fragile
+- Can violate the Liskov Substitution Principle if subclasses do not respect the contract
 
-## Relations with Other Patterns
+## Relations with other patterns
 
 - **Strategy:** Both allow varying algorithm behavior; Strategy uses composition, Template Method uses inheritance
 - **Factory Method:** Often used within template methods to create objects
 - **Hook Method:** Part of Template Method pattern for optional customization points
-- **Decorator:** Can wrap template method classes but doesn't define algorithm skeleton
+- **Decorator:** Can wrap template method classes but does not define an algorithm skeleton
 - **Abstract Factory:** Can work together; factory creates template method instances
 - **State:** Can be combined where state changes trigger different algorithm paths
 - **Observer:** Can notify observers at key template method steps
 - **Chain of Responsibility:** Can implement steps as a chain in template methods
 
-## Key Takeaways
+## Key takeaways
 
-The Template Method pattern is essential for managing code reuse and algorithm variations. It's particularly valuable in framework design and when you have multiple classes implementing similar algorithms with minor variations. Use hook methods liberally to provide extension points without requiring subclass implementation. Be cautious of inheritance depth and consider refactoring to composition-based approaches (Strategy pattern) if hierarchies become complex.
+Template Method is the standard way to share an algorithm skeleton, and it fits framework design and groups of classes with similar algorithms. Use hook methods to add extension points that do not force subclasses to implement anything. Watch inheritance depth, and move to a composition-based approach (Strategy) if the hierarchy gets complex.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
@@ -358,7 +373,6 @@ public class TemplateMethodDemo {
 ```python
 import abc
 
-
 class AbstractClass(metaclass=abc.ABCMeta):
     """
     Define abstract primitive operations that concrete subclasses define
@@ -378,7 +392,6 @@ class AbstractClass(metaclass=abc.ABCMeta):
     def _primitive_operation_2(self):
         pass
 
-
 class ConcreteClass(AbstractClass):
     """
     Implement the primitive operations to carry out
@@ -391,11 +404,9 @@ class ConcreteClass(AbstractClass):
     def _primitive_operation_2(self):
         pass
 
-
 def main():
     concrete_class = ConcreteClass()
     concrete_class.template_method()
-
 
 if __name__ == "__main__":
     main()
@@ -450,7 +461,7 @@ a  b  c  d  e
 a  2  c  4  e
 ```
 
-#### Example 2: Before and After Refactoring
+#### Example 2: Before and after refactoring
 
 Before - duplicated sort logic:
 
