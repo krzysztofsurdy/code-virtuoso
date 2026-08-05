@@ -1,6 +1,16 @@
 # REST API Patterns
 
-## Resource Naming Conventions
+## Contents
+
+- [Resource naming conventions](#resource-naming-conventions)
+- [HTTP methods and idempotency](#http-methods-and-idempotency)
+- [Status code guide](#status-code-guide)
+- [Query parameters](#query-parameters)
+- [Bulk operations](#bulk-operations)
+- [Rate limiting](#rate-limiting)
+- [Caching](#caching)
+
+## Resource naming conventions
 
 - Use plural nouns for collections: `/users`, `/orders`, `/products`
 - Use identifiers for individual resources: `/users/{userId}`
@@ -12,7 +22,7 @@
 - Avoid verbs in URLs. The exception is "controller" actions that do not map to CRUD: `/orders/{id}/cancel`, `/reports/generate`
 - Trailing slashes should be treated consistently (pick one convention and enforce it)
 
-## HTTP Methods and Idempotency
+## HTTP methods and idempotency
 
 | Method | Purpose | Idempotent | Safe | Request body |
 |---|---|---|---|---|
@@ -26,9 +36,9 @@
 
 **Idempotency means** repeating the same request produces the same result. GET, PUT, and DELETE should be safe to retry. For non-idempotent operations (POST), support an `Idempotency-Key` header so clients can safely retry without creating duplicates.
 
-## Status Code Guide
+## Status code guide
 
-### 2xx — Success
+### 2xx Success
 
 | Code | When to use |
 |---|---|
@@ -37,14 +47,14 @@
 | **202 Accepted** | Request accepted for async processing. Return a job/status URL |
 | **204 No Content** | Successful DELETE or PUT/PATCH that returns no body |
 
-### 3xx — Redirection
+### 3xx Redirection
 
 | Code | When to use |
 |---|---|
 | **301 Moved Permanently** | Resource URL has permanently changed |
-| **304 Not Modified** | Conditional request — resource has not changed since last fetch (ETag/If-None-Match) |
+| **304 Not Modified** | Conditional request: resource has not changed since last fetch (ETag/If-None-Match) |
 
-### 4xx — Client Errors
+### 4xx Client errors
 
 | Code | When to use |
 |---|---|
@@ -57,7 +67,7 @@
 | **422 Unprocessable Entity** | Valid syntax but semantic errors (business rule violations) |
 | **429 Too Many Requests** | Rate limit exceeded. Include `Retry-After` header |
 
-### 5xx — Server Errors
+### 5xx Server errors
 
 | Code | When to use |
 |---|---|
@@ -66,7 +76,7 @@
 | **503 Service Unavailable** | Temporary overload or maintenance. Include `Retry-After` header |
 | **504 Gateway Timeout** | Upstream service did not respond in time |
 
-## Query Parameters
+## Query parameters
 
 ### Filtering
 
@@ -92,7 +102,7 @@ GET /users?sort=created_at:desc
 GET /products?sort=price:asc,name:asc
 ```
 
-### Field Selection
+### Field selection
 
 Allow clients to request only the fields they need:
 
@@ -102,7 +112,7 @@ GET /users?fields=id,name,email
 
 This reduces payload size and can improve query performance.
 
-## Bulk Operations
+## Bulk operations
 
 When clients need to create, update, or delete multiple resources:
 
@@ -129,7 +139,7 @@ Response should report per-item results:
 }
 ```
 
-## Rate Limiting
+## Rate limiting
 
 Include these headers in every response:
 
@@ -163,7 +173,7 @@ GET /users/42
 If-None-Match: "a1b2c3d4"
 ```
 
-Server returns `304 Not Modified` if nothing changed — no body transferred.
+Server returns `304 Not Modified` if nothing changed, and no body is transferred.
 
 ### Cache-Control
 
@@ -173,7 +183,7 @@ Cache-Control: private, max-age=60           # Browser only, 1 minute
 Cache-Control: no-store                      # Never cache (sensitive data)
 ```
 
-### Conditional Requests
+### Conditional requests
 
 Use `If-Modified-Since` / `Last-Modified` for time-based caching. Prefer ETags for precision.
 

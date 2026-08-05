@@ -7,11 +7,11 @@ user-invocable: false
 
 # API Design
 
-Principles and patterns for designing APIs that are consistent, predictable, and easy to evolve. Applies to any language or framework — the focus is on protocol-level design decisions, not implementation details.
+Principles and patterns for designing APIs that are consistent, predictable, and easy to evolve. Applies to any language or framework. The focus is protocol-level design decisions, not implementation details.
 
-A well-designed API treats its surface as a product: consumers should be able to predict behavior, recover from errors, and integrate without reading source code.
+Treat the API surface as a product: consumers should be able to predict behavior, recover from errors, and integrate without reading source code.
 
-## When to Use
+## When to use
 
 - Designing a new public or internal API from scratch
 - Reviewing an existing API for consistency and usability
@@ -26,23 +26,23 @@ A well-designed API treats its surface as a product: consumers should be able to
 |---|---|---|
 | **Best for** | CRUD-heavy, resource-oriented domains | Complex, interconnected data with varied client needs |
 | **Data fetching** | Fixed response shapes per endpoint | Client specifies exact fields needed |
-| **Over-fetching** | Common — endpoints return full resources | Eliminated — clients request only what they need |
-| **Under-fetching** | Common — requires multiple round trips | Eliminated — single query can span relations |
+| **Over-fetching** | Common, endpoints return full resources | Eliminated, clients request only what they need |
+| **Under-fetching** | Common, requires multiple round trips | Eliminated, a single query can span relations |
 | **Caching** | Built-in HTTP caching (ETags, Cache-Control) | Requires custom caching (normalized stores, persisted queries) |
 | **File uploads** | Native multipart support | Requires workarounds (multipart spec or separate endpoint) |
 | **Real-time** | Webhooks, SSE, or polling | Subscriptions built into the spec |
-| **Tooling maturity** | Mature — OpenAPI, Postman, HTTP clients | Growing — Apollo, Relay, GraphiQL |
-| **Learning curve** | Lower — leverages existing HTTP knowledge | Higher — schema language, resolvers, query optimization |
-| **Error handling** | HTTP status codes + response body | Always 200 — errors in response `errors` array |
+| **Tooling maturity** | Mature: OpenAPI, Postman, HTTP clients | Growing: Apollo, Relay, GraphiQL |
+| **Learning curve** | Lower, builds on existing HTTP knowledge | Higher: schema language, resolvers, query optimization |
+| **Error handling** | HTTP status codes + response body | Always 200, errors go in the response `errors` array |
 | **Versioning** | URL path, headers, or query params | Schema evolution via deprecation + additive changes |
 
-**Choose REST when:** your domain maps naturally to resources and CRUD operations, you need HTTP caching, or your clients are simple (mobile apps, third-party integrations).
+**Choose REST when:** your domain maps to resources and CRUD operations, you need HTTP caching, or your clients are simple (mobile apps, third-party integrations).
 
-**Choose GraphQL when:** clients have highly varied data needs, you are aggregating multiple backend services, or you want a strongly typed contract between frontend and backend.
+**Choose GraphQL when:** clients have varied data needs, you are aggregating multiple backend services, or you want a strongly typed contract between frontend and backend.
 
-**Both are valid.** Many systems use REST for external/public APIs and GraphQL for internal frontend-backend communication.
+Both are valid. Many systems use REST for external/public APIs and GraphQL for internal frontend-backend communication.
 
-## REST Design Principles
+## REST design principles
 
 REST APIs model the domain as resources and use HTTP semantics to operate on them.
 
@@ -52,10 +52,10 @@ REST APIs model the domain as resources and use HTTP semantics to operate on the
 - URLs identify resources; query parameters filter, sort, or paginate them
 - Use plural nouns for collections: `/users`, `/users/{id}`
 - Limit nesting to two levels: `/users/{id}/orders` is fine; `/users/{id}/orders/{id}/items/{id}/variants` is not
-- Use HTTP status codes meaningfully — do not return 200 for everything
+- Use HTTP status codes meaningfully. Do not return 200 for everything
 - Support content negotiation via `Accept` and `Content-Type` headers
 
-**HATEOAS** (Hypermedia as the Engine of Application State) adds discoverability by including links in responses. Useful for public APIs but often overkill for internal services:
+**HATEOAS** (Hypermedia as the Engine of Application State) adds discoverability by including links in responses. It is useful for public APIs but often overkill for internal services:
 
 ```json
 {
@@ -71,12 +71,12 @@ REST APIs model the domain as resources and use HTTP semantics to operate on the
 
 See [REST Patterns Reference](references/rest-patterns.md) for detailed conventions.
 
-## GraphQL Design Principles
+## GraphQL design principles
 
 GraphQL APIs expose a strongly typed schema that clients query declaratively.
 
 **Core rules:**
-- Design schema-first — define the type system before writing resolvers
+- Design schema-first: define the type system before writing resolvers
 - Types represent domain concepts; fields represent attributes and relations
 - Queries read data, mutations write data, subscriptions stream data
 - Use the type system to enforce constraints (non-null, enums, input types)
@@ -112,9 +112,9 @@ enum OrderStatus {
 
 See [GraphQL Patterns Reference](references/graphql-patterns.md) for detailed conventions.
 
-## Error Handling
+## Error handling
 
-A consistent error format is one of the most impactful API design decisions. Consumers should be able to parse errors programmatically without inspecting message strings.
+A consistent error format is one of the highest-leverage API design decisions. Consumers should be able to parse errors programmatically without inspecting message strings.
 
 **RFC 7807 Problem Details format (recommended for REST):**
 
@@ -136,7 +136,7 @@ A consistent error format is one of the most impactful API design decisions. Con
 ```
 
 **Key principles:**
-- Use a machine-readable `type` or `code` — clients should branch on codes, not messages
+- Use a machine-readable `type` or `code`. Clients should branch on codes, not messages
 - Include a human-readable `detail` for debugging
 - Return field-level errors for validation failures so clients can highlight specific inputs
 - Use appropriate HTTP status codes (REST) or structured error types (GraphQL)
@@ -162,7 +162,7 @@ A consistent error format is one of the most impactful API design decisions. Con
 
 ## Versioning
 
-APIs evolve. Versioning strategies determine how you ship changes without breaking existing consumers.
+The versioning strategy decides how you ship changes without breaking existing consumers.
 
 | Strategy | Mechanism | Pros | Cons |
 |---|---|---|---|
@@ -180,7 +180,7 @@ See [API Evolution Reference](references/api-evolution.md) for detailed strategi
 
 ## Pagination
 
-Every list endpoint needs pagination. The choice between cursor and offset affects performance, consistency, and client complexity.
+Every list endpoint needs pagination. Cursor versus offset affects performance, consistency, and client complexity.
 
 | Approach | How it works | Pros | Cons |
 |---|---|---|---|
@@ -208,26 +208,26 @@ Every list endpoint needs pagination. The choice between cursor and offset affec
 }
 ```
 
-## Authentication & Authorization
+## Authentication and authorization
 
 **Authentication** verifies identity (who are you?). **Authorization** verifies permissions (what can you do?).
 
 | Mechanism | Use case | Notes |
 |---|---|---|
 | **API keys** | Server-to-server, simple integrations | Easy to implement; rotate regularly; never expose in client code |
-| **OAuth 2.0** | Third-party access, delegated permissions | Industry standard; use Authorization Code + PKCE for SPAs/mobile |
+| **OAuth 2.0** | Third-party access, delegated permissions | Industry standard. Use Authorization Code + PKCE for SPAs/mobile |
 | **JWT (Bearer tokens)** | Stateless auth for microservices | Include only essential claims; set short expiry; validate signature and claims |
 | **Session cookies** | Browser-based web apps | Pair with CSRF protection; use `Secure`, `HttpOnly`, `SameSite` flags |
 
 **Best practices:**
-- Always use HTTPS — no exceptions
+- Always use HTTPS, no exceptions
 - Transmit tokens in `Authorization: Bearer <token>` header, not in query strings
 - Implement scopes/permissions for fine-grained access control
 - Return `401 Unauthorized` for missing/invalid credentials, `403 Forbidden` for insufficient permissions
 - Rate-limit authentication endpoints aggressively to prevent brute-force attacks
 - Support token refresh flows to avoid forcing re-authentication
 
-## Common Antipatterns
+## Common antipatterns
 
 | Antipattern | Problem | Fix |
 |---|---|---|
@@ -241,9 +241,9 @@ Every list endpoint needs pagination. The choice between cursor and offset affec
 | **200 for everything** | Errors return HTTP 200 with an error body | Use appropriate HTTP status codes |
 | **Timestamps without timezone** | `2024-01-15 14:30:00` is ambiguous | Always use ISO 8601 with timezone: `2024-01-15T14:30:00Z` |
 
-## Quality Checklist
+## Quality checklist
 
-Before shipping or reviewing an API, verify:
+Before shipping or reviewing an API, check that:
 
 - [ ] Resource naming is consistent (plural nouns, no verbs in URLs)
 - [ ] HTTP methods match semantics (GET is safe, PUT/DELETE are idempotent)

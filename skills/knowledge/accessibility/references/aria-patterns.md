@@ -1,8 +1,20 @@
 # ARIA Patterns
 
-## The First Rule of ARIA
+## Contents
 
-Before reaching for ARIA, ask: can a native HTML element do this? Native elements carry built-in semantics, keyboard behavior, and screen reader support. ARIA only changes announcements - it does not add behavior. You must still implement keyboard handling and state changes yourself.
+- [The first rule of ARIA](#the-first-rule-of-aria)
+- [Roles, states, and properties](#roles-states-and-properties)
+- [Landmark roles](#landmark-roles)
+- [Tabs](#tabs)
+- [Modal dialog](#modal-dialog)
+- [Dropdown menu](#dropdown-menu)
+- [Accordion](#accordion)
+- [Live regions](#live-regions)
+- [Common ARIA mistakes](#common-aria-mistakes)
+
+## The first rule of ARIA
+
+Before reaching for ARIA, ask whether a native HTML element can do the job. Native elements carry built-in semantics, keyboard behavior, and screen reader support. ARIA only changes announcements. It adds no behavior, so you still have to implement keyboard handling and state changes yourself.
 
 **Use ARIA when:** no native element fits (tabs, tree views, comboboxes), you need to describe relationships markup cannot convey, or dynamic content changes need announcing.
 
@@ -10,7 +22,7 @@ Before reaching for ARIA, ask: can a native HTML element do this? Native element
 
 ---
 
-## Roles, States, and Properties
+## Roles, states, and properties
 
 | Category | Purpose | Examples |
 |---|---|---|
@@ -18,15 +30,15 @@ Before reaching for ARIA, ask: can a native HTML element do this? Native element
 | **States** | Current condition (can change) | `aria-expanded`, `aria-selected`, `aria-checked`, `aria-disabled` |
 | **Properties** | Relationships or characteristics (typically static) | `aria-labelledby`, `aria-describedby`, `aria-controls`, `aria-haspopup` |
 
-### Naming Priority
+### Naming priority
 
 The browser resolves accessible names in this order: `aria-labelledby` > `aria-label` > native label (`<label>`, `alt`) > text content. Use `aria-labelledby` when visible text exists. Use `aria-label` only when no visible text is available.
 
 ---
 
-## Landmark Roles
+## Landmark roles
 
-| HTML Element | Implicit Role | Purpose |
+| HTML element | Implicit role | Purpose |
 |---|---|---|
 | `<header>` (top-level) | `banner` | Site header, logo, global nav |
 | `<nav>` | `navigation` | Major navigation blocks |
@@ -89,9 +101,9 @@ function Tabs({ items }: { items: { label: string; content: React.ReactNode }[] 
 
 ---
 
-## Modal Dialog
+## Modal dialog
 
-Modals must trap focus, dismiss with Escape, and return focus to the trigger on close. Prefer native `<dialog>` with `.showModal()` - it provides focus trapping, Escape handling, and backdrop for free.
+Modals must trap focus, dismiss with Escape, and return focus to the trigger on close. Prefer native `<dialog>` with `.showModal()`, which provides focus trapping, Escape handling, and a backdrop.
 
 **HTML (native dialog):**
 ```html
@@ -127,7 +139,7 @@ function confirm() { /* action */ close(); }
 
 ---
 
-## Dropdown Menu
+## Dropdown menu
 
 **Key ARIA:** Trigger gets `aria-haspopup="true"` and `aria-expanded`. Container gets `role="menu"`. Items get `role="menuitem"` with roving tabindex.
 
@@ -173,7 +185,7 @@ function confirm() { /* action */ close(); }
 
 ---
 
-## Live Regions
+## Live regions
 
 Live regions announce dynamic content changes to screen readers. The element must exist in the DOM before content is injected.
 
@@ -193,12 +205,12 @@ Live regions announce dynamic content changes to screen readers. The element mus
 
 ---
 
-## Common ARIA Mistakes
+## Common ARIA mistakes
 
 | Mistake | Problem | Fix |
 |---|---|---|
 | `role="button"` on `<div>` without key handlers | Announced as button but Enter/Space does nothing | Use `<button>` or add tabindex and keydown |
 | `aria-label` overriding visible text | Sighted and SR users get different info | Use `aria-labelledby` pointing to visible text |
 | `aria-hidden="true"` on focusable elements | SR skips it but keyboard can still reach it | Remove from tab order too |
-| Redundant ARIA on native elements | `<nav role="navigation">` double-announces | Omit the role - native semantics suffice |
-| Live region on a large container | Every change triggers announcements | Apply to the smallest possible element |
+| Redundant ARIA on native elements | `<nav role="navigation">` double-announces | Omit the role, native semantics suffice |
+| Live region on a large container | Every change triggers announcements | Apply it to the smallest possible element |

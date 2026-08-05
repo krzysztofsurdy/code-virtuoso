@@ -1,25 +1,37 @@
 # Keyboard and Focus Management
 
-## Why Keyboard Access Matters
+## Contents
+
+- [Why keyboard access matters](#why-keyboard-access-matters)
+- [Tab order](#tab-order)
+- [Arrow key navigation (roving tabindex)](#arrow-key-navigation-roving-tabindex)
+- [Skip links](#skip-links)
+- [Focus trapping](#focus-trapping)
+- [Focus restoration](#focus-restoration)
+- [Visible focus indicators](#visible-focus-indicators)
+- [Touch target sizes](#touch-target-sizes)
+- [Keyboard shortcuts](#keyboard-shortcuts)
+
+## Why keyboard access matters
 
 Keyboard operability is a Level A requirement (WCAG 2.1.1). Users who depend on it include people with motor disabilities, power users, switch device users, and voice control users. If an interaction cannot be completed with a keyboard, those users are locked out.
 
 ---
 
-## Tab Order
+## Tab order
 
 Default tab order follows DOM order of focusable elements (links, buttons, form controls, `tabindex="0"`).
 
 | Rule | Explanation |
 |---|---|
 | DOM order should match visual order | CSS reordering (flexbox `order`, grid) can break logical tab sequence |
-| `tabindex="0"` | Adds custom elements to tab order - use only for interactive widgets |
+| `tabindex="0"` | Adds custom elements to tab order. Use only for interactive widgets |
 | `tabindex="-1"` | Focusable via `.focus()` only, not reachable by Tab |
 | Never use `tabindex` > 0 | Positive values override natural order and create maintenance problems |
 
 ---
 
-## Arrow Key Navigation (Roving Tabindex)
+## Arrow key navigation (roving tabindex)
 
 Within composite widgets (tab lists, menus, tree views), only the active item has `tabindex="0"`. Others have `tabindex="-1"`. Arrow keys swap values and call `.focus()`.
 
@@ -85,7 +97,7 @@ function useRovingTabIndex(count: Ref<number>) {
 
 ---
 
-## Skip Links
+## Skip links
 
 The first focusable element on the page, letting keyboard users bypass navigation.
 
@@ -128,9 +140,9 @@ The first focusable element on the page, letting keyboard users bypass navigatio
 
 ---
 
-## Focus Trapping
+## Focus trapping
 
-When a modal is open, Tab/Shift+Tab must cycle within it. The native `<dialog>` with `.showModal()` handles this automatically - prefer it over custom solutions.
+When a modal is open, Tab/Shift+Tab must cycle within it. The native `<dialog>` with `.showModal()` handles this, so prefer it over custom solutions.
 
 **Vanilla JS trap (for custom dialogs):**
 ```js
@@ -176,13 +188,13 @@ function FocusTrap({ children, active }: { children: React.ReactNode; active: bo
 
 ---
 
-## Focus Restoration
+## Focus restoration
 
 When an overlay closes, return focus to the element that opened it. Store `document.activeElement` before opening, call `.focus()` on it after closing.
 
 ---
 
-## Visible Focus Indicators
+## Visible focus indicators
 
 Never remove focus outlines without a visible alternative. WCAG 2.4.7 (AA) requires visible focus indicators. WCAG 2.4.11 (2.2) requires 2px minimum outline with 3:1 contrast.
 
@@ -201,7 +213,7 @@ Never remove focus outlines without a visible alternative. WCAG 2.4.7 (AA) requi
 
 ---
 
-## Touch Target Sizes
+## Touch target sizes
 
 | Level | Minimum | Notes |
 |---|---|---|
@@ -217,7 +229,7 @@ button, a, [role="button"] {
 
 ---
 
-## Keyboard Shortcuts
+## Keyboard shortcuts
 
 - Use shortcuts only when the relevant widget is focused (not global)
 - Single-character shortcuts must be remappable or disableable (WCAG 2.1.4, Level A)

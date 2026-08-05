@@ -1,6 +1,17 @@
 # DDD Tactical Patterns
 
-Tactical patterns from Domain-Driven Design provide building blocks for expressing domain logic clearly. Each pattern has a specific purpose, placement, and set of rules.
+Tactical patterns from Domain-Driven Design are building blocks for expressing domain logic. Each has a specific purpose, placement, and set of rules.
+
+## Contents
+
+- [Entity](#entity)
+- [Value Object](#value-object)
+- [Aggregate](#aggregate)
+- [Repository](#repository)
+- [Domain Service](#domain-service)
+- [Domain Event](#domain-event)
+- [Application Service](#application-service)
+- [Factory](#factory)
 
 ## Entity
 
@@ -8,64 +19,64 @@ An object defined by its **identity** rather than its attributes. Two entities a
 
 **Characteristics:**
 - Has a unique identifier that persists across time and state changes
-- Mutable — its attributes can change while its identity remains constant
+- Mutable: its attributes can change while its identity stays constant
 - Has a lifecycle (creation, modification, possibly deletion or archival)
-- Enforces its own invariants — rejects state transitions that violate business rules
+- Enforces its own invariants and rejects state transitions that violate business rules
 
 **When to use:**
 - The object has a meaningful lifecycle that the business cares about
 - The object must be tracked and distinguished from similar objects
 - Business rules govern how the object changes over time
 
-**When NOT to use:**
-- The concept is fully described by its attributes with no meaningful identity
+**When not to use:**
+- The concept is described by its attributes alone with no meaningful identity
 - The object is immutable and interchangeable with others sharing the same attributes
 - Use a Value Object instead
 
 **Design guidelines:**
-- Keep entities focused — they should not accumulate unrelated responsibilities
+- Keep entities focused. They should not accumulate unrelated responsibilities
 - Enforce invariants inside the entity, not in external services
 - Expose behavior through intention-revealing methods, not raw setters
-- An entity should always be in a valid state — make invalid states unrepresentable
+- An entity should always be in a valid state. Make invalid states unrepresentable
 
 ## Value Object
 
-An object defined entirely by its **attributes**. It has no identity — two value objects with the same attributes are interchangeable.
+An object defined entirely by its **attributes**. It has no identity, so two value objects with the same attributes are interchangeable.
 
 **Characteristics:**
-- Immutable — once created, its state never changes
+- Immutable: once created, its state never changes
 - Equality is determined by comparing all attributes
-- Side-effect free — operations return new instances rather than modifying the existing one
-- Self-validating — rejects invalid attribute combinations at construction time
+- Side-effect free: operations return new instances instead of modifying the existing one
+- Self-validating: rejects invalid attribute combinations at construction time
 
 **Common examples:** Money (amount + currency), EmailAddress, DateRange, Coordinates, Temperature, PostalCode, Color
 
 **When to use:**
 - The concept is described completely by its attributes
-- Interchangeability is natural — any two instances with the same values are equivalent
+- Interchangeability is natural: any two instances with the same values are equivalent
 - You want to eliminate primitive obsession (replacing raw strings, numbers, or booleans with meaningful types)
 
 **Design guidelines:**
 - Make all fields required at construction; validate immediately
 - Return new instances from operations (e.g., Money.add() returns a new Money)
-- Prefer Value Objects over primitives for domain concepts — they carry meaning and validation
-- Value Objects make excellent building blocks inside entities and aggregates
+- Prefer Value Objects over primitives for domain concepts, since they carry meaning and validation
+- Value Objects work well as building blocks inside entities and aggregates
 
 ## Aggregate
 
-A cluster of related entities and value objects treated as a **single unit for data changes**. The Aggregate defines a consistency boundary — all invariants within the boundary are guaranteed to be consistent after each transaction.
+A cluster of related entities and value objects treated as a **single unit for data changes**. The Aggregate defines a consistency boundary: all invariants within it are consistent after each transaction.
 
 **Characteristics:**
-- Has a single **Aggregate Root** — the only entity through which external code interacts with the aggregate
+- Has a single **Aggregate Root**, the only entity through which external code interacts with the aggregate
 - Enforces all invariants within its boundary
-- Is the unit of persistence — load and save the entire aggregate, not individual parts
+- Is the unit of persistence: load and save the entire aggregate, not individual parts
 - Transactional consistency within, eventual consistency between aggregates
 
 **Rules:**
-1. **Reference other aggregates by ID only** — never hold direct object references to other aggregates
-2. **One aggregate per transaction** — do not modify multiple aggregates in a single transaction. Use domain events for cross-aggregate coordination
-3. **Keep aggregates small** — large aggregates create contention and performance problems. Prefer smaller boundaries
-4. **The root controls all access** — external objects may not hold references to inner entities. All operations go through the root
+1. **Reference other aggregates by ID only.** Never hold direct object references to other aggregates
+2. **One aggregate per transaction.** Do not modify multiple aggregates in a single transaction. Use domain events for cross-aggregate coordination
+3. **Keep aggregates small.** Large aggregates create contention and performance problems. Prefer smaller boundaries
+4. **The root controls all access.** External objects may not hold references to inner entities. All operations go through the root
 
 **Identifying aggregate boundaries:**
 - What must be immediately consistent? That forms one aggregate
@@ -79,26 +90,26 @@ A **collection-like interface** for accessing and persisting aggregates. The rep
 **Characteristics:**
 - Interface is defined in the domain layer
 - Implementation lives in the infrastructure layer
-- One repository per aggregate root — never for entities that are not roots
+- One repository per aggregate root, never for entities that are not roots
 - Methods reflect domain language, not database operations
 
 **Interface design guidelines:**
-- Use domain-oriented method names: findByEmail, findActiveOrders — not queryWithJoinOnTableX
+- Use domain-oriented method names (findByEmail, findActiveOrders), not queryWithJoinOnTableX
 - Accept and return domain objects (aggregates), not raw data structures
-- Keep the interface minimal — only methods the domain actually needs
+- Keep the interface minimal: only methods the domain actually needs
 - Avoid exposing query-building or criteria APIs that leak persistence concepts
 
-**What a repository does NOT do:**
+**What a repository does not do:**
 - It does not contain business logic
 - It does not manage transactions (that is the application service's responsibility)
 - It does not return partial aggregates or projections (use a separate read model or query service for that)
 
 ## Domain Service
 
-A **stateless operation** that represents a domain concept but does not naturally belong to any single entity or value object.
+A **stateless operation** that represents a domain concept but does not belong to any single entity or value object.
 
 **Characteristics:**
-- Stateless — no instance variables that change between calls
+- Stateless: no instance variables that change between calls
 - Named after a domain activity or process (e.g., FundsTransferService, PricingService)
 - Operates on domain objects passed as arguments
 - Lives in the domain layer
@@ -108,10 +119,10 @@ A **stateless operation** that represents a domain concept but does not naturall
 - Placing the operation on one entity would feel forced or create an awkward dependency
 - The operation represents a significant domain concept that deserves its own name
 
-**When NOT to use:**
-- The logic naturally belongs on an entity or value object — prefer placing it there first
-- The operation is purely technical (e.g., sending an email, logging) — use an infrastructure service
-- The operation is orchestration/coordination — use an application service
+**When not to use:**
+- The logic belongs on an entity or value object. Place it there first
+- The operation is purely technical (e.g., sending an email, logging): use an infrastructure service
+- The operation is orchestration/coordination: use an application service
 
 **Domain Service vs Application Service:**
 - Domain Service: contains business rules, lives in the domain layer
@@ -123,7 +134,7 @@ An **immutable record** of something that happened in the domain. Domain events 
 
 **Characteristics:**
 - Named in **past tense**: OrderPlaced, PaymentReceived, InventoryReserved
-- Immutable — once created, the event's data never changes
+- Immutable: once created, the event's data never changes
 - Contains all information a consumer needs to react to what happened
 - Carries a timestamp indicating when the event occurred
 
@@ -131,17 +142,17 @@ An **immutable record** of something that happened in the domain. Domain events 
 - Include the aggregate ID that produced the event
 - Include relevant data so consumers do not need to call back to the producer
 - Avoid including the entire aggregate state unless necessary
-- Use primitive types and value objects — avoid coupling consumers to producer's internal model
+- Use primitive types and value objects to avoid coupling consumers to the producer's internal model
 
 **Handling patterns:**
-- **In-process synchronous**: handlers execute in the same transaction. Simple but couples timing.
+- **In-process synchronous**: handlers execute in the same transaction. Simple, but it couples timing.
 - **In-process asynchronous**: handlers execute after the transaction commits. Better decoupling.
-- **Out-of-process (messaging)**: events published to a message broker. Full decoupling, supports cross-context communication. Requires eventual consistency handling.
+- **Out-of-process (messaging)**: events are published to a message broker. Full decoupling and support for cross-context communication, but you must handle eventual consistency.
 
 **Design guidelines:**
 - Aggregates produce events as a result of state changes
 - Application services (or event dispatchers) are responsible for publishing events
-- Consumers should be idempotent — the same event may be delivered more than once
+- Consumers should be idempotent, because the same event may be delivered more than once
 - Do not use events to replace direct method calls within the same aggregate
 
 ## Application Service
@@ -163,9 +174,9 @@ An **orchestrator** for a specific use case. It coordinates domain objects, mana
 5. Dispatch domain events
 6. Return result to caller
 
-**What it does NOT do:**
-- Contain if/else business logic — delegate to domain objects
-- Directly access databases, APIs, or external systems — use ports
+**What it does not do:**
+- Contain if/else business logic. Delegate to domain objects
+- Directly access databases, APIs, or external systems. Use ports
 - Know about HTTP, CLI, or other delivery mechanisms
 
 ## Factory
@@ -178,11 +189,11 @@ Encapsulates **complex object creation** when constructing a domain object requi
 - Different creation paths produce the same type of object (e.g., creating an order from a cart vs. from a reorder request)
 
 **Placement:**
-- Factory methods on the aggregate root — for creating the aggregate itself or its internal entities
-- Standalone factory classes in the domain layer — for complex cross-aggregate creation scenarios
-- Repository factory methods — for reconstituting aggregates from persistence (infrastructure layer)
+- Factory methods on the aggregate root, for creating the aggregate itself or its internal entities
+- Standalone factory classes in the domain layer, for complex cross-aggregate creation scenarios
+- Repository factory methods, for reconstituting aggregates from persistence (infrastructure layer)
 
 **Design guidelines:**
-- A factory must produce a valid object or fail — never return a half-initialized object
+- A factory must produce a valid object or fail. Never return a half-initialized object
 - Use intention-revealing names that describe the creation scenario
 - Factories in the domain layer should not depend on infrastructure

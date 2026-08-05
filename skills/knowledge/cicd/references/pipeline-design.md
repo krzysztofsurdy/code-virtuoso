@@ -1,10 +1,19 @@
 # Pipeline Design
 
-## Pipeline Stages
+## Contents
+
+- [Pipeline stages](#pipeline-stages)
+- [Parallelization](#parallelization)
+- [Caching](#caching)
+- [Monorepo patterns](#monorepo-patterns)
+- [Pipeline as code](#pipeline-as-code)
+- [Secrets management](#secrets-management)
+
+## Pipeline stages
 
 Order stages so the cheapest, fastest checks run first.
 
-| Stage | Purpose | Typical Duration |
+| Stage | Purpose | Typical duration |
 |---|---|---|
 | **Lint / Static Analysis** | Catch formatting, style, and type errors | Seconds |
 | **Unit Tests** | Verify isolated logic | Seconds to low minutes |
@@ -71,7 +80,7 @@ find tests/ -name '*Test.php' | sort | awk "NR % $TOTAL_RUNNERS == $RUNNER_INDEX
 
 ## Caching
 
-Cache dependencies and build outputs between runs to reduce execution time.
+Cache dependencies and build outputs between runs to cut execution time.
 
 **GitHub Actions:**
 ```yaml
@@ -90,7 +99,7 @@ cache:
   paths: [vendor/]
 ```
 
-| Cache Target | Key Strategy | Impact |
+| Cache target | Key strategy | Impact |
 |---|---|---|
 | Package dependencies | Hash of lock file | High |
 | Build outputs | Hash of source files | Medium |
@@ -100,9 +109,9 @@ Do not cache secrets, test results, or deployment artifacts.
 
 ---
 
-## Monorepo Patterns
+## Monorepo patterns
 
-### Affected Detection
+### Affected detection
 
 Only build, test, and deploy packages that changed.
 
@@ -135,9 +144,9 @@ Simple path filtering misses transitive dependencies. If package A depends on B,
 
 ---
 
-## Pipeline as Code
+## Pipeline as code
 
-### Reusable Workflows
+### Reusable workflows
 
 **GitHub Actions:**
 ```yaml
@@ -174,7 +183,7 @@ Store pipeline definitions in the same repository as the code. Review pipeline c
 
 ---
 
-## Secrets Management
+## Secrets management
 
 | Principle | Implementation |
 |---|---|
@@ -208,4 +217,4 @@ export DB_PASSWORD=$(vault kv get -field=password secret/myapp/db)
 php bin/console doctrine:migrations:migrate --no-interaction
 ```
 
-Dynamic secrets are generated on demand with built-in expiration. The pipeline requests a credential, uses it for the run, and it expires automatically - eliminating manual rotation and limiting blast radius.
+Dynamic secrets are generated on demand with built-in expiration. The pipeline requests a credential, uses it for the run, and it expires on its own. This removes manual rotation and limits the blast radius.

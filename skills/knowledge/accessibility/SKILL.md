@@ -7,24 +7,24 @@ user-invocable: false
 
 # Web Accessibility
 
-Accessibility is not a feature you bolt on at the end - it is a quality attribute that must be considered from the first line of markup. Building accessible interfaces means that people with visual, motor, auditory, or cognitive disabilities can perceive, navigate, and interact with your application. It also means better usability for everyone: keyboard power users, people on slow connections, users with temporary injuries, and those in constrained environments.
+Accessibility is a quality attribute, not a feature to bolt on at the end. Consider it from the first line of markup. Accessible interfaces let people with visual, motor, auditory, or cognitive disabilities perceive, navigate, and use your application. They also help keyboard power users, people on slow connections, users with temporary injuries, and anyone in a constrained environment.
 
-## Why Accessibility Matters
+## Why accessibility matters
 
 | Dimension | Impact |
 |---|---|
 | **Legal** | Legislation in most jurisdictions (ADA, EAA, Section 508, EN 301 549) requires digital products to be accessible. Non-compliance carries litigation risk and financial penalties. |
 | **Ethical** | Roughly 16% of the global population lives with some form of disability. Excluding them from digital services is a choice, not an inevitability. |
 | **Business** | Accessible products reach a wider audience, improve SEO (structured content helps crawlers), reduce support costs, and correlate with higher overall usability scores. |
-| **Technical quality** | Accessibility constraints force clean markup, proper semantics, and separation of concerns - all of which improve maintainability. |
+| **Technical quality** | Accessibility constraints force clean markup, proper semantics, and separation of concerns, which improves maintainability. |
 
 ---
 
-## WCAG Principles: POUR
+## WCAG principles: POUR
 
 The Web Content Accessibility Guidelines organize all success criteria under four principles. Every accessibility requirement maps to at least one.
 
-| Principle | Question It Answers | Examples |
+| Principle | Question it answers | Examples |
 |---|---|---|
 | **Perceivable** | Can users sense the content? | Text alternatives for images, captions for video, sufficient color contrast, resizable text |
 | **Operable** | Can users interact with every control? | Keyboard operability, enough time to complete tasks, no seizure-triggering animations, clear navigation |
@@ -33,25 +33,25 @@ The Web Content Accessibility Guidelines organize all success criteria under fou
 
 ---
 
-## Conformance Levels
+## Conformance levels
 
 WCAG defines three levels. Each higher level includes all criteria from the levels below it.
 
-| Level | Target Audience | Typical Requirement |
+| Level | Target audience | Typical requirement |
 |---|---|---|
-| **A** | Bare minimum - removes the most severe barriers | Most legal and procurement requirements start here |
-| **AA** | Industry standard - addresses the majority of barriers for most users | Required by ADA, EAA, Section 508, and most organizational policies |
-| **AAA** | Highest standard - not always achievable for all content types | Aspirational goal; apply selectively where feasible |
+| **A** | Bare minimum, removes the most severe barriers | Most legal and procurement requirements start here |
+| **AA** | Industry standard, addresses the majority of barriers for most users | Required by ADA, EAA, Section 508, and most organizational policies |
+| **AAA** | Highest standard, not achievable for all content types | Aspirational; apply selectively where feasible |
 
-For most projects, **target Level AA**. It covers the vast majority of real-world accessibility needs without imposing requirements that conflict with certain content types.
+For most projects, **target Level AA**. It meets most real-world needs and avoids requirements that conflict with some content types.
 
 ---
 
-## Semantic HTML Fundamentals
+## Semantic HTML fundamentals
 
 Native HTML elements carry built-in semantics, keyboard behavior, and screen reader announcements. Using the right element is the single most effective accessibility technique.
 
-| Instead Of | Use | Why |
+| Instead of | Use | Why |
 |---|---|---|
 | `<div onclick="...">` | `<button>` | Buttons are focusable, announce their role, and respond to Enter and Space |
 | `<span class="link">` | `<a href="...">` | Links announce as "link," support middle-click, and appear in link lists |
@@ -60,17 +60,17 @@ Native HTML elements carry built-in semantics, keyboard behavior, and screen rea
 | `<div class="table">` | `<table>` with `<th>` | Table headers associate data cells with their labels for screen readers |
 | Styled `<div>` for input | `<input>`, `<select>`, `<textarea>` | Native form controls have label association, validation, and assistive tech support built in |
 
-### Heading Hierarchy
+### Heading hierarchy
 
-Headings create an outline that screen reader users navigate like a table of contents. Follow these rules:
+Headings create an outline that screen reader users navigate like a table of contents.
 
 - One `<h1>` per page that describes the page purpose
 - Never skip levels (do not jump from `<h2>` to `<h4>`)
-- Use headings for structure, not for visual styling - CSS handles appearance
+- Use headings for structure, not visual styling. CSS handles appearance
 
 ---
 
-## Common Accessibility Issues
+## Common accessibility issues
 
 | Issue | Impact | Fix |
 |---|---|---|
@@ -85,15 +85,15 @@ Headings create an outline that screen reader users navigate like a table of con
 | Inaccessible dynamic content | Screen readers do not announce changes that happen after page load | Use ARIA live regions to announce dynamic updates |
 | Missing document title | Screen reader users cannot identify the page when switching tabs | Set a unique, descriptive `<title>` for every page |
 | Touch targets too small | Motor-impaired users cannot reliably tap small controls | Minimum 24x24 CSS pixels (AA), prefer 44x44 for comfortable interaction |
-| Motion and animation | Can cause vestigo, nausea, or seizures | Respect `prefers-reduced-motion` media query; never flash more than 3 times per second |
+| Motion and animation | Can cause vertigo, nausea, or seizures | Respect `prefers-reduced-motion` media query; never flash more than 3 times per second |
 
 ---
 
-## Accessible Forms
+## Accessible forms
 
-Forms are where accessibility failures cause the most real-world harm - users cannot complete purchases, registrations, or critical workflows.
+Forms are where accessibility failures do the most damage: users cannot complete purchases, registrations, or other critical workflows.
 
-### Label Association
+### Label association
 
 Every form control needs a programmatically associated label:
 
@@ -109,34 +109,34 @@ Every form control needs a programmatically associated label:
 </label>
 ```
 
-### Error Handling
+### Error handling
 
 - Display errors inline next to the relevant field, not only at the top of the form
 - Use `aria-describedby` to associate error messages with their input
 - Use `aria-invalid="true"` on fields that fail validation
-- Provide clear, specific error text ("Enter an email in the format name@example.com" not "Invalid input")
+- Write clear, specific error text ("Enter an email in the format name@example.com", not "Invalid input")
 
-### Required Fields
+### Required fields
 
-- Mark required fields with `required` attribute (for native validation) or `aria-required="true"` (for custom validation)
-- Do not rely solely on color or an asterisk to indicate required status - add text like "(required)"
+- Mark required fields with the `required` attribute (native validation) or `aria-required="true"` (custom validation)
+- Do not rely on color or an asterisk alone to indicate required status. Add text like "(required)"
 
 ---
 
-## Color and Contrast
+## Color and contrast
 
-Color must never be the only means of conveying information. Pair it with text, icons, patterns, or other visual cues.
+Color must never be the only way to convey information. Pair it with text, icons, patterns, or other visual cues.
 
 **Contrast ratios (WCAG AA):**
 
-| Element | Minimum Ratio |
+| Element | Minimum ratio |
 |---|---|
 | Normal text (under 18pt / 14pt bold) | 4.5:1 |
 | Large text (18pt+ / 14pt+ bold) | 3:1 |
 | UI components and graphical objects | 3:1 |
 
 **Quick wins:**
-- Test with browser developer tools (Chrome DevTools shows contrast ratios on hover)
+- Check contrast with browser developer tools (Chrome DevTools shows ratios on hover)
 - Respect `prefers-color-scheme` for dark mode support
 - Test designs with simulated color blindness (protanopia, deuteranopia, tritanopia)
 

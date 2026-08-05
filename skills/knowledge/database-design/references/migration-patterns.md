@@ -1,48 +1,57 @@
 # Migration Patterns
 
-## Migration Approaches
+## Contents
 
-### Version-Based Migrations
+- [Migration approaches](#migration-approaches)
+- [Zero-downtime migrations](#zero-downtime-migrations)
+- [Data migrations vs schema migrations](#data-migrations-vs-schema-migrations)
+- [Backward compatibility](#backward-compatibility)
+- [Rollback strategies](#rollback-strategies)
+- [Multi-tool reference](#multi-tool-reference)
 
-Each migration is a numbered script that runs in order. The database tracks which migrations have been applied. New changes are always additive - you write a new migration file rather than editing an existing one.
+## Migration approaches
 
-**Advantages:** Explicit ordering, deterministic replay, easy to reason about history.
+### Version-based migrations
+
+Each migration is a numbered script that runs in order. The database tracks which migrations have been applied. New changes are always additive: you write a new migration file instead of editing an existing one.
+
+**Advantages:** Explicit ordering, deterministic replay, easy-to-follow history.
 **Tools:** Doctrine Migrations, Alembic, Prisma Migrate, Flyway, Liquibase.
 
-### State-Based Migrations
+### State-based migrations
 
 You declare the desired schema state. The tool compares the current database schema against the desired state and generates the necessary DDL to reconcile them.
 
-**Advantages:** No migration files to manage, schema is always visible as a declaration.
+**Advantages:** No migration files to manage, and the schema is always visible as a declaration.
 **Tools:** Prisma (schema push), Atlas, Redgate SQL Compare, TypeORM synchronize (development only).
 
-### Choosing Between Them
+### Choosing between them
 
-| Factor | Version-Based | State-Based |
+| Factor | Version-based | State-based |
 |---|---|---|
 | Production safety | Explicit control over every change | Generated DDL needs careful review |
 | Team workflows | Each developer creates discrete migration files | Merge conflicts happen in the schema declaration |
 | Rollback | Write explicit down migrations | Tool generates reverse DDL (not always safe) |
-| Data migrations | Naturally fit alongside schema changes | Require a separate mechanism |
+| Data migrations | Fit alongside schema changes | Require a separate mechanism |
 
-Most production systems use version-based migrations. State-based tools work well for rapid prototyping and development environments.
+Most production systems use version-based migrations. State-based tools suit rapid prototyping and development environments.
 
 ---
 
-## Zero-Downtime Migrations
+## Zero-downtime migrations
 
-### The Expand-Contract Pattern
+### The expand-contract pattern
 
 Split dangerous schema changes into safe, incremental steps. At every point during the process, both old and new application code can run against the database.
 
-**Example: Renaming a column from `name` to `full_name`**
+**Example: renaming a column from `name` to `full_name`**
 
-**Step 1 - Expand (add new column):**
+**Step 1, expand (add new column):**
 ```sql
 ALTER TABLE users ADD COLUMN full_name VARCHAR(255);
 ```
 
-**Step 2 - Backfill (copy existing data):**
+**Step 2, backfill (copy existing data):**
 ```sql
 UPDATE users SET full_name = name WHERE full_name IS NULL;
 ```
@@ -55,7 +64,7 @@ UPDATE users SET full_name = name
 WHERE full_name IS NULL AND id BETWEEN 1 AND 10000;
 ```
 
-**Step 3 - Dual-write (application writes to both columns):**
+**Step 3, dual-write (application writes to both columns):**
 
 ```php
 // PHP/Doctrine: write to both columns during transition
@@ -71,15 +80,15 @@ class User(Base):
         self.full_name = value
 ```
 
-**Step 4 - Switch (application reads from new column):**
+**Step 4, switch (application reads from new column):**
 Deploy application code that reads `full_name` instead of `name`.
 
-**Step 5 - Contract (remove old column):**
+**Step 5, contract (remove old column):**
 ```sql
 ALTER TABLE users DROP COLUMN name;
 ```
 
-### Operations That Lock Tables
+### Operations that lock tables
 
 Some DDL operations acquire locks that block reads or writes. Know which ones are dangerous:
 
@@ -96,23 +105,23 @@ Some DDL operations acquire locks that block reads or writes. Know which ones ar
 
 ---
 
-## Data Migrations vs Schema Migrations
+## Data migrations vs schema migrations
 
-### Schema Migrations
+### Schema migrations
 
 Change the database structure: adding tables, columns, indexes, constraints.
 
-### Data Migrations
+### Data migrations
 
 Transform existing data to fit a new schema or business rule. These are often the riskier part of a migration.
 
 **Guidelines for data migrations:**
 
-1. **Run separately from schema changes** - deploy the schema first, then run the data migration
-2. **Make them idempotent** - safe to run multiple times without side effects
-3. **Batch large updates** - avoid locking entire tables with single massive UPDATE statements
-4. **Log progress** - for long-running migrations, record how far you have gotten so you can resume
-5. **Test on production-sized data** - a migration that runs in 2 seconds on dev data may take 4 hours in production
+1. **Run separately from schema changes.** Deploy the schema first, then run the data migration
+2. **Make them idempotent.** They should be safe to run multiple times
+3. **Batch large updates.** Avoid locking entire tables with a single massive UPDATE
+4. **Log progress.** For long-running migrations, record how far you got so you can resume
+5. **Test on production-sized data.** A migration that runs in 2 seconds on dev data may take 4 hours in production
 
 **PHP/Doctrine (batched data migration):**
 ```php
@@ -155,20 +164,20 @@ def downgrade():
 
 ---
 
-## Backward Compatibility
+## Backward compatibility
 
-### The Two-Version Rule
+### The two-version rule
 
 At any point during a deployment, both the current version and the previous version of the application may be running simultaneously (rolling deploys, canary releases). Every migration must be compatible with at least two application versions.
 
 **What this means in practice:**
 
-- Never rename a column in a single migration - use expand-contract
-- Never add a NOT NULL column without a default - old code does not know to populate it
-- Never remove a column that old code still reads - deploy the code change first, then remove the column
+- Never rename a column in a single migration. Use expand-contract
+- Never add a NOT NULL column without a default, because old code does not know to populate it
+- Never remove a column that old code still reads. Deploy the code change first, then remove the column
 - Never change a column type in a way that breaks existing queries
 
-### Migration Ordering
+### Migration ordering
 
 ```
 Deploy sequence for a breaking change:
@@ -183,19 +192,19 @@ Deploy sequence for a breaking change:
 
 ---
 
-## Rollback Strategies
+## Rollback strategies
 
-### Forward-Only Migrations
+### Forward-only migrations
 
-Some teams never roll back migrations. Instead, they fix problems by deploying a new forward migration. This avoids the complexity of maintaining and testing down migrations.
+Some teams never roll back migrations and fix problems by deploying a new forward migration instead. That avoids the cost of maintaining and testing down migrations.
 
 **When forward-only works:** When the expand-contract pattern is used consistently, there is always a safe forward path.
 
-### Reversible Migrations
+### Reversible migrations
 
 Each migration includes an `up` and a `down` function. The down function undoes the up function.
 
-### What Cannot Be Rolled Back
+### What cannot be rolled back
 
 - Dropped columns (data is gone unless backed up)
 - Irreversible data transformations (hashing, truncation)
@@ -205,7 +214,7 @@ Each migration includes an `up` and a `down` function. The down function undoes 
 
 ---
 
-## Multi-Tool Reference
+## Multi-tool reference
 
 | Tool | Generate | Apply | Rollback |
 |---|---|---|---|
@@ -214,7 +223,7 @@ Each migration includes an `up` and a `down` function. The down function undoes 
 | **Prisma (TypeScript)** | `prisma migrate dev --name msg` | `prisma migrate deploy` | Revert schema, run `prisma migrate dev` |
 | **Flyway (Java)** | Manual SQL files (`V1__desc.sql`) | `flyway migrate` | `flyway undo` (Teams edition) |
 
-### Common Pitfalls
+### Common pitfalls
 
 | Pitfall | Consequence | Prevention |
 |---|---|---|

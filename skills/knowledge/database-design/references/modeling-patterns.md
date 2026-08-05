@@ -1,6 +1,15 @@
 # Modeling Patterns
 
-## Polymorphic Associations
+## Contents
+
+- [Polymorphic associations](#polymorphic-associations)
+- [Soft deletes](#soft-deletes)
+- [Audit trails](#audit-trails)
+- [Temporal data](#temporal-data)
+- [Self-referential relationships](#self-referential-relationships)
+- [JSON columns](#json-columns)
+
+## Polymorphic associations
 
 When different entity types share a common relationship, there are three inheritance mapping strategies. Each trades query simplicity against schema cleanliness.
 
@@ -13,10 +22,10 @@ CREATE TABLE payments (
     id BIGINT PRIMARY KEY,
     type VARCHAR(20) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    card_last_four CHAR(4),      - credit card only
-    card_brand VARCHAR(20),       - credit card only
-    bank_name VARCHAR(100),       - bank transfer only
-    paypal_email VARCHAR(255),    - paypal only
+    card_last_four CHAR(4),      -- credit card only
+    card_brand VARCHAR(20),       -- credit card only
+    bank_name VARCHAR(100),       -- bank transfer only
+    paypal_email VARCHAR(255),    -- paypal only
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 ```
@@ -45,7 +54,7 @@ class CreditCardPayment(Payment):
 ```
 
 **Best for:** Few subtypes with mostly shared columns. Simple queries, no JOINs needed.
-**Avoid when:** Subtypes diverge significantly - the table accumulates many nullable columns.
+**Avoid when:** Subtypes diverge a lot, because the table accumulates many nullable columns.
 
 ### Class Table Inheritance (CTI)
 
@@ -67,18 +76,18 @@ public class CreditCardPayment extends Payment { private String cardLastFour; }
 ```
 
 **Best for:** Subtypes with many unique columns. Enforces NOT NULL on subtype-specific fields.
-**Avoid when:** Queries frequently need all payment types at once - requires JOINs across subtype tables.
+**Avoid when:** Queries frequently need all payment types at once, since that requires JOINs across subtype tables.
 
 ### Table Per Type (Concrete Table Inheritance)
 
-Each subtype is a fully independent table with no shared base table. Common columns are duplicated.
+Each subtype is an independent table with no shared base table. Common columns are duplicated.
 
 **Best for:** Subtypes queried independently, rarely queried together.
 **Avoid when:** You need to query across all types or enforce cross-type uniqueness.
 
 ---
 
-## Soft Deletes
+## Soft deletes
 
 Soft deletes mark records as deleted without removing them from the database. A `deleted_at` timestamp column distinguishes active from deleted rows.
 
@@ -113,9 +122,9 @@ class SoftDeleteFilter extends SQLFilter
 
 ---
 
-## Audit Trails
+## Audit trails
 
-### Dedicated Audit Table
+### Dedicated audit table
 
 A separate table records every change to audited entities. Each row captures who changed what, when, and what the values were.
 
@@ -124,7 +133,7 @@ CREATE TABLE audit_log (
     id BIGINT PRIMARY KEY,
     table_name VARCHAR(100) NOT NULL,
     record_id BIGINT NOT NULL,
-    action VARCHAR(10) NOT NULL, - 'INSERT', 'UPDATE', 'DELETE'
+    action VARCHAR(10) NOT NULL, -- 'INSERT', 'UPDATE', 'DELETE'
     changed_by VARCHAR(100),
     changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     old_values JSONB,
@@ -143,9 +152,9 @@ CREATE INDEX idx_audit_log_time ON audit_log (changed_at);
 
 ---
 
-## Temporal Data
+## Temporal data
 
-### Valid-Time Tables
+### Valid-time tables
 
 Track when a fact is true in the real world, independent of when the database recorded it.
 
@@ -154,7 +163,7 @@ CREATE TABLE product_prices (
     product_id BIGINT NOT NULL REFERENCES products(id),
     price DECIMAL(10, 2) NOT NULL,
     valid_from DATE NOT NULL,
-    valid_to DATE, - NULL means currently valid
+    valid_to DATE, -- NULL means currently valid
     PRIMARY KEY (product_id, valid_from),
     CONSTRAINT no_overlap CHECK (valid_to IS NULL OR valid_to > valid_from)
 );
@@ -166,9 +175,9 @@ WHERE product_id = 42
   AND (valid_to IS NULL OR valid_to > '2025-06-15');
 ```
 
-### Bitemporal Tables
+### Bitemporal tables
 
-Combine valid time (when the fact is true) with transaction time (when the database recorded it). This supports both historical queries and rollback/correction scenarios.
+Combine valid time (when the fact is true) with transaction time (when the database recorded it). This supports both historical queries and rollback or correction.
 
 ```sql
 CREATE TABLE employee_salaries (
@@ -177,7 +186,7 @@ CREATE TABLE employee_salaries (
     valid_from DATE NOT NULL,
     valid_to DATE,
     recorded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    superseded_at TIMESTAMP, - NULL means current record
+    superseded_at TIMESTAMP, -- NULL means current record
     PRIMARY KEY (employee_id, valid_from, recorded_at)
 );
 ```
@@ -186,9 +195,9 @@ CREATE TABLE employee_salaries (
 
 ---
 
-## Self-Referential Relationships
+## Self-referential relationships
 
-| Pattern | How It Works | Trade-off |
+| Pattern | How it works | Trade-off |
 |---|---|---|
 | **Adjacency list** | Each row has `parent_id` referencing the same table | Simple inserts/moves; subtree queries need recursive CTEs |
 | **Materialized path** | Store full path as string (`/1/5/12/`) | Fast subtree queries via LIKE; moving nodes requires updating all descendants |
@@ -204,16 +213,16 @@ CREATE TABLE category_tree (ancestor_id BIGINT REFERENCES categories(id), descen
 
 ---
 
-## JSON Columns
+## JSON columns
 
-Modern relational databases (PostgreSQL JSONB, MySQL JSON) support structured data inside a column.
+Relational databases such as PostgreSQL (JSONB) and MySQL (JSON) can store structured data inside a column.
 
-**When JSON columns are appropriate:**
+**When JSON columns fit:**
 - Schema-less metadata that varies per row (user preferences, feature flags)
 - Storing external API payloads that the application does not query internally
 - Attributes that belong to the entity but have no relational meaning
 
-**When JSON columns are harmful:**
+**When JSON columns hurt:**
 - Data you JOIN on, filter by frequently, or need referential integrity for
 - Replacing proper normalization to avoid creating tables
 - Deeply nested structures that become difficult to query and validate

@@ -1,21 +1,27 @@
 # Context Mapping
 
-Strategic DDD patterns for defining boundaries between parts of a system and managing how those parts interact. Context mapping is about making integration decisions explicit.
+Strategic DDD patterns for defining boundaries between parts of a system and managing how those parts interact. The point of context mapping is to make integration decisions explicit.
+
+## Contents
+
+- [Bounded Context](#bounded-context)
+- [Context Map patterns](#context-map-patterns)
+- [Integration patterns between contexts](#integration-patterns-between-contexts)
 
 ## Bounded Context
 
 A Bounded Context is a boundary within which a particular domain model is defined, consistent, and meaningful. It is the fundamental unit of ownership in a complex system.
 
 **Key principles:**
-- Each Bounded Context has its own **Ubiquitous Language** — the same word can (and often does) mean different things in different contexts
+- Each Bounded Context has its own **Ubiquitous Language**, and the same word often means different things in different contexts
 - A context should be owned by one team
-- Each context has its own data storage — shared databases between contexts is an antipattern
+- Each context has its own data storage. A database shared between contexts is an antipattern
 - The model inside a context is internally consistent but makes no guarantees about matching models in other contexts
 
 **Identifying boundaries:**
-- Listen for vocabulary conflicts — when "Order" means different things to Sales and Fulfillment, that signals two contexts
+- Listen for vocabulary conflicts. When "Order" means different things to Sales and Fulfillment, that signals two contexts
 - Align with business capabilities (billing, shipping, inventory) rather than technical layers (web, service, data)
-- Follow team structure — Conway's Law suggests system boundaries reflect organizational boundaries
+- Follow team structure. Conway's Law says system boundaries tend to mirror organizational boundaries
 - Look for natural seams where consistency requirements change (immediate vs. eventual)
 
 **Signs a context should be split:**
@@ -29,9 +35,9 @@ A Bounded Context is a boundary within which a particular domain model is define
 - The overhead of integration exceeds the benefit of separation
 - A single team owns both and finds the boundary more painful than helpful
 
-## Context Map Patterns
+## Context Map patterns
 
-A Context Map documents the relationships and integration strategies between Bounded Contexts. Each relationship has a pattern that describes the power dynamic and coupling approach.
+A Context Map documents the relationships and integration strategies between Bounded Contexts. Each relationship follows a pattern that describes the power dynamic and the coupling.
 
 ### Shared Kernel
 
@@ -50,10 +56,10 @@ The upstream context (supplier) provides data or services that the downstream co
 
 ### Conformist
 
-The downstream context conforms entirely to the upstream context's model. There is no negotiation — the downstream team adopts whatever the upstream provides.
+The downstream context conforms entirely to the upstream context's model. There is no negotiation: the downstream team adopts whatever the upstream provides.
 
 - **Use when:** The upstream team has no motivation or capacity to support downstream needs (e.g., a large external platform)
-- **Trade-off:** Simpler integration but the downstream model is constrained by upstream decisions
+- **Trade-off:** Integration is simpler, but upstream decisions constrain the downstream model
 - **Mitigation:** If conforming becomes painful, introduce an Anti-Corruption Layer
 
 ### Anti-Corruption Layer (ACL)
@@ -69,7 +75,7 @@ A translation layer that the downstream context builds to protect its model from
 The upstream context exposes a well-defined protocol (API, event schema) designed to serve multiple consumers. The protocol is a deliberate, maintained interface.
 
 - **Use when:** Multiple downstream contexts need access to the same upstream capabilities
-- **Guidance:** Version the protocol; changes must be backward-compatible or clearly communicated
+- **Guidance:** Version the protocol; changes must be backward-compatible or announced
 - **Combines well with:** Published Language
 
 ### Published Language
@@ -79,17 +85,17 @@ A shared, well-documented data format used for communication between contexts. B
 - **Examples:** Standard event schemas, canonical data formats, industry-standard exchange formats
 - **Use when:** Multiple contexts need a common interchange format that neither context's internal model should dictate
 
-## Integration Patterns Between Contexts
+## Integration patterns between contexts
 
-### Event-Based Integration (Preferred)
+### Event-based integration (preferred)
 
 Contexts communicate by publishing and consuming domain events. Each context decides independently how to react.
 
 - **Advantages:** Loose coupling, temporal decoupling, independent deployability
 - **Challenges:** Eventual consistency, event ordering, idempotency
-- **Guidance:** Events should be part of the Published Language; version them carefully
+- **Guidance:** Events should be part of the Published Language; version them
 
-### Synchronous API Calls
+### Synchronous API calls
 
 One context calls another's API directly. Simpler but creates runtime coupling.
 
@@ -97,9 +103,9 @@ One context calls another's API directly. Simpler but creates runtime coupling.
 - **Challenges:** Cascading failures, latency coupling, availability dependency
 - **Guidance:** Use circuit breakers and timeouts; consider whether eventual consistency would suffice
 
-### Shared Database (Antipattern)
+### Shared database (antipattern)
 
-Multiple contexts read from and write to the same database tables. This creates tight coupling and eliminates the benefits of bounded contexts.
+Multiple contexts read from and write to the same database tables. This creates tight coupling and removes the benefits of bounded contexts.
 
-- **Problems:** Schema changes affect all contexts simultaneously; no clear ownership of data; implicit coupling through data rather than explicit contracts
+- **Problems:** Schema changes affect all contexts at once; no clear ownership of data; implicit coupling through data instead of explicit contracts
 - **Migration path:** Assign table ownership to one context; other contexts integrate through events or APIs; eventually separate the storage

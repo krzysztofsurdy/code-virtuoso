@@ -1,6 +1,15 @@
 # Indexing Strategies
 
-## Index Types in Detail
+## Contents
+
+- [Index types in detail](#index-types-in-detail)
+- [Composite index design](#composite-index-design)
+- [Covering indexes](#covering-indexes)
+- [Partial indexes](#partial-indexes)
+- [Reading EXPLAIN output](#reading-explain-output)
+- [Index anti-patterns](#index-anti-patterns)
+
+## Index types in detail
 
 ### B-tree
 
@@ -28,7 +37,7 @@ CREATE INDEX idx_sessions_token ON sessions USING HASH (token);
 SELECT * FROM sessions WHERE token = 'abc123';
 ```
 
-Limited use cases. B-tree handles equality nearly as well and also supports ranges. Hash indexes do not support ordering or range scans.
+Limited use cases. B-tree handles equality almost as fast and also supports ranges. Hash indexes do not support ordering or range scans.
 
 ### GiST (Generalized Search Tree)
 
@@ -46,7 +55,7 @@ WHERE ST_DWithin(geom, ST_MakePoint(-73.9857, 40.7484)::geography, 5000);
 CREATE INDEX idx_reservations_period ON reservations USING GIST (tsrange(start_at, end_at));
 ```
 
-GiST indexes are lossy for some data types - the database may need to recheck the actual row to confirm a match.
+GiST indexes are lossy for some data types, so the database may need to recheck the actual row to confirm a match.
 
 ### GIN (Generalized Inverted Index)
 
@@ -74,10 +83,10 @@ GIN indexes are slower to build and update than B-tree but provide fast lookups 
 
 ### BRIN (Block Range Index)
 
-Stores summary information (min/max) for ranges of physical table blocks. Extremely compact - orders of magnitude smaller than B-tree for large tables.
+Stores summary information (min/max) for ranges of physical table blocks. Compact: orders of magnitude smaller than B-tree for large tables.
 
 ```sql
--- Ideal for append-only tables with naturally ordered data
+-- Ideal for append-only tables with data in natural order
 CREATE INDEX idx_events_created_at ON events USING BRIN (created_at);
 ```
 
@@ -85,24 +94,24 @@ BRIN works well only when the physical order of rows correlates with the indexed
 
 ---
 
-## Composite Index Design
+## Composite index design
 
-### Column Order Matters
+### Column order matters
 
 ```sql
 -- Index on (status, created_at)
 CREATE INDEX idx_orders_status_created ON orders (status, created_at);
 
 -- These queries USE the index:
-SELECT * FROM orders WHERE status = 'pending';                           - uses leftmost prefix
-SELECT * FROM orders WHERE status = 'pending' AND created_at > '2025-01-01'; - uses both columns
-SELECT * FROM orders WHERE status = 'pending' ORDER BY created_at;       - uses index for filter + sort
+SELECT * FROM orders WHERE status = 'pending';                           -- uses leftmost prefix
+SELECT * FROM orders WHERE status = 'pending' AND created_at > '2025-01-01'; -- uses both columns
+SELECT * FROM orders WHERE status = 'pending' ORDER BY created_at;       -- uses index for filter + sort
 
 -- This query CANNOT use the index:
-SELECT * FROM orders WHERE created_at > '2025-01-01';  - skips the leftmost column
+SELECT * FROM orders WHERE created_at > '2025-01-01';  -- skips the leftmost column
 ```
 
-### Equality Before Range
+### Equality before range
 
 Place columns used with `=` before columns used with `>`, `<`, or `BETWEEN`:
 
@@ -116,7 +125,7 @@ SELECT * FROM orders WHERE tenant_id = 5 AND created_at >= '2025-01-01';
 
 ---
 
-## Covering Indexes
+## Covering indexes
 
 A covering index includes all columns a query needs, so the database reads only the index without touching the table (an "index-only scan").
 
@@ -132,11 +141,11 @@ FROM orders
 WHERE status = 'shipped' AND created_at > '2025-01-01';
 ```
 
-Covering indexes trade extra index storage for eliminated table lookups. Most beneficial for frequently-run queries on large tables where the table itself is much wider than the index.
+Covering indexes trade extra index storage for fewer table lookups. They pay off most for frequently run queries on large tables where the table is much wider than the index.
 
 ---
 
-## Partial Indexes
+## Partial indexes
 
 Index only the rows that matter, reducing index size and write overhead.
 
@@ -151,11 +160,11 @@ CREATE INDEX idx_users_active_email ON users (email) WHERE deleted_at IS NULL;
 CREATE UNIQUE INDEX uq_users_email_active ON users (email) WHERE deleted_at IS NULL;
 ```
 
-Partial indexes are powerful for queue-like patterns, soft-delete tables, and any scenario where queries consistently filter on a fixed condition.
+Partial indexes suit queue-like patterns, soft-delete tables, and any case where queries consistently filter on a fixed condition.
 
 ---
 
-## Reading EXPLAIN Output
+## Reading EXPLAIN output
 
 ### PostgreSQL EXPLAIN ANALYZE
 
@@ -169,16 +178,16 @@ WHERE o.status = 'pending' AND o.created_at > '2025-01-01';
 
 **Key fields to examine:**
 
-| Field | What It Tells You |
+| Field | What it tells you |
 |---|---|
-| **Seq Scan** | Full table scan - often means a missing or unused index |
+| **Seq Scan** | Full table scan, often a sign of a missing or unused index |
 | **Index Scan** | Index used to find rows, then table accessed for remaining columns |
-| **Index Only Scan** | All data served from the index - the best case for covered queries |
+| **Index Only Scan** | All data served from the index, the best case for covered queries |
 | **Bitmap Index Scan** | Multiple index entries collected, then table pages read in bulk - common with OR conditions or low-selectivity indexes |
 | **Nested Loop** | For each row from the outer table, scans the inner table - fast for small inner sets, slow for large ones |
 | **Hash Join** | Builds a hash table from one side, probes with the other - good for large unsorted joins |
 | **Sort** | Explicit sort step - check if it spills to disk (`Sort Method: external merge`) |
-| **actual time** | Real execution time in milliseconds - compare with the estimate |
+| **actual time** | Real execution time in milliseconds, to compare with the estimate |
 | **rows** | Estimated vs actual row count - large discrepancies mean stale statistics |
 
 ### MySQL EXPLAIN
@@ -189,7 +198,7 @@ EXPLAIN SELECT * FROM orders WHERE status = 'pending' AND created_at > '2025-01-
 
 **Key columns:**
 
-| Column | What to Check |
+| Column | What to check |
 |---|---|
 | **type** | `ALL` = full scan (bad), `ref` = index lookup (good), `range` = index range scan (good) |
 | **key** | Which index is actually used (NULL means no index) |
@@ -198,9 +207,9 @@ EXPLAIN SELECT * FROM orders WHERE status = 'pending' AND created_at > '2025-01-
 
 ---
 
-## Index Anti-Patterns
+## Index anti-patterns
 
-| Anti-Pattern | Why It Hurts | What to Do Instead |
+| Anti-pattern | Why it hurts | What to do instead |
 |---|---|---|
 | **Indexing every column** | Slows writes, wastes storage, confuses the query planner | Index only columns used in WHERE, JOIN, ORDER BY of actual queries |
 | **Redundant indexes** | `(a)` is redundant when `(a, b)` exists | Audit indexes periodically and drop subsets |

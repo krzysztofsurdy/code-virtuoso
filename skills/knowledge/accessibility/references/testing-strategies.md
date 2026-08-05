@@ -1,16 +1,27 @@
 # Accessibility Testing Strategies
 
-## The Testing Reality
+## Contents
 
-Automated tools catch roughly 30-40% of accessibility issues. They excel at detecting missing alt text, contrast failures, missing labels, and invalid ARIA. But they cannot judge whether alt text is meaningful, whether navigation flows logically, or whether a custom widget is truly operable. A robust strategy combines automation, manual testing, and assistive technology validation.
+- [Why automation is not enough](#why-automation-is-not-enough)
+- [Automated testing tools](#automated-testing-tools)
+- [Manual testing checklist](#manual-testing-checklist)
+- [Screen reader testing](#screen-reader-testing)
+- [Color contrast verification](#color-contrast-verification)
+- [Accessibility tree inspection](#accessibility-tree-inspection)
+- [CI integration](#ci-integration)
+- [Testing strategy summary](#testing-strategy-summary)
+
+## Why automation is not enough
+
+Automated tools catch roughly 30-40% of accessibility issues. They are good at detecting missing alt text, contrast failures, missing labels, and invalid ARIA. They cannot judge whether alt text is meaningful, whether navigation flows logically, or whether a custom widget is operable. A sound strategy combines three things: automation, manual testing, and assistive technology validation.
 
 ---
 
-## Automated Testing Tools
+## Automated testing tools
 
 | Tool | Type | Strengths |
 |---|---|---|
-| **axe-core** | JS library | Most comprehensive (~80+ rules), integrates with all major test frameworks |
+| **axe-core** | JS library | Largest rule set (~80+ rules), integrates with all major test frameworks |
 | **Lighthouse** | Browser/CLI | Built into Chrome DevTools, scores alongside performance and SEO |
 | **pa11y** | CLI/CI tool | Simple command-line interface, good for pipeline smoke tests |
 | **WAVE** | Browser extension | Visual overlay showing issues in context |
@@ -23,7 +34,7 @@ Automated tools catch roughly 30-40% of accessibility issues. They excel at dete
 
 ---
 
-## Manual Testing Checklist
+## Manual testing checklist
 
 ### Keyboard
 - [ ] Tab reaches every interactive element
@@ -34,7 +45,7 @@ Automated tools catch roughly 30-40% of accessibility issues. They excel at dete
 - [ ] Focus returns to trigger when overlays close
 - [ ] Skip link bypasses repeated navigation
 
-### Visual and Content
+### Visual and content
 - [ ] Page readable at 200% zoom
 - [ ] Content reflows at 320px width without horizontal scroll
 - [ ] Color is never the sole information carrier
@@ -42,7 +53,7 @@ Automated tools catch roughly 30-40% of accessibility issues. They excel at dete
 - [ ] Form errors are clear, specific, and associated with fields
 - [ ] Heading hierarchy is logical (one h1, no skipped levels)
 
-### Dynamic Content
+### Dynamic content
 - [ ] Status messages use live regions or `role="status"`
 - [ ] Error alerts use `role="alert"` or `aria-live="assertive"`
 - [ ] Loading states communicate progress to assistive tech
@@ -55,9 +66,9 @@ Automated tools catch roughly 30-40% of accessibility issues. They excel at dete
 
 ---
 
-## Screen Reader Testing
+## Screen reader testing
 
-### Quick Reference
+### Quick reference
 
 | Reader | Platform | Cost | Activation |
 |---|---|---|---|
@@ -77,24 +88,24 @@ Automated tools catch roughly 30-40% of accessibility issues. They excel at dete
 2. Arrow keys to read through content. Tab for interactive elements.
 3. Insert+Q to quit.
 
-### What to Listen For
+### What to listen for
 - Images: meaningful descriptions (or silence for decorative)
 - Forms: label, required state, error messages announced
-- Buttons/links: purpose clearly described
+- Buttons/links: purpose is described
 - Headings: navigable page outline
 - Dynamic content: updates announced
 - Custom widgets: role and state announced
 
 ---
 
-## Color Contrast Verification
+## Color contrast verification
 
 | Tool | Usage |
 |---|---|
 | **Chrome DevTools** | Inspect element > color picker shows ratio |
 | **Firefox Accessibility Inspector** | Accessibility tab > contrast check |
 | **Colour Contrast Analyser** | Desktop app with eyedropper |
-| **WebAIM Contrast Checker** | Web tool - enter hex values |
+| **WebAIM Contrast Checker** | Web tool, enter hex values |
 
 ```js
 // axe-core contrast check in tests
@@ -104,7 +115,7 @@ expect(results.violations).toHaveLength(0);
 
 ---
 
-## Accessibility Tree Inspection
+## Accessibility tree inspection
 
 The accessibility tree is what assistive tech actually receives. Inspect it to verify:
 - Every interactive element has an accessible name
@@ -116,7 +127,7 @@ The accessibility tree is what assistive tech actually receives. Inspect it to v
 
 ---
 
-## CI Integration
+## CI integration
 
 ### axe-core with Playwright
 ```js
@@ -189,7 +200,7 @@ final class AccessibilityTest extends PantherTestCase
 
 ---
 
-## Testing Strategy Summary
+## Testing strategy summary
 
 | Layer | Catches | When |
 |---|---|---|

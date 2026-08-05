@@ -7,23 +7,23 @@ user-invocable: false
 
 # CI/CD Pipeline Patterns and Deployment Strategies
 
-Continuous Integration, Continuous Delivery, and Continuous Deployment form a spectrum of automation practices. Each builds on the previous one, progressively reducing manual intervention between a code change and its availability to users.
+Continuous Integration, Continuous Delivery, and Continuous Deployment are a spectrum of automation practices. Each builds on the previous one and removes more manual work between a code change and its availability to users.
 
 ## CI vs CD vs CD
 
-| Practice | What It Automates | Gate to Next Stage |
+| Practice | What it automates | Gate to next stage |
 |---|---|---|
 | **Continuous Integration** | Merging, building, and testing code on every commit | Automated tests must pass before merge |
 | **Continuous Delivery** | Packaging and promoting artifacts through environments | Manual approval before production deployment |
 | **Continuous Deployment** | Full path from commit to production without manual steps | Automated quality gates replace human approval |
 
-Continuous Integration is the foundation. Without reliable, fast integration, neither delivery nor deployment is sustainable. Start here and expand outward.
+Continuous Integration is the foundation. Without reliable, fast integration, neither delivery nor deployment is sustainable. Start there.
 
 ---
 
-## Pipeline Design Principles
+## Pipeline design principles
 
-A well-designed pipeline gives developers fast, trustworthy feedback while preventing broken code from reaching users.
+A good pipeline gives developers fast, trustworthy feedback and keeps broken code away from users.
 
 | Principle | Meaning |
 |---|---|
@@ -36,9 +36,9 @@ A well-designed pipeline gives developers fast, trustworthy feedback while preve
 
 ---
 
-## Deployment Strategies Overview
+## Deployment strategies overview
 
-| Strategy | Downtime | Rollback Speed | Infrastructure Cost | Complexity | Best For |
+| Strategy | Downtime | Rollback speed | Infrastructure cost | Complexity | Best for |
 |---|---|---|---|---|---|
 | **Blue-Green** | Zero | Instant (traffic switch) | 2x production | Low | Major releases, risk-averse teams |
 | **Canary** | Zero | Fast (route traffic back) | 1x + small canary slice | Medium | Data-driven teams, high-traffic services |
@@ -46,11 +46,11 @@ A well-designed pipeline gives developers fast, trustworthy feedback while preve
 | **Recreate** | Yes (brief) | Slow (full redeploy) | 1x | Minimal | Dev/staging environments, stateful apps that cannot run two versions |
 | **Feature Flags** | Zero | Instant (toggle off) | 1x | Medium | Progressive rollout, A/B testing, trunk-based development |
 
-No single strategy fits every situation. Many teams combine approaches - for example, canary releases with feature flags for granular control over who sees new functionality.
+No single strategy fits every situation. Many teams combine them, for example canary releases with feature flags to control who sees new functionality.
 
 ---
 
-## Environment Management Overview
+## Environment management overview
 
 A typical promotion path moves artifacts through increasingly production-like environments:
 
@@ -58,17 +58,17 @@ A typical promotion path moves artifacts through increasingly production-like en
 dev -> staging -> production
 ```
 
-Key principles:
+Principles:
 - **Artifact immutability** - Build once, deploy the same artifact everywhere. Never rebuild for each environment.
 - **Configuration separation** - Environment-specific values (database URLs, API keys, feature toggles) live outside the artifact.
 - **Parity** - Staging should mirror production as closely as possible in infrastructure, data shape, and scale.
-- **Ephemeral environments** - Spin up isolated environments per pull request for testing and review, then tear them down automatically.
+- **Ephemeral environments** - Spin up isolated environments per pull request for testing and review, then tear them down when the PR closes.
 
 ---
 
-## Quick Reference: Pipeline Anti-Patterns
+## Quick reference: pipeline anti-patterns
 
-| Anti-Pattern | Problem | Fix |
+| Anti-pattern | Problem | Fix |
 |---|---|---|
 | Rebuilding artifacts per environment | Different binary in staging vs production | Build once, promote the same artifact |
 | Long-running monolithic pipeline | Slow feedback, developers context-switch | Parallelize stages, split into focused pipelines |

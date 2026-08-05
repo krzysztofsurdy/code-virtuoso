@@ -1,8 +1,8 @@
 # API Evolution and Versioning
 
-## Breaking vs Non-Breaking Changes
+## Breaking vs non-breaking changes
 
-Understanding what constitutes a breaking change is the foundation of API evolution.
+Evolving an API safely starts with knowing what counts as a breaking change.
 
 ### Non-breaking changes (safe to ship anytime)
 
@@ -27,7 +27,7 @@ Understanding what constitutes a breaking change is the foundation of API evolut
 
 **Rule of thumb:** if an existing, well-behaved client could break without code changes, it is a breaking change.
 
-## Versioning Strategies Compared
+## Versioning strategies compared
 
 | Strategy | Example | Pros | Cons |
 |---|---|---|---|
@@ -36,24 +36,24 @@ Understanding what constitutes a breaking change is the foundation of API evolut
 | **Query parameter** | `/users?version=2` | Simple to add, easy to test | Easy to forget, complicates caching |
 | **No versioning** | Additive evolution only | Simplest for clients, single codebase | Requires discipline, eventually limits design freedom |
 
-**Recommendation:** for most APIs, URL path versioning (`/v1/`) provides the best balance of clarity and simplicity. Reserve version bumps for truly breaking changes. Prefer additive evolution within a version wherever possible.
+**Recommendation:** for most APIs, URL path versioning (`/v1/`) gives the best balance of clarity and simplicity. Reserve version bumps for breaking changes. Prefer additive evolution within a version wherever possible.
 
-## Deprecation Process
+## Deprecation process
 
-A deprecation is a contract with your consumers. Follow a predictable process:
+A deprecation is a contract with your consumers. Follow the same steps every time:
 
-1. **Announce** — document the deprecation in your changelog, API docs, and release notes. State what is deprecated, why, and what replaces it.
-2. **Sunset header** — include the `Sunset` HTTP header with the removal date:
+1. **Announce:** document the deprecation in your changelog, API docs, and release notes. State what is deprecated, why, and what replaces it.
+2. **Sunset header:** include the `Sunset` HTTP header with the removal date:
    ```
    Sunset: Sat, 01 Mar 2025 00:00:00 GMT
    ```
-3. **Deprecation warnings** — return a `Deprecation` header or warning in responses to deprecated endpoints.
-4. **Migration guide** — provide step-by-step instructions for moving to the replacement.
-5. **Monitor usage** — track calls to deprecated endpoints. Reach out to high-volume consumers individually.
-6. **Grace period** — maintain the deprecated endpoint for a reasonable period (typically 6-12 months for public APIs).
-7. **Remove** — after the sunset date, return `410 Gone` with a message pointing to the replacement.
+3. **Deprecation warnings:** return a `Deprecation` header or warning in responses to deprecated endpoints.
+4. **Migration guide:** provide step-by-step instructions for moving to the replacement.
+5. **Monitor usage:** track calls to deprecated endpoints. Reach out to high-volume consumers individually.
+6. **Grace period:** maintain the deprecated endpoint for a reasonable period (typically 6-12 months for public APIs).
+7. **Remove:** after the sunset date, return `410 Gone` with a message pointing to the replacement.
 
-## Contract Testing
+## Contract testing
 
 Contract tests verify that the API producer and consumers agree on the shape and behavior of the API.
 
@@ -61,31 +61,31 @@ Contract tests verify that the API producer and consumers agree on the shape and
 - **Schema validation:** validate responses against an OpenAPI or GraphQL schema in automated tests. Catch unintentional changes to response shape.
 - **Provider verification:** the API producer verifies that its implementation satisfies all published contracts on every build.
 
-Contract tests complement (but do not replace) integration tests. They catch interface-level regressions early without requiring a running instance of every consumer.
+Contract tests complement integration tests but do not replace them. They catch interface-level regressions early without requiring a running instance of every consumer.
 
-## API Documentation
+## API documentation
 
-Good documentation is as important as good design. Consumers cannot use what they cannot understand.
+Documentation matters as much as the design. Consumers cannot use what they cannot understand.
 
 **OpenAPI / Swagger:**
 - Define the API schema in OpenAPI 3.x format (YAML or JSON)
 - Generate documentation, client SDKs, and server stubs from the schema
-- Keep the schema as the single source of truth — generate it from code annotations or maintain it manually, but never let docs and implementation diverge
+- Keep the schema as the single source of truth. Generate it from code annotations or maintain it manually, but never let docs and implementation diverge
 - Include request/response examples for every endpoint
 
 **GraphQL introspection:**
-- The schema itself serves as documentation
+- The schema is itself the documentation
 - Use descriptions on types, fields, and arguments
 - Tools like GraphiQL and Apollo Studio provide interactive exploration
 
 **Documentation checklist:**
 - [ ] Every endpoint has a description, request example, and response example
 - [ ] Error responses are documented with codes and meanings
-- [ ] Authentication requirements are stated clearly
+- [ ] Authentication requirements are stated
 - [ ] Rate limits are documented
 - [ ] Changelog is maintained with every release
 
-## Changelog Practices
+## Changelog practices
 
 - Maintain a `CHANGELOG` or dedicated changelog page in your API documentation
 - Categorize entries: **Added**, **Changed**, **Deprecated**, **Removed**, **Fixed**

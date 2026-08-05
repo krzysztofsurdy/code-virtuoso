@@ -1,8 +1,17 @@
 # Environment Management
 
-## Environment Promotion
+## Contents
 
-Artifacts move through increasingly production-like environments. Each gate adds confidence.
+- [Environment promotion](#environment-promotion)
+- [Infrastructure as code](#infrastructure-as-code)
+- [Configuration management](#configuration-management)
+- [Ephemeral environments](#ephemeral-environments)
+- [Artifact versioning and immutability](#artifact-versioning-and-immutability)
+- [Post-deploy verification](#post-deploy-verification)
+
+## Environment promotion
+
+Artifacts move through increasingly production-like environments. Each gate adds confidence before the next step.
 
 | Environment | Purpose | Data | Access |
 |---|---|---|---|
@@ -10,7 +19,7 @@ Artifacts move through increasingly production-like environments. Each gate adds
 | **Staging** | Pre-production validation, performance testing | Production-like (anonymized) | Dev team, QA |
 | **Production** | Live user traffic | Real | Restricted, audited |
 
-### Promotion Gates
+### Promotion gates
 
 | Gate | Automated? |
 |---|---|
@@ -56,7 +65,7 @@ deploy-production:
 
 ---
 
-## Infrastructure as Code
+## Infrastructure as code
 
 | Tenet | Meaning |
 |---|---|
@@ -70,9 +79,9 @@ Run periodic plan/diff commands to detect drift. Alert when actual state diverge
 
 ---
 
-## Configuration Management
+## Configuration management
 
-### Per-Environment Configuration
+### Per-environment configuration
 
 The same artifact runs everywhere; only configuration changes.
 
@@ -85,7 +94,7 @@ CONFIG_FILE="config/${ENV}.env"
 set -a && source "$CONFIG_FILE" && set +a
 ```
 
-### Configuration Hierarchy
+### Configuration hierarchy
 
 ```
 defaults.env        <- shared across all environments
@@ -103,7 +112,7 @@ runtime injection   <- secrets from secrets manager
 
 ---
 
-## Ephemeral Environments
+## Ephemeral environments
 
 Short-lived, isolated environments created per pull request for testing and review.
 
@@ -149,18 +158,18 @@ jobs:
 
 ---
 
-## Artifact Versioning and Immutability
+## Artifact versioning and immutability
 
 Build once, deploy the same artifact everywhere. Never rebuild per environment.
 
-| Practice | Why It Matters |
+| Practice | Why it matters |
 |---|---|
 | Tag with commit SHA | Direct traceability to source |
 | Never use `latest` in deployments | Mutable and ambiguous |
 | Sign artifacts | Verify pipeline origin, detect tampering |
 | Store in a registry | Not local builds |
 
-| Versioning Strategy | Format | Use Case |
+| Versioning strategy | Format | Use case |
 |---|---|---|
 | Commit SHA | `abc1234` | Every build |
 | Semantic version | `v2.3.1` | Released packages, APIs |
@@ -177,17 +186,17 @@ build:
 
 ---
 
-## Post-Deploy Verification
+## Post-deploy verification
 
-### Health Check Endpoints
+### Health check endpoints
 
-| Check | Verifies | On Failure |
+| Check | Verifies | On failure |
 |---|---|---|
 | **Liveness** | Process is running | Restart instance |
 | **Readiness** | Can serve traffic | Remove from load balancer |
 | **Dependencies** | DB, cache, queues reachable | Block deployment |
 
-### Smoke Test Script
+### Smoke test script
 
 ```bash
 #!/usr/bin/env bash
@@ -208,7 +217,7 @@ check_endpoint "/api/v1/status" "200"
 echo "All smoke tests passed"
 ```
 
-### Verification Order
+### Verification order
 
 1. Health endpoint returns 200
 2. Core API endpoints respond correctly

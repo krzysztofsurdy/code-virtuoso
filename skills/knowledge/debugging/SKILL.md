@@ -7,13 +7,13 @@ user-invocable: false
 
 # Debugging
 
-Systematic methodology for finding and fixing bugs. Prioritizes root cause analysis over symptom treatment, evidence over intuition, and prevention over recurrence.
+Systematic methodology for finding and fixing bugs. It puts root cause analysis ahead of symptom treatment, evidence ahead of intuition, and prevention ahead of recurrence.
 
-## Iron Law
+## Iron law
 
-**No fix without root cause.** Never apply a fix until you can explain WHY the bug exists, not just WHERE it manifests. Symptom-level fixes create new bugs.
+**No fix without root cause.** Never apply a fix until you can explain WHY the bug exists, not only WHERE it shows up. Symptom-level fixes create new bugs.
 
-## When to Use
+## When to use
 
 - Bug report from QA or production alert
 - Test failure with unclear cause
@@ -28,29 +28,29 @@ Systematic methodology for finding and fixing bugs. Prioritizes root cause analy
 
 Establish a reliable reproduction before investigating.
 
-1. Collect all evidence — error messages, stack traces, logs, screenshots, user steps
+1. Collect all evidence: error messages, stack traces, logs, screenshots, user steps
 2. Identify the exact conditions: environment, data state, user actions, timing
-3. Create a minimal reproduction — strip away everything that isn't needed to trigger the bug
-4. Confirm reproduction is consistent (if intermittent, note frequency and conditions)
-5. Write down the reproduction steps precisely — someone else should be able to follow them
+3. Create a minimal reproduction by stripping away everything not needed to trigger the bug
+4. Confirm the reproduction is consistent (if intermittent, note frequency and conditions)
+5. Write the reproduction steps down precisely so someone else can follow them
 
 **Output**: Documented reproduction steps, minimal test case
 
-**If you cannot reproduce**: Document what you tried, check environment differences, add instrumentation and wait for next occurrence. Do not proceed to Phase 2 on guesswork — unreproducible bugs get logged, not "fixed."
+**If you cannot reproduce**: Document what you tried, check environment differences, add instrumentation, and wait for the next occurrence. Do not move to Phase 2 on guesswork. Unreproducible bugs get logged, not "fixed."
 
 ### Phase 2: Investigate
 
-Gather evidence systematically. Do NOT form hypotheses yet — this phase is about observation, not explanation.
+Gather evidence systematically. Do NOT form hypotheses yet. This phase is about observation, not explanation.
 
-1. Read the full error message and stack trace — every line, not just the first one
-2. Check git history — what changed recently? (`git log --since="2 weeks ago"`, `git bisect`)
-3. Trace the data flow — follow the input from entry point to failure point
-4. Check boundaries — where does data cross component/service/layer boundaries?
-5. Collect environmental context — versions, configuration, dependencies, resource state
-6. Map the blast radius — what else is affected? Is this an isolated failure or systemic?
+1. Read the full error message and stack trace, every line, not only the first one
+2. Check git history for recent changes (`git log --since="2 weeks ago"`, `git bisect`)
+3. Trace the data flow from the entry point to the failure point
+4. Check boundaries: where does data cross component, service, or layer boundaries?
+5. Collect environmental context: versions, configuration, dependencies, resource state
+6. Map the blast radius: what else is affected? Is this an isolated failure or systemic?
 
 **Production vs development debugging:**
-- **Production**: Prioritize impact assessment and mitigation first. Can you reduce blast radius before investigating? Read-only access only — never debug by modifying production state.
+- **Production**: Assess impact and mitigate first. Can you reduce the blast radius before investigating? Use read-only access only, and never debug by modifying production state.
 - **Development**: You have full control. Use breakpoints, modify state, add temporary logging freely.
 
 **Output**: Evidence log (what you found, where, timestamps), affected component map
@@ -59,15 +59,15 @@ Gather evidence systematically. Do NOT form hypotheses yet — this phase is abo
 
 Form competing hypotheses ranked by evidence strength.
 
-1. List ALL plausible causes — do not anchor on the first idea
+1. List ALL plausible causes. Do not anchor on the first idea
 2. Classify each hypothesis by bug category (see [bug categories reference](references/bug-categories.md))
-3. Rate each: evidence strength (strong/medium/weak), testability (easy/hard), likelihood
+3. Rate each on evidence strength (strong/medium/weak), testability (easy/hard), and likelihood
 4. Pick the most likely AND most testable hypothesis first
 5. Define what would CONFIRM and what would FALSIFY each hypothesis
 
 **Example hypothesis table:**
 
-| # | Hypothesis | Category | Evidence | Testability | Test Plan |
+| # | Hypothesis | Category | Evidence | Testability | Test plan |
 |---|---|---|---|---|---|
 | 1 | Cache returns stale data after update | State | Log shows old value 2s after write | Easy | Bypass cache and compare |
 | 2 | Race condition between two workers | Race condition | Intermittent, high load correlation | Medium | Add locking, stress test |
@@ -77,13 +77,13 @@ Form competing hypotheses ranked by evidence strength.
 
 ### Phase 4: Test
 
-Validate one hypothesis at a time. Single-variable changes only.
+Validate one hypothesis at a time. Change a single variable per test.
 
 1. Change ONE thing and observe the result
-2. If confirmed — proceed to Phase 5
-3. If falsified — update evidence log, return to next hypothesis
-4. If inconclusive — add more instrumentation, gather more evidence
-5. After 3 failed hypotheses — STOP. Re-examine your assumptions. The bug model may be wrong.
+2. If confirmed, proceed to Phase 5
+3. If falsified, update the evidence log and move to the next hypothesis
+4. If inconclusive, add more instrumentation and gather more evidence
+5. After 3 failed hypotheses, STOP and re-examine your assumptions. The bug model may be wrong.
 
 **Red flags** (return to Phase 2 immediately):
 - "Quick fix for now, investigate later"
@@ -98,9 +98,9 @@ Validate one hypothesis at a time. Single-variable changes only.
 Implement the fix at the source, not at the symptom.
 
 1. Write a failing test that reproduces the bug FIRST
-2. Implement the fix — single, focused change addressing the root cause
+2. Implement the fix as a single, focused change addressing the root cause
 3. Verify the failing test now passes
-4. Run the full test suite — ensure no regressions
+4. Run the full test suite to catch regressions
 5. Review your own fix: is this the simplest correct solution?
 
 **Fix principles:**
@@ -113,23 +113,23 @@ Implement the fix at the source, not at the symptom.
 
 ### Phase 6: Prevent
 
-Ensure this class of bug cannot recur.
+Make sure this class of bug cannot recur.
 
 1. Add defensive validation at the boundary where bad data entered
-2. Improve error messages — would future-you understand this error immediately?
+2. Improve error messages. Would you understand this error immediately in six months?
 3. Update monitoring/alerting if this was a production issue
 4. Write a post-mortem if the bug was significant (see [post-mortem template](references/post-mortem-template.md))
-5. Share findings with the team — this is how institutional knowledge grows
+5. Share findings with the team, which is how institutional knowledge grows
 
 **Output**: Prevention measures, post-mortem (if significant)
 
 ---
 
-## Bug Category Strategies
+## Bug category strategies
 
 Different bug types need different investigation approaches. See [bug categories reference](references/bug-categories.md) for the full guide.
 
-| Category | First Move | Key Technique |
+| Category | First move | Key technique |
 |---|---|---|
 | Logic error | Read the code, trace conditions | Rubber duck walkthrough, truth tables |
 | Data issue | Inspect actual vs expected data at each boundary | Boundary logging, data flow trace |
@@ -141,20 +141,20 @@ Different bug types need different investigation approaches. See [bug categories
 
 ---
 
-## Escalation Criteria
+## Escalation criteria
 
 Stop debugging and escalate when:
 
 - You have spent more than 2x your initial time estimate without meaningful progress
 - The fix requires architectural changes beyond your component
 - The root cause is in a dependency you do not control
-- You have found 3+ bugs in the same area — the code needs redesign, not more patches
+- You have found 3+ bugs in the same area, which means the code needs redesign, not more patches
 - The bug exposes a fundamental design flaw
-- Production impact is growing and a workaround/rollback is faster than a fix
+- Production impact is growing and a workaround or rollback is faster than a fix
 
 **Escalate to:**
 
-| Situation | Escalate To |
+| Situation | Escalate to |
 |---|---|
 | Design or architecture issues | Architect |
 | Cannot reproduce, need more info | QA team |
@@ -164,7 +164,7 @@ Stop debugging and escalate when:
 
 ---
 
-## Decision Framework
+## Decision framework
 
 ### Fix depth
 - Fix at the SOURCE where bad data/state originates, not where the error appears
@@ -173,25 +173,25 @@ Stop debugging and escalate when:
 
 ### Scope of fix
 - Fix the specific bug, not the surrounding code
-- If you see other issues nearby, file them separately — do not scope-creep a bug fix
+- If you see other issues nearby, file them separately. Do not let a bug fix grow in scope
 - One bug = one fix = one commit = one test
 
 ### When to rewrite vs patch
 - **Patch**: isolated bug, clear root cause, code is otherwise sound
-- **Rewrite**: 3+ bugs in same module, root cause is structural, fix would be more complex than rewrite
-- **Rollback**: production is burning and the previous version worked — roll back first, debug second
+- **Rewrite**: 3+ bugs in the same module, the root cause is structural, and the fix would be more complex than a rewrite
+- **Rollback**: production is burning and the previous version worked. Roll back first, debug second
 
 ---
 
-## Integration with Team Roles
+## Integration with team roles
 
 This debugging workflow connects to broader team processes:
 
-| Phase | Team Integration |
+| Phase | Team integration |
 |---|---|
 | Reproduce | QA provides bug reports with reproduction steps; request more detail if insufficient |
 | Investigate | Architect can help map component dependencies and blast radius |
-| Fix | Code review by a peer before merge — a second pair of eyes catches fix-induced regressions |
+| Fix | A peer reviews the code before merge, since a second pair of eyes catches fix-induced regressions |
 | Prevent | Post-mortem shared with the team; action items tracked in the backlog |
 
 When using other code-virtuoso skills:
@@ -205,7 +205,7 @@ When using other code-virtuoso skills:
 
 ---
 
-## Quality Checklist
+## Quality checklist
 
 Before marking a bug fix done:
 
@@ -220,24 +220,24 @@ Before marking a bug fix done:
 
 ---
 
-## Critical Rules
+## Critical rules
 
 1. **No fix without root cause.** This is the iron law. If you cannot explain why the bug exists, you are not done investigating.
 
 2. **Reproduce first.** Do not investigate what you cannot reproduce. If reproduction fails, add observability and wait.
 
-3. **Single-variable testing.** Change one thing at a time during hypothesis testing. Changing multiple variables makes results uninterpretable.
+3. **Single-variable testing.** Change one thing at a time during hypothesis testing. Changing several variables makes results uninterpretable.
 
-4. **Evidence over intuition.** Log your evidence. "I think it might be X" is not a hypothesis — "Log line Y shows value Z when it should show W" is.
+4. **Evidence over intuition.** Log your evidence. "I think it might be X" is not a hypothesis. "Log line Y shows value Z when it should show W" is.
 
-5. **Test before and after.** A fix without a regression test is a fix that will break again.
+5. **Test before and after.** A fix without a regression test will break again.
 
-6. **Escalate without ego.** Knowing when to stop and ask for help is a skill, not a weakness. See the escalation criteria above.
+6. **Escalate without ego.** Knowing when to stop and ask for help is a skill. See the escalation criteria above.
 
 7. **Document for the next person.** The next person debugging this area might be you in six months. Leave the codebase more observable than you found it.
 
-8. **Never debug production by modifying production.** Read-only investigation. Fixes go through the normal deployment pipeline.
+8. **Never debug production by modifying production.** Investigate read-only. Fixes go through the normal deployment pipeline.
 
 9. **Scope discipline.** Fix the bug. Only the bug. Other improvements are separate tickets.
 
-10. **Share what you learn.** Every significant bug is a learning opportunity for the team. Post-mortems are not blame — they are institutional memory.
+10. **Share what you learn.** Every significant bug is a learning opportunity for the team. Post-mortems are not about blame. They are institutional memory.

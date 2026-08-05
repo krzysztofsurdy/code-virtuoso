@@ -1,10 +1,19 @@
 # Deployment Strategies
 
-## Blue-Green Deployment
+## Contents
+
+- [Blue-green deployment](#blue-green-deployment)
+- [Canary releases](#canary-releases)
+- [Rolling updates](#rolling-updates)
+- [Feature flags for progressive delivery](#feature-flags-for-progressive-delivery)
+- [Zero-downtime database migrations](#zero-downtime-database-migrations)
+- [Rollback strategies](#rollback-strategies)
+
+## Blue-green deployment
 
 Two identical production environments. One serves traffic (blue), the other receives the new version (green). After verification, traffic switches.
 
-### How It Works
+### How it works
 
 1. Blue serves all production traffic
 2. Deploy new version to green
@@ -14,9 +23,9 @@ Two identical production environments. One serves traffic (blue), the other rece
 
 ### Rollback
 
-Switch traffic back to the previous environment. No redeployment needed - the old version is still running.
+Switch traffic back to the previous environment. No redeployment is needed because the old version is still running.
 
-### Database Considerations
+### Database considerations
 
 Both environments share a database. Schema changes must be backward-compatible with both versions. Use the expand-contract pattern: add new structures first, migrate data, remove old structures in a later release.
 
@@ -32,11 +41,11 @@ echo "Active environment: $TARGET"
 
 ---
 
-## Canary Releases
+## Canary releases
 
 Route a small percentage of traffic to the new version. If metrics stay healthy, gradually shift all traffic.
 
-### Traffic Splitting
+### Traffic splitting
 
 ```
 Phase 1:  2% canary  |  98% stable
@@ -45,9 +54,9 @@ Phase 3: 50% canary  |  50% stable
 Phase 4: 100% canary (promote)
 ```
 
-### Promotion Criteria
+### Promotion criteria
 
-| Metric | What to Watch |
+| Metric | What to watch |
 |---|---|
 | **Error rate** | HTTP 5xx, exception counts |
 | **Latency** | P50, P95, P99 vs baseline |
@@ -75,7 +84,7 @@ jobs:
 
 ---
 
-## Rolling Updates
+## Rolling updates
 
 Replace instances incrementally. Both old and new versions run simultaneously during the rollout.
 
@@ -98,11 +107,11 @@ deploy-rolling:
 
 ---
 
-## Feature Flags for Progressive Delivery
+## Feature flags for progressive delivery
 
 Decouple deployment from release. Code is deployed but hidden behind a flag.
 
-### Rollout Pattern
+### Rollout pattern
 
 1. Deploy with flag OFF
 2. Enable for internal team
@@ -110,7 +119,7 @@ Decouple deployment from release. Code is deployed but hidden behind a flag.
 4. Monitor, expand to 25%, 50%, 100%
 5. Remove flag and dead code
 
-| Strategy | Use Case |
+| Strategy | Use case |
 |---|---|
 | **Boolean toggle** | Simple on/off |
 | **Percentage rollout** | Gradual exposure |
@@ -121,9 +130,9 @@ Set expiration dates on flags, track them in a registry, and remove flag code pr
 
 ---
 
-## Zero-Downtime Database Migrations
+## Zero-downtime database migrations
 
-### Expand-Contract Pattern
+### Expand-contract pattern
 
 **Expand (add new, keep old):**
 ```sql
@@ -152,7 +161,7 @@ ALTER TABLE users DROP COLUMN username;
 
 ---
 
-## Rollback Strategies
+## Rollback strategies
 
 | Strategy | Mechanism | Speed |
 |---|---|---|
@@ -161,7 +170,7 @@ ALTER TABLE users DROP COLUMN username;
 | **Rolling** | Reverse rolling update | Slow |
 | **Feature Flag** | Toggle off | Instant |
 
-### Automated Rollback Triggers
+### Automated rollback triggers
 
 - Error rate exceeds 2x pre-deployment baseline
 - P99 latency exceeds SLO
