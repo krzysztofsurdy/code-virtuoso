@@ -1,31 +1,42 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After Examples](#beforeafter-examples)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The Split Temporary Variable refactoring technique addresses the problem of temporary variables that are reused for different purposes throughout a method or function. When a single temporary variable holds different values at different points in the code, it becomes confusing about what the variable actually represents. This refactoring extracts each distinct usage into its own variable with a meaningful name.
+Split Temporary Variable fixes temporary variables that are reused for different purposes within a method or function. When one variable holds different values at different points, it is unclear what it represents. The refactoring gives each distinct use its own variable with a meaningful name.
 
 ## Motivation
 
-Temporary variables often become problematic when they serve multiple purposes within a method. Common issues include:
+A temporary variable that serves several purposes in one method causes problems:
 
-- **Ambiguous Intent**: A variable named `temp` or `result` reused for different calculations obscures what the code is doing
-- **Difficult Debugging**: It's hard to understand what a variable should contain at any given point
-- **Reduced Readability**: Future developers must trace the variable's assignments to understand its purpose
-- **Increased Error Risk**: Misusing a variable becomes easier when its purpose isn't clear
-- **Harder Refactoring**: Extracting methods becomes difficult when variables have unclear responsibilities
+- **Ambiguous intent**: a variable named `temp` or `result` reused for different calculations obscures what the code is doing.
+- **Difficult debugging**: it is hard to tell what the variable should contain at any given point.
+- **Reduced readability**: readers must trace the variable's assignments to understand its purpose.
+- **Increased error risk**: misusing a variable is easier when its purpose is unclear.
+- **Harder refactoring**: extracting methods is difficult when variables have unclear responsibilities.
 
-By splitting temporary variables, each one has a single, well-defined purpose captured in its name.
+After the split, each variable has one purpose, stated in its name.
 
 ## Mechanics
 
-1. **Identify Variables**: Find temporary variables that are assigned multiple times with different purposes
-2. **Analyze Each Assignment**: Determine what each assignment represents and what value is being calculated
-3. **Create New Variables**: Introduce new variables with descriptive names for each distinct purpose
-4. **Replace References**: Update code to use the appropriate new variable
-5. **Remove Original Variable**: Delete the original temporary variable
-6. **Test**: Ensure the refactored code behaves identically
+1. **Identify variables**: find temporary variables that are assigned multiple times for different purposes.
+2. **Analyze each assignment**: determine what each assignment represents and what value is being calculated.
+3. **Create new variables**: introduce a descriptively named variable for each distinct purpose.
+4. **Replace references**: update the code to use the appropriate new variable.
+5. **Remove the original variable**: delete the original temporary variable.
+6. **Test**: confirm the refactored code behaves identically.
 
 ## Before/After Examples
 
-### Example 1: Distance Calculation
+### Example 1: distance calculation
 
 **Before:**
 ```php
@@ -49,7 +60,7 @@ function getDistance(float $initialVelocity, float $acceleration, float $time): 
 }
 ```
 
-### Example 2: User Processing
+### Example 2: user processing
 
 **Before:**
 ```php
@@ -79,7 +90,7 @@ public function processUser(array $data): array
 }
 ```
 
-### Example 3: Complex Calculation
+### Example 3: complex calculation
 
 **Before:**
 ```php
@@ -111,29 +122,29 @@ function calculatePrice(
 
 ## Benefits
 
-- **Increased Readability**: Variable names clearly express their purpose, making code self-documenting
-- **Improved Maintainability**: Developers can quickly understand what each variable represents
-- **Better Debugging**: Easier to trace variable values and catch unexpected assignments
-- **Facilitates Extraction**: Clearer code structure makes it easier to extract methods
-- **Reduces Confusion**: Eliminates the ambiguity of overloaded temporary variables
-- **Type Safety**: Each variable can have appropriate type hints based on its specific purpose
+- **Readability**: variable names express their purpose, so the code documents itself.
+- **Maintainability**: developers can quickly see what each variable represents.
+- **Debugging**: variable values are easier to trace and unexpected assignments are easier to catch.
+- **Easier extraction**: a clearer structure makes it easier to extract methods.
+- **Less confusion**: overloaded temporary variables no longer blur meaning.
+- **Typing**: each variable can have a type hint that fits its specific purpose.
 
-## When NOT to Use
+## When not to use
 
-- **Loop Counters**: Don't split standard loop counters like `$i`, `$j`, `$k` – they have a single, understood purpose
-- **Accumulators**: Variables that genuinely accumulate values (e.g., sum, count) shouldn't be split if they truly serve one purpose
-- **Performance Critical Code**: In rare performance-critical sections, creating multiple variables might have minor overhead implications
-- **Legacy Code Without Tests**: Refactoring without test coverage is risky; ensure tests exist first
-- **Already Clear Code**: If variable purpose is obvious from context and naming, the refactoring adds no value
+- **Loop counters**: do not split standard loop counters like `$i`, `$j`, `$k`. They have a single, understood purpose.
+- **Accumulators**: variables that accumulate values (e.g., sum, count) should not be split if they serve one purpose.
+- **Performance critical code**: in rare performance-critical sections, creating multiple variables might have minor overhead.
+- **Legacy code without tests**: refactoring without test coverage is risky; write the tests first.
+- **Already clear code**: if the variable's purpose is obvious from context and naming, the refactoring adds nothing.
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Method**: Often used after splitting variables to separate concerns
-- **Rename Variable**: Use meaningful names when introducing split variables
-- **Introduce Parameter Object**: When many variables emerge, consider grouping related parameters
-- **Replace Temp with Query**: Transform temporary variables into method calls for better encapsulation
+- **Extract Method**: often used after splitting variables to separate concerns.
+- **Rename Variable**: gives the split variables meaningful names.
+- **Introduce Parameter Object**: when many variables emerge, consider grouping related parameters.
+- **Replace Temp with Query**: turns temporary variables into method calls for better encapsulation.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

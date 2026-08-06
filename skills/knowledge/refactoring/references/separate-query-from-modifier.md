@@ -1,27 +1,35 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After: PHP 8.3+ code](#beforeafter-php-83-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-The Separate Query from Modifier refactoring technique separates methods that retrieve data from methods that modify object state. This implements the Command Query Responsibility Segregation (CQRS) principle, ensuring that methods either perform an action or return data, but not both.
+Separate Query from Modifier splits a method that both returns data and changes object state into two methods. It applies the Command Query Responsibility Segregation (CQRS) principle at method level: a method either performs an action or returns data, not both.
 
 ## Motivation
 
-When a single method both returns a value and produces side effects, it creates unpredictable behavior:
+A method that returns a value and also has side effects behaves unpredictably:
 
-- **Unpredictable results**: Callers cannot retrieve data multiple times and expect identical results
-- **Hidden side effects**: Methods silently change visible state (public fields, database entries, files)
-- **Maintenance burden**: Developers must remember not to call query methods carelessly, as they modify state
+- **Unpredictable results**: callers cannot fetch the data twice and expect identical results.
+- **Hidden side effects**: the method changes visible state without saying so (public fields, database entries, files).
+- **Maintenance burden**: developers must remember not to call the query carelessly, because it modifies state.
 
-Without separation, you cannot safely call a method multiple times to get data without inadvertently changing the object's condition.
+Without the split, you cannot safely call the method to read data without possibly changing the object.
 
 ## Mechanics
 
-The refactoring follows a straightforward process:
+1. **Create a query method**: extract the value-returning logic into a new method that only queries.
+2. **Modify the original method**: have the original modifier call the new query method if its logic needs it.
+3. **Update callers**: replace each call with the query method first, then the modifier separately.
+4. **Clean up**: remove the return value from the original modifier.
 
-1. **Create a query method**: Extract the value-returning logic into a new method that performs only the query operation
-2. **Modify original method**: Have the original modifier call the new query method if needed for its logic
-3. **Update callers**: Replace all references to call the query method first, then the modifier separately
-4. **Clean up**: Remove the return value from the original modifier method
-
-## Before/After: PHP 8.3+ Code
+## Before/After: PHP 8.3+ code
 
 ### Before
 ```php
@@ -78,24 +86,24 @@ $count = $user->getSmileyCount(); // Same result as first call
 
 ## Benefits
 
-- **Predictability**: Query methods can be called as many times as desired without unexpected side effects
-- **Clarity**: Method names and behavior explicitly indicate whether they query or modify
-- **Testability**: Easier to test query and modifier logic independently
-- **Caching**: Query methods become candidates for result caching
-- **Concurrency**: Separating reads from writes improves thread-safety assumptions
-- **CQRS alignment**: Aligns with modern architectural patterns for scalable systems
+- **Predictability**: query methods can be called any number of times without side effects.
+- **Clarity**: method names and behavior show whether they query or modify.
+- **Testability**: query and modifier logic can be tested independently.
+- **Caching**: query methods become candidates for result caching.
+- **Concurrency**: separating reads from writes makes thread-safety easier to reason about.
+- **CQRS alignment**: matches the architectural pattern of the same name.
 
-## When NOT to Use
+## When not to use
 
-- **Convenience methods**: Some operations naturally return data about what was modified (e.g., "how many rows were deleted?")
-- **Performance constraints**: Creating separate calls may introduce overhead in performance-critical code
-- **Legacy systems**: Changing well-established APIs can break dependent code unnecessarily
-- **Simple getters/setters**: Basic property accessors don't need separation if they have no side effects
+- **Convenience methods**: some operations return data about what was modified (e.g., "how many rows were deleted?").
+- **Performance constraints**: separate calls may add overhead in performance-critical code.
+- **Legacy systems**: changing well-established APIs can break dependent code needlessly.
+- **Simple getters/setters**: basic property accessors need no separation if they have no side effects.
 
-## Related Refactorings
+## Related refactorings
 
-- **Command Pattern**: Encapsulates requests as objects, similar to separating modifiers
-- **Query Pattern**: Dedicated pattern for safe, side-effect-free data retrieval
-- **Command Query Responsibility Segregation (CQRS)**: Architectural pattern extending this principle
-- **Remove Setting Method**: Prevents unwanted modifications to immutable objects
-- **Introduce Parameter Object**: Can simplify separated query/modifier method signatures
+- **Command pattern**: encapsulates requests as objects, similar to separating modifiers.
+- **Query pattern**: a dedicated pattern for side-effect-free data retrieval.
+- **Command Query Responsibility Segregation (CQRS)**: the architectural pattern that extends this principle.
+- **Remove Setting Method**: prevents unwanted modifications to immutable objects.
+- **Introduce Parameter Object**: can simplify the signatures of the separated query and modifier methods.

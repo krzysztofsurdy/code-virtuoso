@@ -1,23 +1,31 @@
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before/After](#beforeafter)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-Shotgun Surgery is the smell you encounter when a single logical change forces you to edit code in many different classes. A responsibility that should be concentrated in one place is instead scattered across the codebase, so even a small modification requires a coordinated update to multiple files. This often results from over-aggressive decomposition - splitting classes too finely until a single concern spans many locations.
+Shotgun Surgery is the smell where one logical change forces edits in many different classes. A responsibility that belongs in one place is scattered across the codebase, so even a small modification needs a coordinated update to several files. It often comes from over-aggressive decomposition: classes split so finely that a single concern spans many locations.
 
-## Why It's a Problem
+## Why it's a problem
 
-Shotgun Surgery creates compounding maintainability issues:
+- **High change friction**: even simple feature additions or bug fixes touch many files, which raises the chance of missing one.
+- **Obscured relationships**: the connection between related pieces of code is hidden by their physical distribution.
+- **Error amplification**: each extra file touched is another chance for mistakes and inconsistencies.
+- **Scaling pain**: as the codebase grows, the number of places to update for one concern tends to grow with it.
 
-- **High Change Friction**: Even straightforward feature additions or bug fixes require touching many files, increasing the chance of missing one
-- **Obscured Relationships**: The logical connection between related pieces of code is hidden by their physical distribution across the codebase
-- **Error Amplification**: The more files you touch for a single change, the more opportunities for mistakes and inconsistencies
-- **Scaling Pain**: As the codebase grows, the number of locations to update for a single concern tends to grow with it
+## Signs and symptoms
 
-## Signs and Symptoms
-
-- A single feature or bug fix requires edits in five or more classes
-- Business rule changes are spread across unrelated files
-- You regularly make the same kind of edit in parallel across multiple classes
-- Class boundaries feel arbitrary and do not align with conceptual responsibilities
-- Test updates for one logical change span many test files
+- A single feature or bug fix requires edits in five or more classes.
+- Business rule changes are spread across unrelated files.
+- You regularly make the same kind of edit in parallel across multiple classes.
+- Class boundaries feel arbitrary and do not match conceptual responsibilities.
+- Test updates for one logical change span many test files.
 
 ## Before/After
 
@@ -58,9 +66,9 @@ class AccountingUpdater {
 }
 ```
 
-When you need to modify how orders are processed (e.g., add logging, change validation), you must modify `OrderProcessor`, `InventoryUpdater`, `NotificationSender`, AND `AccountingUpdater`.
+To change how orders are processed (e.g., add logging, change validation) you must modify `OrderProcessor`, `InventoryUpdater`, `NotificationSender`, and `AccountingUpdater`.
 
-### After: Consolidated Responsibility
+### After: consolidated responsibility
 
 ```php
 <?php
@@ -107,27 +115,27 @@ readonly class OrderService {
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
-**Move Method & Move Field**: Identify which class logically owns each piece of functionality. Move related methods and fields to consolidate responsibility. If a class becomes the natural home for multiple related changes, relocate the code there.
+**Move Method and Move Field**: identify which class logically owns each piece of functionality, then move the related methods and fields there. If a class becomes the natural home for several related changes, relocate the code to it.
 
-**Create New Class**: When no existing class cleanly owns the responsibility, create a dedicated, focused class. Use a facade or service class to coordinate related operations.
+**Create a new class**: when no existing class cleanly owns the responsibility, create a focused one. Use a facade or service class to coordinate related operations.
 
-**Inline Class**: After consolidating functionality, remove classes that have become empty shells. Their purposes are now served by more cohesive units.
+**Inline Class**: after consolidating, remove classes that have become empty shells. More cohesive units now serve their purpose.
 
 ## Exceptions
 
-Shotgun Surgery is acceptable in these scenarios:
+Shotgun Surgery is acceptable in these cases:
 
-- **Cross-cutting Concerns**: Logging, security, and monitoring intentionally affect multiple classes; use Aspects or Middleware patterns
-- **Intentional Distributed Changes**: Some architectural patterns (Event Sourcing, CQRS) deliberately distribute related logic
-- **Third-party Integration**: Adapting to external APIs may naturally require multiple touch points
+- **Cross-cutting concerns**: logging, security, and monitoring intentionally affect multiple classes; use Aspects or Middleware patterns.
+- **Intentional distributed changes**: some architectural patterns (Event Sourcing, CQRS) deliberately distribute related logic.
+- **Third-party integration**: adapting to external APIs may require multiple touch points.
 
-## Related Smells
+## Related smells
 
-- **Divergent Change**: The inverse problem - one class accumulating too many reasons to change, while Shotgun Surgery spreads one reason across too many classes
-- **Feature Envy**: Classes that constantly reach into other classes for data are a hint that consolidation would help
-- **Duplicate Code**: Frequently accompanies Shotgun Surgery, since the same kind of change made in multiple places often produces near-identical code
-- **Long Parameter List**: May signal that a new class could encapsulate related data currently passed around separately
+- **Divergent Change**: the inverse problem. One class accumulates too many reasons to change, while Shotgun Surgery spreads one reason across too many classes.
+- **Feature Envy**: classes that keep reaching into other classes for data hint that consolidation would help.
+- **Duplicate Code**: often accompanies Shotgun Surgery, since the same kind of change made in several places tends to produce near-identical code.
+- **Long Parameter List**: may signal that a new class could encapsulate related data currently passed around separately.
 
-After consolidating scattered code with Move Method and Move Field, check whether the original classes have become nearly empty. If so, use Inline Class to merge the remnants and eliminate structural clutter.
+After consolidating scattered code with Move Method and Move Field, check whether the original classes are nearly empty. If so, use Inline Class to merge the remnants.

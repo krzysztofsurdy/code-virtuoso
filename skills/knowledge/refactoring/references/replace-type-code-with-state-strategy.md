@@ -1,31 +1,40 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before code (PHP 8.3)](#before-code-php-83)
+- [After code (PHP 8.3 with State pattern)](#after-code-php-83-with-state-pattern)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-Replace Type Code with State/Strategy is a refactoring technique that eliminates conditional logic based on type codes by replacing them with polymorphic classes. This pattern provides a cleaner, more maintainable way to handle objects that exhibit different behavior based on their type or state.
+Replace Type Code with State/Strategy removes conditional logic driven by a type code by moving each type's behavior into its own class. Use it for objects whose behavior depends on a type or state that can change during the object's lifetime.
 
 ## Motivation
 
-Type codes are often used in legacy code to control an object's behavior through switch statements or if-else chains. This approach has several drawbacks:
+Legacy code often controls behavior through a type code checked in switch statements or if-else chains. This causes several problems:
 
-- **Duplicate code**: Behavior logic is scattered throughout the codebase
-- **Hard to extend**: Adding new types requires modifying multiple locations
-- **Poor encapsulation**: Type-dependent behavior isn't properly encapsulated
-- **Difficult testing**: Testing individual behaviors requires complex setup
-- **Violates Single Responsibility Principle**: Classes handle multiple types' logic
+- **Duplicate code**: behavior logic is scattered through the codebase.
+- **Hard to extend**: adding a type means modifying multiple locations.
+- **Poor encapsulation**: type-dependent behavior lives outside the types.
+- **Difficult testing**: testing one behavior requires complex setup.
+- **Single Responsibility violation**: one class handles the logic of every type.
 
-Using State or Strategy patterns delegates behavior to separate classes, making the code more maintainable and extensible.
+State or Strategy classes take over that behavior, so each type can be changed and extended in one place.
 
 ## Mechanics
 
-### Basic Steps
+1. **Identify the type code**: find the field that controls behavior.
+2. **Create an interface or abstract class**: define the common interface for all behaviors.
+3. **Create concrete classes**: implement each type's behavior in its own class.
+4. **Replace conditionals**: delegate to the polymorphic objects instead of switch statements.
+5. **Move type-specific methods**: move behavior methods from the original class to the type classes.
+6. **Remove the type code**: delete or encapsulate the type code field.
 
-1. **Identify the type code**: Find the field that controls behavior
-2. **Create interface/abstract class**: Define a common interface for all behaviors
-3. **Create concrete classes**: Implement each type's behavior in separate classes
-4. **Replace conditionals**: Delegate to polymorphic objects instead of switch statements
-5. **Move type-specific methods**: Move behavior methods from the original class to type classes
-6. **Remove type code**: Delete or encapsulate the type code field
-
-## Before Code (PHP 8.3)
+## Before code (PHP 8.3)
 
 ```php
 class Order
@@ -67,7 +76,7 @@ class Order
 }
 ```
 
-## After Code (PHP 8.3 with State Pattern)
+## After code (PHP 8.3 with State pattern)
 
 ```php
 // State interface
@@ -173,25 +182,25 @@ echo $order->getPrice(); // 105.0
 
 ## Benefits
 
-- **Cleaner code**: Eliminates switch statements and complex conditionals
-- **Easier to extend**: Adding new types only requires creating a new class
-- **Better encapsulation**: Type-specific logic is encapsulated in separate classes
-- **Improved testability**: Each state can be tested independently
-- **Follows Open/Closed Principle**: Open for extension, closed for modification
-- **State transitions are explicit**: State changes are clearly visible in the code
-- **Reduced duplication**: Common behavior can be shared through inheritance
+- **Cleaner code**: switch statements and complex conditionals disappear.
+- **Easier to extend**: adding a type means adding a class.
+- **Better encapsulation**: type-specific logic lives in separate classes.
+- **Testability**: each state can be tested independently.
+- **Open/Closed Principle**: open for extension, closed for modification.
+- **Explicit transitions**: state changes are visible in the code.
+- **Less duplication**: common behavior can be shared through inheritance.
 
-## When NOT to Use
+## When not to use
 
-- **Simple type codes**: For 2-3 simple types with minimal behavior, the refactoring overhead may not be justified
-- **Read-only type codes**: If the type never changes, consider using constants or enums instead
-- **Performance-critical code**: The polymorphic dispatch adds minimal overhead but may matter in tight loops
-- **Temporary code**: If the code will be refactored soon anyway, defer this refactoring
+- **Simple type codes**: for 2-3 simple types with minimal behavior, the overhead may not be justified.
+- **Read-only type codes**: if the type never changes, use constants or enums instead.
+- **Performance-critical code**: polymorphic dispatch adds minimal overhead, but it may matter in tight loops.
+- **Temporary code**: if the code will be refactored soon anyway, defer this refactoring.
 
-## Related Refactorings
+## Related refactorings
 
-- **Replace Type Code with Subclasses**: When types are immutable
-- **Replace Type Code with Enum**: For simple type codes without complex behavior
-- **Replace Conditional with Polymorphism**: General pattern for eliminating conditionals
-- **State Pattern**: The design pattern foundation for this refactoring
-- **Strategy Pattern**: Alternative pattern for interchangeable algorithms
+- **Replace Type Code with Subclasses**: for types that do not change after construction.
+- **Replace Type Code with Enum**: for simple type codes without complex behavior.
+- **Replace Conditional with Polymorphism**: the general technique for eliminating conditionals.
+- **State pattern**: the design pattern behind this refactoring.
+- **Strategy pattern**: an alternative for interchangeable algorithms.

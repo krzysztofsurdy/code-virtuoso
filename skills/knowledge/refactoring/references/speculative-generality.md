@@ -1,28 +1,38 @@
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before/After Examples](#beforeafter-examples)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-Speculative Generality is a code smell that arises when developers build abstractions for hypothetical future needs that never materialize. The result is unused abstract classes, unnecessary method parameters, unimplemented interfaces, and delegation layers that add structural weight without delivering any value. The code sits idle "just in case," making the system harder to work with for no practical benefit.
+Speculative Generality is the smell of abstractions built for hypothetical future needs that never arrive. The result is unused abstract classes, unnecessary method parameters, unimplemented interfaces, and delegation layers that add structure and no value. The code sits idle "just in case" and makes the system harder to work with.
 
-## Why It's a Problem
+## Why it's a problem
 
-- **Unnecessary Complexity**: Unused abstractions clutter the codebase and make navigation harder
-- **Wasted Maintenance Effort**: Developers must keep, test, and update code that contributes nothing to the application
-- **Misleading Signals**: Unused structures suggest functionality or extensibility that does not actually exist
-- **Refactoring Resistance**: Unnecessary layers make genuine changes harder by adding obstacles to navigate around
-- **Minor Performance Cost**: Extra delegation layers can introduce small overhead, though this is usually secondary to the cognitive cost
-- **Testing Waste**: Dead abstractions still demand test coverage to satisfy code quality metrics
+- **Unnecessary complexity**: unused abstractions clutter the codebase and make navigation harder.
+- **Wasted maintenance effort**: developers must keep, test, and update code that contributes nothing to the application.
+- **Misleading signals**: unused structures suggest functionality or extensibility that does not exist.
+- **Refactoring resistance**: unnecessary layers get in the way of real changes.
+- **Minor performance cost**: extra delegation layers add small overhead, though the cognitive cost is usually larger.
+- **Testing waste**: dead abstractions still need test coverage to satisfy code quality metrics.
 
-## Signs and Symptoms
+## Signs and symptoms
 
-- Abstract classes or interfaces with no concrete implementations
-- Method parameters that are never read inside the method body
-- Classes whose sole purpose is forwarding calls to another class
-- Helper methods that no caller ever invokes
-- Unused generic type parameters or abstract methods never overridden
-- Fields that are initialized but never subsequently accessed
+- Abstract classes or interfaces with no concrete implementations.
+- Method parameters that are never read inside the method body.
+- Classes whose only purpose is forwarding calls to another class.
+- Helper methods that no caller invokes.
+- Unused generic type parameters, or abstract methods that are never overridden.
+- Fields that are initialized but never accessed.
 
 ## Before/After Examples
 
-### Before: Over-engineered With Unused Parameters
+### Before: over-engineered with unused parameters
 
 ```php
 <?php
@@ -69,7 +79,7 @@ abstract class BaseDataHandler {
 }
 ```
 
-### After: Focused and Practical
+### After: focused and practical
 
 ```php
 <?php
@@ -108,10 +118,10 @@ readonly class DataHandler {
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### Collapse Hierarchy
-Remove unnecessary abstract classes when they have only one implementation or when abstract methods are never overridden.
+Remove abstract classes that have only one implementation or whose abstract methods are never overridden.
 
 ```php
 // Before: Unnecessary abstraction
@@ -134,7 +144,7 @@ readonly class PDFReportGenerator {
 ```
 
 ### Remove Parameter
-Delete method parameters that are never used in the method body. Update all call sites accordingly.
+Delete method parameters that are never used in the method body, and update all call sites.
 
 ```php
 // Before
@@ -149,7 +159,7 @@ public function validateEmail(string $email): bool {
 ```
 
 ### Inline Class
-Remove unnecessary delegation classes that add a layer without real value.
+Remove delegation classes that add a layer without real value.
 
 ```php
 // Before: Unnecessary wrapper
@@ -166,23 +176,23 @@ $validator->validate($order->total);
 ```
 
 ### Inline Method
-Replace method calls with direct code if the method adds no meaningful abstraction.
+Replace method calls with the method body if the method adds no meaningful abstraction.
 
 ## Exceptions
 
-**Framework Development**: Framework libraries intentionally provide unused extensions for framework users.
+**Framework development**: framework libraries intentionally provide extension points that their own code does not use.
 
-**Experimental Features**: Code explicitly marked as experimental or in-progress may justifiably include speculative elements.
+**Experimental features**: code marked as experimental or in progress may justifiably include speculative elements.
 
-**Test Utilities**: Internal test-only methods used by test suites should not be removed.
+**Test utilities**: internal test-only methods used by test suites should not be removed.
 
-**Legacy Support**: Deprecated methods maintaining backward compatibility should be kept temporarily.
+**Legacy support**: deprecated methods that maintain backward compatibility should be kept temporarily.
 
-**Plugin Systems**: Framework extension points designed for third-party plugins may appear unused.
+**Plugin systems**: extension points designed for third-party plugins may appear unused.
 
-## Related Smells
+## Related smells
 
-- **Dead Code**: Unreachable or unused code blocks - closely related, but Dead Code refers to code that was once active
-- **Lazy Class**: A class that contributes too little to justify its existence in the codebase
-- **Middle Man**: A class that exists solely to forward calls to another, adding a layer without adding value
-- **Feature Envy**: Methods that rely more heavily on another class's features than their own
+- **Dead Code**: unreachable or unused code. Closely related, but Dead Code refers to code that was once active.
+- **Lazy Class**: a class that contributes too little to justify its existence.
+- **Middle Man**: a class that exists only to forward calls to another, adding a layer without value.
+- **Feature Envy**: methods that rely more on another class's features than their own.

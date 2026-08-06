@@ -1,35 +1,44 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After PHP 8.3+ code](#beforeafter-php-83-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Self Encapsulate Field is a foundational refactoring that replaces direct field access within a class with getter and setter methods. This introduces an intermediary layer between the field and all code that reads or writes it, allowing the class to evolve its internal representation without disrupting external consumers.
+Self Encapsulate Field replaces direct field access inside a class with getter and setter methods. The accessors sit between the field and all code that reads or writes it, so the class can change its internal representation without affecting its consumers.
 
-Instead of referencing a field directly (e.g., `$this->name`), you route all access through accessor methods (`getName()` and `setName()`). This becomes especially valuable in larger systems where fields eventually need validation, change notification, or deferred initialization.
+Instead of referencing a field directly (e.g., `$this->name`), all access goes through accessor methods (`getName()` and `setName()`). This pays off in larger systems where fields eventually need validation, change notification, or deferred initialization.
 
 ## Motivation
 
-**Why encapsulate fields:**
+Reasons to encapsulate fields:
 
-1. **Flexibility**: Storage format or computation logic can change without breaking callers
-2. **Validation**: Setters can enforce constraints and business rules at the point of assignment
-3. **Side effects**: Field changes can trigger observers, dirty flags, or audit logging
-4. **Lazy initialization**: Getters can delay expensive object creation until first access
-5. **Single Responsibility**: Separates the concern of data access from data storage
-6. **Gradual evolution**: Provides a path to introduce computed properties or derived values over time
+1. **Flexibility**: storage format or computation logic can change without breaking callers.
+2. **Validation**: setters can enforce constraints and business rules at the point of assignment.
+3. **Side effects**: field changes can trigger observers, dirty flags, or audit logging.
+4. **Lazy initialization**: getters can delay expensive object creation until first access.
+5. **Single Responsibility**: data access is separated from data storage.
+6. **Gradual evolution**: computed properties or derived values can be introduced later.
 
 ## Mechanics
 
-The refactoring proceeds as follows:
+1. Write a getter method that returns the field value.
+2. Write a setter method that assigns a new value to the field.
+3. Find every direct read of the field in the class.
+4. Replace each direct read with a call to the getter.
+5. Replace each direct write with a call to the setter.
+6. Restrict the field's visibility to private or protected.
+7. Add validation or side-effect logic to the setter as needed.
 
-1. Write a getter method that returns the field value
-2. Write a setter method that assigns a new value to the field
-3. Locate every direct read of the field throughout the class
-4. Replace each direct read with a call to the getter
-5. Replace each direct write with a call to the setter
-6. Restrict the field's visibility to private or protected
-7. Add validation or side-effect logic inside the setter as needed
+## Before/After PHP 8.3+ code
 
-## Before/After PHP 8.3+ Code
-
-### Before: Direct Field Access
+### Before: direct field access
 
 ```php
 class User
@@ -62,7 +71,7 @@ $user->age = 25; // Direct assignment
 echo $user->status; // Direct read
 ```
 
-### After: Encapsulated Access
+### After: encapsulated access
 
 ```php
 class User
@@ -143,32 +152,32 @@ echo $user->getStatus(); // Through getter
 
 ## Benefits
 
-- **Validation and constraints**: Business rules are enforced at the moment of assignment
-- **Centralized modification**: All changes to a field flow through a single point, simplifying debugging
-- **Lazy initialization**: Expensive computations can be deferred until the getter is first called
-- **Observable state**: Observers or event handlers can be triggered on field changes
-- **Computed properties**: Fields can be transparently replaced by derived values
-- **Backward compatibility**: Internal representation can change without altering the public API
-- **Debugging support**: Breakpoints in getters and setters make it easy to trace access
-- **Polymorphic behavior**: Subclasses can override accessors to customize field behavior
+- **Validation and constraints**: business rules are enforced at the moment of assignment.
+- **Centralized modification**: all changes to a field pass through one point, which simplifies debugging.
+- **Lazy initialization**: expensive computations can be deferred until the getter is first called.
+- **Observable state**: observers or event handlers can be triggered on field changes.
+- **Computed properties**: a field can be replaced by a derived value without callers noticing.
+- **Backward compatibility**: the internal representation can change without altering the public API.
+- **Debugging**: breakpoints in getters and setters make it easy to trace access.
+- **Polymorphic behavior**: subclasses can override accessors to customize field behavior.
 
-## When NOT to Use
+## When not to use
 
-- **Value Objects**: Immutable value classes with final fields may not benefit from encapsulation
-- **DTOs**: Simple data transfer objects might not justify the overhead of getters and setters
-- **High-frequency access**: Accessor methods add negligible overhead, but in extreme cases it may be a consideration
-- **Wholesale public fields**: If the entire codebase relies on public fields, a massive encapsulation effort may not be justified
-- **Already encapsulated**: If getters and setters are already in place, further application yields diminishing returns
+- **Value Objects**: immutable value classes with final fields may not benefit from encapsulation.
+- **DTOs**: simple data transfer objects might not justify the getters and setters.
+- **High-frequency access**: accessor overhead is negligible, but in extreme cases it may matter.
+- **Wholesale public fields**: if the entire codebase relies on public fields, a massive encapsulation effort may not be justified.
+- **Already encapsulated**: if getters and setters are already in place, further application yields little.
 
-## Related Refactorings
+## Related refactorings
 
-- **Replace Data Value with Object**: Upgrade a primitive field to a dedicated object with richer behavior
-- **Remove Setter**: Eliminate setters for fields that should be immutable or write-once
-- **Replace Temp with Query**: Extract field initialization logic into query methods
-- **Hide Delegate**: Encapsulate internal dependencies behind the class's own interface
-- **Introduce Parameter Object**: Bundle related fields into a single parameter object
+- **Replace Data Value with Object**: upgrades a primitive field to a dedicated object with richer behavior.
+- **Remove Setter**: eliminates setters for fields that should be immutable or write-once.
+- **Replace Temp with Query**: extracts field initialization logic into query methods.
+- **Hide Delegate**: encapsulates internal dependencies behind the class's own interface.
+- **Introduce Parameter Object**: bundles related fields into a single parameter object.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

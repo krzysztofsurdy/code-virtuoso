@@ -1,27 +1,37 @@
 # Switch Statements Code Smell
 
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before/After Examples](#beforeafter-examples)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-Switch statements (and lengthy if-else chains) are a code smell that points to missed opportunities for polymorphism. When you see conditional logic branching on an object's type or category, it usually means the behavior should be distributed across specialized classes rather than centralized in one block. A single, isolated switch is rarely a problem - the smell intensifies when similar switches appear in multiple places throughout the codebase.
+Switch statements (and long if-else chains) are a smell that points to a missed chance for polymorphism. Conditional logic that branches on an object's type or category usually belongs in specialized classes, not in one central block. A single, isolated switch is rarely a problem. The smell gets worse when similar switches appear in several places.
 
-## Why It's a Problem
+## Why it's a problem
 
-Branching on type creates a rigid bond between the conditional logic and the set of types it handles. Every time a new type is introduced, you must track down and update every switch that deals with that classification. This directly violates the Open/Closed Principle - the system should accommodate new variants without modifying existing code.
+Branching on type ties the conditional logic to the set of types it handles. Each time you add a type, you must find and update every switch on that classification. This violates the Open/Closed Principle: the system should accept new variants without changes to existing code.
 
-Beyond maintainability, scattered switch statements signal missing abstractions. Each case branch typically represents a distinct behavior that belongs in its own class, where it can be tested independently and extended without ripple effects.
+Scattered switches also point to missing abstractions. Each case usually represents a distinct behavior that belongs in its own class, where it can be tested alone and extended without ripple effects.
 
-## Signs and Symptoms
+## Signs and symptoms
 
-- Switch or match blocks with many cases
-- The same branching pattern duplicated in several places across the codebase
-- Conditional logic that inspects an object's type or property to decide behavior
-- Adding a new variant forces changes in multiple switch locations
-- Deeply nested logic or side effects inside case branches
-- Individual cases that are hard to test in isolation
+- Switch or match blocks with many cases.
+- The same branching pattern repeated in several places.
+- Conditional logic that inspects an object's type or property to decide behavior.
+- Adding a new variant forces changes in several switch locations.
+- Deeply nested logic or side effects inside case branches.
+- Individual cases that are hard to test alone.
 
 ## Before/After Examples
 
-### Before: Type-Based Switching
+### Before: type-based switching
 
 ```php
 <?php
@@ -58,7 +68,7 @@ function getPaymentFee(Payment $payment): float {
 }
 ```
 
-### After: Polymorphism-Based Approach
+### After: polymorphism-based approach
 
 ```php
 <?php
@@ -116,40 +126,40 @@ readonly class Payment {
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 **Replace Type Code with Subclasses**
-Instead of switching on type codes, create a class for each variant. All classes share the same interface but provide their own implementation of the behavior.
+Instead of switching on type codes, create a class for each variant. All classes share one interface and supply their own behavior.
 
 **Replace Conditional with Polymorphism**
-The most common remedy. Let each object define its own behavior through inheritance or interface implementation, eliminating the need for external branching entirely.
+The most common remedy. Each object defines its own behavior through inheritance or an interface, so no external branching is needed.
 
-**Introduce Strategy Pattern**
-When behavior must vary at runtime, inject different strategy implementations. This achieves flexible composition without requiring an inheritance hierarchy.
+**Introduce Strategy pattern**
+When behavior must vary at runtime, inject different strategy implementations. This gives flexible composition without an inheritance hierarchy.
 
 **Replace Parameter with Explicit Methods**
-Split a method that accepts a type parameter into separate, clearly named methods. The method name itself communicates the intent.
+Split a method that takes a type parameter into separate, well-named methods. The method name states the intent.
 
 **Extract Method and Move Method**
-Pull the switch logic into its own method first, then relocate it to the class where it belongs - typically the class representing the type being switched on.
+Pull the switch logic into its own method first, then move it to the class where it belongs, usually the class for the type being switched on.
 
 **Introduce Null Object**
-When one of the cases handles null, replace the null check with a dedicated null object that implements the expected interface with default behavior.
+When one of the cases handles null, replace the null check with a null object that implements the expected interface with default behavior.
 
 ## Exceptions
 
-Simple switches are appropriate in these situations:
+Simple switches are fine in these situations:
 
-- **Factory patterns**: Instantiating the right class based on input is a natural use of switches
-- **Mapping operations**: Straightforward data transformations without behavioral differences (e.g., converting an enum to a display string)
-- **Router/dispatcher logic**: Directing requests to the appropriate handler is standard in frameworks
-- **Guard clauses**: Validating preconditions with early returns
-- **Single, isolated switches**: A switch that appears in exactly one place and serves one clear purpose is far less problematic than duplicated switches
+- **Factory patterns**: creating the right class from input is a natural use of a switch.
+- **Mapping operations**: straightforward data transformations with no behavioral differences (e.g., converting an enum to a display string).
+- **Router/dispatcher logic**: directing requests to the right handler is standard in frameworks.
+- **Guard clauses**: validating preconditions with early returns.
+- **Single, isolated switches**: a switch in exactly one place with one clear purpose is far less of a problem than duplicated switches.
 
-## Related Smells
+## Related smells
 
-- **Primitive Obsession**: Switches often compensate for missing value objects or enums
-- **Duplicate Code**: Repeated switches across the codebase indicate duplicated conditional logic
-- **Long Method**: Complex switches are a sign that a method is handling too many responsibilities
-- **Speculative Generality**: Replacing simple switches with elaborate polymorphism for hypothetical future needs
-- **Lazy Class**: Classes created solely to replace a switch that didn't warrant the abstraction
+- **Primitive Obsession**: switches often make up for missing value objects or enums.
+- **Duplicate Code**: repeated switches across the codebase are duplicated conditional logic.
+- **Long Method**: a complex switch suggests a method with too many responsibilities.
+- **Speculative Generality**: elaborate polymorphism replacing a simple switch for hypothetical future needs.
+- **Lazy Class**: a class created only to replace a switch that did not need the abstraction.

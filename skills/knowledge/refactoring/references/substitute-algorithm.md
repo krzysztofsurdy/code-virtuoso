@@ -1,33 +1,45 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before: PHP 8.3+ example](#before-php-83-example)
+- [After: PHP 8.3+ example](#after-php-83-example)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Substitute Algorithm is a refactoring technique that replaces an existing algorithm with a clearer, simpler, or more efficient implementation. When you discover a better way to implement a method's logic, this refactoring allows you to safely swap the old algorithm for the new one while maintaining the same interface and behavior. This is particularly useful when you understand the problem better or when new, superior solutions become available.
+Substitute Algorithm replaces an existing algorithm with a clearer, simpler, or faster one. The method keeps the same interface and behavior, and only its internals change. Use it when you understand the problem better than you did, or when a better solution is now available.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
-- **Found a clearer algorithm**: Discovered a simpler, more readable approach to the same problem
-- **Performance bottleneck**: The current algorithm is inefficient for the use case
-- **Using outdated approaches**: Modern techniques or libraries provide better solutions
-- **Difficult to understand**: Current implementation is convoluted and hard to maintain
-- **Algorithm no longer fits requirements**: Business logic changes make a different approach more suitable
-- **Duplication with better solutions**: Found a library or pattern that handles it better
+- **A clearer algorithm exists**: you found a simpler, more readable approach to the same problem.
+- **Performance bottleneck**: the current algorithm is too slow for the use case.
+- **Outdated approach**: a newer technique or library gives a better solution.
+- **Hard to understand**: the current implementation is convoluted and hard to maintain.
+- **Changed requirements**: business logic changed, and a different approach now fits better.
+- **Duplicated effort**: a library or pattern already solves the problem.
 
-### Why It Matters
+### Why it matters
 
-Substitute Algorithm improves code maintainability, performance, and clarity. It recognizes that as we understand problems better, we can implement them more elegantly. Refactoring to a superior algorithm reduces technical debt and makes code more professional.
+A better algorithm makes the code easier to maintain, faster, or clearer. It also reduces technical debt.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
-1. **Ensure test coverage**: Write comprehensive tests for the current algorithm's behavior
-2. **Study the new algorithm**: Understand the alternative approach completely
-3. **Prepare the new algorithm**: Write the new implementation alongside the old one
-4. **Compare inputs and outputs**: Verify both algorithms handle edge cases identically
-5. **Switch the algorithm**: Replace the old implementation with the new one
-6. **Run all tests**: Verify behavior remains identical across all test cases
-7. **Remove old code**: Clean up the deprecated algorithm once confident
+1. **Check test coverage**: write tests that pin down the current algorithm's behavior.
+2. **Study the new algorithm**: understand the alternative before using it.
+3. **Prepare the new algorithm**: write the new implementation next to the old one.
+4. **Compare inputs and outputs**: verify that both algorithms handle edge cases the same way.
+5. **Switch the algorithm**: replace the old implementation with the new one.
+6. **Run all tests**: verify that behavior is identical across all test cases.
+7. **Remove the old code**: delete the old algorithm once you are confident.
 
-## Before: PHP 8.3+ Example
+## Before: PHP 8.3+ example
 
 ```php
 <?php
@@ -77,7 +89,7 @@ class StringFormatter
 }
 ```
 
-## After: PHP 8.3+ Example
+## After: PHP 8.3+ example
 
 ```php
 <?php
@@ -126,32 +138,31 @@ class StringFormatter
 
 ## Benefits
 
-- **Improved Performance**: Superior algorithms reduce execution time and resource consumption
-- **Enhanced Readability**: Clearer implementations are easier for developers to understand
-- **Better Maintainability**: Simpler logic reduces maintenance burden and bug potential
-- **Professional Code Quality**: Modern, elegant solutions reflect well-engineered software
-- **Reduced Cognitive Load**: Developers spend less mental effort understanding the code
-- **Leverages Best Practices**: Incorporates industry-standard approaches and patterns
-- **Future-Proof**: Better algorithms often scale better with changing requirements
+- **Performance**: a better algorithm cuts execution time and resource use.
+- **Readability**: a clearer implementation is easier to understand.
+- **Maintainability**: simpler logic means less maintenance work and fewer bugs.
+- **Lower cognitive load**: readers spend less effort understanding the code.
+- **Established practice**: the new version can use standard approaches and patterns.
+- **Scaling**: a better algorithm often scales better as requirements change.
 
-## When NOT to Use
+## When not to use
 
-- **Premature Optimization**: Don't substitute algorithms to optimize code that isn't a bottleneck
-- **Unproven Alternatives**: Avoid switching to algorithms without thorough testing and validation
-- **Insufficient Testing**: Don't substitute without comprehensive test coverage guaranteeing behavior
-- **Complex Behavior**: When the current algorithm handles edge cases the new one doesn't
-- **High Risk/Reward Ratio**: Changing critical algorithms in production systems carries risk
-- **Missing Context**: Don't substitute if you don't fully understand both algorithms' implications
+- **Premature optimization**: do not swap algorithms to speed up code that is not a bottleneck.
+- **Unproven alternatives**: do not switch without testing and validating the new algorithm.
+- **Insufficient tests**: do not substitute without test coverage that pins down current behavior.
+- **Edge cases**: the current algorithm handles cases the new one does not.
+- **High risk**: changing critical algorithms in production systems carries risk.
+- **Missing context**: do not substitute if you do not understand the implications of both algorithms.
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Method**: Often precedes substitution by isolating the algorithm to replace
-- **Replace Loop with Pipeline**: Modernizes iteration patterns to cleaner functional approaches
-- **Replace Type Code with State/Strategy Pattern**: When algorithm choice depends on state or conditions
-- **Decompose Conditional**: Simplifies algorithm selection logic before substitution
-- **Replace Conditional with Polymorphism**: Enables different algorithms via inheritance or interfaces
+- **Extract Method**: often comes first, to isolate the algorithm to replace.
+- **Replace Loop with Pipeline**: turns iteration into a cleaner functional form.
+- **Replace Type Code with State/Strategy**: for when the choice of algorithm depends on state or conditions.
+- **Decompose Conditional**: simplifies algorithm selection logic before substitution.
+- **Replace Conditional with Polymorphism**: lets different algorithms live behind an inheritance hierarchy or interface.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

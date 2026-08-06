@@ -1,33 +1,44 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before: PHP 8.3+ example](#before-php-83-example)
+- [After: PHP 8.3+ example](#after-php-83-example)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-Replace Type Code with Class removes magic numbers and strings that represent distinct categories or statuses by converting them into enumeration types or dedicated classes. This refactoring strengthens type safety, improves code readability, and shifts validation from runtime conditionals to compile-time checks.
+Replace Type Code with Class converts magic numbers and strings that stand for categories or statuses into enumeration types or dedicated classes. Invalid values are then rejected by the type system instead of by runtime conditionals.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
-- **Raw numeric or string codes**: Using integer codes (1, 2, 3) or string literals ('active', 'pending', 'inactive') to represent types
-- **Repeated validation**: Checking whether a value matches the expected set of codes in multiple places
-- **Scattered definitions**: Type code constants defined in different locations instead of a single authoritative source
-- **Missing IDE assistance**: The IDE cannot offer autocompletion or safe renaming for plain strings or integers
-- **Domain richness**: Different statuses or categories carry validation rules and associated behavior
+- **Raw numeric or string codes**: integer codes (1, 2, 3) or string literals ('active', 'pending', 'inactive') represent types.
+- **Repeated validation**: the same check that a value belongs to the expected set appears in several places.
+- **Scattered definitions**: type code constants are defined in different locations instead of one authoritative source.
+- **No IDE help**: the IDE cannot autocomplete or safely rename plain strings or integers.
+- **Behavior attached to categories**: different statuses or categories carry validation rules and behavior.
 
-### Why It Matters
+### Why it matters
 
-Primitive type codes offer no protection against invalid values. Replacing them with enums or dedicated types gives you compile-time guarantees, eliminates illegal state transitions, enables IDE tooling, and makes the code's purpose clear through meaningful type names.
+A primitive type code offers no protection against invalid values. An enum or dedicated type rules out illegal values, gives the IDE something to work with, and names the concept.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
-1. **Catalog type codes**: Locate every magic number or string that represents a distinct category
-2. **Define an enum or class**: PHP 8.1+ enums are the natural choice for straightforward type codes
-3. **Enumerate all values**: Ensure every valid code has a corresponding enum case
-4. **Replace primitive fields**: Change variables that store type codes to the new enum type
-5. **Update signatures**: Switch method parameter and return types from int/string to the enum
-6. **Strip manual validation**: Remove conditional checks that verify type code validity
-7. **Attach behavior**: Migrate type-specific logic into methods on the enum or class
-8. **Run the test suite**: Confirm that all transitions and validations still function correctly
+1. **Catalog type codes**: find every magic number or string that represents a distinct category.
+2. **Define an enum or class**: PHP 8.1+ enums are the natural choice for simple type codes.
+3. **Enumerate all values**: give every valid code a corresponding enum case.
+4. **Replace primitive fields**: change variables that store type codes to the new enum type.
+5. **Update signatures**: change method parameter and return types from int/string to the enum.
+6. **Remove manual validation**: delete the conditionals that check type code validity.
+7. **Attach behavior**: move type-specific logic into methods on the enum or class.
+8. **Run the test suite**: confirm that all transitions and validations still work.
 
-## Before: PHP 8.3+ Example
+## Before: PHP 8.3+ example
 
 ```php
 <?php
@@ -95,7 +106,7 @@ if ($user->getStatus() === 1) {
 $user->setStatus(2); // What does 2 mean?
 ```
 
-## After: PHP 8.3+ Example
+## After: PHP 8.3+ example
 
 ```php
 <?php
@@ -193,27 +204,25 @@ $permissions = $user->getRole()->permissions(); // IDE autocomplete available
 
 ## Benefits
 
-- **Type safety**: The compiler and IDE prevent invalid type assignments at development time
-- **Self-documenting**: Enum case names replace opaque numbers; intent is immediately obvious
-- **IDE tooling**: Autocompletion, jump-to-definition, and rename support work out of the box
-- **No manual validation**: The type system itself enforces that only valid values are used
-- **Compile-time checking**: Invalid values are caught before the code ever runs
-- **Encapsulated behavior**: Type-related logic lives directly on the enum methods
-- **Fewer bugs**: It becomes impossible to accidentally assign an invalid code value
-- **Centralized changes**: Modifying the set of allowed values requires editing only the enum definition
+- **Type safety**: the compiler and IDE reject invalid type assignments during development.
+- **Self-documenting**: enum case names replace opaque numbers.
+- **IDE tooling**: autocompletion, jump-to-definition, and rename support work out of the box.
+- **No manual validation**: the type system enforces that only valid values are used.
+- **Encapsulated behavior**: type-related logic lives on the enum methods.
+- **Centralized changes**: changing the set of allowed values means editing only the enum definition.
 
-## When NOT to Use
+## When not to use
 
-- **Truly dynamic values**: Type codes originating from external APIs that change unpredictably
-- **User-defined categories**: When end users can create new types at runtime
-- **Huge numeric ranges**: Thousands of possible values are better served by a database lookup
-- **Legacy integration**: When refactoring would force extensive downstream changes in external systems
-- **Strict compatibility**: When third-party code mandates raw string or integer types
+- **Dynamic values**: type codes from external APIs that change unpredictably.
+- **User-defined categories**: end users can create new types at runtime.
+- **Huge numeric ranges**: thousands of possible values are better served by a database lookup.
+- **Legacy integration**: the refactoring would force extensive changes in external systems.
+- **Strict compatibility**: third-party code mandates raw string or integer types.
 
-## Related Refactorings
+## Related refactorings
 
-- **Replace Data Value with Object**: For cases requiring richer behavior than a simple enum
-- **Extract Class**: When type codes need their own associated data and methods
-- **Replace Conditional with Polymorphism**: To replace type-based conditionals with polymorphic dispatch
-- **Introduce Parameter Object**: For bundling related type codes into a single parameter
-- **Self Encapsulate Field**: For adding validation to primitive type code fields before upgrading to an enum
+- **Replace Data Value with Object**: for cases that need richer behavior than a simple enum.
+- **Extract Class**: when type codes need their own data and methods.
+- **Replace Conditional with Polymorphism**: replaces type-based conditionals with polymorphic dispatch.
+- **Introduce Parameter Object**: bundles related type codes into a single parameter.
+- **Self Encapsulate Field**: adds validation to primitive type code fields before upgrading to an enum.

@@ -1,30 +1,40 @@
 # Temporary Field
 
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before/After Examples](#beforeafter-examples)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-A Temporary Field is an instance variable that only holds a meaningful value during specific execution paths, sitting empty or null the rest of the time. This makes the object's state unpredictable - readers expect every field on a class to be relevant to the object's identity, not to serve as scratch space for a single algorithm.
+A Temporary Field is an instance variable that holds a meaningful value only on certain execution paths and sits empty or null the rest of the time. This makes the object's state unpredictable. Readers expect every field on a class to relate to the object's identity, not to act as scratch space for one algorithm.
 
-## Why It's a Problem
+## Why it's a problem
 
-Temporary fields usually appear when a developer avoids a long parameter list by stashing intermediate computation data into class-level fields. The result is a trade-off that sacrifices clarity for convenience:
+Temporary fields usually appear when a developer avoids a long parameter list by stashing intermediate data in class-level fields. This trades clarity for convenience:
 
-- **Unclear Purpose**: The class becomes harder to understand when some fields are only meaningful under certain conditions
-- **Misleading State**: Developers naturally assume all fields represent persistent, meaningful data - temporary algorithm storage violates that expectation
-- **Implicit Coupling**: The dependency between the temporary field and the specific code path that populates it remains undocumented and fragile
-- **Fragile Maintenance**: Future changes risk breaking the unwritten rules about when fields are valid, especially when algorithms requiring numerous inputs evolve independently
+- **Unclear purpose**: the class is harder to understand when some fields matter only under certain conditions.
+- **Misleading state**: developers assume all fields hold persistent, meaningful data. Temporary algorithm storage breaks that expectation.
+- **Implicit coupling**: the dependency between the temporary field and the code path that fills it is undocumented and fragile.
+- **Fragile maintenance**: future changes can break the unwritten rules about when fields are valid, especially when algorithms with many inputs evolve on their own.
 
-## Signs and Symptoms
+## Signs and symptoms
 
-- Fields that are only populated inside specific methods or conditional branches
-- Instance variables that are null or empty during most of the object's lifetime
-- Null-checking scattered throughout the code to guard against uninitialized fields
-- Comments explaining the conditions under which a field will actually contain data
-- Object behavior that varies depending on which methods have been called previously
-- Difficulty describing what the object represents at any arbitrary point in time
+- Fields that are populated only inside specific methods or conditional branches.
+- Instance variables that are null or empty for most of the object's lifetime.
+- Null checks scattered through the code to guard against uninitialized fields.
+- Comments explaining when a field will actually contain data.
+- Object behavior that depends on which methods were called earlier.
+- Difficulty describing what the object represents at an arbitrary point in time.
 
 ## Before/After Examples
 
-**Before** — Temporary field for calculation intermediate values:
+**Before**: temporary fields hold intermediate calculation values.
 
 ```php
 <?php
@@ -67,7 +77,7 @@ final class UserReportGenerator
 }
 ```
 
-**After** — Extract into method object with clear purpose:
+**After**: the data moves into small objects with clear purposes.
 
 ```php
 <?php
@@ -130,34 +140,34 @@ final class UserReportGenerator
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 **1. Extract Method Object**
-Move the temporary field and related operations into a separate class. This creates a dedicated object with a clear purpose, eliminating the hidden state within the original class.
+Move the temporary field and the related operations into a separate class. The new object has a clear purpose, and the hidden state leaves the original class.
 
 **2. Introduce Parameter Object**
-Group temporary fields into a data transfer object or value object that explicitly represents what the method needs. Pass this as a parameter rather than storing it as instance state.
+Group temporary fields into a data transfer object or value object that states what the method needs. Pass it as a parameter instead of storing it as instance state.
 
-**3. Replace with Null Object Pattern**
-If the field is primarily checked for null existence, create a Null Object that implements expected interfaces, eliminating conditional checks throughout the code.
+**3. Replace with Null Object**
+If the field is mostly checked for null, create a Null Object that implements the expected interface. The conditional checks then go away.
 
-**4. Extract to Private Helper Method**
-For simple cases, convert the method using temporary fields into smaller, focused methods that accept parameters instead of relying on mutable state.
+**4. Extract to private helper methods**
+For simple cases, split the method that uses temporary fields into smaller methods that take parameters and do not rely on mutable state.
 
 ## Exceptions
 
-Temporary fields are occasionally acceptable when:
+Temporary fields are sometimes acceptable:
 
-- **Performance-Critical Caching**: Temporarily storing query results within a transaction scope for reuse during complex operations
-- **Builder Pattern**: Accumulating state during object construction (acceptable because intent is explicit)
-- **Transaction Processing**: Holding intermediate state during a discrete transaction that must be atomic
-- **Short-Lived Objects**: Using temporary fields in objects designed to be instantiated, used once, then discarded
+- **Performance-critical caching**: storing query results within a transaction scope for reuse during a complex operation.
+- **Builder pattern**: accumulating state during object construction (acceptable because the intent is explicit).
+- **Transaction processing**: holding intermediate state during a discrete transaction that must be atomic.
+- **Short-lived objects**: objects designed to be created, used once, and discarded.
 
-In these cases, clearly document the temporary nature and usage scope.
+In these cases, document the temporary nature and the usage scope.
 
-## Related Smells
+## Related smells
 
-- **Long Parameter List**: Frequently the root cause - temporary fields are introduced specifically to avoid passing many parameters
-- **Message Chain**: Hidden temporary state can obscure complex object collaborations happening behind the scenes
-- **Data Clumps**: Temporary fields that appear together are strong candidates for extraction into a dedicated class
-- **Primitive Obsession**: Temporary state stored as raw primitives rather than meaningful objects
+- **Long Parameter List**: often the root cause. Temporary fields are introduced to avoid passing many parameters.
+- **Message Chain**: hidden temporary state can obscure complex object collaborations.
+- **Data Clumps**: temporary fields that appear together are good candidates for extraction into their own class.
+- **Primitive Obsession**: temporary state stored as raw primitives instead of meaningful objects.
