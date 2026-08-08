@@ -1,29 +1,40 @@
 # Incomplete Library Class
 
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after examples](#before-and-after-examples)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-The Incomplete Library Class smell appears when a third-party library does not provide the functionality your application requires, and you cannot modify its source to fill the gap. Developers end up scattering workarounds and duplicated logic throughout the codebase instead of extending the library cleanly. The appropriate remedy depends on scale: a handful of missing methods call for Foreign Methods, while broader gaps justify building a Local Extension (wrapper or decorator).
+The Incomplete Library Class smell appears when a third-party library lacks functionality your application needs and you cannot change its source. Developers end up scattering workarounds and duplicated logic through the codebase. The fix depends on scale. A few missing methods call for Foreign Methods. Broader gaps justify a Local Extension (wrapper or decorator).
 
-## Why It's a Problem
+## Why it's a problem
 
-Libraries follow their own development roadmap, which may never align with your application's needs. When the functionality you require falls outside the library's scope or timeline, you face unpleasant trade-offs:
+Libraries follow their own roadmap, which may never match your application's needs. When you need something outside the library's scope or timeline, you face trade-offs:
+
 - Workaround logic gets copy-pasted wherever the library is used
-- Fragile hacks accumulate and become increasingly expensive to maintain
-- Code reusability and testability suffer as custom logic is scattered rather than centralized
+- Fragile hacks pile up and get more expensive to maintain
+- Reuse and testing suffer because custom logic is scattered instead of centralized
 
-Over time this binds your application tightly to an incomplete abstraction, driving up long-term maintenance costs.
+Over time your application becomes tied to an incomplete abstraction, and maintenance costs rise.
 
-## Signs and Symptoms
+## Signs and symptoms
 
 - The same supplemental logic appearing after library calls in multiple places
-- Utility classes that exist solely to patch missing library methods
+- Utility classes that exist only to patch missing library methods
 - Comments explaining library shortcomings or justifying workarounds
 - Tests that mock or extend library classes to simulate absent features
 - Developers avoiding certain library classes because they feel "incomplete"
 
-## Before/After Examples
+## Before and after examples
 
-### Before: Workaround Duplication
+### Before: workaround duplication
 
 ```php
 <?php
@@ -106,10 +117,11 @@ final readonly class SortableUserRepository
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### 1. Introduce Foreign Method
-Use for 1-2 missing methods. Add as static helper methods in your codebase:
+
+Use for 1-2 missing methods. Add them as static helper methods in your codebase:
 
 ```php
 <?php
@@ -130,8 +142,9 @@ final class UserRepositoryExtensions
 $sorted = UserRepositoryExtensions::sortByName($users);
 ```
 
-### 2. Introduce Local Extension (Decorator Pattern)
-Use for substantial missing features. Wrap the library class:
+### 2. Introduce Local Extension (Decorator pattern)
+
+Use for larger missing features. Wrap the library class:
 
 ```php
 <?php
@@ -185,16 +198,17 @@ enum SortOrder
 ## Exceptions
 
 It is reasonable to tolerate an incomplete library class when:
-- The missing feature genuinely falls outside the library's intended scope
-- Building extensions would require deep knowledge of library internals
-- You use only the library's core functionality and rarely encounter the gap
+
+- The missing feature is outside the library's intended scope
+- Building extensions would need detailed knowledge of library internals
+- You use only the library's core functionality and rarely hit the gap
 - Contributing upstream or switching libraries is impractical
 
-Keep in mind that extending a library introduces a maintenance surface: when the library updates, your extensions may need corresponding adjustments. Weigh this ongoing cost before committing to a wrapper or decorator.
+An extension is extra code to maintain. When the library updates, your extensions may need changes too. Weigh that cost before you commit to a wrapper or decorator.
 
-## Related Smells
+## Related smells
 
-- **Feature Envy**: Your code constantly reaching into another class for data it needs
-- **Inappropriate Intimacy**: Extensions that require deep understanding of library internals
-- **Data Clumps**: Workarounds that repeat the same parameter groups the library fails to encapsulate
-- **Duplicated Code**: The natural consequence of scattering the same workaround in multiple places
+- **Feature Envy**: Your code keeps reaching into another class for data it needs
+- **Inappropriate Intimacy**: Extensions that need detailed knowledge of library internals
+- **Data Clumps**: Workarounds that repeat parameter groups the library does not encapsulate
+- **Duplicated Code**: The usual result of scattering the same workaround in several places

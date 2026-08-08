@@ -1,16 +1,27 @@
 # Form Template Method
 
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after](#before-and-after)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Form Template Method addresses duplication that lives at the algorithmic level rather than the code-block level. When several classes implement the same overall algorithm but differ in specific steps, you extract the shared algorithm skeleton into a base class method and let subclasses supply the varying steps.
+Form Template Method removes duplication at the algorithm level instead of the code-block level. When several classes implement the same overall algorithm but differ in specific steps, you extract the shared skeleton into a base class method and let subclasses supply the varying steps.
 
-This refactoring strengthens adherence to the Open/Closed Principle: new algorithm variants require only a new subclass, not changes to existing code.
+It supports the Open/Closed Principle: a new algorithm variant needs only a new subclass, with no changes to existing code.
 
 ## Motivation
 
-Not all duplication is obvious copy-paste. Sometimes two classes follow the same sequence of steps - initialize, process, finalize - but each step has a slightly different implementation. This structural duplication is harder to spot yet just as costly to maintain, because changes to the algorithm flow must be replicated across every class that implements it.
+Not all duplication is obvious copy-paste. Sometimes two classes follow the same sequence of steps (initialize, process, finalize) but each step is implemented a little differently. This structural duplication is harder to spot but just as costly. Every change to the algorithm flow must be repeated in each class that implements it.
 
-Consolidating the flow into a single template method eliminates that risk and makes the algorithm's structure explicit and centralized.
+Moving the flow into a single template method removes that risk and puts the algorithm's structure in one visible place.
 
 ## Mechanics
 
@@ -20,11 +31,11 @@ Consolidating the flow into a single template method eliminates that risk and ma
 4. **Declare abstract methods** - define abstract method signatures in the base class for steps that vary
 5. **Move the algorithm** - place the template method in the base class, calling both concrete and abstract step methods
 
-## Before/After
+## Before and after
 
 ### Before
 
-Multiple subclasses implement similar CSV and JSON export processes with duplicated algorithm structure:
+Two exporters implement the same export process with a duplicated algorithm structure:
 
 ```php
 <?php
@@ -84,7 +95,7 @@ class JSONExporter
 
 ### After
 
-Common algorithm consolidated into base template method:
+The common algorithm moves into a base template method:
 
 ```php
 <?php
@@ -138,27 +149,27 @@ final readonly class JSONExporter extends Exporter
 
 ## Benefits
 
-- **Centralized Algorithm Structure** - the flow is defined once in the base class, not repeated in every subclass
-- **Single Edit Point** - changes to the algorithm sequence happen in one place
-- **Open/Closed Compliance** - adding a new format means adding a subclass, not modifying existing ones
-- **Visible Architecture** - the template method makes the algorithm's shape immediately apparent
-- **Focused Subclass Tests** - test the flow once in the base; test only the varying steps in each subclass
+- **Centralized algorithm structure** - the flow is defined once in the base class, not repeated in every subclass
+- **Single edit point** - changes to the algorithm sequence happen in one place
+- **Open/Closed compliance** - adding a new format means adding a subclass, not modifying existing ones
+- **Visible structure** - the template method shows the algorithm's shape at a glance
+- **Focused subclass tests** - test the flow once in the base; test only the varying steps in each subclass
 
-## When NOT to Use
+## When not to use
 
-- **Simple algorithms** - if the shared structure is trivial, the abstraction overhead outweighs the benefit
-- **Radically different implementations** - when subclasses do not truly share a common sequence, forcing a template creates artificial constraints
-- **Single implementation** - delay this refactoring until duplication actually appears in a second class
+- **Simple algorithms** - if the shared structure is trivial, the abstraction costs more than it saves
+- **Radically different implementations** - when subclasses do not share a common sequence, forcing a template adds artificial constraints
+- **Single implementation** - delay this refactoring until duplication appears in a second class
 - **Runtime flexibility needed** - if the algorithm steps must be swapped or reordered dynamically, the Strategy pattern is a better choice
 
-## Related Refactorings
+## Related refactorings
 
 - **Strategy Pattern** - preferred when algorithm selection happens at runtime rather than through inheritance
 - **Extract Method** - a prerequisite step for identifying the discrete steps of the algorithm
 - **Pull Up Method** - used to move identical step methods into the base class
 - **Template Method Design Pattern** - the design pattern this refactoring produces
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

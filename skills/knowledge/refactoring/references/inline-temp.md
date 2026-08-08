@@ -1,33 +1,42 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after examples](#before-and-after-examples)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Inline Temp removes a temporary variable that adds no clarity by replacing it with the expression it holds. When a variable is assigned once, used once, and its name does not reveal anything the expression itself does not already say, the variable is just a detour. Removing it makes the code more direct.
+Inline Temp removes a temporary variable that adds no clarity by replacing it with the expression it holds. If a variable is assigned once, used once, and its name says nothing the expression does not, the variable is a detour. Removing it makes the code more direct.
 
 ## Motivation
 
-Temporary variables sometimes appear for valid reasons that no longer apply:
+Temporary variables often appear for reasons that no longer apply:
 
 - **Pass-through assignments**: A variable stores a value only to hand it to the next line
 - **Leftover debugging aids**: Variables introduced to inspect values during development that stayed
 - **Over-explanation**: Variables whose names restate the expression without adding insight
-- **Unnecessary decomposition**: Steps broken apart that do not actually improve readability
-- **Single-use intermediaries**: Variables that exist solely to bridge two adjacent lines
+- **Needless decomposition**: Steps split apart without improving readability
+- **Single-use intermediaries**: Variables that exist only to bridge two adjacent lines
 
-When a variable does not help the reader understand what the code does, removing it tightens the logic and often reveals further simplification opportunities.
+When a variable does not help the reader, removing it tightens the logic and often shows further simplifications.
 
 ## Mechanics
 
-### Step-by-Step Process
-
 1. **Identify the variable**: Find a temporary that is assigned once and used once or a small number of times
-2. **Verify safety**: Confirm that the expression has no side effects that would be duplicated
+2. **Check for side effects**: Confirm the expression has no side effects that would be duplicated
 3. **Substitute each usage**: Replace every reference to the variable with the original expression
 4. **Delete the declaration**: Remove the variable and its assignment
 5. **Run the tests**: Confirm behavior is unchanged
 6. **Reassess**: If the resulting expression is too dense, consider Extract Variable for selected parts
 
-## Before/After Examples
+## Before and after examples
 
-### Example 1: Simple Arithmetic Expression
+### Example 1: simple arithmetic expression
 
 **Before:**
 ```php
@@ -69,7 +78,7 @@ $calc = new Calculator();
 $result = $calc->calculateTotal(100, 0.1);
 ```
 
-### Example 2: Method Call Result
+### Example 2: method call result
 
 **Before:**
 ```php
@@ -111,7 +120,7 @@ $service = new UserService();
 $message = $service->processUser($user);
 ```
 
-### Example 3: Conditional Expression
+### Example 3: conditional expression
 
 **Before:**
 ```php
@@ -158,28 +167,28 @@ $discount = $processor->determineDiscount(1500, true);
 
 - **Tighter code**: Fewer lines and variables to track
 - **Clearer data flow**: The relationship between expressions is visible without intermediate stops
-- **Faster reading**: Readers parse fewer declarations to understand what happens
-- **Reveals further refactoring**: Removing intermediaries often exposes opportunities like Extract Method
-- **Less noise**: Eliminates naming decisions that do not carry meaningful information
+- **Faster reading**: Readers parse fewer declarations
+- **Shows further refactoring**: Removing intermediaries often exposes chances for Extract Method
+- **Less noise**: No naming decisions that carry no information
 
-## When NOT to Use
+## When not to use
 
-- **Readable names add meaning**: If the variable name conveys something the expression does not, keep it
-- **Multiple usages**: A variable used in several places prevents duplication of the expression
-- **Side-effect-producing expressions**: Inlining would evaluate the expression multiple times, duplicating side effects
-- **Complex expressions**: If the result would be a dense, hard-to-read compound expression, the variable is doing useful work
-- **Expensive computations**: A variable can document and cache the cost of an operation
-- **Stateful method calls**: Calls that depend on or modify object state should not be repeated
-- **Debugging breakpoints**: Variables kept specifically for breakpoint placement may be worth retaining during development
+- **The name adds meaning**: If the variable name says something the expression does not, keep it
+- **Multiple usages**: A variable used in several places avoids repeating the expression
+- **Expressions with side effects**: Inlining would evaluate the expression several times and repeat the side effects
+- **Complex expressions**: If the result would be a dense, hard-to-read compound expression, the variable is useful
+- **Expensive computations**: A variable can name an operation and avoid paying for it twice
+- **Stateful method calls**: Calls that depend on or change object state should not be repeated
+- **Debugging breakpoints**: Variables kept for breakpoint placement may be worth keeping during development
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Variable**: The opposite - introducing a named variable when an expression is too complex
-- **Inline Method**: The same principle applied to methods rather than temporary variables
-- **Replace Temp with Query**: Converts a temp into a method call, useful when the expression should be reusable
-- **Remove Dead Code**: Identifies variables that are declared but never read
+- **Extract Variable**: The opposite: introducing a named variable when an expression is too complex
+- **Inline Method**: The same idea applied to methods instead of temporary variables
+- **Replace Temp with Query**: Converts a temp into a method call, which helps when the expression should be reusable
+- **Remove Dead Code**: Removes variables that are declared but never read
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

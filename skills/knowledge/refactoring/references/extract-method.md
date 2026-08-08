@@ -1,23 +1,35 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before: PHP 8.3+ Example](#before-php-83-example)
+- [After: PHP 8.3+ Example](#after-php-83-example)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
 Extract Method is one of the most commonly applied refactorings. It takes a block of code buried inside a larger method and moves it into its own method with a descriptive name. The result is shorter methods, clearer intent, and logic that can be reused and tested independently.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
 - **Long methods**: Methods beyond 15-20 lines become harder to follow and test
 - **Repeated logic**: The same code block appears in multiple places
 - **Opaque intent**: A section of code requires careful reading to understand its purpose
 - **Tangled responsibilities**: A single method handles validation, calculation, formatting, and persistence
-- **Difficult testing**: Comprehensive unit testing is impractical because the method does too much
+- **Difficult testing**: Thorough unit testing is impractical because the method does too much
 - **Complex branching**: Long if/else or switch structures hide the high-level flow
 
-### Why It Matters
+### Why it matters
 
-Smaller methods with meaningful names turn code into a narrative. Readers can understand the flow at a glance and dive into details only when needed. Each extracted method becomes an independent unit that can be tested, reused, and modified in isolation.
+Smaller methods with meaningful names turn code into a narrative. Readers can see the flow at a glance and read the details only when needed. Each extracted method can be tested, reused, and modified in isolation.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
 1. **Select the fragment**: Identify a cohesive block of code that performs a distinct task
 2. **Check dependencies**: Note which local variables the fragment reads or writes
@@ -154,23 +166,22 @@ class OrderProcessor
 
 ## Benefits
 
-- **Readable Flow**: The calling method reads like a summary; details live in named sub-methods
-- **Targeted Testing**: Each extracted method can be tested with focused inputs and assertions
+- **Readable flow**: The calling method reads like a summary; details live in named sub-methods
+- **Targeted testing**: Each extracted method can be tested with focused inputs and assertions
 - **Reuse**: Extracted logic can be called from other methods or classes
-- **Reduced Cognitive Load**: Developers process smaller chunks of logic at a time
-- **Faster Debugging**: When something breaks, the stack trace points to a narrow, specific method
-- **Composability**: Small methods combine naturally into larger workflows
-- **Polymorphism Support**: Extracted methods are easy to override in subclasses
+- **Less to hold in your head**: Developers process smaller chunks of logic at a time
+- **Faster debugging**: When something breaks, the stack trace points to a narrow, specific method
+- **Polymorphism**: Extracted methods are easy to override in subclasses
 
-## When NOT to Use
+## When not to use
 
 - **One-liner code**: Wrapping a single obvious statement in a method adds noise
-- **One-off utilities**: A calculation used exactly once and already clear may not need its own method
+- **One-off utilities**: A calculation used once and already clear may not need its own method
 - **Parameter explosion**: If the extracted method requires many parameters, consider Introduce Parameter Object or Extract Class instead
-- **Too many tiny methods**: Overextraction can scatter logic so widely that following the flow becomes harder than reading inline code
-- **Performance-critical inner loops**: Method call overhead is rarely a concern, but measure before ruling it out
+- **Too many tiny methods**: Over-extraction can scatter logic so widely that following the flow is harder than reading it inline
+- **Performance-critical inner loops**: Method call overhead is rarely a concern. Measure before ruling it out
 
-## Related Refactorings
+## Related refactorings
 
 - **Extract Class**: When extracted logic deserves its own class rather than just a method
 - **Replace Method with Method Object**: For methods with so many local variables that extraction is impractical
@@ -178,7 +189,7 @@ class OrderProcessor
 - **Replace Temp with Query**: Removes temporary variables that complicate extraction
 - **Remove Duplication**: Often precedes Extract Method to consolidate repeated code first
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

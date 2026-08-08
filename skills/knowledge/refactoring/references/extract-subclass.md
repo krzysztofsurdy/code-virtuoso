@@ -1,5 +1,16 @@
 # Extract Subclass Refactoring
 
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/after examples](#beforeafter-examples)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
 Extract Subclass moves special-case fields and methods out of a general-purpose class and into a dedicated subclass. When a class carries features that only matter in certain scenarios, those features belong in a subclass that represents that specific variation.
@@ -13,7 +24,7 @@ As classes grow, they often accumulate fields and methods that apply only to a s
 - Makes the parent class harder to understand and test
 - Limits the ability to add further variations cleanly
 
-Extracting a subclass sharpens both the parent and the child, giving each a clear and focused purpose.
+After the extraction, the parent covers the general case and the child covers one specific variation.
 
 ## Mechanics
 
@@ -23,9 +34,9 @@ Extracting a subclass sharpens both the parent and the child, giving each a clea
 4. Update creation sites to instantiate the subclass where the special behavior is needed
 5. Run the tests to confirm behavior is preserved
 
-## Before/After Examples
+## Before/after examples
 
-### Before: Employee Class with Manager-Specific Logic
+### Before: Employee class with manager-specific logic
 
 ```php
 <?php
@@ -72,7 +83,7 @@ class Employee
 }
 ```
 
-### After: Separate Manager Subclass
+### After: separate Manager subclass
 
 ```php
 <?php
@@ -125,19 +136,19 @@ $manager = new Manager('Bob', 75000, 'Engineering', 5000);
 
 ## Benefits
 
-- **Lighter Parent Class**: The parent sheds fields and methods that only mattered to the special case
-- **Explicit Variation**: A dedicated subclass makes the distinction between general and specialized behavior unmistakable
-- **Type Safety**: PHP 8.3 readonly properties on the subclass enforce immutability and provide clarity
-- **Extensibility**: Additional variations can be introduced as further subclasses without bloating the parent
-- **Focused Responsibility**: Each class has a single, well-defined reason to change
+- **Lighter parent class**: The parent sheds fields and methods that only mattered to the special case
+- **Explicit variation**: A dedicated subclass makes the distinction between general and specialized behavior obvious
+- **Immutability**: PHP 8.3 readonly properties on the subclass enforce immutability
+- **Extensibility**: Additional variations can be added as further subclasses without bloating the parent
+- **Focused responsibility**: Each class has a single reason to change
 
-## When NOT to Use
+## When not to use
 
 - **Multiple orthogonal dimensions**: If the class varies along two or more independent axes (e.g., role AND employment type), composition or the Strategy pattern is a better fit than inheritance
-- **Shallow difference**: When the subclass would add only a trivial field and no meaningful behavior, the complexity of a new class may not be justified
+- **Shallow difference**: When the subclass would add only a trivial field and no real behavior, a new class may not be worth the complexity
 - **Deep inheritance chains**: Avoid creating subclasses that extend already-deep hierarchies
 
-## Related Refactorings
+## Related refactorings
 
 - **Pull Up Method**: Move shared methods from the subclass back into the parent
 - **Push Down Method**: Move specialized methods from the parent into the subclass
@@ -145,7 +156,7 @@ $manager = new Manager('Bob', 75000, 'Engineering', 5000);
 - **Replace Type Code with Subclasses**: Use subclasses to replace a type field and its conditional logic
 - **Replace Conditional with Polymorphism**: Eliminate conditionals by distributing behavior across subclasses
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

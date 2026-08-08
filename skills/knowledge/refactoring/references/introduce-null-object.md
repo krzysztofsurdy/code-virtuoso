@@ -1,27 +1,38 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after: PHP 8.3+ code](#before-and-after-php-83-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Introduce Null Object replaces scattered null checks with a dedicated object that provides safe, default behavior. Instead of guarding every method call with `if ($object !== null)`, you create a class that implements the same interface but does nothing (or returns sensible defaults). Callers treat it exactly like a real object, and the conditional clutter vanishes.
+Introduce Null Object replaces scattered null checks with a dedicated object that has safe default behavior. Instead of guarding every method call with `if ($object !== null)`, you create a class that implements the same interface but does nothing, or returns sensible defaults. Callers treat it like a real object, and the conditionals disappear.
 
 ## Motivation
 
-When methods return `null` to signal the absence of a value, consumers must check for null at every turn. This leads to:
+When methods return `null` to signal a missing value, every consumer must check for null. This leads to:
 
 - Null-checking conditionals scattered across the codebase
-- Reduced readability as business logic is buried under defensive checks
-- Null pointer errors when a check is accidentally omitted
-- Verbose code that obscures the actual flow of the program
+- Business logic buried under defensive checks
+- Null pointer errors when a check is accidentally left out
+- Verbose code that hides the actual flow of the program
 
-A Null Object uses polymorphism to absorb the "missing value" case, producing cleaner code that works uniformly whether a real object or a stand-in is present.
+A Null Object uses polymorphism to handle the "missing value" case. The code works the same whether a real object or a stand-in is present.
 
 ## Mechanics
 
 1. **Create a null implementation** that shares the same interface or extends the same base class
 2. **Add an `isNull()` method** (optional) returning `true` for the null object and `false` for real instances
 3. **Return the null object** wherever the code previously returned `null`
-4. **Remove null checks** in client code, relying on the null object's safe default behavior
+4. **Remove null checks** in client code and rely on the null object's default behavior
 5. **Implement sensible defaults** in the null class: no-ops for actions, empty strings or zeroes for queries
 
-## Before and After: PHP 8.3+ Code
+## Before and after: PHP 8.3+ code
 
 ### Before (with null checks)
 
@@ -60,7 +71,7 @@ if ($user2->notification !== null) {
 }
 ```
 
-### After (with Null Object Pattern)
+### After (with Null Object pattern)
 
 ```php
 interface Notification
@@ -140,27 +151,27 @@ echo $user2->getNotificationMethod(); // 'No notification configured'
 
 - **No conditional clutter**: Null checks disappear from client code
 - **Polymorphic handling**: Absence is modeled as an object, not a special case
-- **Readable business logic**: The flow reads naturally without defensive branching
-- **Fewer missed checks**: Null pointer errors become impossible for the covered type
+- **Readable business logic**: The flow reads without defensive branching
+- **Fewer missed checks**: Null pointer errors cannot come from the covered type
 - **Clear responsibilities**: Real objects handle business logic; null objects handle absence
 - **Uniform treatment**: Callers do not need to know whether they hold a real or null instance
 
-## When NOT to Use
+## When not to use
 
-- **Simple presence/absence**: When a boolean flag communicates the state clearly enough
+- **Simple presence/absence**: When a boolean flag states the case clearly enough
 - **Dynamic transitions**: If objects frequently switch between null and real states, consider Strategy or Optional instead
 - **Strict type guarantees**: When callers must distinguish between real and absent objects for correctness
-- **Negligible repetition**: If null checks appear in only one or two places, a full null class may be overkill
-- **Performance sensitivity**: Object allocation overhead is typically trivial, but measure if unsure
+- **Negligible repetition**: If null checks appear in only one or two places, a full null class is probably too much
+- **Performance sensitivity**: Object allocation overhead is usually trivial, but measure if unsure
 
-## Related Refactorings
+## Related refactorings
 
-- **Replace Conditional with Polymorphism**: Extends the same principle to other conditional branches
+- **Replace Conditional with Polymorphism**: Applies the same idea to other conditional branches
 - **Strategy Pattern**: Similar structure, but for selecting among meaningful behavioral alternatives
 - **Special Case Pattern**: A generalization of Null Object for any exceptional case, not just absence
-- **Specification Pattern**: Another approach for encoding complex conditions as objects
+- **Specification Pattern**: Another way to encode complex conditions as objects
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

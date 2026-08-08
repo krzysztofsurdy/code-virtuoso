@@ -1,26 +1,36 @@
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after examples](#before-and-after-examples)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-Inappropriate Intimacy describes classes that are entangled with each other's internal implementation details. Rather than communicating through well-defined public interfaces, one class reaches directly into another's private fields and methods. This tight coupling makes both classes fragile - changes to one can silently break the other, and neither can be understood, tested, or reused in isolation.
+Inappropriate Intimacy describes classes that are tangled up with each other's internal details. Instead of talking through public interfaces, one class reaches directly into another's private fields and methods. This tight coupling makes both classes fragile. A change to one can break the other without warning. Neither can be understood, tested, or reused alone.
 
-## Why It's a Problem
+## Why it's a problem
 
-- **Implementation Dependence**: Classes rely on internal details that are free to change without notice
-- **Cascading Breakage**: Modifying one class's internals risks breaking every class that depends on those details
-- **No Independent Reuse**: Tightly intertwined classes cannot be extracted and used in different contexts
-- **Complex Test Setup**: Testing requires elaborate mocking to satisfy intimate cross-class dependencies
-- **Encapsulation Erosion**: The fundamental OOP principle of hiding implementation behind a stable interface is undermined
+- **Implementation dependence**: Classes rely on internal details that can change without notice
+- **Cascading breakage**: Changing one class's internals can break every class that depends on them
+- **No independent reuse**: Intertwined classes cannot be extracted and used in other contexts
+- **Complex test setup**: Tests need elaborate mocking to satisfy the cross-class dependencies
+- **Broken encapsulation**: Implementation is no longer hidden behind a stable interface
 
-## Signs and Symptoms
+## Signs and symptoms
 
 - One class directly accessing another class's private or internal properties
 - A class calling multiple non-public methods of another class
 - Bidirectional dependencies where each class references the other
 - Internal state shared between classes without a formal public contract
-- Using a class requires deep knowledge of another class's implementation structure
+- Using a class requires detailed knowledge of another class's implementation
 
-## Before/After Examples
+## Before and after examples
 
-### Problem: Direct Access to Private Properties
+### Problem: direct access to private properties
 
 ```php
 // BAD: Inappropriate Intimacy
@@ -45,7 +55,7 @@ final readonly class User
 }
 ```
 
-### Solution: Use Public Interface Methods
+### Solution: use public interface methods
 
 ```php
 // GOOD: Proper encapsulation
@@ -86,7 +96,7 @@ final readonly class UserRepository
 }
 ```
 
-### Problem: Bidirectional Coupling
+### Problem: bidirectional coupling
 
 ```php
 // BAD: Order knows too much about Customer
@@ -107,7 +117,7 @@ final class Customer
 }
 ```
 
-### Solution: Delegate Responsibility
+### Solution: delegate responsibility
 
 ```php
 // GOOD: Order delegates to Customer
@@ -160,36 +170,36 @@ final readonly class Order
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### 1. Move Method/Field
-Move functionality to the class that actually uses it. If class A frequently accesses a method of class B, consider moving that method to class A.
+Move functionality to the class that uses it. If class A frequently accesses a method of class B, consider moving that method to class A.
 
-### 2. Extract Class & Hide Delegate
+### 2. Extract Class and Hide Delegate
 Create an intermediary class to formalize the relationship. Extract shared functionality into a dedicated class that both original classes interact with.
 
 ### 3. Change Association Direction
-Convert bidirectional dependencies to unidirectional. Determine which class should own the relationship and remove the reverse dependency.
+Convert bidirectional dependencies to unidirectional. Decide which class should own the relationship and remove the reverse dependency.
 
 ### 4. Replace Delegation with Inheritance
-For clear parent-child relationships, use inheritance instead of composition to reduce unnecessary intimacy.
+For a clear parent-child relationship, use inheritance instead of composition to reduce the intimacy.
 
 ## Exceptions
 
-Appropriate Intimacy is acceptable in these cases:
+Intimacy is acceptable in these cases:
 
-- **Framework Integration**: Using framework internals when necessary for extension points
-- **Close Collaborators**: Classes designed as a cohesive unit (e.g., value objects with a single repository)
-- **Performance Critical Code**: Strategic intimacy in tight loops when profiling proves necessary
+- **Framework integration**: Using framework internals at extension points
+- **Close collaborators**: Classes designed as one unit (e.g., value objects with a single repository)
+- **Performance-critical code**: Intimacy in tight loops, when profiling shows it is needed
 - **Data Transfer Objects**: DTO classes designed to expose all fields are exempt
-- **Legacy Systems**: Gradual refactoring may require temporary intimacy
+- **Legacy systems**: Gradual refactoring may require temporary intimacy
 
-## Related Smells
+## Related smells
 
-- **Feature Envy**: A method that uses more of another class's data than its own - a frequent companion to Inappropriate Intimacy
-- **Message Chains**: Traversing returned objects to reach deeply nested data, creating implicit structural dependencies
-- **Middle Man**: A class that exists solely to delegate, sometimes introduced as an overcorrection for intimacy
-- **Data Clumps**: Groups of variables that travel together and should be encapsulated, reducing the need for cross-class field access
-- **Temporal Coupling**: Methods that must be called in a specific order, with that requirement hidden inside implementation details
+- **Feature Envy**: A method that uses more of another class's data than its own. It often appears alongside Inappropriate Intimacy
+- **Message Chains**: Traversing returned objects to reach nested data, which creates hidden structural dependencies
+- **Middle Man**: A class that exists only to delegate, sometimes introduced as an overcorrection for intimacy
+- **Data Clumps**: Groups of variables that travel together and should be encapsulated, which reduces cross-class field access
+- **Temporal Coupling**: Methods that must be called in a specific order, where that requirement is hidden in implementation details
 
-The guiding principle is that well-designed classes should know as little as possible about each other's internals. When intimacy is detected, the first step is deciding which class should own the shared data or behavior, then using Move Method, Move Field, or Extract Class to establish proper boundaries. For bidirectional dependencies, determine which direction is essential and convert the other to unidirectional.
+Classes should know as little as possible about each other's internals. When you find intimacy, first decide which class should own the shared data or behavior. Then use Move Method, Move Field, or Extract Class to set the boundary. For bidirectional dependencies, decide which direction is needed and remove the other.

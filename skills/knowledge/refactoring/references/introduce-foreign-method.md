@@ -1,36 +1,56 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before: workaround code](#before-workaround-code)
+- [After: using foreign methods](#after-using-foreign-methods)
+- [Alternative: marking foreign methods with attributes](#alternative-marking-foreign-methods-with-attributes)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [When to upgrade to a wrapper class](#when-to-upgrade-to-a-wrapper-class)
+- [Related refactorings](#related-refactorings)
+- [Common pitfalls](#common-pitfalls)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Introduce Foreign Method adds functionality to a class you cannot modify by placing a new method in a class you do control. The method accepts an instance of the unmodifiable class and performs the operation that class is missing. This keeps related logic in one place rather than scattering workaround code throughout the application.
+Introduce Foreign Method adds functionality to a class you cannot modify by placing a new method in a class you control. The method takes an instance of the unmodifiable class and performs the operation that class is missing. Related logic stays in one place instead of being scattered through the application as workaround code.
 
 ## Motivation
 
-Situations that call for a foreign method include:
+Use a foreign method when:
 
 1. **Third-party class limitations** - a library class lacks a method your domain needs
-2. **Restricted ownership** - the class belongs to another team or a framework you should not patch
-3. **Separation of concerns** - the desired behavior is specific to your domain and does not belong in the general-purpose class
-4. **Temporary bridging** - you need a solution now without waiting for an upstream release
+2. **Restricted ownership** - the class belongs to another team or to a framework you should not patch
+3. **Separation of concerns** - the behavior is specific to your domain and does not belong in the general-purpose class
+4. **Temporary bridging** - you need a solution now and cannot wait for an upstream release
 
-A foreign method is a cleaner alternative to duplicating workaround logic at every call site.
+A foreign method is better than repeating workaround logic at every call site.
 
 ## Mechanics
 
-### Step 1: Identify the Gap
+### Step 1: Identify the gap
+
 Determine which method the foreign class is missing.
 
-### Step 2: Write the Method in Your Own Class
+### Step 2: Write the method in your own class
+
 Create a method that takes the foreign object as a parameter.
 
-### Step 3: Implement the Logic
-Place the logic that would naturally belong on the foreign class inside your method.
+### Step 3: Implement the logic
 
-### Step 4: Document the Reason
+Put the logic that would belong on the foreign class inside your method.
+
+### Step 4: Document the reason
+
 Note that the method exists because the target class cannot be modified.
 
-### Step 5: Consider Upgrading
-If foreign methods accumulate for the same class, consider consolidating them into a wrapper or extension class.
+### Step 5: Consider upgrading
 
-## Before: Workaround Code
+If foreign methods pile up for the same class, move them into a wrapper or extension class.
+
+## Before: workaround code
 
 ```php
 <?php
@@ -69,7 +89,7 @@ class ReportService
 }
 ```
 
-## After: Using Foreign Methods
+## After: using foreign methods
 
 ```php
 <?php
@@ -146,9 +166,9 @@ class ReportService
 }
 ```
 
-## Alternative: Using Trait-based Foreign Methods
+## Alternative: marking foreign methods with attributes
 
-For PHP 8.3+, you can use attributes to mark foreign methods:
+In PHP 8.3+, you can use attributes to mark foreign methods:
 
 ```php
 <?php
@@ -182,22 +202,22 @@ class DateTimeExtension
 
 1. **Consolidated logic** - related operations on external classes live in one place
 2. **Easier maintenance** - changes to the workaround logic happen in a single location
-3. **Reuse** - multiple callers can invoke the same foreign method
-4. **Transparent intent** - the code clearly marks itself as an extension of a class that cannot be modified
-5. **Testability** - foreign methods are straightforward to unit test in isolation
-6. **Discoverable** - a dedicated extension class is easier to find than inline workaround code
+3. **Reuse** - multiple callers can use the same foreign method
+4. **Clear intent** - the code marks itself as an extension of a class that cannot be modified
+5. **Testability** - foreign methods are easy to unit test in isolation
+6. **Discoverability** - a dedicated extension class is easier to find than inline workaround code
 
-## When NOT to Use
+## When not to use
 
-1. **You own the class** - modify it directly instead
-2. **The method belongs upstream** - if the functionality is truly general-purpose, contribute it to the library
-3. **Too many foreign methods accumulate** - at that point, create a full wrapper or subclass
+1. **You own the class** - change it directly
+2. **The method belongs upstream** - if the functionality is general-purpose, contribute it to the library
+3. **Too many foreign methods** - at that point, create a full wrapper or subclass
 4. **One-off usage** - a single inline workaround may be simpler than a dedicated method
-5. **Complex interactions** - operations that deeply interact with the foreign class internals are better handled by a proper adapter or decorator
+5. **Complex interactions** - operations that depend heavily on the foreign class internals are better handled by an adapter or decorator
 
-## When to Upgrade to a Wrapper Class
+## When to upgrade to a wrapper class
 
-If you find yourself creating many foreign methods for the same class, consider creating a wrapper:
+If you create many foreign methods for the same class, consider a wrapper:
 
 ```php
 <?php
@@ -240,23 +260,23 @@ class ExtendedDateTime
 }
 ```
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Method** - isolates inline workaround code before promoting it to a foreign method
+- **Extract Method** - isolates inline workaround code before you promote it to a foreign method
 - **Extract Class** - groups accumulated foreign methods into a dedicated utility class
-- **Introduce Parameter Object** - bundles related foreign method parameters
+- **Introduce Parameter Object** - groups related foreign method parameters
 - **Adapter Pattern** - wraps a foreign class for interface compatibility
-- **Decorator Pattern** - extends behavior dynamically without modifying the original class
+- **Decorator Pattern** - adds behavior at runtime without modifying the original class
 
-## Common Pitfalls
+## Common pitfalls
 
-1. **Accumulation** - too many foreign methods signals the need for a wrapper class
-2. **Modifying the wrong thing** - if you can change the class, change it; do not create a workaround
-3. **Vague naming** - name foreign methods clearly so readers understand they extend external functionality
-4. **Missing rationale** - always document why the method exists as a foreign extension
-5. **Overuse of statics** - consider instance methods or a wrapper class for better readability
+1. **Accumulation** - too many foreign methods means you need a wrapper class
+2. **Wrong target** - if you can change the class, change it; do not create a workaround
+3. **Vague naming** - name foreign methods so readers see they extend external functionality
+4. **Missing rationale** - document why the method exists as a foreign extension
+5. **Overuse of statics** - consider instance methods or a wrapper class for readability
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

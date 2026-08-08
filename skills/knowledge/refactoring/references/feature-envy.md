@@ -1,18 +1,26 @@
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-Feature Envy describes a method that reaches into another object's data far more than it uses its own. The method is effectively doing work that belongs to the other class - it is "envious" of that class's fields and methods. This violates encapsulation and is a strong signal that the logic should live closer to the data it operates on.
+Feature Envy describes a method that reaches into another object's data far more than it uses its own. The method does work that belongs to the other class: it is "envious" of that class's fields and methods. This breaks encapsulation and signals that the logic should live closer to the data it operates on.
 
-## Why It's a Problem
+## Why it's a problem
 
-Feature Envy introduces several compounding issues:
+- **Tight coupling**: The method depends on another class's internal layout, so both classes resist change
+- **Scattered cohesion**: Data and the behavior that acts on it end up in different classes
+- **Ripple effects**: Structural changes to the data-holding class force updates in every envious method across the codebase
+- **Poor reusability**: Code tangled with another object's internals is difficult to extract and reuse
+- **Testing friction**: Envious methods need elaborate setup to satisfy external dependencies
 
-- **Tight Coupling**: The method becomes deeply dependent on another class's internal layout, making both classes resistant to change
-- **Scattered Cohesion**: Data and the behavior that acts on it end up in different classes, weakening the conceptual integrity of both
-- **Ripple Effects**: Structural changes to the data-holding class force updates in every envious method across the codebase
-- **Poor Reusability**: Code tangled with another object's internals is difficult to extract and reuse in other contexts
-- **Testing Friction**: Envious methods require elaborate setup to satisfy external dependencies, making unit tests harder to write and maintain
-
-## Signs and Symptoms
+## Signs and symptoms
 
 - A method makes multiple getter calls on a single external object
 - The method references another object's fields more often than its own class's fields
@@ -20,7 +28,7 @@ Feature Envy introduces several compounding issues:
 - The same conditions on another object are checked repeatedly across methods
 - Helper methods exist mainly to reach into another object's state
 
-## Before and After
+## Before and after
 
 ### Before: Feature Envy
 
@@ -69,7 +77,7 @@ class Address
 }
 ```
 
-### After: Proper Encapsulation
+### After: proper encapsulation
 
 ```php
 <?php
@@ -117,14 +125,14 @@ readonly class Order
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### 1. Move Method
-Move the entire method to the class whose data it primarily uses. The refactored code above demonstrates this: shipping cost calculation moves from `OrderProcessor` to `Address` where the zone and distance data reside.
+Move the entire method to the class whose data it primarily uses. The refactored code above does this: shipping cost calculation moves from `OrderProcessor` to `Address`, where the zone and distance data reside.
 
 **When to use**: The method operates mainly on one class's data, with minimal interaction with its current class.
 
-### 2. Extract Method & Move
+### 2. Extract Method and move
 Extract the portion of code that accesses another object's data into a separate method, then move it to that object's class.
 
 ```php
@@ -142,7 +150,7 @@ private function getBaseRate(): float
 **When to use**: Only part of the method exhibits feature envy, and the rest needs to remain in the original class.
 
 ### 3. Delegate Method
-Create a delegation method in the data-holder class and call it instead of accessing data directly.
+Create a delegation method in the data-holder class and call it instead of reading the data.
 
 ```php
 readonly class Order
@@ -158,16 +166,16 @@ readonly class Order
 
 Feature Envy is sometimes acceptable:
 
-- **Utility/Helper Classes**: Methods in utility classes or data mappers may naturally access other objects' data without being "envious"
-- **Value Objects**: Operations on multiple value objects (like distance calculations) are legitimate
-- **DTOs in Data Transfer**: Data Transfer Objects intentionally expose all data for transfer purposes
-- **Framework Code**: ORM/framework code deliberately accesses object internals
+- **Utility/helper classes**: Methods in utility classes or data mappers may access other objects' data without being "envious"
+- **Value objects**: Operations on multiple value objects (like distance calculations) are legitimate
+- **DTOs**: Data Transfer Objects intentionally expose all their data
+- **Framework code**: ORM/framework code deliberately accesses object internals
 
-## Related Smells
+## Related smells
 
-- **Inappropriate Intimacy**: Classes that dig into each other's private implementation details - a broader form of the same coupling issue
+- **Inappropriate Intimacy**: Classes that dig into each other's private implementation details. A broader form of the same coupling problem
 - **Message Chains**: Traversing a chain of method calls (like `object->a()->b()->c()`) is often a symptom of envy for data buried deep in the object graph
 - **Lazy Class**: An object that does very little itself and mostly delegates, pushing logic outward where it becomes envious
 - **Anemic Domain Model**: Domain objects that hold data but no behavior, forcing all logic into service classes that are inherently envious
 
-A useful rule of thumb: if things change together, keep them together. When a method uses data from several classes, determine which class owns the majority of that data and place the method there. The exception is when behavior is intentionally kept separate to enable runtime flexibility - patterns like Strategy and Visitor deliberately separate behavior from data.
+Rule of thumb: if things change together, keep them together. When a method uses data from several classes, put it in the class that owns most of that data. The exception is behavior kept apart on purpose for runtime flexibility. Strategy and Visitor separate behavior from data by design.

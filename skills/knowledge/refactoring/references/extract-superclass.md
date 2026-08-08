@@ -1,29 +1,40 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after](#before-and-after)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Extract Superclass pulls shared fields and methods out of two or more classes and into a newly created parent class. When independent classes carry duplicate code that performs similar tasks, introducing a common superclass eliminates the repetition and makes the relationship between the classes explicit.
+Extract Superclass pulls shared fields and methods out of two or more classes and into a newly created parent class. When independent classes carry duplicate code that performs similar tasks, introducing a common superclass removes the repetition and makes the relationship between the classes explicit.
 
 ## Motivation
 
-Duplicate code across classes is a maintenance liability. When the shared logic needs to change, every copy must be updated in lockstep, and missed updates lead to inconsistencies. Extract Superclass addresses this by:
+Duplicate code across classes is a maintenance liability. When the shared logic changes, every copy must be updated in lockstep, and a missed update leads to inconsistencies. Extract Superclass helps by:
 
-- Centralizing shared behavior in a single location
+- Putting shared behavior in a single location
 - Making the structural relationship between the classes visible
-- Providing a stable base for future shared functionality
-- Reducing the total amount of code to read and maintain
+- Providing a base for future shared functionality
+- Reducing the amount of code to read and maintain
 
 ## Mechanics
 
-Follow this order to avoid breaking intermediate states:
+Follow this order so no intermediate state breaks:
 
 1. **Create the superclass** - define an abstract parent class
 2. **Pull up fields first** - move shared attributes into the superclass (methods may depend on them)
-3. **Pull up methods** - migrate identical methods to the parent
-4. **Pull up constructor logic** - consolidate shared initialization
+3. **Pull up methods** - move identical methods to the parent
+4. **Pull up constructor logic** - merge shared initialization
 5. **Update client code** - where appropriate, reference the superclass type instead of individual subclasses
 
-## Before and After
+## Before and after
 
-### Before: Duplicate Code in Two Classes
+### Before: duplicate code in two classes
 
 ```php
 <?php declare(strict_types=1);
@@ -77,7 +88,7 @@ class Contractor
 }
 ```
 
-### After: Extracted Superclass
+### After: extracted superclass
 
 ```php
 <?php declare(strict_types=1);
@@ -137,28 +148,28 @@ final class Contractor extends Person
 
 ## Benefits
 
-- **Single Source of Truth** - shared logic lives in one place, not scattered across classes
-- **Cheaper Maintenance** - changes to common behavior require a single edit
-- **Visible Relationships** - the inheritance hierarchy documents how classes relate
-- **Foundation for Growth** - new subclasses can extend the superclass without duplicating boilerplate
-- **Polymorphic Flexibility** - client code can accept the superclass type, enabling substitution
+- **Single source of truth** - shared logic lives in one place, not scattered across classes
+- **Cheaper maintenance** - changes to common behavior need a single edit
+- **Visible relationships** - the inheritance hierarchy documents how classes relate
+- **Room to grow** - new subclasses can extend the superclass without duplicating boilerplate
+- **Polymorphism** - client code can accept the superclass type and work with any subclass
 
-## When NOT to Use
+## When not to use
 
 - **Existing inheritance conflicts** - if subclasses already extend a different parent, adding another is not possible in single-inheritance languages
 - **Superficial similarity** - if the shared code looks the same but serves different purposes, a forced hierarchy will mislead readers
-- **Composition is a better fit** - when the shared functionality is a capability rather than an identity, inject it via composition or traits
+- **Composition is a better fit** - when the shared functionality is a capability rather than an identity, inject it through composition or traits
 - **Only one class** - if the duplication has not yet appeared in a second class, the extraction is premature
 - **Divergent semantics** - when the same method name means different things in different classes, a shared superclass obscures that difference
 
-## Related Refactorings
+## Related refactorings
 
 - **Extract Interface** - use when you need a shared contract without shared implementation
 - **Extract Subclass** - the reverse direction: pulling specialized behavior down into a child class
 - **Pull Up Field/Method** - the individual steps that make up this refactoring
 - **Move Method** - shifts behavior between classes without introducing a hierarchy
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

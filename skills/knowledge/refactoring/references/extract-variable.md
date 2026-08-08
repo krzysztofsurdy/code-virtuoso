@@ -1,20 +1,31 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after examples](#before-and-after-examples)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Extract Variable assigns a complex or opaque expression to a named variable, making the code's intent explicit. By giving a meaningful name to a sub-expression, you turn cryptic inline logic into self-documenting code that is easier to read, debug, and maintain.
+Extract Variable assigns a complex or opaque expression to a named variable, making the code's intent explicit. A meaningful name for a sub-expression turns cryptic inline logic into code that explains itself.
 
-This technique is especially valuable for compound conditionals, chained property accesses, and mathematical formulas where the purpose is not obvious at a glance.
+It works best on compound conditionals, chained property accesses, and mathematical formulas where the purpose is not obvious at a glance.
 
 ## Motivation
 
-**Clarity**: A descriptive variable name communicates what a value represents far more effectively than a raw expression.
+**Clarity**: A descriptive variable name says what a value represents. A raw expression only says how it is computed.
 
-**Maintenance**: When the same expression appears in multiple places, extracting it into a variable eliminates duplication and provides a single point of change.
+**Maintenance**: When the same expression appears in multiple places, extracting it into a variable removes the duplication and gives you a single point of change.
 
-**Debugging**: Named variables appear in debugger watches and stack traces, making it straightforward to inspect intermediate values.
+**Debugging**: Named variables appear in debugger watches and stack traces, so intermediate values are easy to inspect.
 
 **Reuse**: Once extracted, the variable can be referenced elsewhere in the same scope without recalculating the expression.
 
-**Intent**: A well-chosen name acts as embedded documentation, explaining the "what" without needing a comment.
+**Intent**: A well-chosen name documents the "what" without needing a comment.
 
 ## Mechanics
 
@@ -25,11 +36,11 @@ This technique is especially valuable for compound conditionals, chained propert
 5. **Replace the expression**: Swap the original expression with the variable name
 6. **Run the tests**: Confirm identical behavior
 7. **Expand scope if needed**: Place the variable at the appropriate scope level (method, block, or class)
-8. **Eliminate duplicates**: Replace all identical expressions with the new variable
+8. **Remove duplicates**: Replace all identical expressions with the new variable
 
-## Before and After Examples
+## Before and after examples
 
-### Example 1: Conditional Logic
+### Example 1: conditional logic
 
 **Before (PHP 8.3+)**:
 ```php
@@ -75,7 +86,7 @@ class Order
 }
 ```
 
-### Example 2: Property Chain
+### Example 2: property chain
 
 **Before (PHP 8.3+)**:
 ```php
@@ -113,7 +124,7 @@ class UserReport
 }
 ```
 
-### Example 3: Calculation
+### Example 3: calculation
 
 **Before (PHP 8.3+)**:
 ```php
@@ -155,30 +166,29 @@ class PricingCalculator
 
 ## Benefits
 
-- **Self-Documenting Code**: Names convey meaning that raw expressions do not
-- **Simpler Expressions**: Breaking a formula into labeled parts makes each step obvious
-- **Targeted Testing**: Individual variables can be inspected and asserted on
-- **Single Point of Change**: A duplicated expression becomes a single assignment
-- **Debugging Support**: Named values are easy to watch and log
-- **Reduced Duplication**: Multiple uses of the same expression collapse into one variable
+- **Self-documenting code**: Names convey meaning that raw expressions do not
+- **Simpler expressions**: Breaking a formula into labeled parts makes each step obvious
+- **Targeted testing**: Individual variables can be inspected and asserted on
+- **Single point of change**: A duplicated expression becomes a single assignment
+- **Easier debugging**: Named values are easy to watch and log
 
-## When NOT to Use
+## When not to use
 
 - **Already clear expressions**: `$age = $currentYear - $birthYear` needs no further naming
-- **Single-use with obvious meaning**: Extracting a one-time expression that is already readable adds verbosity
+- **Single-use with obvious meaning**: Extracting a one-time expression that is already readable adds noise
 - **Tight performance loops**: In rare micro-optimization scenarios, an extra variable could matter - measure first
 - **Arrow functions and pipelines**: Modern PHP or functional patterns may be more expressive than intermediate variables
-- **Well-named helper methods already exist**: If a method already encapsulates the expression, a variable on top of it is redundant
+- **A well-named helper method already exists**: If a method already encapsulates the expression, a variable on top of it is redundant
 
-## Related Refactorings
+## Related refactorings
 
 - **Extract Method**: When the extracted variable and its context form a logical unit worth naming as a method
-- **Replace Temp with Query**: Converts a temporary variable into a method call for stronger encapsulation
+- **Replace Temp with Query**: Converts a temporary variable into a method call
 - **Introduce Explaining Variable**: A specialized form of Extract Variable aimed at clarifying complex expressions
-- **Rename Variable**: Complements this refactoring by ensuring the chosen name is optimal
+- **Rename Variable**: Use it afterwards if the first name you picked turns out to be weak
 - **Decompose Conditional**: Applies Extract Variable specifically to boolean expressions in conditionals
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

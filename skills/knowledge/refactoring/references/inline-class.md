@@ -1,28 +1,38 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after: PHP 8.3+ code](#before-and-after-php-83-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-Inline Class dissolves a class that no longer earns its keep by folding its fields and methods into the class that uses it. When a class has shrunk to the point where it adds more indirection than value, merging it into its sole consumer simplifies the codebase.
+Inline Class removes a class that no longer earns its keep by folding its fields and methods into the class that uses it. When a class has shrunk until it adds more indirection than value, merge it into its only consumer.
 
 ## Motivation
 
-Not every abstraction pays for itself. A class may become a candidate for inlining when:
+Not every abstraction pays for itself. A class is a candidate for inlining when:
 
 - **It has too little substance**: After other refactorings, the class holds only a field or two and a trivial method
-- **Only one consumer exists**: A single class uses it, making the separation purely ceremonial
-- **The original split was premature**: The design introduced more structure than the problem warranted
-- **Reading the code is harder**: Tracing through the extra class adds cognitive cost without illuminating intent
-- **It outlived its purpose**: Subsequent refactorings have shifted responsibilities elsewhere, leaving the class hollow
+- **Only one consumer exists**: A single class uses it, so the separation is ceremony
+- **The original split was premature**: The design added more structure than the problem needed
+- **Reading the code is harder**: Tracing through the extra class costs effort and clarifies nothing
+- **It outlived its purpose**: Later refactorings moved its responsibilities elsewhere and left it hollow
 
 ## Mechanics
 
 1. **Check usage**: Confirm the class has a single consumer (or very few)
-2. **Migrate members**: Move all fields and methods from the inlined class into the consumer
-3. **Redirect references**: Update all code that references the inlined class to use the consumer instead
+2. **Move members**: Move all fields and methods from the inlined class into the consumer
+3. **Redirect references**: Update all code that references the inlined class to use the consumer
 4. **Delete the class**: Remove the now-empty class file
-5. **Verify with tests**: Run the full suite to confirm behavior is preserved
+5. **Run the tests**: Run the full suite to confirm behavior is preserved
 
-## Before/After: PHP 8.3+ Code
+## Before and after: PHP 8.3+ code
 
-### Before (Unnecessary Abstraction)
+### Before (unnecessary abstraction)
 
 ```php
 class Person
@@ -72,7 +82,7 @@ $person = new Person('John Doe', '5551234567');
 echo $person->getTelephoneNumber();
 ```
 
-### After (Inlined Class)
+### After (inlined class)
 
 ```php
 class Person
@@ -116,22 +126,22 @@ echo $person->getTelephoneNumber();
 - **Fewer moving parts**: One less class to navigate, name, and maintain
 - **Direct relationships**: Data and the methods that use it live in the same place
 - **Less indirection**: No delegation layer between the consumer and the data
-- **Easier comprehension**: Readers see everything in one class instead of chasing references
-- **Simpler testing**: Tests target a single class rather than a pair of collaborators
-- **Reduced overhead**: Eliminates object creation and method delegation costs
+- **Easier to read**: Everything is in one class, with no references to chase
+- **Simpler testing**: Tests target one class instead of a pair of collaborators
+- **Less overhead**: No extra object creation or method delegation
 
-## When NOT to Use
+## When not to use
 
-- **Multiple consumers**: If several classes depend on the class, inlining duplicates code and spreads responsibility
-- **Meaningful domain concept**: If the class represents a real-world entity, preserving it keeps the model honest
-- **Polymorphic use**: Classes designed for substitution or extension should not be collapsed
-- **Distinct responsibilities**: If the class manages a genuinely separate concern, merging muddies the consumer
+- **Multiple consumers**: If several classes depend on the class, inlining duplicates code and spreads the responsibility
+- **Meaningful domain concept**: If the class represents a real-world entity, keeping it keeps the model accurate
+- **Polymorphic use**: Classes designed for substitution or extension should stay
+- **Distinct responsibilities**: If the class manages a separate concern, merging muddies the consumer's purpose
 - **Anticipated growth**: If the class is likely to gain new behavior or additional consumers, keep it
 - **External contracts**: Classes that implement interfaces consumed by other modules or libraries must stay
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Class**: The inverse - splitting a class when it takes on too many responsibilities
-- **Hide Delegate**: Consider hiding the delegation before deciding to inline
-- **Replace Temp with Query**: Simplifies code by removing intermediate variables during inlining
-- **Collapse Hierarchy**: A parallel refactoring that merges a subclass into its parent
+- **Extract Class**: The inverse: splitting a class that has too many responsibilities
+- **Hide Delegate**: Consider hiding the delegation before you decide to inline
+- **Replace Temp with Query**: Removes intermediate variables while you inline
+- **Collapse Hierarchy**: A similar refactoring that merges a subclass into its parent

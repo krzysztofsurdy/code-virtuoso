@@ -1,10 +1,21 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before: PHP 8.3+ Example](#before-php-83-example)
+- [After: PHP 8.3+ Example](#after-php-83-example)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-Hide Delegate shields client code from knowing about the internal objects a class delegates to. Instead of letting callers reach through one object to access another (`department->getManager()->getName()`), you add a method on the intermediate class that performs the delegation internally. Callers interact with a simpler, more stable interface.
+Hide Delegate keeps client code from knowing about the internal objects a class delegates to. Instead of letting callers reach through one object to get to another (`department->getManager()->getName()`), you add a method on the intermediate class that does the delegation internally. Callers see a simpler, more stable interface.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
 - **Chained method calls**: Client code navigates through multiple objects to reach the data it needs
 - **Excessive coupling**: Callers depend on the internal structure of objects they should not know about
@@ -13,11 +24,11 @@ Hide Delegate shields client code from knowing about the internal objects a clas
 - **Fragile call sites**: Restructuring internal objects forces changes across many client locations
 - **Feature envy**: A class spends more time accessing another object's data than its own
 
-### Why It Matters
+### Why it matters
 
-When clients reach through delegation chains, they become tightly coupled to the internal wiring of the objects involved. Any change to that wiring - renaming a method, replacing an internal object, reorganizing responsibilities - ripples out to every call site. Providing a facade method on the owning class absorbs that change in a single place.
+Clients that reach through delegation chains are tightly coupled to the internal wiring of the objects involved. Any change to that wiring (renaming a method, replacing an internal object, reorganizing responsibilities) ripples out to every call site. A wrapper method on the owning class absorbs that change in a single place.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
 1. **Find delegation chains**: Locate places where client code accesses a delegated object's properties or methods
 2. **Add a wrapper method**: Create a method on the owning class that performs the delegation internally
@@ -159,27 +170,26 @@ $employee->reportToManager();     // Output: Reporting to: John Smith
 
 ## Benefits
 
-- **Weaker Coupling**: Clients depend on a stable surface API rather than the internal object graph
-- **Stronger Encapsulation**: Internal objects can be restructured without touching callers
-- **Demeter Compliance**: Each class communicates only with its direct collaborators
-- **Cleaner Public Interface**: The owning class presents a focused, intuitive set of methods
-- **Localized Change**: Modifications to internal delegation affect a single method, not every call site
-- **Clearer Boundaries**: Each class has a well-defined scope of responsibility
-- **Easier Comprehension**: Fewer indirections make the code faster to read and understand
+- **Weaker coupling**: Clients depend on a stable surface API, not the internal object graph
+- **Stronger encapsulation**: Internal objects can be restructured without touching callers
+- **Demeter compliance**: Each class talks only to its direct collaborators
+- **Smaller public interface**: The owning class presents a focused set of methods
+- **Localized change**: Modifications to internal delegation affect a single method, not every call site
+- **Fewer indirections**: The code is faster to read
 
-## When NOT to Use
+## When not to use
 
-- **Clients genuinely need the delegated object**: Sometimes the caller requires the full object, not just a single property
-- **Excessive wrapping**: If hiding many different delegated objects bloats the owning class, the cure may be worse than the disease
+- **Clients need the delegated object**: Sometimes the caller requires the full object, not just a single property
+- **Excessive wrapping**: If hiding many different delegated objects bloats the owning class, the owning class becomes the problem
 - **Intentional transparency**: Patterns like Facade and Adapter deliberately expose delegation
 - **Trivial pass-through**: A single, obvious delegation with no stability benefit may not be worth wrapping
 - **Negligible coupling risk**: If the internal structure is unlikely to change, the indirection adds little value
 - **External API dependency**: When third-party libraries expect access to the delegated object
 
-## Related Refactorings
+## Related refactorings
 
-- **Remove Middle Man**: The inverse - exposing the delegated object when too many wrapper methods accumulate
-- **Encapsulate Field**: Hides internal fields behind accessors, following the same encapsulation principle
+- **Remove Middle Man**: The inverse: exposing the delegated object when too many wrapper methods accumulate
+- **Encapsulate Field**: Hides internal fields behind accessors, on the same encapsulation principle
 - **Extract Class**: Pulls delegation-heavy logic into its own class when responsibility grows
-- **Facade Pattern**: A broader application of the same idea, abstracting an entire subsystem
+- **Facade Pattern**: A broader application of the same idea, hiding an entire subsystem
 - **Introduce Parameter Object**: Bundles delegated data into a single parameter to simplify method signatures
