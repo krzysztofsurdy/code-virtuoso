@@ -1,39 +1,47 @@
 # Database Optimization
 
-## Query Optimization
+## Contents
 
-### Using Explain Plans
+- [Query optimization](#query-optimization)
+- [N+1 query detection and prevention](#n1-query-detection-and-prevention)
+- [Connection pooling](#connection-pooling)
+- [Read replicas and query routing](#read-replicas-and-query-routing)
+- [Batch operations](#batch-operations)
 
-Every database provides a way to inspect how it executes a query. Always check the explain plan before optimizing - it shows whether indexes are used, how tables are joined, and where time is spent.
+## Query optimization
+
+### Using explain plans
+
+Every database can show how it executes a query. Check the explain plan before optimizing: it shows whether indexes are used, how tables are joined, and where time is spent.
 
 **Key things to look for in explain output:**
 - **Full table scans** on large tables (sequential scan where an index scan is expected)
 - **Sort operations** that spill to disk instead of using an index
 - **Nested loops** with high row counts on the inner table
-- **Estimated vs actual row counts** - large discrepancies indicate stale statistics
+- **Estimated vs actual row counts**: large gaps indicate stale statistics
 
-### Index Strategies
+### Index strategies
 
-| Index Type | Purpose | Example |
+| Index type | Purpose | Example |
 |---|---|---|
 | **Single-column** | Speed up queries filtering on one column | Index on `email` for user lookup |
 | **Composite** | Match multi-column filters following the leftmost prefix rule | Index on `(tenant_id, created_at)` for tenant-scoped date ranges |
-| **Covering** | Include all columns the query needs, avoiding table lookup | Index on `(status, created_at) INCLUDE (total)` for dashboard queries |
+| **Covering** | Include all columns the query needs, so no table lookup is required | Index on `(status, created_at) INCLUDE (total)` for dashboard queries |
 | **Partial/Filtered** | Index only rows matching a condition, reducing index size | Index on `status` WHERE `status = 'pending'` for queue processing |
 | **Full-text** | Support text search queries | Full-text index on `title, description` for search features |
 
 **Index maintenance rules:**
-- Drop indexes that no query uses - they slow writes and waste storage
+- Drop indexes that no query uses, since they slow writes and waste storage
 - Rebuild fragmented indexes periodically in high-churn tables
-- Avoid indexing columns with very low cardinality (e.g., boolean flags) unless combined with selective columns
+- Avoid indexing columns with low cardinality (e.g., boolean flags) unless combined with selective columns
 
 ---
 
-## N+1 Query Detection and Prevention
+## N+1 query detection and prevention
 
-### The Problem
+### The problem
 
-Fetching a list then querying each item individually. Instead of one or two queries, the application issues N+1.
+The application fetches a list, then queries each item individually. Instead of one or two queries, it issues N+1.
 
 ```
 -- 1 query to fetch orders
@@ -45,9 +53,9 @@ SELECT * FROM order_items WHERE order_id = 103;
 ... (repeated for every order)
 ```
 
-### Prevention: Eager Loading
+### Prevention: eager loading
 
-Fetch related data upfront in a single query or a small number of queries.
+Fetch related data up front in a single query or a few queries.
 
 **PHP - Doctrine eager loading:**
 ```php
@@ -109,9 +117,9 @@ orders.forEach(o -> o.getItems().size()); // N queries
 List<Order> findWithItemsByUserId(Long userId);
 ```
 
-### Prevention: Batch Loading (DataLoader Pattern)
+### Prevention: batch loading (DataLoader pattern)
 
-Collect all IDs needed during a request, then fetch all related records in a single query. Especially useful in GraphQL resolvers.
+Collect all IDs needed during a request, then fetch all related records in a single query. This is especially useful in GraphQL resolvers.
 
 **TypeScript - DataLoader:**
 ```typescript
@@ -123,7 +131,7 @@ const itemLoader = new DataLoader<number, OrderItem[]>(async (orderIds) => {
   return orderIds.map((id) => grouped[id] ?? []);
 });
 
-// Each resolve call batches automatically
+// Each resolve call is batched
 const items = await itemLoader.load(order.id);
 ```
 
@@ -139,20 +147,20 @@ def load_items_for_orders(order_ids: list[int]) -> dict[int, list[OrderItem]]:
 
 ---
 
-## Connection Pooling
+## Connection pooling
 
-### Why Pooling Matters
+### Why pooling matters
 
-Creating a database connection involves TCP handshake, TLS negotiation, and authentication. This can take 20-100ms per connection. A pool maintains open connections and lends them to requests on demand.
+Creating a database connection involves a TCP handshake, TLS negotiation, and authentication. This can take 20-100ms per connection. A pool keeps connections open and lends them to requests on demand.
 
-### Configuration Guidelines
+### Configuration guidelines
 
 | Parameter | Guidance |
 |---|---|
-| **Minimum pool size** | Set to your baseline concurrency - connections ready immediately |
+| **Minimum pool size** | Set to the baseline concurrency so connections are ready immediately |
 | **Maximum pool size** | Cap at what the database can handle; a common starting point is `(2 * CPU cores) + disk spindles` |
 | **Idle timeout** | Reclaim connections idle for too long (e.g., 10 minutes) |
-| **Connection max lifetime** | Rotate connections periodically to handle DNS changes and server restarts |
+| **Connection max lifetime** | Rotate connections periodically to pick up DNS changes and server restarts |
 | **Validation on borrow** | Test connection health before handing it to the application |
 
 **PHP:** Use `PDO::ATTR_PERSISTENT => true` for persistent connections, or an external pooler like PgBouncer for long-running workers.
@@ -166,7 +174,7 @@ engine = create_engine(
 )
 ```
 
-**Java:** HikariCP - set `maximumPoolSize`, `minimumIdle`, `idleTimeout`, `maxLifetime`, and `connectionTimeout`.
+**Java:** HikariCP: set `maximumPoolSize`, `minimumIdle`, `idleTimeout`, `maxLifetime`, and `connectionTimeout`.
 
 **TypeScript - pg pool:**
 ```typescript
@@ -176,7 +184,7 @@ const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
 
 ---
 
-## Read Replicas and Query Routing
+## Read replicas and query routing
 
 For read-heavy workloads, route read queries to replicas and writes to the primary.
 
@@ -198,9 +206,9 @@ For read-heavy workloads, route read queries to replicas and writes to the prima
 
 ---
 
-## Batch Operations
+## Batch operations
 
-### Insert Batching
+### Insert batching
 
 Instead of inserting rows one at a time, batch them.
 
@@ -215,9 +223,9 @@ $em->flush();
 
 **Python:** `cursor.executemany("INSERT INTO products (name, price) VALUES (%s, %s)", rows)`. **TypeScript:** `queryBuilder.insert().into(Product).values(records).execute()`. **Java:** `PreparedStatement.addBatch()` in a loop, then `executeBatch()`.
 
-### Update Batching
+### Update batching
 
-Use CASE expressions or temp tables for bulk updates instead of updating rows one at a time:
+Use CASE expressions or temp tables for bulk updates instead of updating rows one at a time.
 
 ```sql
 UPDATE products

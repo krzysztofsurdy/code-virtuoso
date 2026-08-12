@@ -1,10 +1,17 @@
 # Caching Strategies
 
-## Cache Layers in Depth
+## Contents
 
-### L1: In-Process Cache
+- [Cache layers in depth](#cache-layers-in-depth)
+- [Cache invalidation patterns](#cache-invalidation-patterns)
+- [Cache stampede prevention](#cache-stampede-prevention)
+- [Choosing a strategy](#choosing-a-strategy)
 
-The fastest cache is memory within your own process. No network round-trip, no serialization. Use it for data that is read many times within a single request or a short time window.
+## Cache layers in depth
+
+### L1: in-process cache
+
+The fastest cache is memory inside your own process. It has no network round-trip and no serialization. Use it for data that is read many times within a single request or a short time window.
 
 **PHP:** `static array` property with null-check memoization. **Python:** `@functools.lru_cache(maxsize=N)` decorator. **TypeScript:** `Map<string, T>` with has/get/set pattern. **Java:** `ConcurrentHashMap.computeIfAbsent()` for thread-safe memoization.
 
@@ -12,7 +19,7 @@ The fastest cache is memory within your own process. No network round-trip, no s
 
 ---
 
-### L2: Distributed Cache
+### L2: distributed cache
 
 A shared cache accessible by all application instances. Redis and Memcached are the most common choices.
 
@@ -39,25 +46,25 @@ def get_rate(currency: str) -> float:
 
 ---
 
-### HTTP Caching
+### HTTP caching
 
-HTTP caching prevents the request from reaching your server at all. Use `Cache-Control` headers to instruct browsers and proxies.
+HTTP caching stops the request from reaching your server at all. Use `Cache-Control` headers to instruct browsers and proxies.
 
 | Header | Purpose | Example |
 |---|---|---|
 | `Cache-Control: max-age=3600` | Browser caches for 1 hour | Static assets, public API data |
 | `Cache-Control: no-cache` | Browser must revalidate every time | Dynamic content that changes frequently |
 | `Cache-Control: private` | Only browser can cache, not shared proxies | User-specific data |
-| `ETag` + `If-None-Match` | Conditional request - server returns 304 if unchanged | Any cacheable resource |
+| `ETag` + `If-None-Match` | Conditional request: server returns 304 if unchanged | Any cacheable resource |
 | `Vary: Accept-Encoding` | Cache separate versions per encoding | Compressed vs uncompressed responses |
 
 ---
 
-## Cache Invalidation Patterns
+## Cache invalidation patterns
 
-### TTL-Based Expiration
+### TTL-based expiration
 
-Set an expiration time and accept that data may be stale within that window. Simple and effective when perfect freshness is not required.
+Set an expiration time and accept that data may be stale within that window. Simple, and effective when perfect freshness is not required.
 
 **Choosing TTL values:**
 - Configuration data: minutes to hours (changes infrequently)
@@ -65,9 +72,9 @@ Set an expiration time and accept that data may be stale within that window. Sim
 - API response caches: seconds to minutes (depends on freshness requirements)
 - Static assets: days to years (use versioned URLs for busting)
 
-### Event-Based Invalidation
+### Event-based invalidation
 
-Clear or update the cache whenever the source data changes. More complex but ensures freshness.
+Clear or update the cache whenever the source data changes. More complex, but the data stays fresh.
 
 **PHP:**
 ```php
@@ -81,21 +88,21 @@ public function updateProduct(Product $product): void
 
 **Python:** Delete keys after save: `cache.delete(f"product:{product.id}")`. **TypeScript:** Same pattern with `await cache.del(key)`. **Java:** Use `@CacheEvict(value = "product", key = "#product.id")` annotation.
 
-### Write-Through Cache
+### Write-through cache
 
 Every write updates both the cache and the database. Readers always get fresh data from cache.
 
-Best for read-heavy workloads where consistency matters. Adds latency to writes since both stores must be updated.
+Best for read-heavy workloads where consistency matters. Writes are slower because both stores must be updated.
 
-### Write-Behind (Write-Back) Cache
+### Write-behind (write-back) cache
 
-Writes update the cache immediately. The backing store is updated asynchronously, often in batches. Gives fast write performance but risks data loss if the cache fails before flushing to the store.
+Writes update the cache immediately. The backing store is updated asynchronously, often in batches. Writes are fast, but data is lost if the cache fails before it flushes to the store.
 
 ---
 
-## Cache Stampede Prevention
+## Cache stampede prevention
 
-### Locking Approach
+### Locking approach
 
 Only one request regenerates the expired value. Others either wait for the result or serve stale data.
 
@@ -130,9 +137,9 @@ def get_with_lock(key: str, compute_fn, ttl: int = 300) -> Any:
     return cache.get(key) or compute_fn()
 ```
 
-### Probabilistic Early Recomputation
+### Probabilistic early recomputation
 
-Each request approaching cache expiry independently decides whether to refresh early. The probability increases as expiry approaches, spreading regeneration across time and preventing a thundering herd.
+Each request near cache expiry decides on its own whether to refresh early. The probability rises as expiry approaches, which spreads regeneration over time and prevents a thundering herd.
 
 **Pseudocode for the XFetch algorithm:**
 ```
@@ -148,11 +155,11 @@ function get_with_early_recompute(key, compute_fn, ttl, beta=1.0):
     return value
 ```
 
-The `beta` parameter controls how aggressively early recomputation triggers. Higher values mean earlier recomputation, reducing stampede risk but increasing total recomputation work.
+The `beta` parameter controls how early recomputation triggers. Higher values recompute earlier, which lowers stampede risk but increases total recomputation work.
 
-### Request Coalescing
+### Request coalescing
 
-Multiple concurrent requests for the same key are collapsed into a single backend call. The first request does the work; all others wait for and share the result.
+Concurrent requests for the same key are collapsed into a single backend call. The first request does the work and all others wait for and share the result.
 
 **TypeScript - Promise-based coalescing:**
 ```typescript
@@ -188,9 +195,9 @@ public class CoalescingCache {
 
 ---
 
-## Choosing a Strategy
+## Choosing a strategy
 
-| Scenario | Recommended Approach |
+| Scenario | Recommended approach |
 |---|---|
 | Data changes rarely, staleness is OK | TTL-based expiration with L2 distributed cache |
 | Data must be fresh after writes | Event-based invalidation on write operations |

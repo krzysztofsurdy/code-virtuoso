@@ -7,42 +7,42 @@ user-invocable: false
 
 # Performance Optimization
 
-Performance work follows one rule above all others: measure before you change anything. Intuition about bottlenecks is wrong more often than it is right. Every optimization should start with profiling, produce a hypothesis, apply a targeted fix, and verify with another measurement.
+Performance work follows one rule: measure before you change anything. Intuition about bottlenecks is wrong more often than right. Every optimization starts with profiling, forms a hypothesis, applies a targeted fix, and ends with another measurement.
 
-## Core Principles
+## Core principles
 
 | Principle | Meaning |
 |---|---|
-| **Measure first** | Never optimize without profiling data - gut feelings about bottlenecks are unreliable |
-| **Optimize the critical path** | Focus on the code that runs most frequently or blocks user-visible latency |
+| **Measure first** | Never optimize without profiling data. Gut feelings about bottlenecks are unreliable |
+| **Optimize the critical path** | Focus on the code that runs most often or blocks user-visible latency |
 | **Set budgets** | Define acceptable latency, throughput, and resource usage before you start |
-| **Avoid premature optimization** | Readable, correct code first - optimize only when measurements show a real problem |
-| **Know your tradeoffs** | Every optimization trades something (memory for speed, complexity for throughput, freshness for latency) |
+| **Avoid premature optimization** | Write readable, correct code first. Optimize only when measurements show a real problem |
+| **Know the tradeoffs** | Every optimization costs something (memory for speed, complexity for throughput, freshness for latency) |
 
 ---
 
-## Profiling and Benchmarking
+## Profiling and benchmarking
 
-Profiling identifies where time and resources are spent. Without it, you are guessing.
+Profiling shows where time and resources go. Without it you are guessing.
 
-### Types of Profiling
+### Types of profiling
 
-| Type | What It Reveals | When to Use |
+| Type | What it reveals | When to use |
 |---|---|---|
 | **CPU profiling** | Hot functions, call frequency, execution time distribution | Slow request handling, high CPU usage |
 | **Memory profiling** | Allocation rates, heap size, object retention, leaks | Growing memory usage, OOM errors, GC pressure |
 | **I/O profiling** | Disk reads/writes, network calls, blocking waits | Slow file operations, external service latency |
 | **Database profiling** | Query execution time, query count per request, slow queries | High DB load, N+1 patterns, missing indexes |
 
-### The Profiling Workflow
+### The profiling workflow
 
-1. **Baseline** - Capture metrics under normal conditions before any changes
-2. **Identify** - Find the hotspot consuming the most time or resources
-3. **Hypothesize** - Form a specific theory about why it is slow
-4. **Fix** - Apply a single, targeted change
-5. **Verify** - Measure again to confirm improvement and check for regressions
+1. **Baseline**: capture metrics under normal conditions before any changes
+2. **Identify**: find the hotspot using the most time or resources
+3. **Hypothesize**: form a specific theory about why it is slow
+4. **Fix**: apply a single, targeted change
+5. **Verify**: measure again to confirm the improvement and check for regressions
 
-### Performance Budgets
+### Performance budgets
 
 Define limits that trigger action when exceeded:
 
@@ -51,17 +51,17 @@ Define limits that trigger action when exceeded:
 - **Resource usage**: CPU, memory, and connection limits per service
 - **Page weight**: Maximum transfer size for frontend assets
 
-See [Profiling Patterns Reference](references/profiling-patterns.md) for detailed profiling workflows, bottleneck signatures, and load testing strategies.
+See [Profiling Patterns Reference](references/profiling-patterns.md) for profiling workflows, bottleneck signatures, and load testing strategies.
 
 ---
 
-## Caching Strategies
+## Caching strategies
 
-Caching eliminates redundant computation and data fetching by storing results closer to where they are needed.
+Caching removes redundant computation and data fetching by storing results closer to where they are needed.
 
-### Cache Layers
+### Cache layers
 
-| Layer | Location | Latency | Use Case |
+| Layer | Location | Latency | Use case |
 |---|---|---|---|
 | **L1 - In-process** | Application memory (object cache, memoization) | Nanoseconds | Hot data accessed many times per request |
 | **L2 - Distributed** | Redis, Memcached, shared cache | Sub-millisecond to low milliseconds | Data shared across application instances |
@@ -69,41 +69,41 @@ Caching eliminates redundant computation and data fetching by storing results cl
 | **CDN** | Edge servers worldwide | Low latency from geographic proximity | Static files, pre-rendered pages, media |
 | **Database cache** | Query result cache, buffer pool | Varies | Repeated identical queries |
 
-### Invalidation Approaches
+### Invalidation approaches
 
-| Strategy | How It Works | Best For |
+| Strategy | How it works | Best for |
 |---|---|---|
 | **TTL-based** | Cache entries expire after a fixed duration | Data that tolerates bounded staleness |
 | **Event-based** | Cache is cleared when the source data changes | Data that must stay fresh after writes |
-| **Write-through** | Writes update both the cache and the backing store simultaneously | Read-heavy workloads needing strong consistency |
+| **Write-through** | Writes update both the cache and the backing store at the same time | Read-heavy workloads needing strong consistency |
 | **Write-behind** | Writes update the cache immediately; backing store is updated asynchronously | High write throughput where eventual consistency is acceptable |
 
-### Cache Stampede Prevention
+### Cache stampede prevention
 
-When a popular cache key expires, many concurrent requests may all try to regenerate it at once, overwhelming the backend. Three approaches prevent this:
+When a popular cache key expires, many concurrent requests may all try to regenerate it at once and overwhelm the backend. Three approaches prevent this:
 
-- **Locking** - Only one request regenerates; others wait or serve stale data
-- **Probabilistic early recomputation** - Requests randomly refresh the cache before expiration, spreading regeneration over time
-- **Request coalescing** - Duplicate in-flight requests are collapsed into a single backend call
+- **Locking**: only one request regenerates; others wait or serve stale data
+- **Probabilistic early recomputation**: requests randomly refresh the cache before expiration, spreading regeneration over time
+- **Request coalescing**: duplicate in-flight requests are collapsed into a single backend call
 
 See [Caching Strategies Reference](references/caching-strategies.md) for implementation patterns with multi-language examples.
 
 ---
 
-## Database Optimization
+## Database optimization
 
 Database queries are the most common performance bottleneck in web applications.
 
-### Index Strategy
+### Index strategy
 
 - Create indexes on columns used in WHERE, JOIN, and ORDER BY clauses
-- Use composite indexes that match your most frequent query patterns (leftmost prefix rule)
-- Covering indexes include all columns a query needs, avoiding table lookups entirely
-- Monitor unused indexes - they slow down writes without helping reads
+- Use composite indexes that match the most frequent query patterns (leftmost prefix rule)
+- Covering indexes include all columns a query needs, so no table lookup is required
+- Monitor unused indexes, since they slow down writes without helping reads
 
-### N+1 Query Prevention
+### N+1 query prevention
 
-The N+1 problem occurs when code fetches a list of N records, then issues one additional query per record to load related data. Instead of 1 query, you execute N+1.
+The N+1 problem occurs when code fetches a list of N records and then runs one more query per record to load related data. Instead of 1 query, it runs N+1.
 
 **Detection signals:**
 - Query count scales linearly with result set size
@@ -113,36 +113,36 @@ The N+1 problem occurs when code fetches a list of N records, then issues one ad
 **Prevention strategies:**
 - Eager loading (JOIN or separate batch query upfront)
 - Batch loading (collect IDs, fetch all related records in one query)
-- DataLoader pattern (automatic batching and deduplication within a request)
+- DataLoader pattern (batching and deduplication within a request)
 
-### Connection Pooling
+### Connection pooling
 
-Opening a database connection is expensive (TCP handshake, authentication, TLS negotiation). Connection pools maintain a set of reusable connections:
+Opening a database connection is expensive (TCP handshake, authentication, TLS negotiation). A connection pool keeps a set of reusable connections:
 
-- Size the pool based on expected concurrency - too small causes queueing, too large overwhelms the database
-- Always return connections to the pool promptly - leaked connections exhaust the pool
+- Size the pool for expected concurrency: too small causes queueing, too large overwhelms the database
+- Return connections to the pool as soon as the work is done, because leaked connections exhaust the pool
 - Set idle timeouts to reclaim unused connections
-- Use external poolers (like PgBouncer for PostgreSQL) when application-level pooling is insufficient
+- Use external poolers (like PgBouncer for PostgreSQL) when application-level pooling is not enough
 
 See [Database Optimization Reference](references/database-optimization.md) for query patterns, explain plan analysis, and multi-language examples.
 
 ---
 
-## Memory and Resource Management
+## Memory and resource management
 
-### Memory Optimization Patterns
+### Memory optimization patterns
 
 | Pattern | Description |
 |---|---|
 | **Object pooling** | Reuse expensive objects instead of allocating and discarding them |
 | **Streaming** | Process large datasets as streams instead of loading everything into memory |
-| **Lazy initialization** | Defer creation of expensive objects until they are actually needed |
+| **Lazy initialization** | Defer creation of expensive objects until they are needed |
 | **Weak references** | Hold references that do not prevent garbage collection |
 | **Buffer reuse** | Allocate buffers once and reuse them across operations |
 
-### Lazy Loading
+### Lazy loading
 
-Lazy loading defers work until the result is actually needed. It reduces startup time and memory usage but adds complexity and can cause unexpected latency later.
+Lazy loading defers work until the result is needed. It reduces startup time and memory use, but adds complexity and can cause surprise latency later.
 
 **Where lazy loading helps:**
 - Loading related database records only when accessed
@@ -150,13 +150,13 @@ Lazy loading defers work until the result is actually needed. It reduces startup
 - Loading UI components or assets only when they become visible
 
 **Where lazy loading hurts:**
-- When the deferred work always happens anyway (just adds overhead)
+- When the deferred work always happens anyway (it only adds overhead)
 - When it moves latency from a predictable startup phase to unpredictable user interactions
 - When it creates N+1 query patterns (see Database Optimization above)
 
-### Batch Operations
+### Batch operations
 
-Replace individual operations with batch alternatives wherever possible:
+Replace individual operations with batch alternatives where possible:
 
 - Batch inserts instead of inserting one row at a time
 - Batch API calls instead of calling an external service N times
@@ -164,9 +164,9 @@ Replace individual operations with batch alternatives wherever possible:
 
 ---
 
-## Quick Reference: Common Bottleneck Patterns
+## Quick reference: common bottleneck patterns
 
-| Symptom | Likely Cause | First Investigation Step |
+| Symptom | Likely cause | First investigation step |
 |---|---|---|
 | Slow response times, low CPU | I/O waits (database, network, disk) | Profile I/O and check query logs |
 | High CPU, normal response times | Inefficient algorithms or excessive computation | CPU profile to find hot functions |
@@ -180,8 +180,8 @@ Replace individual operations with batch alternatives wherever possible:
 
 | Reference | Contents |
 |---|---|
-| [Caching Strategies](references/caching-strategies.md) | Cache layers, invalidation patterns, stampede prevention with multi-language examples |
-| [Database Optimization](references/database-optimization.md) | Query optimization, N+1 prevention, connection pooling, batch operations with multi-language examples |
+| [Caching Strategies](references/caching-strategies.md) | Cache layers, invalidation patterns, stampede prevention, with multi-language examples |
+| [Database Optimization](references/database-optimization.md) | Query optimization, N+1 prevention, connection pooling, batch operations, with multi-language examples |
 | [Profiling Patterns](references/profiling-patterns.md) | Profiling workflows, bottleneck signatures, performance budgets, load testing strategies |
 
 ---

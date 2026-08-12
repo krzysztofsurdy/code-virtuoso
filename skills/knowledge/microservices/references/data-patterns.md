@@ -1,17 +1,25 @@
 # Data Patterns for Microservices
 
+## Contents
+
+- [CQRS - Command Query Responsibility Segregation](#cqrs---command-query-responsibility-segregation)
+- [Event Sourcing](#event-sourcing)
+- [Saga Pattern](#saga-pattern)
+- [Eventual consistency strategies](#eventual-consistency-strategies)
+- [Outbox Pattern](#outbox-pattern)
+
 ## CQRS - Command Query Responsibility Segregation
 
-CQRS splits your application's data model into two distinct sides: a write model optimized for processing commands and enforcing business rules, and a read model optimized for serving queries. The write side validates, applies domain logic, and persists changes. The read side maintains denormalized projections tailored to specific query needs.
+CQRS splits an application's data model into two sides: a write model for processing commands and enforcing business rules, and a read model for serving queries. The write side validates, applies domain logic, and persists changes. The read side maintains denormalized projections shaped for specific queries.
 
-### When CQRS Helps
+### When CQRS helps
 
-- Read and write workloads have vastly different scaling requirements
-- Query patterns demand denormalized views that differ significantly from the write model
+- Read and write workloads have very different scaling requirements
+- Query patterns need denormalized views that differ a lot from the write model
 - The domain has complex business rules on the write side but simple read requirements
 - You need to audit every state change (pairs well with event sourcing)
 
-### When CQRS is Overkill
+### When CQRS is overkill
 
 - Simple CRUD operations where read and write models are nearly identical
 - Small applications with uniform access patterns
@@ -50,15 +58,15 @@ final class OrderSummaryProjector
 }
 ```
 
-**Python:** Same structure - `PlaceOrderHandler` with `OrderRepository` and `EventBus` dependencies, calling `Order.place()` and publishing `OrderPlaced`. **TypeScript:** Async handler with `await` on repository save and event publish. **Java:** Handler class with repository and event bus fields, publishing `OrderPlaced` after `orders.save()`.
+**Python:** Same structure: `PlaceOrderHandler` with `OrderRepository` and `EventBus` dependencies, calling `Order.place()` and publishing `OrderPlaced`. **TypeScript:** Async handler with `await` on repository save and event publish. **Java:** Handler class with repository and event bus fields, publishing `OrderPlaced` after `orders.save()`.
 
 ---
 
 ## Event Sourcing
 
-Instead of storing only the current state, event sourcing persists every state change as an immutable event. The current state is derived by replaying events from the beginning. This gives you a complete audit trail and the ability to reconstruct state at any point in time.
+Event sourcing stores every state change as an immutable event instead of storing only the current state. The current state is derived by replaying events from the beginning. This gives a full audit trail and the ability to reconstruct state at any point in time.
 
-### Core Concepts
+### Core concepts
 
 | Concept | Description |
 |---|---|
@@ -67,7 +75,7 @@ Instead of storing only the current state, event sourcing persists every state c
 | **Projection** | Read-optimized view built by processing a stream of events |
 | **Snapshot** | Periodic checkpoint of aggregate state to avoid replaying the entire event history |
 
-### Event Store Mechanics
+### Event store mechanics
 
 Events are appended, never modified or deleted. Each event carries:
 - A unique event ID
@@ -76,9 +84,9 @@ Events are appended, never modified or deleted. Each event carries:
 - The event type and payload
 - A timestamp
 
-**Rebuilding state:** Load all events for an aggregate, apply them in sequence, and the result is the current state. For performance, take periodic snapshots and replay only events after the last snapshot.
+**Rebuilding state:** Load all events for an aggregate and apply them in sequence to get the current state. To speed this up, take periodic snapshots and replay only the events after the last one.
 
-**Projections** transform the event stream into read-optimized views. A single event stream can feed multiple projections - one for a dashboard, another for search, another for analytics. Projections can be rebuilt from scratch at any time by replaying events.
+**Projections** transform the event stream into read-optimized views. A single event stream can feed several projections, for example one for a dashboard, one for search, and one for analytics. Projections can be rebuilt from scratch at any time by replaying events.
 
 ---
 
@@ -86,14 +94,14 @@ Events are appended, never modified or deleted. Each event carries:
 
 A saga manages a business transaction that spans multiple services. Instead of a single distributed transaction with locks, a saga executes a sequence of local transactions. Each step either succeeds and triggers the next, or fails and triggers compensating actions to undo previous steps.
 
-### Orchestration vs Choreography
+### Orchestration vs choreography
 
-| Approach | How It Works | Strengths | Weaknesses |
+| Approach | How it works | Strengths | Weaknesses |
 |---|---|---|---|
 | **Orchestration** | A central coordinator directs each step, telling services what to do | Clear flow, easy to reason about, centralized error handling | Single point of coordination, the orchestrator can become complex |
 | **Choreography** | Each service listens for events and decides independently what to do next | No central coordinator, services are more autonomous | Harder to track the overall flow, risk of circular dependencies |
 
-### Orchestration Example
+### Orchestration example
 
 **PHP:**
 ```php
@@ -129,38 +137,38 @@ final class OrderSagaOrchestrator
 }
 ```
 
-**Python:** Same orchestrator structure - try charge/reserve/schedule in sequence, catch each failure type and call compensating actions (refund, release) in reverse order. **TypeScript:** Async orchestrator with `await` on each step; catch block checks which steps completed and compensates accordingly. **Java:** Orchestrator with `PaymentService`, `InventoryService`, `ShippingService` fields; catch blocks call `payments.refund()` and `inventory.release()` as needed.
+**Python:** Same orchestrator structure: try charge/reserve/schedule in sequence, catch each failure type, and call the compensating actions (refund, release) in reverse order. **TypeScript:** Async orchestrator with `await` on each step; the catch block checks which steps completed and compensates for them. **Java:** Orchestrator with `PaymentService`, `InventoryService`, `ShippingService` fields; catch blocks call `payments.refund()` and `inventory.release()` as needed.
 
 ---
 
-## Eventual Consistency Strategies
+## Eventual consistency strategies
 
-When services own their own data, cross-service consistency cannot be immediate. Eventual consistency means that all replicas will converge to the same state given enough time and no new updates.
+When services own their own data, cross-service consistency cannot be immediate. Eventual consistency means all replicas converge to the same state given enough time and no new updates.
 
-### Practical Approaches
+### Practical approaches
 
-- **Idempotent consumers** - design message handlers so processing the same event twice produces the same result; use event IDs or deduplication keys
-- **Causal ordering** - when order matters, use sequence numbers per aggregate or vector clocks to detect and enforce ordering
-- **Read-your-writes consistency** - after a user performs a write, route subsequent reads to a source that reflects the write, even if other replicas lag behind
-- **Conflict resolution** - for concurrent updates, decide a strategy: last-write-wins, merge, or prompt the user to resolve
+- **Idempotent consumers**: design message handlers so processing the same event twice gives the same result; use event IDs or deduplication keys
+- **Causal ordering**: when order matters, use sequence numbers per aggregate or vector clocks to detect and enforce ordering
+- **Read-your-writes consistency**: after a user writes, route their reads to a source that reflects the write, even if other replicas lag behind
+- **Conflict resolution**: for concurrent updates, pick a strategy: last-write-wins, merge, or prompt the user to resolve
 
 ---
 
 ## Outbox Pattern
 
-The outbox pattern solves the dual-write problem: how to atomically update a database and publish an event. Without it, you risk updating the database but failing to publish the event (or vice versa), leaving the system in an inconsistent state.
+The outbox pattern solves the dual-write problem: how to update a database and publish an event atomically. Without it, the database update can succeed while the event publish fails (or the reverse), leaving the system inconsistent.
 
-### How It Works
+### How it works
 
 1. Within the same database transaction that updates business data, insert a row into an `outbox` table containing the event payload
 2. A separate process (relay or poller) reads new rows from the outbox table and publishes them to the message broker
 3. After successful publishing, mark the outbox row as processed or delete it
 
-Because the business write and the outbox insert share a single transaction, they either both succeed or both fail. The relay process handles delivery to the external broker independently.
+Because the business write and the outbox insert share one transaction, they either both succeed or both fail. The relay process delivers to the external broker separately.
 
-### Implementation Considerations
+### Implementation considerations
 
-- **Polling vs CDC** - the relay can poll the outbox table on a timer, or use change data capture (reading the database's transaction log) for lower latency
-- **Idempotent consumers** - the relay may publish the same event more than once (at-least-once delivery), so consumers must handle duplicates
-- **Ordering** - preserve ordering by processing outbox rows sequentially per aggregate ID
-- **Cleanup** - periodically purge old processed outbox rows to prevent table bloat
+- **Polling vs CDC**: the relay can poll the outbox table on a timer, or use change data capture (reading the database's transaction log) for lower latency
+- **Idempotent consumers**: the relay may publish the same event more than once (at-least-once delivery), so consumers must handle duplicates
+- **Ordering**: preserve ordering by processing outbox rows sequentially per aggregate ID
+- **Cleanup**: purge old processed outbox rows periodically to prevent table bloat

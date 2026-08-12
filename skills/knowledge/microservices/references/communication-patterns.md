@@ -1,42 +1,52 @@
 # Communication Patterns
 
-## Synchronous Communication
+## Contents
+
+- [Synchronous communication](#synchronous-communication)
+- [Asynchronous communication](#asynchronous-communication)
+- [API gateway pattern](#api-gateway-pattern)
+- [Service discovery](#service-discovery)
+- [Sidecar pattern](#sidecar-pattern)
+- [Service mesh](#service-mesh)
+- [Choosing a communication style](#choosing-a-communication-style)
+
+## Synchronous communication
 
 ### REST
 
-REST over HTTP remains the most common inter-service communication style. It is well understood, widely supported, and simple to debug with standard tools. Use it when the caller needs an immediate response and the interaction follows a resource-oriented model.
+REST over HTTP is the most common inter-service communication style. It is well understood, widely supported, and easy to debug with standard tools. Use it when the caller needs an immediate response and the interaction follows a resource-oriented model.
 
-**Trade-offs:** Simple to implement and test. Generates tight temporal coupling - the caller blocks until the response arrives. If the downstream service is slow or down, the caller suffers directly.
+**Trade-offs:** Simple to implement and test. It creates tight temporal coupling: the caller blocks until the response arrives. If the downstream service is slow or down, the caller suffers.
 
 ### gRPC
 
-gRPC uses HTTP/2 for transport and Protocol Buffers for serialization, producing compact binary messages with strongly typed contracts. It supports unary calls, server streaming, client streaming, and bidirectional streaming.
+gRPC uses HTTP/2 for transport and Protocol Buffers for serialization. Messages are compact and binary, with strongly typed contracts. It supports unary calls, server streaming, client streaming, and bidirectional streaming.
 
 **When to prefer gRPC over REST:**
 - High-throughput internal service-to-service calls where serialization overhead matters
 - Streaming use cases (real-time feeds, large data transfers)
-- Polyglot environments where auto-generated clients from a shared `.proto` file reduce integration effort
+- Polyglot environments where clients generated from a shared `.proto` file cut integration effort
 
 **Trade-offs:** Faster and more bandwidth-efficient than JSON/REST. Harder to debug without tooling (binary protocol). Browser support requires gRPC-Web or a proxy layer.
 
-### GraphQL Federation
+### GraphQL federation
 
-GraphQL federation composes a single graph from schemas owned by different services. Each service defines and resolves its own portion of the schema, and a gateway merges them into a unified API for clients.
+GraphQL federation composes one graph from schemas owned by different services. Each service defines and resolves its own part of the schema, and a gateway merges them into a single API for clients.
 
 **When it fits:**
 - Multiple teams own different domain areas but clients need a single query endpoint
 - Frontend clients have diverse data needs that would require many REST endpoints
 - You want to avoid over-fetching and under-fetching across service boundaries
 
-**Trade-offs:** Reduces client-side complexity. Adds gateway complexity and requires careful schema governance. Query planning and performance optimization across federated services can be challenging.
+**Trade-offs:** Reduces client-side complexity. Adds gateway complexity and needs schema governance. Query planning and performance tuning across federated services can be hard.
 
 ---
 
-## Asynchronous Communication
+## Asynchronous communication
 
-### Message Queues (Point-to-Point)
+### Message queues (point-to-point)
 
-A producer sends a message to a queue, and exactly one consumer picks it up. This decouples the sender from the receiver in time - the sender does not need the receiver to be running at the moment the message is sent.
+A producer sends a message to a queue, and exactly one consumer picks it up. This decouples sender and receiver in time: the sender does not need the receiver to be running when the message is sent.
 
 **Common brokers:** RabbitMQ, Amazon SQS, Azure Service Bus.
 
@@ -45,9 +55,9 @@ A producer sends a message to a queue, and exactly one consumer picks it up. Thi
 - Workload buffering during traffic spikes
 - Reliable command delivery where each command must be processed exactly once
 
-### Event Bus and Pub/Sub
+### Event bus and pub/sub
 
-A producer publishes an event to a topic, and all subscribers receive a copy. The producer does not know or care who is listening.
+A producer publishes an event to a topic, and all subscribers receive a copy. The producer does not know who is listening.
 
 **Common brokers:** Apache Kafka, Amazon SNS, Google Pub/Sub, NATS.
 
@@ -56,20 +66,20 @@ A producer publishes an event to a topic, and all subscribers receive a copy. Th
 - Building event-driven architectures where services react to changes
 - Feeding event sourcing projections or analytics pipelines
 
-### Choosing Between Queues and Pub/Sub
+### Choosing between queues and pub/sub
 
-| Need | Queue (Point-to-Point) | Pub/Sub (Fan-Out) |
+| Need | Queue (point-to-point) | Pub/sub (fan-out) |
 |---|---|---|
-| One consumer per message | Yes | No - all subscribers get every message |
+| One consumer per message | Yes | No, all subscribers get every message |
 | Multiple consumers per message | No | Yes |
 | Load balancing across workers | Built-in (competing consumers) | Requires consumer groups (e.g., Kafka) |
 | Message replay | Typically not supported | Supported by log-based brokers like Kafka |
 
 ---
 
-## API Gateway Pattern
+## API gateway pattern
 
-An API gateway sits at the edge of your microservices architecture and acts as the single entry point for all client requests. It handles cross-cutting concerns that individual services should not need to implement themselves.
+An API gateway sits at the edge of the architecture and is the single entry point for all client requests. It handles cross-cutting concerns that individual services should not have to implement.
 
 ### Responsibilities
 
@@ -82,37 +92,37 @@ An API gateway sits at the edge of your microservices architecture and acts as t
 | **Rate limiting** | Protects backend services from traffic surges by throttling requests per client |
 | **TLS termination** | Handles encryption at the edge so internal traffic can use plaintext or mutual TLS |
 
-### Gateway Anti-patterns
+### Gateway anti-patterns
 
-- **Business logic in the gateway** - the gateway should route and transform, not make business decisions
-- **Gateway as single point of failure** - deploy multiple instances behind a load balancer
-- **Monolithic gateway** - if the gateway grows too large, split it into multiple gateways per client type (Backend-for-Frontend pattern)
+- **Business logic in the gateway**: the gateway should route and transform, not make business decisions
+- **Gateway as single point of failure**: deploy multiple instances behind a load balancer
+- **Monolithic gateway**: if the gateway grows too large, split it into one gateway per client type (Backend-for-Frontend pattern)
 
 ---
 
-## Service Discovery
+## Service discovery
 
 In a dynamic environment where service instances come and go (scaling, deployments, failures), callers need a way to find available instances.
 
-### Client-Side Discovery
+### Client-side discovery
 
 The client queries a service registry to get a list of available instances and selects one using a load-balancing strategy (round-robin, random, least connections).
 
 **Flow:** Client -> Service Registry -> Client picks an instance -> Direct call to instance.
 
-**Strengths:** No extra hop. Client can make intelligent routing decisions.
-**Weaknesses:** Every client must implement discovery logic. Tightly couples clients to the registry.
+**Strengths:** No extra hop. The client can make its own routing decisions.
+**Weaknesses:** Every client must implement discovery logic. Couples clients tightly to the registry.
 
-### Server-Side Discovery
+### Server-side discovery
 
 The client sends the request to a load balancer or router, which queries the registry and forwards the request to an available instance.
 
 **Flow:** Client -> Load Balancer -> Load Balancer queries Registry -> Forward to instance.
 
-**Strengths:** Clients are simple - they call one address. Discovery logic is centralized.
+**Strengths:** Clients are simple because they call one address. Discovery logic is centralized.
 **Weaknesses:** Extra network hop. The load balancer can become a bottleneck or single point of failure.
 
-### Service Registry
+### Service registry
 
 The registry is the source of truth for which instances are running. Services register on startup and deregister on shutdown. Health checks remove instances that stop responding.
 
@@ -120,11 +130,11 @@ The registry is the source of truth for which instances are running. Services re
 
 ---
 
-## Sidecar Pattern
+## Sidecar pattern
 
-A sidecar is a helper process deployed alongside each service instance, sharing the same host or pod. It handles cross-cutting infrastructure concerns so the service code can focus on business logic.
+A sidecar is a helper process deployed alongside each service instance, sharing the same host or pod. It handles cross-cutting infrastructure concerns so the service code can stay focused on business logic.
 
-### What Sidecars Handle
+### What sidecars handle
 
 - Network proxying (routing, retries, circuit breaking)
 - Mutual TLS and encryption
@@ -132,15 +142,15 @@ A sidecar is a helper process deployed alongside each service instance, sharing 
 - Log aggregation and formatting
 - Configuration injection and secret management
 
-### How It Works
+### How it works
 
-The service communicates with the sidecar over localhost (fast, no network hops). The sidecar handles all outbound and inbound network traffic on behalf of the service. This means the service does not need libraries for retries, TLS, or tracing - the sidecar does it transparently.
+The service talks to the sidecar over localhost (fast, no network hops). The sidecar handles all inbound and outbound network traffic for the service, so the service needs no libraries for retries, TLS, or tracing.
 
-**Trade-off:** Simplifies application code significantly. Adds memory and CPU overhead per instance. Debugging network issues requires understanding the sidecar's behavior.
+**Trade-off:** Simplifies application code. Adds memory and CPU overhead per instance. Debugging network issues requires understanding the sidecar's behavior.
 
 ---
 
-## Service Mesh
+## Service mesh
 
 A service mesh extends the sidecar pattern to the entire system. Every service instance gets a sidecar proxy, and a control plane manages all proxies centrally.
 
@@ -156,28 +166,28 @@ A service mesh extends the sidecar pattern to the entire system. Every service i
 | Capability | Description |
 |---|---|
 | **Traffic management** | Canary deployments, blue-green routing, traffic splitting, fault injection for testing |
-| **Security** | Automatic mutual TLS between all services, fine-grained access policies |
+| **Security** | Mutual TLS between all services, fine-grained access policies |
 | **Observability** | Distributed tracing, metrics, and access logs without modifying application code |
-| **Reliability** | Retries, timeouts, circuit breaking applied uniformly across all service-to-service calls |
+| **Reliability** | Retries, timeouts, and circuit breaking applied the same way across all service-to-service calls |
 
-### When a Service Mesh is Worth It
+### When a service mesh is worth it
 
 - You have many services (dozens or more) and need consistent networking policies
 - You want mutual TLS everywhere without modifying each service
 - You need traffic management features like canary deployments or fault injection
 - Your teams want fine-grained observability without instrumenting every service
 
-### When It is Overkill
+### When it is overkill
 
-- A handful of services that communicate simply
+- A handful of services with simple communication
 - Teams that lack the operational expertise to manage the mesh infrastructure
-- Environments where the added latency and resource overhead per sidecar is not acceptable
+- Environments where the added latency and resource overhead per sidecar are not acceptable
 
 ---
 
-## Choosing a Communication Style
+## Choosing a communication style
 
-| Scenario | Recommended Approach |
+| Scenario | Recommended approach |
 |---|---|
 | Client needs immediate response | Synchronous (REST or gRPC) |
 | Fire-and-forget command | Asynchronous queue |

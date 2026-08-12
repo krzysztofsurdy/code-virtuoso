@@ -1,34 +1,44 @@
 # PR Patterns
 
-## Why PR Size Matters
+## Contents
 
-Large pull requests are the single biggest cause of slow reviews, missed defects, and reviewer burnout. Research consistently shows that review quality drops sharply as the diff grows.
+- [Why PR size matters](#why-pr-size-matters)
+- [PR description templates](#pr-description-templates)
+- [Review workflow patterns](#review-workflow-patterns)
+- [Merge strategies](#merge-strategies)
+- [Branch protection rules](#branch-protection-rules)
+- [Stacked PRs](#stacked-prs)
+- [Rebase vs merge for updating feature branches](#rebase-vs-merge-for-updating-feature-branches)
 
-### Size Thresholds
+## Why PR size matters
 
-| Lines Changed | Review Effectiveness | Typical Review Time |
+Large pull requests are the biggest cause of slow reviews, missed defects, and reviewer burnout. Review quality drops fast as the diff grows.
+
+### Size thresholds
+
+| Lines changed | Review effectiveness | Typical review time |
 |---|---|---|
-| < 50 | Very high - reviewer catches most issues | 5-15 minutes |
-| 50-200 | High - manageable cognitive load | 15-30 minutes |
-| 200-400 | Moderate - requires dedicated focus | 30-60 minutes |
-| 400-800 | Low - reviewer fatigue sets in | 1-2 hours, often delayed |
-| 800+ | Very low - superficial review likely | Often abandoned or rubber-stamped |
+| < 50 | Very high: reviewer catches most issues | 5-15 minutes |
+| 50-200 | High: manageable cognitive load | 15-30 minutes |
+| 200-400 | Moderate: needs dedicated focus | 30-60 minutes |
+| 400-800 | Low: reviewer fatigue sets in | 1-2 hours, often delayed |
+| 800+ | Very low: superficial review likely | Often abandoned or rubber-stamped |
 
-### Strategies to Keep PRs Small
+### Strategies to keep PRs small
 
-- **One concern per PR** - A single feature, a single bug fix, or a single refactor. Never mix.
-- **Separate mechanical changes** - Renames, formatting fixes, and import reorganization go in their own PR.
-- **Extract preparatory refactors** - If a feature requires restructuring existing code, do the refactor first in a separate PR.
-- **Use feature flags** - Merge partial implementations behind a flag rather than waiting for the full feature.
-- **Stacked PRs** - Break large features into a chain of dependent, reviewable PRs (see Stacked PRs section below).
+- **One concern per PR**: a single feature, bug fix, or refactor. Never mix them.
+- **Separate mechanical changes**: renames, formatting fixes, and import reorganization go in their own PR.
+- **Extract preparatory refactors**: if a feature needs existing code restructured, do the refactor first in a separate PR.
+- **Use feature flags**: merge partial implementations behind a flag instead of waiting for the full feature.
+- **Stacked PRs**: break large features into a chain of dependent, reviewable PRs (see the Stacked PRs section below).
 
 ---
 
-## PR Description Templates
+## PR description templates
 
 A good PR description answers three questions: what changed, why it changed, and how to verify it.
 
-### Standard Template
+### Standard template
 
 ```markdown
 ## What
@@ -37,7 +47,7 @@ Brief summary of the changes (1-3 sentences).
 
 ## Why
 
-Link to the ticket or issue. Explain the motivation if the ticket does not capture it fully.
+Link to the ticket or issue. Explain the motivation if the ticket does not capture it.
 
 ## How to Verify
 
@@ -50,7 +60,7 @@ Link to the ticket or issue. Explain the motivation if the ticket does not captu
 Any trade-offs, follow-up work, or context reviewers should know.
 ```
 
-### Minimal Template (for small PRs)
+### Minimal template (for small pRs)
 
 ```markdown
 ## Summary
@@ -60,32 +70,32 @@ One-line description of the change and its purpose.
 Closes #123
 ```
 
-### What Makes a Good Description
+### What makes a good description
 
 - Links to the relevant ticket or issue
-- Explains the "why" - reviewers can see the "what" in the diff
+- Explains the "why", since reviewers can see the "what" in the diff
 - Includes screenshots or recordings for UI changes
 - Calls out areas where feedback is specifically wanted
 - Lists any follow-up work that was intentionally deferred
 
 ---
 
-## Review Workflow Patterns
+## Review workflow patterns
 
-### Required Reviewers
+### Required reviewers
 
-Configure your repository to require a minimum number of approvals before merge. Common configurations:
+Configure the repository to require a minimum number of approvals before merge. Common setups:
 
-| Team Size | Required Approvals | Rationale |
+| Team size | Required approvals | Rationale |
 |---|---|---|
 | 2-4 | 1 | Small team, everyone has context |
-| 5-10 | 1-2 | Balance between speed and oversight |
-| 10+ | 2 | Ensures at least two perspectives |
+| 5-10 | 1-2 | Balances speed and oversight |
+| 10+ | 2 | At least two perspectives |
 | Critical paths (auth, payments) | 2 + domain expert | High-risk code needs specialist review |
 
 ### CODEOWNERS
 
-A CODEOWNERS file automatically assigns reviewers based on which files a PR touches. This ensures domain experts review changes to code they own.
+A CODEOWNERS file assigns reviewers based on which files a PR touches, so domain experts review changes to code they own.
 
 ```
 # .github/CODEOWNERS (GitHub) or CODEOWNERS at repo root
@@ -109,34 +119,34 @@ docs/                       @tech-writers
 migrations/                 @dba-team @backend-team
 ```
 
-### Review Assignment Strategies
+### Review assignment strategies
 
-- **Round-robin** - Distributes reviews evenly across team members
-- **Load-balanced** - Assigns to the person with the fewest open reviews
-- **Domain-based** - CODEOWNERS routes to the relevant expert
-- **Random from pool** - Selects randomly from eligible reviewers
+- **Round-robin**: spreads reviews evenly across team members
+- **Load-balanced**: assigns to the person with the fewest open reviews
+- **Domain-based**: CODEOWNERS routes to the relevant expert
+- **Random from pool**: picks randomly from eligible reviewers
 
 Most teams combine CODEOWNERS for critical paths with round-robin for general code.
 
 ---
 
-## Merge Strategies
+## Merge strategies
 
-### Merge Commit (--no-ff)
+### Merge commit (--no-ff)
 
-Preserves full branch history with an explicit merge node. Easy to revert entire features. Best for open-source projects and audit trails. Downside: noisy history with many merge commits.
+Keeps the full branch history with an explicit merge node. Entire features are easy to revert. Best for open-source projects and audit trails. Downside: noisy history with many merge commits.
 
-### Squash and Merge
+### Squash and merge
 
-Collapses all branch commits into a single commit on main. Clean, linear history where each commit represents a complete reviewed change. Best for teams where intermediate commits are noisy. Downside: loses granular commit attribution.
+Collapses all branch commits into a single commit on main. The history is linear and each commit is a complete reviewed change. Best for teams where intermediate commits are noisy. Downside: loses granular commit attribution.
 
-### Rebase and Merge
+### Rebase and merge
 
-Replays branch commits onto main tip, creating linear history without merge commits while preserving individual commits. Best for teams with clean commit discipline. Downside: rewrites commit hashes.
+Replays branch commits onto the tip of main. History stays linear, there are no merge commits, and individual commits are kept. Best for teams with clean commit discipline. Downside: rewrites commit hashes.
 
-### Choosing a Default Strategy
+### Choosing a default strategy
 
-| Factor | Merge Commit | Squash | Rebase |
+| Factor | Merge commit | Squash | Rebase |
 |---|---|---|---|
 | History readability | Low (noisy) | High (one commit per PR) | Medium (linear but verbose) |
 | Revert granularity | Entire PR (easy) | Entire PR (easy) | Individual commits (harder) |
@@ -146,13 +156,13 @@ Replays branch commits onto main tip, creating linear history without merge comm
 
 ---
 
-## Branch Protection Rules
+## Branch protection rules
 
-Branch protection prevents direct pushes to important branches and enforces quality gates.
+Branch protection blocks direct pushes to important branches and enforces quality gates.
 
-### Common Configurations by Risk Level
+### Common configurations by risk level
 
-| Risk Level | Approvals | CI Required | Up-to-date | Dismiss Stale |
+| Risk level | Approvals | CI required | Up-to-date | Dismiss stale |
 |---|---|---|---|---|
 | Low (docs, internal tools) | 1 | Yes | No | No |
 | Medium (application code) | 1 | Yes | Yes | Yes |
@@ -163,9 +173,9 @@ Branch protection prevents direct pushes to important branches and enforces qual
 
 ## Stacked PRs
 
-Stacked PRs break a large feature into a series of small, dependent pull requests that build on each other. Each PR in the stack is reviewable and mergeable independently.
+Stacked PRs break a large feature into a series of small, dependent pull requests that build on each other. Each PR in the stack can be reviewed and merged on its own.
 
-### How Stacking Works
+### How stacking works
 
 ```
 main
@@ -199,18 +209,18 @@ git push -u origin feat/user-verification-ui
 # Open PR #3 targeting feat/user-email-verification
 ```
 
-### Managing the Stack
+### Managing the stack
 
 When a reviewer requests changes to an earlier PR, update it and rebase downstream branches with `git rebase <parent-branch>` followed by `git push --force-with-lease`. After a PR merges to main, retarget the next PR to `main` and rebase it onto the updated main.
 
-### When to Use Stacked PRs
+### When to use stacked PRs
 
 - Large features that would otherwise produce a 1000+ line PR
 - Changes that touch multiple layers (database, service, API, UI)
-- Work that benefits from incremental review - earlier PRs inform later design
+- Work that benefits from incremental review, where earlier PRs inform later design
 - Teams where review bottlenecks are caused by PR size
 
-### When to Avoid Stacked PRs
+### When to avoid stacked PRs
 
 - Simple features that fit in a single small PR
 - Teams unfamiliar with rebase workflows (the overhead is not worth it)
@@ -218,11 +228,11 @@ When a reviewer requests changes to an earlier PR, update it and rebase downstre
 
 ---
 
-## Rebase vs Merge for Updating Feature Branches
+## Rebase vs merge for updating feature branches
 
-| Approach | Command | Best For |
+| Approach | Command | Best for |
 |---|---|---|
 | **Merge main in** | `git merge main` | Shared branches, preserving integration history |
 | **Rebase onto main** | `git rebase main` | Local or single-author branches, clean linear history |
 
-**Key rule:** Never rebase commits that others have based work on - it rewrites shared history and causes divergence. Use `--force-with-lease` (not `--force`) when pushing rebased branches to catch unexpected upstream changes.
+**Key rule:** Never rebase commits that others have based work on, because it rewrites shared history and causes divergence. Use `--force-with-lease` (not `--force`) when pushing rebased branches, so unexpected upstream changes are caught.

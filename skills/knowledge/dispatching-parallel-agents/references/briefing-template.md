@@ -1,14 +1,22 @@
 # Briefing Template
 
-How to write precise subagent briefs that produce predictable, high-quality results. A brief is the contract between orchestrator and worker. Everything the subagent needs must be in the brief; everything not in the brief does not exist for that agent.
+How to write precise subagent briefs that produce predictable results. A brief is the contract between orchestrator and worker. Everything the subagent needs must be in the brief; anything not in the brief does not exist for that agent.
 
 ---
 
-## The Brief Structure
+## Contents
 
-Every subagent brief should contain these sections:
+- [The brief structure](#the-brief-structure)
+- [Complete brief example](#complete-brief-example)
+- [Brief calibration by agent type](#brief-calibration-by-agent-type)
+- [Common brief mistakes](#common-brief-mistakes)
+- [Output format specifications](#output-format-specifications)
 
-### 1. Task (Required)
+## The brief structure
+
+Every subagent brief contains these sections:
+
+### 1. Task (required)
 
 One sentence describing what must be true when the agent finishes. This is the success criterion.
 
@@ -16,11 +24,11 @@ One sentence describing what must be true when the agent finishes. This is the s
 
 **Bad**: "Look at the order module and see what needs testing."
 
-The task should be falsifiable - someone reviewing the output can verify whether the task was accomplished.
+The task should be falsifiable: someone reviewing the output can verify whether it was accomplished.
 
-### 2. Context (Required)
+### 2. Context (required)
 
-Background information the agent needs to understand the task. Include only what is relevant. Every token of irrelevant context increases the chance the agent gets distracted.
+Background the agent needs to understand the task. Include only what is relevant, since irrelevant context distracts the agent.
 
 **Include**:
 - Why this task matters (one sentence)
@@ -32,7 +40,7 @@ Background information the agent needs to understand the task. Include only what
 - Context about other parallel agents
 - Background on unrelated parts of the system
 
-### 3. Inputs (Required)
+### 3. Inputs (required)
 
 Concrete file paths, data, or references the agent needs to start working.
 
@@ -46,7 +54,7 @@ Files to examine:
 
 **Bad**: "Check the order module." (Which files? Where does the module start and end?)
 
-### 4. Expected Output (Required)
+### 4. Expected output (required)
 
 The exact structure and format of what the agent should return. Structured output is easier to synthesize.
 
@@ -60,7 +68,7 @@ Where Priority is: high, medium, low
 
 **Bad**: "Tell me what you find." (Produces unstructured narrative that is hard to merge with other agents' output.)
 
-### 5. Boundaries (Required)
+### 5. Boundaries (required)
 
 Explicit statements about what is in scope and what is out of scope. Boundaries prevent scope creep and overlapping work with other agents.
 
@@ -74,7 +82,7 @@ Do NOT suggest refactoring changes - report findings only
 
 **Bad**: No boundaries stated. (Agent may wander into adjacent modules or start "helpfully" fixing things.)
 
-### 6. Failure Mode (Required)
+### 6. Failure mode (required)
 
 What the agent should do when it gets stuck. Without this, agents either hallucinate through obstacles or silently return incomplete results.
 
@@ -85,9 +93,9 @@ What the agent should do when it gets stuck. Without this, agents either halluci
 
 ---
 
-## Complete Brief Example
+## Complete brief example
 
-### Good Brief
+### Good brief
 
 ```
 TASK: Review the authentication module for OWASP Top 10 security vulnerabilities.
@@ -125,7 +133,7 @@ with remaining files. If you are unsure whether something is a vulnerability,
 include it with severity "low" and flag it as "needs verification."
 ```
 
-### Bad Brief
+### Bad brief
 
 ```
 Check the auth code for security issues and let me know what you find.
@@ -140,13 +148,13 @@ Check the auth code for security issues and let me know what you find.
 
 ---
 
-## Brief Calibration by Agent Type
+## Brief calibration by agent type
 
-Different agent types benefit from emphasis on different brief sections:
+Different agent types need emphasis on different brief sections:
 
-### Investigator Briefs
+### Investigator briefs
 
-Emphasize scope boundaries and output structure. Investigators explore broadly by nature - without boundaries they will trace every dependency chain they find.
+Emphasize scope boundaries and output structure. Investigators explore broadly by nature, so without boundaries they trace every dependency chain they find.
 
 ```
 TASK: Map the dependency chain of OrderService.
@@ -165,9 +173,9 @@ Dependency tree as indented list:
       -> HttpClient (infrastructure)
 ```
 
-### Implementer Briefs
+### Implementer briefs
 
-Emphasize the test cases and acceptance criteria. Implementers follow TDD - they need to know what "done" looks like in testable terms.
+Emphasize the test cases and acceptance criteria. Implementers follow TDD, so they need to know what "done" looks like in testable terms.
 
 ```
 TASK: Implement the discount calculation for bulk orders.
@@ -189,7 +197,7 @@ BOUNDARIES:
 - Do NOT modify tax calculation logic
 ```
 
-### Reviewer Briefs
+### Reviewer briefs
 
 Emphasize the evaluation criteria and severity definitions. Reviewers need to know what standard to apply.
 
@@ -212,7 +220,7 @@ EXPECTED OUTPUT: Findings grouped by severity, each with file path, line number,
 description, and suggested fix.
 ```
 
-### Refactor Scout Briefs
+### Refactor scout briefs
 
 Emphasize the target directories and smell categories to prioritize.
 
@@ -234,11 +242,11 @@ EXPECTED OUTPUT: Table with columns:
 
 ---
 
-## Common Brief Mistakes
+## Common brief mistakes
 
 | Mistake | Problem | Fix |
 |---|---|---|
-| **Task is a paragraph** | Agent may miss the core objective | One sentence. Period. |
+| **Task is a paragraph** | Agent may miss the core objective | One sentence. |
 | **Context includes conversation history** | Agent processes irrelevant tokens, may get confused | Extract only the relevant facts |
 | **No file paths** | Agent spends time searching instead of working | Always provide concrete entry points |
 | **Output format is "tell me what you find"** | Results are unstructured, hard to merge | Define columns, sections, or structure |
@@ -249,18 +257,18 @@ EXPECTED OUTPUT: Table with columns:
 
 ---
 
-## Output Format Specifications
+## Output format specifications
 
 When defining expected output, choose a format that supports synthesis:
 
-### For Findings / Issues
+### For findings / issues
 
 Markdown table with consistent columns allows sorting and deduplication:
 ```
 | File | Line | Finding | Severity | Category |
 ```
 
-### For Investigations
+### For investigations
 
 Structured sections allow merging across agents:
 ```
@@ -270,7 +278,7 @@ Structured sections allow merging across agents:
 ### Key Observations
 ```
 
-### For Implementation
+### For implementation
 
 Commit-oriented output allows tracking:
 ```
@@ -282,7 +290,7 @@ Commit-oriented output allows tracking:
 - Suite status and any new failures
 ```
 
-### For Analysis
+### For analysis
 
 Quantified results allow aggregation:
 ```
@@ -293,4 +301,4 @@ Quantified results allow aggregation:
 [per-file findings]
 ```
 
-Choose the format before dispatching. If different agents return different formats, synthesis becomes manual labor.
+Choose the format before dispatching. If agents return different formats, synthesis becomes manual work.

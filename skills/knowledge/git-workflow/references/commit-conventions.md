@@ -1,10 +1,21 @@
 # Commit Conventions
 
-## The Conventional Commits Format
+## Contents
 
-Conventional commits follow a structured format that makes commit history readable by both humans and machines. The format enables automated version bumping, changelog generation, and semantic release pipelines.
+- [The Conventional Commits format](#the-conventional-commits-format)
+- [Commit types](#commit-types)
+- [Scope naming patterns](#scope-naming-patterns)
+- [Breaking changes](#breaking-changes)
+- [Semantic versioning alignment](#semantic-versioning-alignment)
+- [Automated changelog generation](#automated-changelog-generation)
+- [Git hooks for commit validation](#git-hooks-for-commit-validation)
+- [Writing good commit messages](#writing-good-commit-messages)
 
-### Full Format
+## The Conventional Commits format
+
+Conventional commits use a structured format that humans and machines can both read. It enables automated version bumping, changelog generation, and semantic release pipelines.
+
+### Full format
 
 ```
 <type>(<scope>): <description>
@@ -16,17 +27,17 @@ Conventional commits follow a structured format that makes commit history readab
 
 ### Rules
 
-- **type** - Required. Describes the category of change (see types below)
-- **scope** - Optional. A noun identifying the section of the codebase affected, wrapped in parentheses
-- **description** - Required. A short summary in imperative mood ("add" not "added"), lowercase, no period at the end
-- **body** - Optional. Provides additional context. Separated from the description by a blank line
-- **footer** - Optional. Contains metadata like `BREAKING CHANGE:`, `Reviewed-by:`, or issue references
+- **type**: required. Describes the category of change (see types below)
+- **scope**: optional. A noun identifying the section of the codebase affected, wrapped in parentheses
+- **description**: required. A short summary in imperative mood ("add" not "added"), lowercase, no period at the end
+- **body**: optional. Provides additional context. Separated from the description by a blank line
+- **footer**: optional. Contains metadata like `BREAKING CHANGE:`, `Reviewed-by:`, or issue references
 
 ---
 
-## Commit Types
+## Commit types
 
-| Type | When to Use | Example |
+| Type | When to use | Example |
 |---|---|---|
 | `feat` | A new feature visible to end users | `feat(cart): add quantity selector to cart items` |
 | `fix` | A bug fix | `fix(auth): prevent session expiry on active users` |
@@ -42,11 +53,11 @@ Conventional commits follow a structured format that makes commit history readab
 
 ---
 
-## Scope Naming Patterns
+## Scope naming patterns
 
 Scopes should be consistent across a project. Common approaches:
 
-### By Module or Domain
+### By module or domain
 
 ```
 feat(auth): add two-factor authentication
@@ -54,7 +65,7 @@ fix(billing): correct proration calculation
 refactor(notification): consolidate email templates
 ```
 
-### By Layer
+### By layer
 
 ```
 feat(api): add pagination to /users endpoint
@@ -62,7 +73,7 @@ fix(db): handle connection timeout gracefully
 perf(cache): reduce Redis round-trips for session data
 ```
 
-### By Package (Monorepos)
+### By package (Monorepos)
 
 ```
 feat(web-app): add dark mode toggle
@@ -74,11 +85,11 @@ Pick one approach and document it. Mixing scope strategies in a single project m
 
 ---
 
-## Breaking Changes
+## Breaking changes
 
 Two equivalent ways to signal a breaking change:
 
-### Exclamation Mark After Type
+### Exclamation mark after type
 
 ```
 feat(api)!: rename /users/list to /users
@@ -87,22 +98,22 @@ The /users/list endpoint has been removed. Clients should use GET /users with
 pagination parameters instead.
 ```
 
-### BREAKING CHANGE Footer
+### BREAKING CHANGE footer
 
 ```
 refactor(config): switch from YAML to TOML configuration
 
 BREAKING CHANGE: Configuration files must be migrated from config.yaml to
-config.toml. Run `bin/migrate-config` to convert automatically.
+config.toml. Run `bin/migrate-config` to convert them.
 ```
 
 Both approaches trigger a major version bump in automated release pipelines. Use the footer form when you want to include detailed migration instructions.
 
 ---
 
-## Semantic Versioning Alignment
+## Semantic versioning alignment
 
-Conventional commits map directly to semantic version increments:
+Conventional commits map to semantic version increments:
 
 | Commit Pattern | Version Bump | Before -> After |
 |---|---|---|
@@ -112,7 +123,7 @@ Conventional commits map directly to semantic version increments:
 | `feat!:` or `BREAKING CHANGE` | Major | 2.3.1 -> 3.0.0 |
 | `refactor`, `test`, `docs`, `chore`, `ci`, `build`, `style` | None (no release) | 2.3.1 -> 2.3.1 |
 
-### Pre-release Versions
+### Pre-release versions
 
 For pre-release builds, append identifiers to the version:
 
@@ -125,11 +136,11 @@ v2.0.0            # Stable release
 
 ---
 
-## Automated Changelog Generation
+## Automated changelog generation
 
-When commits follow conventional format, changelogs can be generated automatically by parsing `git log` output.
+When commits follow conventional format, changelogs can be generated by parsing `git log` output.
 
-### Typical Generated Changelog Structure
+### Typical generated changelog structure
 
 ```markdown
 ## [2.4.0] - 2026-03-06
@@ -146,15 +157,15 @@ When commits follow conventional format, changelogs can be generated automatical
 - **search**: add database index for full-text queries (p3q4r5s)
 ```
 
-### Release Automation Pipeline
+### Release automation pipeline
 
 A typical automated release flow:
 
-1. **Analyze** - Scan commits since the last tag, categorize by type
-2. **Determine version** - Calculate the next version based on commit types present
-3. **Generate changelog** - Build release notes from commit messages
-4. **Tag** - Create an annotated git tag with the new version
-5. **Publish** - Build artifacts, push to registries, create platform release
+1. **Analyze**: scan commits since the last tag and categorize by type
+2. **Determine version**: calculate the next version from the commit types present
+3. **Generate changelog**: build release notes from commit messages
+4. **Tag**: create an annotated git tag with the new version
+5. **Publish**: build artifacts, push to registries, create the platform release
 
 ```bash
 # Example: manual changelog generation from conventional commits
@@ -163,11 +174,11 @@ git log v2.3.1..HEAD --pretty=format:"%s" | grep "^feat" | sed 's/^/- /'
 
 ---
 
-## Git Hooks for Commit Validation
+## Git hooks for commit validation
 
-Git hooks can enforce commit message format at the point of creation, preventing non-conforming messages from entering the repository.
+Git hooks can enforce the commit message format at commit time, so non-conforming messages never enter the repository.
 
-### commit-msg Hook
+### Commit-msg hook
 
 The `commit-msg` hook runs after the developer writes a commit message but before the commit is finalized. It receives the path to the temporary file containing the message.
 
@@ -197,7 +208,7 @@ fi
 chmod +x .git/hooks/commit-msg
 ```
 
-### Sharing Hooks Across the Team
+### Sharing hooks across the team
 
 Git hooks live in `.git/hooks/` by default, which is not tracked by version control. To share them, store hooks in a tracked directory (e.g., `.githooks/`) and configure git to use it:
 
@@ -207,11 +218,11 @@ git config core.hooksPath .githooks
 
 ---
 
-## Writing Good Commit Messages
+## Writing good commit messages
 
 - Use imperative mood: "add feature" not "added feature"
 - Keep the description under 72 characters (ideally under 50), no trailing period
 - Be specific: "fix null pointer in user serializer" not "fix bug"
-- In the body, explain **why** the change was made - reviewers can see the "what" in the diff
+- In the body, explain **why** the change was made, since reviewers can see the "what" in the diff
 - Avoid vague messages like `fix stuff` or `WIP` in the final history
 - Use `git rebase -i main` to squash fixup commits and reword messages before merging

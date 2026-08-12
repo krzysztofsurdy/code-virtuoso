@@ -1,28 +1,36 @@
 # Isolation and Merging
 
-How to keep subagents independent during execution and integrate their results afterward. Isolation prevents interference; merging produces a coherent whole from parallel outputs.
+How to keep subagents independent during execution and integrate their results afterward. Isolation prevents interference; merging turns parallel outputs into one coherent result.
 
 ---
 
-## Context Isolation
+## Contents
 
-Every subagent starts with a clean slate. It does not inherit the orchestrator's conversation history, memory, or accumulated context. This is not a limitation - it is a feature.
+- [Context isolation](#context-isolation)
+- [Filesystem isolation](#filesystem-isolation)
+- [Result synthesis](#result-synthesis)
+- [Merging code changes](#merging-code-changes)
+- [Failure handling during synthesis](#failure-handling-during-synthesis)
 
-### Why Context Isolation Matters
+## Context isolation
+
+Every subagent starts with a clean slate. It does not inherit the orchestrator's conversation history, memory, or accumulated context. This is deliberate, not a limitation.
+
+### Why context isolation matters
 
 - **Focus**: An agent with only its brief stays on task. An agent with full conversation history gets distracted by tangential context.
 - **Token efficiency**: Subagents receive only what they need. Full context wastes capacity on irrelevant information.
 - **Predictability**: The same brief produces the same behavior regardless of what the orchestrator discussed before dispatching.
 - **Independence**: No agent can accidentally depend on another agent's intermediate output if it never sees it.
 
-### How to Achieve Context Isolation
+### How to achieve context isolation
 
 1. **Write self-contained briefs**: Every fact the agent needs is in the brief. If it is not in the brief, the agent does not know about it.
 2. **Do not pass conversation history**: Extract relevant facts and include them as context in the brief. Discard the conversational wrapper.
 3. **Do not share results between parallel agents**: If Agent B needs Agent A's output, they are not parallel - sequence them.
 4. **Do not reference other agents**: Agent A should not know Agent B exists. Each agent believes it is the only one working on the problem.
 
-### What to Include in Context
+### What to include in context
 
 | Include | Why |
 |---|---|
@@ -32,7 +40,7 @@ Every subagent starts with a clean slate. It does not inherit the orchestrator's
 | Recent relevant changes | Agent needs to know what changed and why |
 | Acceptance criteria | Agent needs to know what "done" looks like |
 
-### What to Exclude from Context
+### What to exclude from context
 
 | Exclude | Why |
 |---|---|
@@ -44,11 +52,11 @@ Every subagent starts with a clean slate. It does not inherit the orchestrator's
 
 ---
 
-## Filesystem Isolation
+## Filesystem isolation
 
 When agents modify files, they must work in separate filesystem spaces to prevent conflicts. The standard approach is git worktrees.
 
-### Worktree Isolation
+### Worktree isolation
 
 A git worktree creates a separate working directory backed by the same repository. Each worktree has its own branch. Agents modify files freely without affecting the main working tree or each other.
 
@@ -62,7 +70,7 @@ A git worktree creates a separate working directory backed by the same repositor
 - Only one agent modifies files in this dispatch round
 - Agent modifies only files that no other agent touches
 
-### Setting Up Worktree Isolation
+### Setting up worktree isolation
 
 For each file-modifying agent:
 
@@ -71,30 +79,30 @@ For each file-modifying agent:
 3. Include the worktree path in the agent's brief
 4. After the agent completes, review changes before merging
 
-### File Ownership Rules
+### File ownership rules
 
 Even with worktree isolation, merge conflicts can occur if two agents modify the same files on different branches. Prevent this with strict file ownership:
 
 | Rule | Implementation |
 |---|---|
 | **Exclusive file ownership** | Each agent's brief lists the exact files or directories it may modify. No overlap allowed. |
-| **Directory-level boundaries** | Assign entire directories to agents rather than individual files when possible. Cleaner ownership. |
+| **Directory-level boundaries** | Assign whole directories to agents instead of individual files when possible. Ownership is cleaner. |
 | **Shared files are sequential** | If two agents must modify the same file, sequence them. The second agent works on the first agent's branch. |
 | **New file convention** | If an agent needs to create a new file, the brief specifies the exact path. Two agents never create files in the same directory. |
 
-### Read-Only Agents and Shared Trees
+### Read-only agents and shared trees
 
 Agents that only read files (investigators, reviewers, auditors, test gap analyzers) can safely share the main working tree. They cannot interfere with each other because they make no modifications.
 
-**Safety check**: Verify the agent's tool permissions do not include file editing or writing capabilities. A "read-only" agent with write tools is an accident waiting to happen.
+**Safety check**: Verify the agent's tool permissions do not include file editing or writing capabilities. A "read-only" agent with write tools will eventually write.
 
 ---
 
-## Result Synthesis
+## Result synthesis
 
-When parallel agents complete, the orchestrator receives multiple outputs that must be integrated into a single coherent result. Synthesis is the orchestrator's core responsibility - it cannot be delegated.
+When parallel agents complete, the orchestrator receives multiple outputs that must be integrated into a single coherent result. Synthesis is the orchestrator's core responsibility and cannot be delegated.
 
-### Synthesis Steps
+### Synthesis steps
 
 1. **Collect**: Gather all agent outputs. Note which agents completed successfully and which failed or returned partial results.
 
@@ -104,7 +112,7 @@ When parallel agents complete, the orchestrator receives multiple outputs that m
 
 4. **Resolve conflicts**: When agents disagree, the orchestrator must decide. Common resolution strategies:
 
-   | Conflict Type | Resolution Strategy |
+   | Conflict type | Resolution strategy |
    |---|---|
    | Severity disagreement | Use the higher severity (conservative) |
    | Contradictory findings | Re-investigate the specific point manually |
@@ -119,11 +127,11 @@ When parallel agents complete, the orchestrator receives multiple outputs that m
    - Adding cross-references between findings
    - Writing a summary that no individual agent could have written
 
-7. **Deliver**: Present the synthesized result. The final output should read as if one comprehensive agent produced it, not as a collage of separate reports.
+7. **Deliver**: Present the synthesized result. The final output should read as if one agent produced it, not as a collage of separate reports.
 
-### Synthesis by Pattern
+### Synthesis by pattern
 
-| Pattern | Primary Synthesis Challenge |
+| Pattern | Primary synthesis challenge |
 |---|---|
 | Fan-out / Fan-in | Merging N independent result sets into one ordered list |
 | Pipeline | Validating that stage N output is suitable input for stage N+1 |
@@ -133,17 +141,17 @@ When parallel agents complete, the orchestrator receives multiple outputs that m
 
 ---
 
-## Merging Code Changes
+## Merging code changes
 
-When multiple agents produce code changes in separate worktrees, merging requires additional care.
+When multiple agents produce code changes in separate worktrees, merging needs extra care.
 
-### Merge Order Strategy
+### Merge order strategy
 
-1. **Merge the smallest, most isolated change first**: Minimize the merge base complexity for subsequent merges.
+1. **Merge the smallest, most isolated change first**: This keeps the merge base simple for later merges.
 2. **Run tests after each merge**: Do not batch merges. A test failure after merge 3 of 5 is much harder to diagnose than after merge 1.
-3. **If a merge conflicts, stop**: Do not resolve merge conflicts mechanically. Conflicts indicate the decomposition had an overlap. Understand the conflict before resolving it.
+3. **If a merge conflicts, stop**: Do not resolve merge conflicts mechanically. A conflict means the decomposition overlapped. Understand the conflict before resolving it.
 
-### Pre-Merge Checklist
+### Pre-merge checklist
 
 Before merging each agent's branch:
 
@@ -153,7 +161,7 @@ Before merging each agent's branch:
 - [ ] Test suite passes on the agent's branch
 - [ ] No unexpected file modifications outside the assigned scope
 
-### Post-Merge Verification
+### Post-merge verification
 
 After all branches are merged:
 
@@ -163,7 +171,7 @@ After all branches are merged:
 - [ ] The merged result achieves the original task objective
 - [ ] No duplicate or contradictory changes from different agents
 
-### Handling Merge Conflicts
+### Handling merge conflicts
 
 | Scenario | Response |
 |---|---|
@@ -173,11 +181,11 @@ After all branches are merged:
 
 ---
 
-## Failure Handling During Synthesis
+## Failure handling during synthesis
 
 Not every agent succeeds. The orchestrator's synthesis must account for incomplete results.
 
-### Failure Categories
+### Failure categories
 
 | Category | Description | Response |
 |---|---|---|
@@ -186,11 +194,11 @@ Not every agent succeeds. The orchestrator's synthesis must account for incomple
 | **Wrong scope** | Agent answered a different question than asked | Discard and re-dispatch with a clearer brief |
 | **Low quality** | Agent returned results but they are superficial or inaccurate | Supplement with manual investigation of the weak areas |
 
-### Decision Tree for Failed Agents
+### Decision tree for failed agents
 
 ```
 Agent failed?
-  -> Was the brief clear? 
+  -> Was the brief clear?
        No  -> Revise brief, re-dispatch
        Yes -> Was it a transient error?
                 Yes -> Retry same brief
@@ -199,7 +207,7 @@ Agent failed?
                          No  -> Absorb the work into the orchestrator's own context
 ```
 
-### Acceptable Degradation
+### Acceptable degradation
 
 Not every gap needs filling. Define in advance what constitutes an acceptable result:
 

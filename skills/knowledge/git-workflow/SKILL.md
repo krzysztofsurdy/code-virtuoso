@@ -7,37 +7,37 @@ user-invocable: false
 
 # Git Workflow
 
-Effective version control is not just about tracking changes - it is about enabling teams to collaborate predictably, release confidently, and maintain a history that tells a coherent story. The right workflow depends on team size, release cadence, and how much process the project can absorb without slowing down.
+Version control lets a team collaborate predictably, release with confidence, and keep a history that reads coherently. The right workflow depends on team size, release cadence, and how much process the project can absorb without slowing down.
 
-## Choosing a Branching Strategy
+## Choosing a branching strategy
 
-No single branching model fits every team. The right choice depends on how often you release, how large your team is, and how much ceremony you can tolerate.
+No single branching model fits every team. The choice depends on how often you release, how large the team is, and how much ceremony it can tolerate.
 
-### Strategy Comparison
+### Strategy comparison
 
-| Strategy | Release Cadence | Team Size | Complexity | Best For |
+| Strategy | Release cadence | Team size | Complexity | Best for |
 |---|---|---|---|---|
 | **Trunk-Based** | Continuous (multiple per day) | Any (works best with strong CI) | Low | SaaS, cloud-native, teams with mature CI/CD |
 | **GitHub Flow** | On-demand (per merged PR) | Small to medium | Low | Web apps, startups, teams wanting simplicity |
 | **Git Flow** | Scheduled / versioned releases | Medium to large | High | Packaged software, mobile apps, multiple supported versions |
 | **GitLab Flow** | Environment-promoted | Medium to large | Medium | Teams needing environment-specific branches (staging, production) |
 
-### Decision Guide
+### Decision guide
 
-1. **Do you deploy continuously?** - Use trunk-based development. Short-lived branches (hours, not days), feature flags for incomplete work, and strong CI are prerequisites.
-2. **Do you deploy on merge but want review gates?** - Use GitHub Flow. One long-lived branch (main), feature branches, pull requests as the merge gate.
-3. **Do you ship versioned releases on a schedule?** - Use Git Flow. Separate develop and main branches, release branches for stabilization, hotfix branches for emergency patches.
-4. **Do you promote through environments?** - Use GitLab Flow. Environment branches (staging, production) sit downstream of main, and merges flow in one direction.
+1. **Do you deploy continuously?** Use trunk-based development. Short-lived branches (hours, not days), feature flags for incomplete work, and strong CI are prerequisites.
+2. **Do you deploy on merge but want review gates?** Use GitHub Flow. One long-lived branch (main), feature branches, pull requests as the merge gate.
+3. **Do you ship versioned releases on a schedule?** Use Git Flow. Separate develop and main branches, release branches for stabilization, hotfix branches for emergency patches.
+4. **Do you promote through environments?** Use GitLab Flow. Environment branches (staging, production) sit downstream of main, and merges flow in one direction.
 
 See [Branching Strategies Reference](references/branching-strategies.md) for detailed mechanics, feature flag integration, and migration paths between strategies.
 
 ---
 
-## Commit Message Conventions
+## Commit message conventions
 
-Good commit messages serve three audiences: reviewers reading the PR, developers reading `git log` next month, and automation tools generating changelogs and version bumps.
+Commit messages have three audiences: reviewers reading the PR, developers reading `git log` next month, and automation tools generating changelogs and version bumps.
 
-### The Conventional Commits Format
+### The Conventional Commits format
 
 ```
 <type>(<scope>): <description>
@@ -47,9 +47,9 @@ Good commit messages serve three audiences: reviewers reading the PR, developers
 [optional footer(s)]
 ```
 
-### Common Commit Types
+### Common commit types
 
-| Type | Purpose | Version Impact |
+| Type | Purpose | Version impact |
 |---|---|---|
 | `feat` | New feature visible to users | Minor bump |
 | `fix` | Bug fix | Patch bump |
@@ -61,7 +61,7 @@ Good commit messages serve three audiences: reviewers reading the PR, developers
 | `ci` | CI/CD pipeline changes | None |
 | `build` | Build system or dependency changes | None |
 
-### Breaking Changes
+### Breaking changes
 
 Append `!` after the type or add a `BREAKING CHANGE:` footer to signal incompatible changes. Either notation triggers a major version bump when used with automated release tooling.
 
@@ -71,9 +71,9 @@ feat(api)!: remove deprecated /v1/users endpoint
 BREAKING CHANGE: The /v1/users endpoint has been removed. Use /v2/users instead.
 ```
 
-### Semantic Versioning Alignment
+### Semantic versioning alignment
 
-| Commit Contains | Version Bump | Example |
+| Commit contains | Version bump | Example |
 |---|---|---|
 | `fix:` | Patch (1.0.0 -> 1.0.1) | Bug corrections |
 | `feat:` | Minor (1.0.0 -> 1.1.0) | New capabilities |
@@ -83,29 +83,29 @@ See [Commit Conventions Reference](references/commit-conventions.md) for scope n
 
 ---
 
-## Pull Request Workflow
+## Pull request workflow
 
-Pull requests are the primary collaboration point in most git workflows. Their quality directly affects review speed, defect discovery, and team velocity.
+Pull requests are the main collaboration point in most git workflows. Their quality drives review speed and how many defects get caught.
 
-### PR Size Guidelines
+### PR size guidelines
 
-| PR Size (lines changed) | Review Quality | Recommended |
+| PR size (lines changed) | Review quality | Recommended |
 |---|---|---|
-| < 50 | Excellent - reviewer catches most issues | Ideal for stacked PRs |
-| 50-200 | Good - manageable cognitive load | Sweet spot for most changes |
-| 200-400 | Acceptable - requires focused review time | Upper bound for single reviews |
-| 400+ | Poor - reviewer fatigue, defects slip through | Split into smaller PRs |
+| < 50 | Excellent: reviewer catches most issues | Ideal for stacked PRs |
+| 50-200 | Good: manageable cognitive load | Sweet spot for most changes |
+| 200-400 | Acceptable: needs focused review time | Upper bound for single reviews |
+| 400+ | Poor: reviewer fatigue, defects slip through | Split into smaller PRs |
 
-### Core PR Practices
+### Core PR practices
 
-- **One concern per PR** - A PR should do one thing: add a feature, fix a bug, refactor a module. Mixing concerns makes review harder and reverts riskier.
-- **Write a clear description** - State what changed, why it changed, and how to verify it. Link to the relevant ticket or issue.
-- **Keep the diff reviewable** - Move large mechanical changes (renames, formatting) into separate PRs from logic changes.
-- **Respond to feedback promptly** - Stale PRs accumulate merge conflicts and block dependent work.
+- **One concern per PR**: a PR should do one thing: add a feature, fix a bug, refactor a module. Mixing concerns makes review harder and reverts riskier.
+- **Write a clear description**: state what changed, why it changed, and how to verify it. Link to the relevant ticket or issue.
+- **Keep the diff reviewable**: move large mechanical changes (renames, formatting) into separate PRs from logic changes.
+- **Respond to feedback quickly**: stale PRs accumulate merge conflicts and block dependent work.
 
-### Merge Strategies
+### Merge strategies
 
-| Strategy | History Shape | Best For |
+| Strategy | History shape | Best for |
 |---|---|---|
 | **Merge commit** | Preserves branch topology, creates merge node | Open-source projects, audit trails |
 | **Squash and merge** | Collapses branch into single commit on main | Feature branches with messy intermediate commits |
@@ -115,19 +115,19 @@ See [PR Patterns Reference](references/pr-patterns.md) for description templates
 
 ---
 
-## Release Management
+## Release management
 
-Release management bridges development and deployment. The approach depends on whether releases are continuous, scheduled, or versioned.
+The release approach depends on whether releases are continuous, scheduled, or versioned.
 
-### Release Models
+### Release models
 
-| Model | How It Works | When to Use |
+| Model | How it works | When to use |
 |---|---|---|
-| **Continuous release** | Every merged PR deploys automatically | SaaS with strong CI/CD and monitoring |
+| **Continuous release** | Every merged PR deploys | SaaS with strong CI/CD and monitoring |
 | **Scheduled release** | Changes accumulate, release on a cadence (weekly, biweekly) | Teams needing coordination windows |
 | **Versioned release** | Explicit version tags, release branches for stabilization | Libraries, APIs, packaged software |
 
-### Git Tags for Releases
+### Git tags for releases
 
 Tags mark specific commits as release points. Use annotated tags for releases because they store author, date, and message metadata.
 
@@ -142,9 +142,9 @@ git push origin v1.2.0
 git tag -l "v1.*"
 ```
 
-### Automated Release Pipeline
+### Automated release pipeline
 
-When conventional commits are combined with release automation tooling, the pipeline can:
+Combined with conventional commits, release automation can:
 
 1. Analyze commits since the last tag to determine the next version
 2. Generate or update the changelog from commit messages
@@ -152,9 +152,9 @@ When conventional commits are combined with release automation tooling, the pipe
 4. Build and publish artifacts
 5. Create a release entry on the hosting platform (GitHub/GitLab)
 
-This eliminates manual version decisions and ensures the changelog stays synchronized with actual changes.
+This removes manual version decisions and keeps the changelog in sync with actual changes.
 
-### Hotfix Workflow
+### Hotfix workflow
 
 When a critical bug is found in production:
 
@@ -178,9 +178,9 @@ git merge hotfix/fix-auth-crash
 
 ---
 
-## Quick Reference: Common Workflow Problems
+## Quick reference: common workflow problems
 
-| Problem | Likely Cause | Resolution |
+| Problem | Likely cause | Resolution |
 |---|---|---|
 | Frequent merge conflicts | Long-lived branches, infrequent integration | Merge main into feature branches daily, or switch to trunk-based |
 | Broken main branch | No CI on PRs, insufficient test coverage | Require passing CI before merge, add branch protection |
@@ -194,7 +194,7 @@ git merge hotfix/fix-auth-crash
 
 | Reference | Contents |
 |---|---|
-| [Branching Strategies](references/branching-strategies.md) | Trunk-based, GitHub Flow, Git Flow, GitLab Flow - mechanics, feature flags, comparison matrix |
+| [Branching Strategies](references/branching-strategies.md) | Trunk-based, GitHub Flow, Git Flow, GitLab Flow: mechanics, feature flags, comparison matrix |
 | [Commit Conventions](references/commit-conventions.md) | Conventional commits format, scope patterns, semantic versioning, changelog automation, git hooks |
 | [PR Patterns](references/pr-patterns.md) | Size guidelines, description templates, CODEOWNERS, merge strategies, branch protection, stacked PRs |
 

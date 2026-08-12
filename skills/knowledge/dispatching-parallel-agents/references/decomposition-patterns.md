@@ -1,12 +1,21 @@
 # Decomposition Patterns
 
-How to split work into independent units suitable for parallel subagent execution. Each pattern fits different task shapes. Choosing the wrong pattern creates artificial dependencies or wastes agent capacity.
+How to split work into independent units for parallel subagent execution. Each pattern fits a different task shape. The wrong pattern creates artificial dependencies or wastes agent capacity.
 
 ---
 
-## Fan-Out / Fan-In
+## Contents
 
-The most common dispatch pattern. One orchestrator sends work to N subagents, waits for all to complete, and synthesizes results.
+- [Fan-out / Fan-in](#fan-out--fan-in)
+- [Pipeline](#pipeline)
+- [Scatter-gather](#scatter-gather)
+- [Specialist-per-concern](#specialist-per-concern)
+- [Map-reduce](#map-reduce)
+- [Choosing the right pattern](#choosing-the-right-pattern)
+
+## Fan-out / Fan-in
+
+The most common dispatch pattern: one orchestrator sends work to N subagents, waits for all to complete, and synthesizes results.
 
 ### Shape
 
@@ -18,19 +27,19 @@ Orchestrator ---> Agent A ---> Result A ---|
              +--> Agent C ---> Result C ---|
 ```
 
-### When to Use
+### When to use
 
 - N independent tasks with no data dependencies between them
 - All tasks can start immediately with information the orchestrator already has
 - Results need to be combined into a single deliverable
 
-### Decision Criteria
+### Decision criteria
 
 - Can each task complete without knowing any other task's result? If yes, fan-out works.
 - Do all tasks need the same input preparation? If input prep is expensive, do it once before dispatch.
 - Is N reasonable (3-7)? Beyond 7, consider whether some tasks should be grouped.
 
-### Examples with Project Agents
+### Examples with project agents
 
 **Multi-area investigation:**
 ```
@@ -56,7 +65,7 @@ Orchestrator -> Test Gap Analyzer("Analyze test coverage for module A")
           <- Prioritized list of missing tests across all modules
 ```
 
-### Synthesis Responsibilities
+### Synthesis responsibilities
 
 The orchestrator must:
 - Deduplicate findings that appear in multiple agent outputs
@@ -78,19 +87,19 @@ Stage 2: [Agent C, Agent D] ---> Combined Stage 2 Output  (uses Stage 1 output)
 Stage 3: [Agent E]          ---> Final Output              (uses Stage 2 output)
 ```
 
-### When to Use
+### When to use
 
 - Work has clear phase dependencies (understand before design, design before implement)
 - Each phase can be parallelized internally even though phases are sequential
 - Quality gates exist between phases (review before proceeding)
 
-### Decision Criteria
+### Decision criteria
 
 - Is there a natural ordering where later work depends on earlier work? If yes, pipeline.
-- Can you parallelize within each stage? If each stage is a single task, this is just sequential execution.
-- Are there quality gates? Pipelines naturally support stop/go decisions between stages.
+- Can you parallelize within each stage? If each stage is a single task, this is plain sequential execution.
+- Are there quality gates? Pipelines support stop/go decisions between stages.
 
-### Examples with Project Agents
+### Examples with project agents
 
 **Feature delivery pipeline:**
 ```
@@ -110,7 +119,7 @@ Stage 3 (Implement):   [Implementer(component-1), Implementer(component-2)]
 Stage 4 (Review):      Reviewer (reviews both worktree branches)
 ```
 
-### Stage Transition Rules
+### Stage transition rules
 
 - The orchestrator reviews stage output before starting the next stage
 - If stage output reveals the decomposition was wrong, re-plan rather than push forward
@@ -118,7 +127,7 @@ Stage 4 (Review):      Reviewer (reviews both worktree branches)
 
 ---
 
-## Scatter-Gather
+## Scatter-gather
 
 Send the same question or task to multiple specialists who approach it from different angles. Merge the best insights from each response.
 
@@ -132,19 +141,19 @@ Same question ---> Specialist A (security lens)   ---> Perspective A ---|
               +--> Specialist C (correctness lens) ---> Perspective C ---|
 ```
 
-### When to Use
+### When to use
 
 - A problem benefits from multiple perspectives
 - Each specialist has a distinct evaluation framework
-- You want comprehensive analysis without sequential bias (where the first analysis anchors later ones)
+- You want a full analysis without sequential bias (where the first analysis anchors later ones)
 
-### Decision Criteria
+### Decision criteria
 
 - Would different specialists notice different things? If all would find the same issues, scatter-gather wastes agents.
 - Is the question well-defined enough that all specialists can work from the same input? If the question is ambiguous, sequential clarification is better.
-- Do the perspectives complement each other? Security + performance + correctness is complementary. Three security reviews are redundant.
+- Do the perspectives complement each other? Security, performance, and correctness reviews are complementary. Three security reviews are redundant.
 
-### Examples with Project Agents
+### Examples with project agents
 
 **Multi-dimensional code review:**
 ```
@@ -162,7 +171,7 @@ Same design doc -> Architect (evaluates trade-offs and boundaries)
            <- Unified assessment with go/no-go recommendation
 ```
 
-### Synthesis Challenge
+### Synthesis challenge
 
 Scatter-gather produces the most overlap. The orchestrator must:
 - Weight perspectives (a security finding may outrank a style finding)
@@ -171,7 +180,7 @@ Scatter-gather produces the most overlap. The orchestrator must:
 
 ---
 
-## Specialist-Per-Concern
+## Specialist-per-concern
 
 Assign each agent a distinct concern or dimension of the task. Unlike scatter-gather, agents work on different aspects of the same codebase rather than the same aspect from different angles.
 
@@ -185,19 +194,19 @@ Codebase ---> Agent A (security audit)     ---> Security findings
          +--> Agent C (performance profiling) -> Performance findings
 ```
 
-### When to Use
+### When to use
 
-- A comprehensive assessment requires expertise across multiple domains
+- A full assessment requires expertise across multiple domains
 - Each concern has its own investigation methodology
 - Results are additive (security findings + dependency findings = more complete picture)
 
-### Decision Criteria
+### Decision criteria
 
-- Are the concerns truly distinct? If "security audit" and "dependency audit" examine the same files for the same things, combine them.
+- Are the concerns distinct? If "security audit" and "dependency audit" examine the same files for the same things, combine them.
 - Does each concern require different tools or approaches? If yes, specialist-per-concern is appropriate.
 - Is there a natural specialist for each concern? Map concerns to available agent types.
 
-### Examples with Project Agents
+### Examples with project agents
 
 **Pre-release health check:**
 ```
@@ -218,7 +227,7 @@ Test suite -> Test Gap Analyzer (migration-related test coverage)
 
 ---
 
-## Map-Reduce
+## Map-reduce
 
 Split a large input into chunks, process each chunk with the same operation, then merge results. The "map" is the parallel processing; the "reduce" is the synthesis.
 
@@ -230,19 +239,19 @@ Large input -> Chunk 1 -> Agent A -> Result 1 ---|
             -> Chunk 3 -> Agent C -> Result 3 ---|
 ```
 
-### When to Use
+### When to use
 
 - The same operation must be applied to a large dataset or many files
 - Processing order does not matter
 - Results can be merged mechanically (counts, lists, categorized findings)
 
-### Decision Criteria
+### Decision criteria
 
-- Is the operation truly the same for each chunk? If different chunks need different handling, use specialist-per-concern instead.
+- Is the operation the same for each chunk? If different chunks need different handling, use specialist-per-concern instead.
 - Can chunks be defined without overlap? If splitting creates boundary issues (e.g., a function spanning two file chunks), adjust chunk boundaries.
 - Is mechanical merging sufficient, or does synthesis require judgment? Map-reduce works best with structured, mergeable outputs.
 
-### Examples with Project Agents
+### Examples with project agents
 
 **Large-scale refactoring assessment:**
 ```
@@ -256,7 +265,7 @@ Large input -> Chunk 1 -> Agent A -> Result 1 ---|
          <- Combined gap report sorted by priority
 ```
 
-### Reduce Strategy
+### Reduce strategy
 
 - Concatenate lists (all findings from all chunks)
 - Deduplicate entries that appear at chunk boundaries
@@ -265,9 +274,9 @@ Large input -> Chunk 1 -> Agent A -> Result 1 ---|
 
 ---
 
-## Choosing the Right Pattern
+## Choosing the right pattern
 
-| Question | If Yes | If No |
+| Question | If yes | If no |
 |---|---|---|
 | Are all tasks independent with no shared state? | Fan-out / Fan-in | Consider Pipeline |
 | Does work have clear sequential phases? | Pipeline | Fan-out or Scatter-gather |
@@ -275,7 +284,7 @@ Large input -> Chunk 1 -> Agent A -> Result 1 ---|
 | Does each agent own a distinct domain? | Specialist-per-concern | Fan-out |
 | Is it the same operation on different data chunks? | Map-reduce | Fan-out or Specialist |
 
-### Pattern Combinations
+### Pattern combinations
 
 Real workflows often combine patterns:
 
@@ -283,4 +292,4 @@ Real workflows often combine patterns:
 - **Fan-out then map-reduce**: Dispatch investigators, then map-reduce their findings into a summary
 - **Scatter-gather into pipeline**: Multiple perspectives feed into a sequential decision pipeline
 
-The key is applying the right pattern at each level of the workflow, not forcing the entire task into a single pattern.
+Apply the right pattern at each level of the workflow instead of forcing the whole task into one pattern.

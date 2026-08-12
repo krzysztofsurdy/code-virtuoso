@@ -1,10 +1,18 @@
 # Profiling Patterns
 
-## Types of Profiling
+## Contents
 
-### CPU Profiling
+- [Types of profiling](#types-of-profiling)
+- [The profiling workflow](#the-profiling-workflow)
+- [Common bottleneck signatures](#common-bottleneck-signatures)
+- [Performance budgets and SLOs](#performance-budgets-and-slos)
+- [Load testing strategies](#load-testing-strategies)
 
-Identifies which functions consume the most processing time. Look for hot paths - functions called frequently or with high per-call cost.
+## Types of profiling
+
+### CPU profiling
+
+Identifies which functions use the most processing time. Look for hot paths: functions called often or with a high per-call cost.
 
 **Common tools by language:**
 - **PHP**: Xdebug (trace/profiling mode), SPX, Blackfire
@@ -18,9 +26,9 @@ Identifies which functions consume the most processing time. Look for hot paths 
 - Repeated computation that could be memoized
 - String concatenation in tight loops (use builders instead)
 
-### Memory Profiling
+### Memory profiling
 
-Tracks allocations, heap size, and object retention to find leaks and excessive memory use.
+Tracks allocations, heap size, and object retention to find leaks and excess memory use.
 
 **PHP - tracking memory within a process:**
 ```php
@@ -61,12 +69,12 @@ long usedMb = heapUsage.getUsed() / (1024 * 1024);
 ```
 
 **Memory leak indicators:**
-- Memory usage grows steadily over time without leveling off
+- Memory use grows steadily over time without leveling off
 - Garbage collection runs more frequently but reclaims less
 - Objects in heap dumps that should have been freed are still referenced
 - Unbounded caches or collections that grow without eviction
 
-### I/O Profiling
+### I/O profiling
 
 Measures time spent waiting on external resources: disk, network, database, APIs.
 
@@ -83,9 +91,9 @@ Measures time spent waiting on external resources: disk, network, database, APIs
 
 ---
 
-## The Profiling Workflow
+## The profiling workflow
 
-### Step 1: Establish a Baseline
+### Step 1: establish a baseline
 
 Before changing anything, measure current performance under realistic conditions.
 
@@ -94,13 +102,13 @@ Before changing anything, measure current performance under realistic conditions
 - Measure throughput (requests per second) at current load
 - Capture resource usage (CPU, memory, connections) during normal operation
 - Document query counts and external call counts per request
-- Use production-like data volumes - performance on 100 rows does not predict performance on 10 million
+- Use production-like data volumes: performance on 100 rows does not predict performance on 10 million
 
-### Step 2: Identify the Bottleneck
+### Step 2: identify the bottleneck
 
-Use profiling data to find the single largest contributor to latency or resource usage.
+Use profiling data to find the largest single contributor to latency or resource use.
 
-**The 80/20 rule applies:** A small number of code paths usually account for the majority of time. Focus on the biggest contributor first.
+**The 80/20 rule applies:** A small number of code paths usually account for most of the time. Start with the biggest contributor.
 
 **Common identification techniques:**
 - Sort functions by cumulative time in CPU profiles
@@ -108,17 +116,17 @@ Use profiling data to find the single largest contributor to latency or resource
 - Check slow query logs for database bottlenecks
 - Review trace waterfalls for long spans in distributed systems
 
-### Step 3: Form a Hypothesis
+### Step 3: form a hypothesis
 
-Before writing code, state what you expect will improve and by how much. This forces clarity and makes verification possible.
+Before writing code, state what you expect to improve and by how much. This makes verification possible.
 
 Example: "The product listing page makes 47 queries per request due to N+1 loading. Switching to eager loading should reduce this to 2 queries and cut response time from 340ms to under 100ms."
 
-### Step 4: Apply a Targeted Fix
+### Step 4: apply a targeted fix
 
-Change one thing at a time. If you change multiple things simultaneously, you cannot attribute improvement to a specific change.
+Change one thing at a time. If you change several things at once, you cannot tell which change caused the improvement.
 
-### Step 5: Verify Improvement
+### Step 5: verify improvement
 
 Measure again using the same methodology as the baseline. Confirm that:
 - The target metric improved as expected
@@ -127,9 +135,9 @@ Measure again using the same methodology as the baseline. Confirm that:
 
 ---
 
-## Common Bottleneck Signatures
+## Common bottleneck signatures
 
-| Signature | Likely Cause | Verification |
+| Signature | Likely cause | Verification |
 |---|---|---|
 | CPU usage maxed, response time increases linearly with load | CPU-bound computation (inefficient algorithm, excessive serialization) | CPU profile shows a single hot function |
 | Low CPU, high response time, many idle threads | I/O-bound (waiting on database, network, disk) | Trace shows long waits on external calls |
@@ -140,13 +148,13 @@ Measure again using the same methodology as the baseline. Confirm that:
 
 ---
 
-## Performance Budgets and SLOs
+## Performance budgets and SLOs
 
-### Defining Performance Budgets
+### Defining performance budgets
 
 A performance budget is a threshold that triggers investigation or blocks deployment when exceeded.
 
-| Budget Type | Example Threshold | Action When Exceeded |
+| Budget type | Example threshold | Action when exceeded |
 |---|---|---|
 | **API response time** | P95 < 200ms, P99 < 500ms | Investigate before deploying |
 | **Page load time** | First Contentful Paint < 1.5s | Block deployment, optimize assets |
@@ -154,9 +162,9 @@ A performance budget is a threshold that triggers investigation or blocks deploy
 | **Query count** | Max 10 queries per API request | Check for N+1, add eager loading |
 | **Memory per request** | Peak < 128MB per PHP worker | Profile allocations, use streaming |
 
-### Service Level Objectives (SLOs)
+### Service level objectives (SLOs)
 
-SLOs define the performance contract with your users. They are more formal than budgets and typically tracked over time windows.
+SLOs define the performance contract with users. They are more formal than budgets and are usually tracked over time windows.
 
 **Structure:** `[metric] will be [threshold] for [percentage] of requests over [time window]`
 
@@ -165,15 +173,15 @@ SLOs define the performance contract with your users. They are more formal than 
 - "Homepage load time will be under 2 seconds for 95% of users over any 7-day window"
 - "Database query time will be under 100ms for 99% of queries over any 24-hour window"
 
-**Error budgets:** If your SLO is 99.9% availability, you have a 0.1% error budget per month (~43 minutes of downtime). When the error budget is consumed, prioritize reliability work over features.
+**Error budgets:** If the SLO is 99.9% availability, the error budget is 0.1% per month (~43 minutes of downtime). When the error budget is used up, prioritize reliability work over features.
 
 ---
 
-## Load Testing Strategies
+## Load testing strategies
 
-### Types of Load Tests
+### Types of load tests
 
-| Test Type | Purpose | Duration |
+| Test type | Purpose | Duration |
 |---|---|---|
 | **Smoke test** | Verify the system works under minimal load | Minutes |
 | **Load test** | Validate behavior at expected traffic levels | 15-60 minutes |
@@ -181,16 +189,16 @@ SLOs define the performance contract with your users. They are more formal than 
 | **Soak test** | Detect memory leaks and degradation over extended operation | Hours to days |
 | **Spike test** | Test response to sudden traffic bursts | Short bursts repeated |
 
-### Load Testing Principles
+### Load testing principles
 
-1. **Test with production-like data** - empty databases perform differently than full ones
-2. **Ramp up gradually** - sudden load does not reveal where the system starts struggling
-3. **Monitor everything during the test** - CPU, memory, connections, queue depths, error rates
-4. **Test the whole path** - include load balancers, caches, databases, and external services
-5. **Automate and run regularly** - performance regressions creep in between releases
-6. **Establish pass/fail criteria before running** - define what "acceptable" means in advance
+1. **Test with production-like data**: empty databases perform differently than full ones
+2. **Ramp up gradually**: sudden load does not reveal where the system starts struggling
+3. **Monitor everything during the test**: CPU, memory, connections, queue depths, error rates
+4. **Test the whole path**: include load balancers, caches, databases, and external services
+5. **Automate and run regularly**: performance regressions creep in between releases
+6. **Set pass/fail criteria before running**: define what "acceptable" means in advance
 
-### Interpreting Results
+### Interpreting results
 
 Look for these patterns in load test data:
 
@@ -199,4 +207,4 @@ Look for these patterns in load test data:
 - **Gradual degradation over time at constant load** indicates a memory leak or connection leak
 - **Error rate spike at a specific concurrency level** indicates pool or thread exhaustion
 
-Compare results against your performance budgets and SLOs. If results are within budget, the system passes. If not, use the profiling workflow to investigate.
+Compare results against the performance budgets and SLOs. If results are within budget, the system passes. If not, use the profiling workflow to investigate.
