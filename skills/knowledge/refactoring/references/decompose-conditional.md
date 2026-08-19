@@ -1,34 +1,46 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before (PHP 8.3+)](#before-php-83)
+- [After (PHP 8.3+)](#after-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Decompose Conditional takes a tangled conditional expression and breaks it apart into well-named methods. Instead of forcing readers to mentally parse compound boolean logic or lengthy if-else chains, each condition and its associated action gets a descriptive name that communicates intent directly.
+Decompose Conditional breaks a tangled conditional into well-named methods. Readers no longer parse compound boolean logic or long if-else chains in their heads. Each condition and its action gets a descriptive name that states the intent.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
-- **Dense boolean expressions**: Conditions composed of multiple `&&` and `||` operators that require careful reading
-- **Lengthy if-else chains**: Multi-branch conditionals where each branch handles a different scenario
+- **Dense boolean expressions**: Conditions composed of multiple `&&` and `||` operators that take effort to read
+- **Long if-else chains**: Multi-branch conditionals where each branch handles a different scenario
 - **Repeated conditions**: The same compound expression appears in several places
 - **Hidden business rules**: The purpose of a condition is not obvious from the raw expression
 - **Hard-to-test logic**: Complex conditionals resist focused unit testing
-- **Mixed responsibilities**: A single conditional handles validation, business rules, and side effects simultaneously
-- **Cognitive strain**: Developers have to pause and think to understand what the condition checks
+- **Mixed responsibilities**: One conditional handles validation, business rules, and side effects
+- **Cognitive strain**: Developers have to stop and think to see what the condition checks
 
-### Why It Matters
+### Why it matters
 
-Well-named methods act as documentation that stays in sync with the code. Extracting conditions into named methods turns opaque boolean logic into a readable narrative, makes each piece independently testable, and localizes future changes to a single spot.
+A well-named method documents itself and stays in sync with the code. Extracting conditions into named methods turns opaque boolean logic into readable steps, lets you test each piece alone, and keeps future changes in one spot.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
 1. **Find the complex condition**: Locate if-else statements or compound boolean expressions
 2. **Extract the condition**: Move it into a new method that returns a boolean
-3. **Choose a meaningful name**: The method name should describe the question being asked, not the implementation
+3. **Choose a meaningful name**: The name should describe the question being asked, not the implementation
 4. **Substitute the method call**: Replace the inline condition with a call to the new method
-5. **Extract branch bodies if needed**: If the code inside a branch is substantial, extract that into a named method too
-6. **Confirm behavior is preserved**: Run all tests to verify nothing has changed
-7. **Repeat**: Apply the same treatment to other complex conditionals in the codebase
+5. **Extract branch bodies if needed**: If the code inside a branch is long, extract it into a named method too
+6. **Confirm behavior is preserved**: Run all tests
+7. **Repeat**: Do the same for other complex conditionals
 
-## Before: PHP 8.3+ Example
+## Before (PHP 8.3+)
 
 ```php
 <?php
@@ -65,7 +77,7 @@ class UserValidator
 }
 ```
 
-## After: PHP 8.3+ Example
+## After (PHP 8.3+)
 
 ```php
 <?php
@@ -115,32 +127,32 @@ class UserValidator
 
 ## Benefits
 
-- **Self-Documenting Logic**: Method names explain the business rules without comments
-- **Independent Testability**: Each extracted condition can be tested in isolation
-- **Lower Cognitive Load**: Readers grasp the flow without decoding boolean algebra
-- **Localized Changes**: Modifying a business rule affects only its dedicated method
-- **Reuse Across the Codebase**: Extracted conditions can be called from other methods that need the same check
-- **Composable Checks**: Small, focused predicates combine naturally into larger validations
-- **Safer Refactoring**: Narrow, well-tested methods are easier to modify without side effects
+- **Self-documenting logic**: Method names explain the business rules without comments
+- **Independent tests**: Each extracted condition can be tested in isolation
+- **Lower cognitive load**: Readers follow the flow without decoding boolean algebra
+- **Localized changes**: Changing a business rule touches only its own method
+- **Reuse**: Other methods that need the same check can call the extracted condition
+- **Composable checks**: Small predicates combine into larger validations
+- **Safer changes**: Narrow, well-tested methods are easier to modify without side effects
 
-## When NOT to Use
+## When NOT to use
 
-- **Trivial conditions**: A single, readable comparison like `if ($age > 18)` does not benefit from extraction
-- **Single-use, clear conditions**: If a condition is used once and already reads naturally, extraction adds indirection without value
-- **Hot loops**: In extremely performance-sensitive paths, the overhead of method calls may matter (though this is rarely a practical concern)
-- **Already decomposed**: If conditions are already short and descriptive, further decomposition adds clutter
-- **No business meaning**: Extracting a condition that has no meaningful name does not improve readability
+- **Trivial conditions**: A single, readable comparison like `if ($age > 18)` gains nothing from extraction
+- **Single-use, clear conditions**: If a condition is used once and already reads naturally, extraction adds indirection for no gain
+- **Hot loops**: In extremely performance-sensitive paths, the cost of method calls may matter (rarely a practical concern)
+- **Already decomposed**: If conditions are already short and descriptive, more decomposition adds clutter
+- **No business meaning**: A condition with no meaningful name gains no readability from extraction
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Method**: Used for the branch body when it contains substantial logic
-- **Replace Conditional with Polymorphism**: Appropriate when conditions distinguish between object types
-- **Extract Variable**: Introduces a named variable as a lighter alternative to a full method extraction
-- **Guard Clauses**: A specific form of decomposition for precondition checks
+- **Extract Method**: Used for the branch body when it contains a lot of logic
+- **Replace Conditional with Polymorphism**: Fits when conditions distinguish between object types
+- **Extract Variable**: Adds a named variable as a lighter alternative to extracting a method
+- **Guard Clauses**: A form of decomposition for precondition checks
 - **Introduce Explaining Variable**: An intermediate step before full decomposition
 - **Replace Temp with Query**: Removes temporary variables that hold intermediate condition results
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

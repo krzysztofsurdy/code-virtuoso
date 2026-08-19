@@ -1,17 +1,28 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after](#before-and-after)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Extract Interface creates a formal contract from a set of methods that multiple clients rely on or that several classes implement in common. Unlike Extract Superclass, which shares both interface and implementation, Extract Interface isolates the contract alone, leaving each implementing class free to provide its own logic.
+Extract Interface creates a formal contract from a set of methods that several clients rely on or that several classes implement in common. Extract Superclass shares both interface and implementation. Extract Interface isolates the contract alone, and each implementing class provides its own logic.
 
 ## Motivation
 
-### Explicit Role Definition
-Interfaces declare the roles a class plays in different contexts. Extracting an interface makes that role visible in the type system and defines a clear boundary between what callers can expect and how the class delivers it.
+### Explicit roles
+Interfaces declare the roles a class plays in different contexts. Extracting an interface makes the role visible in the type system and draws a clear line between what callers can expect and how the class delivers it.
 
-### Pluggable Implementations
-When a system needs interchangeable variants - payment gateways, notification channels, storage backends - an interface ensures every variant conforms to the same contract without forcing them into an artificial inheritance tree.
+### Pluggable implementations
+When a system needs interchangeable variants (payment gateways, notification channels, storage backends), an interface makes every variant follow the same contract without forcing an artificial inheritance tree.
 
-### Dependency Inversion
-Clients that depend on an interface rather than a concrete class become insulated from implementation changes. This makes the code easier to test with mocks and more flexible when requirements shift.
+### Dependency inversion
+Clients that depend on an interface instead of a concrete class are insulated from implementation changes. The code is easier to test with mocks and easier to adapt when requirements change.
 
 ## Mechanics
 
@@ -19,9 +30,9 @@ Clients that depend on an interface rather than a concrete class become insulate
 2. **Declare the methods** that shared clients depend on
 3. **Have classes implement** the new interface
 4. **Update client type hints** to reference the interface instead of concrete classes
-5. **Optional**: Remove the concrete class from client signatures entirely if no class-specific features are needed
+5. **Optional**: Remove the concrete class from client signatures if no class-specific features are needed
 
-## Before/After
+## Before and after
 
 ### Before
 
@@ -127,29 +138,29 @@ readonly class RefundService
 
 ## Benefits
 
-- **Defined Contracts**: Interfaces make explicit what callers are allowed to depend on
-- **Simplified Testing**: Mock the interface instead of the concrete class in unit tests
-- **Loose Coupling**: Clients are insulated from implementation details
-- **Swappable Implementations**: Different concrete classes can be substituted without touching client code
-- **Clear Communication**: Interface names and method signatures document the expected behavior
-- **Easy Extension**: New implementations can be added without modifying existing code
+- **Defined contracts**: Interfaces make explicit what callers are allowed to depend on
+- **Simpler testing**: Mock the interface instead of the concrete class in unit tests
+- **Loose coupling**: Clients are insulated from implementation details
+- **Swappable implementations**: Concrete classes can be substituted without touching client code
+- **Clear communication**: Interface names and method signatures document the expected behavior
+- **Easy extension**: New implementations can be added without modifying existing code
 
-## When NOT to Use
+## When NOT to use
 
-- **Only one implementation exists**: An interface with a single implementor may be premature abstraction
+- **Only one implementation exists**: An interface with a single implementor may be a premature abstraction
 - **Shared implementation needed**: If classes share code as well as a contract, Extract Superclass is a better fit
-- **Interface is too broad**: A large interface with unrelated methods likely violates the Interface Segregation Principle - split it first
-- **No evidence of variation**: Do not create interfaces speculatively; wait until a second implementation is needed
-- **Artificial abstractions**: An interface should represent a genuine concept, not exist for the sake of having one
+- **Interface is too broad**: A large interface with unrelated methods likely violates the Interface Segregation Principle. Split it first
+- **No evidence of variation**: Do not create interfaces speculatively. Wait until a second implementation is needed
+- **Artificial abstractions**: An interface should represent a real concept, not exist for its own sake
 
-## Related Refactorings
+## Related refactorings
 
 - **Extract Superclass**: Shares both contract and implementation between classes
 - **Extract Class**: Moves responsibilities to a new class without inheritance
-- **Remove Middle Man**: Strips excessive abstraction layers that obscure rather than clarify
-- **Interface Segregation**: Splits an overly broad interface into narrower, focused ones
+- **Remove Middle Man**: Removes abstraction layers that obscure more than they clarify
+- **Interface Segregation**: Splits a broad interface into narrower, focused ones
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

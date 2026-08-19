@@ -1,35 +1,46 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before (PHP 8.3+)](#before-php-83)
+- [After (PHP 8.3+)](#after-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-Change Value to Reference transforms a value object - one that is freely created and discarded - into a reference object managed through a central registry or factory. This is appropriate when multiple parts of the system should share a single canonical instance rather than working with independent copies.
+Change Value to Reference turns a value object, one that is created and discarded freely, into a reference object managed through a central registry or factory. Use it when several parts of the system should share one canonical instance instead of working with independent copies.
 
-The refactoring is the inverse of Change Reference to Value. It applies most naturally to entities that model real-world concepts requiring a single, authoritative representation in memory.
+It is the inverse of Change Reference to Value. It fits best for entities that model real-world concepts and need a single authoritative representation in memory.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
 - **Redundant copies**: Several instances represent the same logical entity (e.g., a customer or account)
 - **Inconsistent state**: Updating one copy leaves other copies stale
 - **Identity semantics**: The object should be compared by identity, not by field values
-- **Memory waste**: Duplicating large or numerous objects consumes memory unnecessarily
-- **Shared mutation**: All consumers should see changes immediately when the object is modified
+- **Memory waste**: Duplicating large or numerous objects uses memory for nothing
+- **Shared mutation**: All consumers should see a change as soon as the object is modified
 - **Database alignment**: The object maps to a database row where a single record is the source of truth
 
-### Why It Matters
+### Why it matters
 
-When the same entity is represented by multiple independent instances, changes to one go unnoticed by the others. Converting to reference semantics establishes a single source of truth, guaranteeing that every part of the system operates on the same, current data.
+When several independent instances represent the same entity, a change to one goes unnoticed by the others. Reference semantics give you a single source of truth, so every part of the system works on the same current data.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
 1. **Build a registry or factory**: Create a mechanism that stores and retrieves instances by a unique key
-2. **Provide identity-based lookup**: Allow clients to obtain an existing instance by its identifier
+2. **Provide identity-based lookup**: Let clients get an existing instance by its identifier
 3. **Route creation through the factory**: Replace direct constructor calls with factory lookups
-4. **Switch to identity equality**: Adjust comparisons from value-based to reference-based
-5. **Update all client code**: Ensure every consumer obtains instances from the registry
-6. **Eliminate stale copies**: Remove code paths that create duplicate instances
-7. **Validate consistency**: Confirm that all references to a given entity stay in sync
+4. **Switch to identity equality**: Change comparisons from value-based to reference-based
+5. **Update all client code**: Make every consumer get instances from the registry
+6. **Remove stale copies**: Remove code paths that create duplicate instances
+7. **Validate consistency**: Confirm that all references to an entity stay in sync
 
-## Before: PHP 8.3+ Example
+## Before (PHP 8.3+)
 
 ```php
 <?php
@@ -100,7 +111,7 @@ echo $order1->getCustomer()->getName(); // "John Smith"
 echo $order2->getCustomer()->getName(); // "John Doe" - INCONSISTENT!
 ```
 
-## After: PHP 8.3+ Example
+## After (PHP 8.3+)
 
 ```php
 <?php
@@ -191,28 +202,28 @@ echo $order2->getCustomer()->getName(); // "John Smith" - CONSISTENT!
 
 ## Benefits
 
-- **Guaranteed Consistency**: Every consumer works with the same instance, so changes propagate instantly
-- **Clear Identity Semantics**: Objects are explicitly identity-based rather than ambiguously value-based
-- **Lower Memory Footprint**: One instance per entity instead of many duplicates
-- **No Manual Synchronization**: State changes are inherently visible everywhere
-- **Easier Debugging**: A single canonical instance is straightforward to inspect and trace
-- **Database Compatibility**: Mirrors how relational databases treat rows - one record per identity
-- **Fewer State Bugs**: Eliminates a category of bugs caused by stale or divergent copies
+- **Consistency**: Every consumer works with the same instance, so changes are visible at once
+- **Clear identity semantics**: Objects are identity-based, not ambiguously value-based
+- **Lower memory use**: One instance per entity instead of many duplicates
+- **No manual synchronization**: State changes are visible everywhere
+- **Easier debugging**: A single canonical instance is easy to inspect and trace
+- **Database fit**: Mirrors how relational databases treat rows: one record per identity
+- **Fewer state bugs**: Removes a category of bugs caused by stale or divergent copies
 
-## When NOT to Use
+## When NOT to use
 
-- **Immutable data**: Value semantics are a better fit for objects that never change
+- **Immutable data**: Value semantics suit objects that never change
 - **Stateless objects**: Objects without mutable state gain nothing from reference semantics
-- **Simple DTOs**: Data transfer objects benefit from being lightweight and disposable
+- **Simple DTOs**: Data transfer objects should stay lightweight and disposable
 - **Functional style**: Pure functions and value objects are easier to reason about
-- **No shared mutation**: If objects are never modified after creation, references add unneeded complexity
+- **No shared mutation**: If objects are never modified after creation, references add needless complexity
 - **Serialization needs**: Registry-backed objects complicate serialization and deserialization
-- **Concurrency concerns**: Shared mutable references require synchronization in multithreaded environments
+- **Concurrency**: Shared mutable references need synchronization in multithreaded environments
 
-## Related Refactorings
+## Related refactorings
 
-- **Change Reference to Value**: The opposite transformation, returning to value semantics
+- **Change Reference to Value**: The opposite: returns to value semantics
 - **Extract Class**: Often paired with this refactoring to separate concerns among reference objects
-- **Replace Data Value with Object**: Promotes primitive values into full reference objects
-- **Introduce Null Object**: Provides a safe stand-in for missing references
-- **Move Field**: Consolidates related data into shared reference objects
+- **Replace Data Value with Object**: Turns primitive values into full reference objects
+- **Introduce Null Object**: Gives a safe stand-in for missing references
+- **Move Field**: Gathers related data into shared reference objects

@@ -1,8 +1,18 @@
 # Add Parameter Refactoring
 
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after (PHP 8.3+)](#before-and-after-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-Add Parameter solves the problem of a method that needs additional data to perform its job correctly. Instead of having the method dig into class internals or rely on global state, you surface the missing information as an explicit parameter. This produces methods with transparent inputs that are straightforward to understand and verify.
+Add Parameter applies when a method needs more data to do its job. Instead of having the method dig into class internals or rely on global state, pass the missing information as an explicit parameter. The method's inputs become visible, which makes it easier to understand and verify.
 
 ## Motivation
 
@@ -12,7 +22,7 @@ Apply this technique when:
 - The required information changes from call to call, making it a poor fit for a class property
 - You want tests to control method inputs directly without manipulating object state
 - You need to break an implicit dependency on internal fields
-- Different callers possess context-specific values that should flow into the method
+- Different callers have context-specific values that should flow into the method
 
 ## Mechanics
 
@@ -22,11 +32,11 @@ Apply this technique when:
 4. **Remove the original method** once every caller has been migrated, or keep it as a shorthand overload
 
 Points to keep in mind:
-- Apply signature changes methodically to avoid breaking existing call sites
-- Default parameter values ease the transition by preserving backward compatibility
-- If the parameter feels unnatural, it may signal a more fundamental design issue
+- Change the signature step by step so existing call sites keep working
+- A default parameter value eases the transition and keeps old callers compatible
+- If the parameter feels unnatural, it may point to a deeper design issue
 
-## Before/After - PHP 8.3+ Code
+## Before and after (PHP 8.3+)
 
 **BEFORE:**
 
@@ -80,31 +90,31 @@ $service->send($user, 'Urgent', 'push');    // Uses 'push' channel
 
 ## Benefits
 
-- **Flexibility**: The method handles a broader set of scenarios without internal changes
-- **Testability**: Passing different values as arguments enables thorough, isolated tests
-- **Reduced Coupling**: The method no longer pulls values from mutable internal state
-- **Reusability**: The same logic serves multiple callers with varying data
-- **Transparent Interface**: The signature communicates every piece of data the method depends on
-- **Named Arguments**: PHP 8.0+ named parameters make call sites self-documenting
+- **Flexibility**: The method handles more scenarios without internal changes
+- **Testability**: Tests can pass different values directly, in isolation
+- **Reduced coupling**: The method no longer pulls values from mutable internal state
+- **Reusability**: The same logic serves multiple callers with different data
+- **Transparent interface**: The signature lists every piece of data the method depends on
+- **Named arguments**: PHP 8.0+ named parameters make call sites self-documenting
 
-## When NOT to Use
+## When NOT to use
 
-- **Parameter Overload**: Methods with more than 3-4 parameters signal a need for structural redesign
-- **Repeated Growth**: Continuously appending parameters suggests bundling them into a Parameter Object or DTO
-- **Related Values**: When the new parameter naturally groups with existing ones, wrap them in a value object
-- **Stable Public Contracts**: Altering published interfaces disrupts downstream consumers
-- **Hidden Abstraction Gap**: The need to pass data may reveal a missing class or responsibility
+- **Parameter overload**: A method with more than 3-4 parameters needs structural redesign
+- **Repeated growth**: If parameters keep getting appended, bundle them into a Parameter Object or DTO
+- **Related values**: When the new parameter belongs with existing ones, wrap them in a value object
+- **Stable public contracts**: Changing a published interface breaks downstream consumers
+- **Hidden abstraction gap**: The need to pass data may reveal a missing class or responsibility
 
 Alternatives to consider:
-- Promote the data to a class property if it logically belongs to the object
+- Make the data a class property if it belongs to the object
 - Combine related parameters into a DTO or value object
-- Carve out a separate class for the associated functionality
+- Extract a separate class for the associated functionality
 - Inject service-level dependencies through the constructor
 
-## Related Refactorings
+## Related refactorings
 
 - **Remove Parameter**: The inverse operation, used when a parameter becomes unnecessary
-- **Introduce Parameter Object**: Groups multiple related parameters into a single object
-- **Extract Method**: Often applied in tandem to sharpen method focus
+- **Introduce Parameter Object**: Groups several related parameters into one object
+- **Extract Method**: Often applied alongside to keep methods focused
 - **Replace Method with Method Object**: Handles complex methods that accumulate many parameters
-- **Move Method**: Shifts logic to a class that already holds the needed data
+- **Move Method**: Moves logic to a class that already holds the needed data

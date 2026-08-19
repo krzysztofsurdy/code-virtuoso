@@ -1,24 +1,34 @@
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-Divergent Change occurs when a single class must be modified for multiple, unrelated reasons. It is the mirror image of Shotgun Surgery: where Shotgun Surgery means one change touches many classes, Divergent Change means many different changes all land in the same class. This is a direct violation of the Single Responsibility Principle - the class has accumulated too many distinct responsibilities.
+Divergent Change occurs when one class must be modified for several unrelated reasons. It is the mirror image of Shotgun Surgery. Shotgun Surgery means one change touches many classes. Divergent Change means many different changes land in the same class. It violates the Single Responsibility Principle: the class has too many responsibilities.
 
-## Why It's a Problem
+## Why it's a problem
 
-- **Tangled Maintenance**: Each change forces you to navigate unrelated parts of the same class, increasing the risk of accidental side effects
-- **Weak Cohesion**: Methods within the class serve fundamentally different concerns, making the class hard to reason about as a unit
-- **Collateral Damage**: Modifying one responsibility can inadvertently break another that shares the same class
-- **Difficult Testing**: Multiple concerns interleaved in one class demand complex, scenario-heavy test setups
-- **Friction on Growth**: Adding new features means modifying an already-overloaded class rather than creating focused new components
+- **Tangled maintenance**: Each change takes you through unrelated parts of the same class, which risks accidental side effects
+- **Weak cohesion**: Methods in the class serve different concerns, so the class is hard to reason about as a unit
+- **Collateral damage**: Changing one responsibility can break another in the same class
+- **Difficult testing**: Several concerns interleaved in one class need complex, scenario-heavy test setups
+- **Friction on growth**: New features mean modifying an already overloaded class instead of creating focused new components
 
-## Signs and Symptoms
+## Signs and symptoms
 
 - A single class changes for multiple unrelated reasons (e.g., adding a product type requires editing finder, display, and ordering methods in the same class)
-- Methods within the class address fundamentally different business concerns
+- Methods in the class address different business concerns
 - Inline comments or region markers dividing the class into conceptual "sections"
 - The class is hard to name concisely because it does too many things
-- Certain instance variables are only relevant to a subset of the class's methods
+- Some instance variables are used by only a subset of the class's methods
 
-## Before/After
+## Before and after
 
 ### Before (PHP 8.3)
 
@@ -142,13 +152,13 @@ readonly class OrderService
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### Extract Class
-Split responsibilities into separate classes. Each class should have a single, well-defined reason to change. This is the primary solution and was demonstrated in the After example above.
+Split responsibilities into separate classes. Each class should have one reason to change. This is the main fix, shown in the After example above.
 
 ### Extract Superclass
-If multiple classes share similar behavior, create a base class. This works well with enums for type-specific behavior:
+If several classes share similar behavior, create a base class. This pairs well with enums for type-specific behavior:
 
 ```php
 enum ProductType: string
@@ -178,23 +188,23 @@ readonly class PhysicalProductHandler extends ProductHandler
 }
 ```
 
-### Use Dependency Injection
-Reduce coupling and improve testability by injecting dependencies rather than managing them all in one class.
+### Use dependency injection
+Inject dependencies instead of managing them all in one class. This lowers coupling and makes testing easier.
 
 ## Exceptions
 
-**When Divergent Change Is Acceptable:**
+**When Divergent Change is acceptable:**
 
-- **Utility Classes**: Helper classes with truly disparate utility methods (though even these benefit from organization)
-- **Domain Value Objects**: Simple classes representing domain concepts may legitimately have several methods
-- **Facade Classes**: Intentional facades that coordinate multiple subsystems may have diverse methods
-- **Initial Development**: In early prototyping, some divergent change is acceptable before refactoring
+- **Utility classes**: Helper classes with unrelated utility methods (though even these benefit from organization)
+- **Domain value objects**: Simple classes representing domain concepts may have several methods
+- **Facade classes**: Intentional facades that coordinate several subsystems may have varied methods
+- **Initial development**: Some divergent change is acceptable in early prototyping, before refactoring
 
-## Related Smells
+## Related smells
 
-- **Shotgun Surgery**: The inverse problem - a single change scattered across many classes, while Divergent Change is many changes funneling into one class
-- **God Object**: An extreme form of Divergent Change where one class has become the center of gravity for most of the system
-- **Feature Envy**: Methods that work primarily with another class's data, suggesting they belong elsewhere
-- **Inappropriate Intimacy**: Classes entangled in each other's internals, often a companion to classes with too many responsibilities
+- **Shotgun Surgery**: The inverse problem: a single change scattered across many classes, while Divergent Change is many changes funneling into one class
+- **God Object**: An extreme form of Divergent Change where one class sits at the center of most of the system
+- **Feature Envy**: Methods that work mostly with another class's data, which suggests they belong there
+- **Inappropriate Intimacy**: Classes entangled in each other's internals, often found alongside classes with too many responsibilities
 
-Divergent Change often stems from poor initial architecture or copy-paste habits that pile unrelated functionality into a convenient existing class. The remedy is straightforward: give each responsibility its own class.
+Divergent Change often comes from weak initial architecture or from copy-paste habits that pile unrelated functionality into a convenient existing class. The fix is to give each responsibility its own class.

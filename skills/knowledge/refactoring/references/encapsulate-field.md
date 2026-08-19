@@ -1,18 +1,29 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after (PHP 8.3+)](#before-and-after-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Encapsulate Field replaces direct access to a public class field with getter and setter methods. This draws a boundary between the internal representation and the external contract, allowing you to add validation, change storage mechanisms, or introduce computed properties without affecting any calling code.
+Encapsulate Field replaces direct access to a public class field with getter and setter methods. This separates the internal representation from the external contract. You can then add validation, change how data is stored, or add computed properties without affecting calling code.
 
 ## Motivation
 
 **Why wrap fields in accessor methods:**
 
-1. **Guard External Access**: Prevent callers from assigning invalid or inconsistent values
-2. **Conceal Storage Details**: How data is stored becomes an internal decision
-3. **Enforce Constraints**: Setter methods can reject values that violate business rules
-4. **Support Evolution**: Swap a stored field for a computed property without breaking clients
-5. **Clean Boundaries**: Public methods form a stable contract; private fields can change freely
-6. **Enable Side Effects**: Add logging, caching, or event notifications later without a signature change
-7. **Stronger Typing**: Method signatures enforce types more explicitly than raw field access
+1. **Guard external access**: Prevent callers from assigning invalid or inconsistent values
+2. **Hide storage details**: How data is stored becomes an internal decision
+3. **Enforce constraints**: Setter methods can reject values that violate business rules
+4. **Support change**: Swap a stored field for a computed property without breaking clients
+5. **Clean boundaries**: Public methods form a stable contract; private fields can change freely
+6. **Allow side effects**: Add logging, caching, or event notifications later without a signature change
+7. **Stronger typing**: Method signatures state types more explicitly than raw field access
 
 ## Mechanics
 
@@ -24,9 +35,9 @@ Encapsulate Field replaces direct access to a public class field with getter and
 6. Change the field visibility to private
 7. Add validation or constraints inside the setter
 
-## Before/After PHP 8.3+ Code
+## Before and after (PHP 8.3+)
 
-### Before: Public Field Access
+### Before: public field access
 
 ```php
 <?php
@@ -62,7 +73,7 @@ echo "Stock: " . $product->stock;
 $product->price *= 0.5; // Direct manipulation
 ```
 
-### After: Encapsulated Access
+### After: encapsulated access
 
 ```php
 <?php
@@ -148,33 +159,33 @@ $product->applyDiscount(10); // Controlled, validated change
 
 ## Benefits
 
-- **Input Validation**: Setters reject values that break business rules
-- **Hidden Internals**: Callers interact with a stable method-based contract
-- **Seamless Migration**: Switch from a stored field to a derived computation without touching clients
-- **Computed Properties**: A getter can calculate its return value on the fly
-- **Observable State Changes**: Setters can trigger logging, events, or cache invalidation
-- **Strict Types**: Method signatures give callers and IDEs precise type information
-- **Self-Documenting**: Method names and signatures describe what the class offers
-- **Room to Grow**: New behavior can be layered into accessors without altering the public contract
+- **Input validation**: Setters reject values that break business rules
+- **Hidden internals**: Callers interact with a stable method-based contract
+- **Painless migration**: Switch from a stored field to a derived computation without touching clients
+- **Computed properties**: A getter can calculate its return value on demand
+- **Observable state changes**: Setters can trigger logging, events, or cache invalidation
+- **Strict types**: Method signatures give callers and IDEs precise type information
+- **Self-documenting**: Method names and signatures show what the class offers
+- **Room to grow**: New behavior can be added to accessors without changing the public contract
 
-## When NOT to Use
+## When NOT to use
 
-- **Immutable Value Objects**: Final readonly classes may not need setters at all
-- **Simple DTOs in Private Layers**: Internal data carriers with no validation needs may not benefit
-- **Internal Utility Classes**: Private helpers with no outside consumers
-- **Already Encapsulated**: If callers already go through methods, the work is done
-- **Minimal Payoff**: Wrapping a field that will never need validation or change adds ceremony for little gain
+- **Immutable value objects**: Final readonly classes may not need setters at all
+- **Simple DTOs in private layers**: Internal data carriers with no validation needs gain little
+- **Internal utility classes**: Private helpers with no outside consumers
+- **Already encapsulated**: If callers already go through methods, the work is done
+- **Minimal payoff**: Wrapping a field that will never need validation or change adds ceremony for little gain
 
-## Related Refactorings
+## Related refactorings
 
-- **Self Encapsulate Field**: Applies the same idea to internal access within the class itself
+- **Self Encapsulate Field**: Applies the same idea to access inside the class itself
 - **Hide Delegate**: Wraps another object's fields behind the delegating class
-- **Replace Data Value with Object**: Promotes a primitive field into a dedicated class
+- **Replace Data Value with Object**: Turns a primitive field into a dedicated class
 - **Extract Class**: Moves related fields into their own class
-- **Introduce Parameter Object**: Groups related fields into a single parameter object
-- **Remove Setter**: Makes fields read-only by dropping the setter
+- **Introduce Parameter Object**: Groups related fields into one parameter object
+- **Remove Setting Method**: Makes fields read-only by dropping the setter
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

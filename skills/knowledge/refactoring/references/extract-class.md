@@ -1,30 +1,40 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after (PHP 8.3+)](#before-and-after-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-Extract Class splits a class that has taken on too many responsibilities into two or more focused classes. When a class accumulates unrelated fields and methods, carving out a cohesive subset into its own class restores clarity and keeps each class aligned with the Single Responsibility Principle.
+Extract Class splits a class that has too many responsibilities into two or more focused classes. When a class collects unrelated fields and methods, moving a cohesive subset into its own class restores clarity and keeps each class in line with the Single Responsibility Principle.
 
 ## Motivation
 
-Classes tend to grow organically. Features get added, fields multiply, and before long the class handles concerns that have little to do with each other. Signs that extraction is overdue include:
+Classes grow over time. Features get added and fields multiply until the class handles concerns that have little to do with each other. Signs that extraction is overdue:
 
 - **Multiple reasons to change**: Different kinds of requirements drive modifications to the same class
 - **Feature envy**: Methods spend more time working with another class's data than their own
 - **Repeated patterns**: Similar groups of fields and methods appear in several places
-- **Hard-to-test code**: The class requires elaborate setup because it juggles too many concerns
-- **Excessive size**: The class is long and difficult to hold in your head
-- **Vague purpose**: Describing what the class does requires several conjunctions
+- **Hard-to-test code**: The class needs elaborate setup because it juggles too many concerns
+- **Excessive size**: The class is long and hard to hold in your head
+- **Vague purpose**: Describing what the class does takes several conjunctions
 
 ## Mechanics
 
-1. **Spot the cohesive subset**: Identify fields and methods that naturally belong together
-2. **Create a new class**: Give it a name that reflects the extracted concept
-3. **Relocate fields**: Move the relevant fields into the new class
-4. **Relocate methods**: Move methods that operate primarily on those fields
+1. **Spot the cohesive subset**: Identify fields and methods that belong together
+2. **Create a new class**: Name it after the extracted concept
+3. **Move fields**: Move the relevant fields into the new class
+4. **Move methods**: Move methods that mainly operate on those fields
 5. **Wire up the original class**: Replace the moved fields and methods with a reference to the new class
-6. **Verify behavior**: Run the tests to confirm nothing has changed
+6. **Verify behavior**: Run the tests to confirm behavior is unchanged
 
-## Before/After PHP 8.3+ Code
+## Before and after (PHP 8.3+)
 
-### Before: Overly Responsible Class
+### Before: class with too many responsibilities
 
 ```php
 class Person {
@@ -57,7 +67,7 @@ class Person {
 }
 ```
 
-### After: Extracted Responsibilities
+### After: extracted responsibilities
 
 ```php
 // New TelephoneNumber class
@@ -146,27 +156,27 @@ echo $person->getOfficeAddress()->toString();    // 123 Main St
 
 ## Benefits
 
-- **Focused Classes**: Each class does one thing and does it well
-- **Easier Testing**: Smaller classes need less setup and fewer test scenarios
-- **Greater Reuse**: Extracted classes like TelephoneNumber and Address can serve other parts of the system
-- **Lower Cognitive Load**: Developers understand a class faster when it handles a single concern
-- **Independent Change**: Modifications to one concern do not ripple into unrelated code
-- **Stronger Types**: Rich types replace scattered primitives, especially with PHP 8.3+ readonly support
-- **SOLID Alignment**: Directly supports the Single Responsibility and Open/Closed principles
+- **Focused classes**: Each class does one thing
+- **Easier testing**: Smaller classes need less setup and fewer test scenarios
+- **More reuse**: Extracted classes like TelephoneNumber and Address can serve other parts of the system
+- **Lower cognitive load**: A class with a single concern is quicker to understand
+- **Independent change**: A change to one concern does not ripple into unrelated code
+- **Stronger types**: Rich types replace scattered primitives, especially with PHP 8.3+ readonly support
+- **SOLID alignment**: Supports the Single Responsibility and Open/Closed principles
 
-## When NOT to Use
+## When NOT to use
 
-- **Premature extraction**: Wait until the separation is clear; extracting too early can fragment the design
-- **No natural cohesion**: If the subset of fields and methods does not form a coherent concept, the extraction will feel forced
-- **Performance-critical code**: Rarely, the extra object allocation matters; profile before ruling this out
-- **Trivial classes**: When the data is simple and has no behavior, a plain array or simple object may suffice
-- **Early development**: Focus on getting the feature working first and extract once patterns emerge
+- **Premature extraction**: Wait until the separation is clear. Extracting too early can fragment the design
+- **No natural cohesion**: If the fields and methods do not form a coherent concept, the extraction will feel forced
+- **Performance-critical code**: The extra object allocation rarely matters. Profile before ruling it out
+- **Trivial classes**: When the data is simple and has no behavior, a plain array or simple object may be enough
+- **Early development**: Get the feature working first and extract once patterns emerge
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Method**: Often a preliminary step that reveals which groups of code belong together
-- **Move Method/Field**: The fine-grained counterpart for shifting individual members between classes
-- **Extract Interface**: Useful after extraction when multiple implementations of the new concept are likely
-- **Replace Temp with Query**: Helps eliminate temporary variables before extraction
+- **Extract Method**: Often a first step that shows which groups of code belong together
+- **Move Method/Field**: The fine-grained counterpart for moving individual members between classes
+- **Extract Interface**: Useful after extraction when several implementations of the new concept are likely
+- **Replace Temp with Query**: Removes temporary variables before extraction
 - **Replace Method with Method Object**: An alternative when a single method has too many local variables
 - **Introduce Parameter Object**: Groups related parameters into a new class

@@ -1,28 +1,38 @@
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-The Comments smell surfaces when code relies heavily on inline explanations to make itself understood. Comments are not inherently bad - they become a smell when they substitute for clear code rather than supplementing it. If a block of code needs a comment to explain *what* it does, the real fix is usually restructuring the code so the comment becomes unnecessary. Truly self-documenting code communicates through well-chosen names, small focused methods, and explicit types.
+The Comments smell appears when code needs inline explanations to be understood. Comments are not bad in themselves. They become a smell when they replace clear code instead of adding to it. If a block needs a comment to explain *what* it does, the fix is usually to restructure the code so the comment is no longer needed. Self-documenting code relies on good names, small focused methods, and explicit types.
 
-## Why It's a Problem
+## Why it's a problem
 
-Even well-intentioned comments introduce risks:
+Even well-meant comments carry risks:
 
-- **They rot quickly**: When code evolves, comments are often left behind, becoming misleading rather than helpful
-- **They mask structural weaknesses**: Heavy commenting usually signals that the code itself is too convoluted - fixing the code is a better investment than annotating it
-- **They compensate for poor naming**: Instead of renaming a method or variable to be self-explanatory, developers add a comment alongside the unclear name
-- **They restate the obvious**: Comments that merely echo what the code already says add noise without value
-- **They discourage refactoring**: Developers may feel the code is "documented enough" and skip the structural improvements it actually needs
+- **They rot quickly**: When code changes, comments are often left behind and become misleading
+- **They mask structural weaknesses**: Heavy commenting usually means the code is too convoluted. Fixing the code is a better investment than annotating it
+- **They compensate for poor naming**: Instead of renaming an unclear method or variable, developers add a comment next to it
+- **They restate the obvious**: Comments that echo the code add noise
+- **They discourage refactoring**: Developers may feel the code is "documented enough" and skip the structural fixes it needs
 
-## Signs and Symptoms
+## Signs and symptoms
 
-- Methods peppered with inline explanations throughout
-- Comments that describe *what* the code does rather than *why* a non-obvious decision was made
+- Methods full of inline explanations
+- Comments that describe *what* the code does instead of *why* a non-obvious decision was made
 - Comments placed before complex expressions or logic blocks
 - Stale comments that no longer match the current code behavior
-- Comments that paraphrase variable or method names that could simply be renamed
+- Comments that paraphrase variable or method names that could be renamed
 
-## Before/After Examples
+## Before and after
 
-### Before: Unclear Logic with Heavy Comments
+### Before: unclear logic with heavy comments
 
 ```php
 <?php declare(strict_types=1);
@@ -64,7 +74,7 @@ class OrderProcessor
 }
 ```
 
-### After: Self-Documenting Code
+### After: self-documenting code
 
 ```php
 <?php declare(strict_types=1);
@@ -123,30 +133,30 @@ class OrderProcessor
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
-**Extract Method**: Convert commented code sections into separate, well-named methods. The method name replaces the need for the comment.
+**Extract Method**: Turn commented code sections into separate, well-named methods. The method name replaces the comment.
 
-**Rename Method/Variable**: Give unclear identifiers more descriptive names. `$d` becomes `$daysThreshold`; `calc()` becomes `calculateTotalWithTax()`.
+**Rename Method/Variable**: Give unclear identifiers descriptive names. `$d` becomes `$daysThreshold`; `calc()` becomes `calculateTotalWithTax()`.
 
-**Extract Variable**: Break complex expressions into intermediate variables with meaningful names, eliminating the need for clarifying comments.
+**Extract Variable**: Break complex expressions into intermediate variables with meaningful names. The clarifying comment is then unnecessary.
 
-**Introduce Enum/Class**: Group related constants or values into enums or typed classes to make code structure clearer.
+**Introduce Enum/Class**: Group related constants or values into enums or typed classes to clarify the code structure.
 
-**Extract Assertion**: Replace comments documenting expected state with assertions or type hints that enforce invariants.
+**Extract Assertion**: Replace comments that document expected state with assertions or type hints that enforce invariants.
 
 ## Exceptions
 
-Comments are valuable and appropriate when:
+Comments are appropriate when:
 
-- **Explaining "why" not "what"**: Documenting business logic, legal requirements, or architectural decisions that aren't obvious from code alone
-- **Documenting complex algorithms**: When an algorithm is inherently complex and simplification isn't feasible, a comment explaining the approach is acceptable
-- **API documentation**: PHPDoc blocks for public methods, parameters, and return types serve as part of the API contract
-- **Non-obvious workarounds**: Explaining why a seemingly incorrect implementation is necessary (e.g., browser compatibility, performance trade-offs)
+- **Explaining "why", not "what"**: Business logic, legal requirements, or architectural decisions that the code alone does not show
+- **Complex algorithms**: When an algorithm is complex and cannot be simplified, a comment explaining the approach is acceptable
+- **API documentation**: PHPDoc blocks for public methods, parameters, and return types are part of the API contract
+- **Non-obvious workarounds**: Explaining why an implementation that looks wrong is necessary (e.g., browser compatibility, performance trade-offs)
 
-## Related Smells
+## Related smells
 
 - **Long Method**: Methods that accumulate many comments are usually too long and should be decomposed
-- **Poor Naming**: Comments frequently serve as a bandage over unclear variable and method names
-- **Duplicate Code**: Identical logic explained separately in different locations via comments
+- **Poor Naming**: Comments often cover up unclear variable and method names
+- **Duplicate Code**: Identical logic explained separately in comments in different places
 - **Magic Numbers**: Unexplained numeric constants that force developers to write clarifying comments

@@ -1,31 +1,42 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before (PHP 8.3+)](#before-php-83)
+- [After (PHP 8.3+)](#after-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-This refactoring removes a superfluous back-reference from a bidirectional relationship between two classes. When one side of a two-way link never actually uses its connection to the other, that connection serves no purpose and only adds complexity. Eliminating it produces leaner classes with fewer responsibilities.
+This refactoring removes a superfluous back-reference from a bidirectional relationship between two classes. When one side of a two-way link never uses its connection to the other, that connection has no purpose and only adds complexity. Removing it leaves leaner classes with fewer responsibilities.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
 - **Dormant reference**: One class maintains a link to the other but never reads or writes through it
 - **Indirect access suffices**: The referenced object can be retrieved via queries, method arguments, or services instead
-- **Resource waste**: Circular references interfere with garbage collection and consume unnecessary memory
-- **Unnecessary coupling**: Both classes are forced into mutual awareness when only one genuinely depends on the other
-- **Simpler evolution**: Fewer interdependencies make the code easier to understand and modify
+- **Resource waste**: Circular references interfere with garbage collection and use memory for nothing
+- **Unnecessary coupling**: Both classes know about each other although only one depends on the other
+- **Simpler evolution**: Fewer interdependencies make the code easier to change
 
-### Why It Matters
+### Why it matters
 
-Two-way associations impose ongoing coordination costs: they demand synchronization logic whenever objects are created, updated, or destroyed. Classes bound by bidirectional references cannot be comprehended or changed independently. When one direction of the link sits unused, the resulting coupling is pure waste.
+Two-way associations carry an ongoing coordination cost: they need synchronization logic whenever objects are created, updated, or destroyed. Classes bound by bidirectional references cannot be understood or changed independently. When one direction of the link is unused, that coupling is pure waste.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
 1. **Verify the link is unused**: Confirm that one class never reads, writes, or otherwise relies on the back-reference, or that the same data is reachable by other means
-2. **Map out alternative access paths**: Determine whether the needed information can arrive through method arguments, repository queries, or service lookups
-3. **Reroute existing usage**: Swap any remaining direct field access with the alternative path
-4. **Strip assignment code**: Remove statements that establish or update the back-reference during object lifecycle events
+2. **Find alternative access paths**: Determine whether the needed information can arrive through method arguments, repository queries, or service lookups
+3. **Reroute existing usage**: Replace any remaining direct field access with the alternative path
+4. **Remove assignment code**: Remove statements that establish or update the back-reference during object lifecycle events
 5. **Drop the field**: Delete the now-unused reference property from the class
-6. **Execute the test suite**: Verify that all behavior is preserved
+6. **Run the test suite**: Confirm that behavior is unchanged
 
-## Before: PHP 8.3+ Example
+## Before (PHP 8.3+)
 
 ```php
 <?php
@@ -101,7 +112,7 @@ class Employee
 }
 ```
 
-## After: PHP 8.3+ Example
+## After (PHP 8.3+)
 
 ```php
 <?php
@@ -165,25 +176,25 @@ class Employee
 
 ## Benefits
 
-- **Leaner Classes**: Removing the unused link cuts down on code each class must carry
-- **Improved Memory Management**: Breaking circular references allows garbage collectors to reclaim memory more efficiently
-- **Lower Coupling**: Each class can change independently without ripple effects on the other
-- **Easier Testing**: Classes that stand alone require less scaffolding in unit tests
-- **Simplified Lifecycle**: No synchronization logic is required for the eliminated direction
-- **Tighter Encapsulation**: Classes only expose associations they genuinely rely on
+- **Leaner classes**: Removing the unused link cuts down on code each class must carry
+- **Memory management**: Breaking circular references lets the garbage collector reclaim memory sooner
+- **Lower coupling**: Each class can change independently without ripple effects on the other
+- **Easier testing**: Standalone classes need less scaffolding in unit tests
+- **Simpler lifecycle**: The removed direction needs no synchronization logic
+- **Tighter encapsulation**: Classes only expose associations they rely on
 
-## When NOT to Use
+## When NOT to use
 
 - **Both directions see active use**: If both classes read the reference, the bidirectional link is warranted
-- **Reverse lookup performance**: When substituting the direct reference with a database query would introduce unacceptable latency
-- **Inherently mutual relationships**: Some domain concepts are naturally two-way
+- **Reverse lookup performance**: Replacing the direct reference with a database query would add unacceptable latency
+- **Inherently mutual relationships**: Some domain concepts are two-way by nature
 - **Published API surface**: Removing the association may break external consumers who depend on it
-- **Uncertain usage**: If you cannot confirm the back-reference is truly unused, investigate thoroughly before deleting it
+- **Uncertain usage**: If you cannot confirm the back-reference is unused, investigate before deleting it
 
-## Related Refactorings
+## Related refactorings
 
 - **Change Unidirectional Association to Bidirectional**: The reverse operation, introducing a back-reference when needed
-- **Extract Class**: Separates responsibilities to further decrease coupling
-- **Move Method**: Relocates behavior closer to the data it operates on
+- **Extract Class**: Separates responsibilities to reduce coupling further
+- **Move Method**: Moves behavior closer to the data it operates on
 - **Hide Delegate**: Wraps associations behind accessor methods to limit exposure
-- **Remove Middle Man**: Strips out intermediary objects that manage relationships unnecessarily
+- **Remove Middle Man**: Removes intermediary objects that manage relationships unnecessarily

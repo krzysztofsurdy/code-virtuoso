@@ -1,12 +1,23 @@
 # Collapse Hierarchy
 
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after](#before-and-after)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Collapse Hierarchy merges a subclass into its superclass (or vice versa) when the two have become so similar that maintaining separate classes provides no value. The goal is to remove structural overhead that no longer serves a purpose.
+Collapse Hierarchy merges a subclass into its superclass (or the reverse) when the two have become so similar that separate classes add no value. It removes structure that no longer has a purpose.
 
 ## Motivation
 
-As a codebase evolves, subclasses sometimes lose the distinctive behavior that justified their existence. Methods get moved, features get removed, and eventually the parent and child become nearly identical. At that point the hierarchy is noise - it forces readers to navigate between classes without gaining any insight. Collapsing the two into one class restores simplicity.
+Over time, subclasses can lose the behavior that justified them. Methods get moved and features get removed until parent and child are nearly identical. At that point the hierarchy is noise: readers jump between classes and learn nothing. Merging the two into one class makes the code simpler.
 
 ## Mechanics
 
@@ -14,11 +25,11 @@ As a codebase evolves, subclasses sometimes lose the distinctive behavior that j
 2. Pull members up into the superclass or push them down into the subclass, depending on which class you want to keep
 3. Update all references throughout the codebase to use the surviving class
 4. Delete the now-empty class
-5. Run your tests to confirm nothing has changed behaviorally
+5. Run the tests to confirm behavior is unchanged
 
-## Before/After Examples
+## Before and after
 
-### Before: Unnecessary Vehicle Hierarchy
+### Before: unnecessary Vehicle hierarchy
 
 ```php
 <?php
@@ -62,7 +73,7 @@ final class Truck extends Vehicle
 }
 ```
 
-### After: Collapsed Into Single Class with Enum
+### After: collapsed into a single class with an enum
 
 ```php
 <?php
@@ -110,26 +121,26 @@ final readonly class Vehicle
 
 ## Benefits
 
-- **Less Structural Overhead**: Fewer classes means less indirection and fewer files to manage
-- **Centralized Logic**: All behavior lives in one place instead of being scattered across a hierarchy
-- **Lower Maintenance Cost**: Modifications happen in a single class rather than requiring coordination between parent and child
-- **Faster Comprehension**: Developers understand the design without tracing through inheritance chains
+- **Less structure**: Fewer classes mean less indirection and fewer files to manage
+- **Centralized logic**: All behavior lives in one place instead of across a hierarchy
+- **Lower maintenance cost**: Changes happen in one class, with no coordination between parent and child
+- **Faster reading**: Developers can follow the design without tracing inheritance chains
 
-## When NOT to Use
+## When NOT to use
 
-- **Multiple subclasses with real differences**: Merging would force unrelated behaviors into one class, violating the Liskov Substitution Principle
-- **Meaningful behavioral variation**: If subclasses carry genuinely distinct responsibilities, the hierarchy is earning its keep
-- **Public API stability**: Collapsing classes that are part of an external API may break consumers
+- **Multiple subclasses with real differences**: Merging would force unrelated behaviors into one class and violate the Liskov Substitution Principle
+- **Meaningful behavioral variation**: If subclasses carry distinct responsibilities, the hierarchy is earning its keep
+- **Public API stability**: Collapsing classes that are part of an external API can break consumers
 
-## Related Refactorings
+## Related refactorings
 
 - **Pull Up Field/Method**: Moves members from subclass to superclass
 - **Push Down Field/Method**: Moves members from superclass to subclass
-- **Extract Superclass**: The opposite direction - creating a hierarchy where none existed
-- **Replace Type Code with Subclasses**: Introduces subclasses to represent type variants
+- **Extract Superclass**: The opposite direction: creates a hierarchy where none existed
+- **Replace Type Code with Subclasses**: Adds subclasses to represent type variants
 - **Replace Type Code with State/Strategy**: An alternative to subclassing for behavioral variation
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

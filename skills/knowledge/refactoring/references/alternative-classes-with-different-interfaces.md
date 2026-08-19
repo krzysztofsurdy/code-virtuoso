@@ -1,28 +1,38 @@
 # Alternative Classes with Different Interfaces
 
+## Contents
+
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and Symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
 ## Overview
 
-This smell arises when two or more classes do essentially the same thing but expose their functionality through different method names and signatures. It usually happens because a developer creates a new class without realizing that an equivalent one already exists - different naming conventions, different file locations, or simply lack of communication between team members. The result is redundant implementations behind inconsistent APIs.
+This smell appears when two or more classes do the same thing but use different method names and signatures. It usually happens when a developer adds a class without knowing an equivalent one exists. Causes include different naming conventions, different file locations, or poor communication in the team. The result is redundant implementations behind inconsistent APIs.
 
-## Why It's a Problem
+## Why it's a problem
 
-- **Redundant Logic**: The same behavior is implemented multiple times, multiplying maintenance effort
-- **Confusing API Surface**: Different method names for identical operations force users to guess which class to use
-- **Cognitive Overhead**: Developers waste time determining whether functionally similar classes actually differ in behavior
-- **Divergent Maintenance**: Bug fixes and enhancements must be applied to each copy, and missed copies introduce inconsistencies
-- **Unnecessary Test Burden**: Each implementation requires its own test coverage despite providing no unique functionality
+- **Redundant logic**: The same behavior is implemented multiple times, multiplying maintenance effort
+- **Confusing API surface**: Different method names for identical operations force users to guess which class to use
+- **Cognitive overhead**: Developers waste time working out whether similar classes actually differ in behavior
+- **Divergent maintenance**: Bug fixes and enhancements must be applied to each copy, and missed copies introduce inconsistencies
+- **Extra tests**: Each implementation needs its own test coverage even though it adds no unique functionality
 
-## Signs and Symptoms
+## Signs and symptoms
 
 - Classes with different method names that perform the same operation
 - Nearly identical algorithms implemented independently with minor variations
 - Developers unsure which class to choose for a given task
-- Documentation that attempts to explain the distinction between functionally equivalent classes
+- Documentation that tries to explain the difference between functionally equivalent classes
 - Similar logic appearing under different naming conventions in different parts of the codebase
 
-## Before/After
+## Before and after
 
-### Before: Inconsistent Interfaces
+### Before: inconsistent interfaces
 
 ```php
 <?php
@@ -54,7 +64,7 @@ class CSVFormatter
 }
 ```
 
-### After: Unified Interface
+### After: unified interface
 
 ```php
 <?php
@@ -98,19 +108,19 @@ readonly class CSVExporter implements DataExporter
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
-### 1. Extract Common Interface
-Create a shared interface that all related classes implement, standardizing method signatures and making intent explicit.
+### 1. Extract Interface
+Create a shared interface that all related classes implement. It standardizes method signatures and makes intent explicit.
 
 ### 2. Rename Methods
-If unifying under one interface, rename methods to provide consistent naming across all implementations. Prefer semantic names like `export()`, `serialize()`, or `transform()` based on purpose.
+When unifying under one interface, rename methods so naming is consistent across all implementations. Prefer names like `export()`, `serialize()`, or `transform()` based on purpose.
 
-### 3. Use Enums for Variants
-When dealing with multiple implementations of the same behavior, use PHP enums to explicitly define variants and make selections type-safe.
+### 3. Use enums for variants
+When several implementations share the same behavior, use PHP enums to define the variants explicitly and make selection type-safe.
 
-### 4. Consolidate with Factory Pattern
-Implement a factory that instantiates the correct class, allowing clients to request formatters by type rather than knowing specific class names.
+### 4. Consolidate with a factory
+Add a factory that instantiates the correct class, so clients request formatters by type instead of by class name.
 
 ```php
 <?php
@@ -135,18 +145,18 @@ If only partial functionality overlaps, extract a readonly base class with share
 
 ## Exceptions
 
-### When It's Acceptable
+### When it's acceptable
 
-- **Third-party Classes**: When integrating external libraries with different APIs, creating adapter classes is appropriate
-- **Intentional Variation**: When different interfaces serve fundamentally different use cases (not just naming differences)
-- **Legacy System Integration**: Temporary adapters while migrating legacy code are acceptable
-- **Domain-Specific Requirements**: When business logic demands genuinely different method names for semantic clarity in different contexts
+- **Third-party classes**: When integrating external libraries with different APIs, creating adapter classes is appropriate
+- **Intentional variation**: The interfaces serve different use cases, not just different names
+- **Legacy system integration**: Temporary adapters are acceptable while migrating legacy code
+- **Domain-specific requirements**: The business logic calls for different method names in different contexts
 
-## Related Smells
+## Related smells
 
-- **Duplicate Code**: Naturally accompanies alternative classes, since each implements the same logic independently
-- **Data Clumps**: Multiple classes operating on similar data structures often hints at a shared abstraction waiting to be extracted
+- **Duplicate Code**: Often comes with alternative classes, since each implements the same logic on its own
+- **Data Clumps**: Multiple classes operating on similar data structures often points to a shared abstraction that can be extracted
 - **Inappropriate Intimacy**: Classes that are too similar to justify existing separately
 - **Lazy Class**: After unifying interfaces, one of the alternatives may turn out to be entirely redundant
 
-The first step is standardizing the method names across all alternatives. Then use Move Method, Add Parameter, or Parameterize Method to align signatures and implementations. When only partial overlap exists, Extract Superclass lets both classes inherit shared behavior. Once the interfaces are unified, delete the redundant class - the codebase becomes smaller, more consistent, and easier to navigate.
+Start by standardizing the method names across all alternatives. Then use Move Method, Add Parameter, or Parameterize Method to align signatures and implementations. When only part of the functionality overlaps, Extract Superclass lets both classes inherit the shared behavior. Once the interfaces match, delete the redundant class.

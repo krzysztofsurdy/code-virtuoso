@@ -1,33 +1,44 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before (PHP 8.3+)](#before-php-83)
+- [After (PHP 8.3+)](#after-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+
 ## Overview
 
-Duplicate Observed Data resolves the problem of data being stored in both domain objects and UI components by introducing an observer-based synchronization mechanism. The domain model becomes the single source of truth, and UI components subscribe to it for automatic updates. This prevents the data drift that occurs when two copies of the same information must be kept in sync manually.
+Duplicate Observed Data fixes data that is stored in both domain objects and UI components by adding observer-based synchronization. The domain model becomes the single source of truth, and UI components subscribe to it for updates. This prevents the drift that happens when two copies of the same information must be kept in sync by hand.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
 - **Mirrored data**: The same information is stored in both the domain layer and UI layer
 - **Synchronization failures**: Changes to the domain do not always reach the UI, or vice versa
-- **Redundant update code**: Logic for updating both copies is scattered and easy to forget
+- **Redundant update code**: Logic that updates both copies is scattered and easy to forget
 - **Hidden bugs**: Stale data in one layer causes incorrect behavior that is hard to trace
-- **Complex state tracking**: Multiple locations maintain overlapping information
-- **Testing difficulty**: Data duplication makes it hard to test domain logic independently of the UI
+- **Complex state tracking**: Several places hold overlapping information
+- **Testing difficulty**: Duplicated data makes it hard to test domain logic apart from the UI
 
-### Why It Matters
+### Why it matters
 
-Establishing a single authoritative data store (the domain model) and using observers to propagate changes eliminates an entire class of synchronization bugs. It also decouples the UI from the details of data storage, making both layers easier to test and modify independently.
+One authoritative data store (the domain model) plus observers that propagate changes removes a whole class of synchronization bugs. It also decouples the UI from how data is stored, so each layer is easier to test and change on its own.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
 1. **Map the duplication**: Identify every place where the same data lives in both domain and UI
-2. **Define an observer contract**: Create an interface that UI components will implement to receive change notifications
+2. **Define an observer contract**: Create an interface that UI components implement to receive change notifications
 3. **Register observers**: Have UI components subscribe to the domain objects they depend on
-4. **Notify on change**: Modify domain setters to broadcast notifications to all registered observers
+4. **Notify on change**: Change domain setters to notify all registered observers
 5. **Remove cached copies**: Delete the duplicate data fields from UI components
 6. **Read from the source**: Update UI accessors to fetch values directly from the domain model
-7. **Verify synchronization**: Confirm that UI always reflects the current domain state, regardless of how changes originate
+7. **Verify synchronization**: Confirm that the UI always shows the current domain state, however the change originates
 
-## Before: PHP 8.3+ Example
+## Before (PHP 8.3+)
 
 ```php
 <?php
@@ -105,7 +116,7 @@ class PersonUI
 }
 ```
 
-## After: PHP 8.3+ Example
+## After (PHP 8.3+)
 
 ```php
 <?php
@@ -186,7 +197,7 @@ class PersonUI implements Observer
 
     public function update(): void
     {
-        // Automatically called when person changes
+        // Called when person changes
         // No need to manually sync - read from domain directly
     }
 
@@ -223,38 +234,38 @@ echo $ui->getNameDisplay(); // "John Doe"
 
 // Update through UI
 $ui->updatePerson('Jane Doe', 31);
-echo $ui->getNameDisplay(); // "Jane Doe" - automatically synced
+echo $ui->getNameDisplay(); // "Jane Doe" - synced
 
-// Update domain directly - UI stays in sync automatically
+// Update domain directly - UI stays in sync
 $person->setName('Bob Smith');
 echo $ui->getNameDisplay(); // "Bob Smith" - still synced
 ```
 
 ## Benefits
 
-- **Authoritative Data Store**: The domain model is the only place data lives
-- **Automatic Propagation**: UI components refresh themselves without manual coordination
-- **No Stale Data**: Every read returns the current value from the source of truth
-- **Cleaner Update Logic**: Duplicate update code disappears from the UI layer
-- **Isolated Testing**: Domain and UI can be tested independently
-- **Single Point of Change**: Structural changes to the data model happen in one place
-- **Multiple Consumers**: Several UI components can observe the same domain object simultaneously
-- **Loose Coupling**: The domain knows nothing about the UI; the UI depends on the domain through a generic observer contract
+- **Authoritative data store**: The domain model is the only place data lives
+- **Automatic propagation**: UI components refresh themselves without manual coordination
+- **No stale data**: Every read returns the current value from the source of truth
+- **Cleaner update logic**: Duplicate update code disappears from the UI layer
+- **Isolated testing**: Domain and UI can be tested independently
+- **Single point of change**: Structural changes to the data model happen in one place
+- **Multiple consumers**: Several UI components can observe the same domain object
+- **Loose coupling**: The domain knows nothing about the UI. The UI depends on the domain through a generic observer contract
 
-## When NOT to Use
+## When NOT to use
 
 - **Read-only or immutable data**: If data never changes, there is nothing to synchronize
-- **High-frequency updates**: Notification overhead may be unacceptable in tight loops or real-time systems
-- **Batched changes**: Frequent small updates can flood observers; consider batching or debouncing instead
-- **Separate processes**: When domain and UI run in different processes or services, an observer within a single process is not sufficient
-- **Heavily coupled legacy code**: Retrofitting the observer pattern into tightly coupled legacy systems may require extensive changes
+- **High-frequency updates**: Notification overhead may be too high in tight loops or real-time systems
+- **Batched changes**: Frequent small updates can flood observers. Consider batching or debouncing instead
+- **Separate processes**: When domain and UI run in different processes or services, an in-process observer is not enough
+- **Tightly coupled legacy code**: Adding the Observer pattern to tightly coupled legacy systems may require extensive changes
 - **One-way data flow**: If data only moves from UI to domain and never back, the duplication problem does not apply
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Class**: Split observer management into a dedicated class if the domain object becomes too large
+- **Extract Class**: Move observer management into its own class if the domain object grows too large
 - **Replace Temp with Query**: Remove temporary variables that cache domain data
-- **Replace Data Value with Object**: Promote primitive fields into richer objects that can participate in observation
-- **Move Method**: Relocate observer-related logic to the class where it fits best
-- **Introduce Parameter Object**: Group related observed fields into a single object
-- **Observer Pattern**: The design pattern that underpins this refactoring
+- **Replace Data Value with Object**: Turn primitive fields into richer objects that can take part in observation
+- **Move Method**: Move observer-related logic to the class where it fits best
+- **Introduce Parameter Object**: Group related observed fields into one object
+- **Observer Pattern**: The design pattern behind this refactoring
