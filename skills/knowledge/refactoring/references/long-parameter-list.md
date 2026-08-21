@@ -1,29 +1,36 @@
 # Long Parameter List
 
-## Overview
+A method or function takes more than three or four parameters, which turns call sites into puzzles and invites mistakes. The smell usually appears when several algorithms are folded into one method. It also appears when callers must assemble data that the method could fetch on its own. As the parameter count climbs, the method gets harder to call, test in isolation, and maintain.
 
-A method or function takes more than three or four parameters, turning call sites into puzzles and inviting mistakes. This smell commonly emerges when several algorithms are folded into a single method, or when callers must assemble data that the method could fetch on its own. As the parameter count climbs, the method becomes progressively harder to invoke correctly, test in isolation, and maintain over time.
+## Contents
 
-## Why It's a Problem
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
 
-- **Opaque Call Sites**: Callers must recall the correct sequence and meaning of each argument, particularly when multiple parameters share the same type
-- **Test Setup Overhead**: Constructing test cases demands numerous arguments, many irrelevant to the behavior under test
-- **Cascade of Changes**: Adding, removing, or reordering parameters forces updates at every call site
-- **Hidden Constraints**: Dependencies and invariants among parameters stay invisible rather than being captured in a type
-- **Tight Coupling**: Passing many primitive values ties the caller directly to the method's internal expectations
+## Why it's a problem
 
-## Signs and Symptoms
+- **Opaque call sites**: callers must remember the order and meaning of each argument, especially when several parameters share a type.
+- **Test setup overhead**: test cases need many arguments, most irrelevant to the behavior under test.
+- **Cascading changes**: adding, removing, or reordering parameters forces updates at every call site.
+- **Hidden constraints**: dependencies and invariants among parameters stay invisible instead of being captured in a type.
+- **Tight coupling**: passing many primitive values ties the caller to the method's internal expectations.
+
+## Signs and symptoms
 
 - Methods that accept four or more parameters
-- Multiple parameters of the same type that logically belong together
-- Callers calculating values solely to pass them as arguments
-- Developers routinely checking the signature to remember parameter order
-- Identical parameter groupings recurring across several methods
+- Several parameters of the same type that logically belong together
+- Callers computing values only to pass them as arguments
+- Developers checking the signature to remember parameter order
+- The same parameter groupings recurring across several methods
 - Parameters that are never used independently of one another
 
-## Before/After
+## Before and after
 
-### Before: Long Parameter List
+### Before: long parameter list
 
 ```php
 <?php declare(strict_types=1);
@@ -70,7 +77,7 @@ $processor->processOrder(
 );
 ```
 
-### After: Parameter Objects
+### After: parameter objects
 
 ```php
 <?php declare(strict_types=1);
@@ -168,37 +175,42 @@ $processor = new OrderProcessor();
 $processor->processOrder($request);
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### 1. Introduce Parameter Object
-Consolidate related parameters into a single value object. Group data that naturally belongs together, reducing the parameter count while making the conceptual relationship explicit.
+
+Consolidate related parameters into a single value object. Group data that belongs together, which cuts the parameter count and makes the relationship explicit.
 
 ### 2. Replace Parameter with Method Call
-When a parameter value is just the result of calling a method on another object, let the receiving method fetch it directly. This trims unnecessary arguments and loosens the coupling between caller and callee.
+
+When a parameter value is just the result of calling a method on another object, let the receiving method fetch it directly. This removes unnecessary arguments and loosens the coupling between caller and callee.
 
 ### 3. Preserve Whole Object
-Rather than extracting individual fields from an object and passing them one by one, pass the entire object. This works well when the caller already holds a reference, though watch out for circular dependencies.
 
-### 4. Use Enums for Options
-Replace boolean flags and string-based choices with enums. This provides type safety and makes the intent immediately apparent at call sites.
+Instead of extracting individual fields from an object and passing them one by one, pass the whole object. This works well when the caller already holds a reference. Watch for circular dependencies.
 
-### 5. Extract to Builder Pattern
+### 4. Use enums for options
+
+Replace boolean flags and string-based choices with enums. They add type safety and make the intent obvious at call sites.
+
+### 5. Extract to Builder pattern
+
 For assembling complex objects with many optional parameters, a builder keeps call sites readable and avoids telescoping constructors.
 
-Note that refactoring long parameter lists frequently uncovers previously hidden duplicate code, since the same parameter groupings tend to appear in multiple locations.
+Refactoring long parameter lists often uncovers duplicate code, since the same parameter groupings tend to appear in several places.
 
 ## Exceptions
 
-When NOT to refactor:
-- **Framework Requirements**: Some frameworks mandate specific method signatures
-- **Public APIs**: Changing signatures breaks consumer code; add overloads or new methods instead
-- **Performance Sensitivity**: Object wrapping introduces negligible overhead in most cases, but profile before deciding in hot paths
-- **Deliberate Flexibility**: Some methods genuinely need many parameters for algorithmic control
-- **Legacy Constraints**: When the refactoring would cascade across too large a surface area to be practical
+Do not refactor when:
+- **Framework requirements**: some frameworks mandate specific method signatures
+- **Public APIs**: changing signatures breaks consumer code, so add overloads or new methods instead
+- **Performance sensitivity**: object wrapping adds very little overhead in most cases, but profile before deciding in hot paths
+- **Deliberate flexibility**: some methods need many parameters for algorithmic control
+- **Legacy constraints**: the refactoring would cascade across too large a surface to be practical
 
-## Related Smells
+## Related smells
 
-- **Data Clumps**: Parameters that invariably travel together and should be grouped into objects
-- **Primitive Obsession**: Raw types standing in for value objects
-- **Feature Envy**: A method extracting many values from another object (suggests the method belongs there instead)
-- **Message Chains**: Deep object traversal to extract values (related to the Preserve Whole Object solution)
+- **Data Clumps**: parameters that always travel together and should be grouped into objects
+- **Primitive Obsession**: raw types standing in for value objects
+- **Feature Envy**: a method extracting many values from another object suggests the method belongs there
+- **Message Chains**: deep object traversal to extract values (related to the Preserve Whole Object solution)

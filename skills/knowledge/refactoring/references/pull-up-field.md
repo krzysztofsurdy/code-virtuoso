@@ -2,31 +2,42 @@
 
 ## Overview
 
-Pull Up Field moves a field that appears in multiple subclasses into their common superclass. When two or more child classes declare the same field for the same purpose, centralizing the declaration in the parent removes the redundancy and establishes a single authoritative location for the shared state.
+Pull Up Field moves a field that appears in several subclasses into their common superclass. When two or more child classes declare the same field for the same purpose, one declaration in the parent removes the redundancy and gives the shared state a single home.
+
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after PHP 8.3+ code](#before-and-after-php-83-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
 
 ## Motivation
 
-Repeated field declarations across sibling classes produce several downsides:
+Repeated field declarations across sibling classes have several downsides:
 
-- **Scattered updates**: Renaming or changing the field type must be done in every subclass
-- **Silent divergence**: Subclasses may gradually handle the field differently, introducing subtle bugs
-- **Blocked consolidation**: Methods that depend on the duplicated field cannot be pulled up until the field itself is consolidated
-- **Obscured intent**: The fact that the field is shared across the hierarchy is not visible from any single class
+- **Scattered updates**: renaming the field or changing its type must be done in every subclass.
+- **Silent divergence**: subclasses may handle the field differently over time, which causes subtle bugs.
+- **Blocked consolidation**: methods that depend on the duplicated field cannot be pulled up until the field is consolidated.
+- **Obscured intent**: no single class shows that the field is shared across the hierarchy.
 
-Lifting the field into the parent creates one definition that all subclasses inherit, enabling further refactorings and making the shared nature of the data explicit.
+Moving the field into the parent gives one definition that all subclasses inherit. It enables further refactorings and shows that the data is shared.
 
 ## Mechanics
 
-1. **Analyze the fields**: Verify that the fields in different subclasses serve identical purposes
-2. **Standardize naming**: If fields have different names, choose a consistent name
-3. **Declare in superclass**: Add the field to the parent class with appropriate visibility (typically `protected`)
-4. **Remove from subclasses**: Delete the field declarations from all subclasses
-5. **Update references**: Ensure all code correctly references the inherited field
-6. **Consider encapsulation**: Apply Self Encapsulate Field to hide the field behind accessor methods
+1. **Analyze the fields**: verify that the fields in different subclasses serve the same purpose.
+2. **Standardize naming**: if the fields have different names, choose one name.
+3. **Declare in the superclass**: add the field to the parent class with suitable visibility (typically `protected`).
+4. **Remove from subclasses**: delete the field declarations from all subclasses.
+5. **Update references**: check that all code refers to the inherited field.
+6. **Consider encapsulation**: apply Self Encapsulate Field to hide the field behind accessor methods.
 
-## Before/After PHP 8.3+ Code
+## Before and after PHP 8.3+ code
 
-### Before: Duplicate Fields in Subclasses
+### Before: duplicate fields in subclasses
 
 ```php
 abstract class Employee
@@ -82,7 +93,7 @@ class Designer extends Employee
 }
 ```
 
-### After: Fields Pulled Up to Superclass
+### After: fields pulled up to the superclass
 
 ```php
 abstract class Employee
@@ -147,28 +158,28 @@ class Designer extends Employee
 
 ## Benefits
 
-- **Single definition**: One field declaration replaces several identical ones
-- **Uniform behavior**: All subclasses share the same storage and access rules
-- **Stronger type guarantees**: A centralized declaration enforces a consistent type across the hierarchy
-- **Unlocks further refactoring**: Methods that use the field can now be pulled up as well
-- **Visible hierarchy design**: The parent class clearly communicates which state is shared
+- **Single definition**: one field declaration replaces several identical ones.
+- **Uniform behavior**: all subclasses share the same storage and access rules.
+- **Consistent types**: one declaration enforces one type across the hierarchy.
+- **Unlocks further refactoring**: methods that use the field can be pulled up too.
+- **Visible hierarchy design**: the parent class shows which state is shared.
 
-## When NOT to Use
+## When not to use
 
-- **Different purposes**: If subclasses use similarly-named fields for different purposes, pulling up creates false cohesion
-- **Different initialization logic**: When subclasses initialize the same field differently, consolidation may add unnecessary complexity
-- **Temporary fields**: Avoid pulling up fields used by only one or two subclasses; extract a new subclass instead
-- **Conditional usage**: If not all subclasses actually need the field, consider using composition or creating intermediate abstract classes
+- **Different purposes**: if subclasses use similarly named fields for different purposes, pulling up creates false cohesion.
+- **Different initialization logic**: when subclasses initialize the same field differently, consolidation may add complexity.
+- **Fields used by few subclasses**: do not pull up fields used by only one or two subclasses. Extract a new subclass instead.
+- **Conditional usage**: if not every subclass needs the field, consider composition or an intermediate abstract class.
 
-## Related Refactorings
+## Related refactorings
 
-- **Pull Up Method**: Consolidate duplicate methods the same way as fields
-- **Push Down Field**: The opposite operation when fields need to be moved to subclasses
-- **Extract Superclass**: Create a new superclass when duplication spans unrelated classes
-- **Self Encapsulate Field**: Hide the field behind getter/setter methods for better control
-- **Replace Data with Object**: Convert primitive fields to dedicated objects for richer behavior
+- **Pull Up Method**: consolidate duplicate methods the same way as fields.
+- **Push Down Field**: the opposite operation, for fields that should move to subclasses.
+- **Extract Superclass**: create a new superclass when the duplication spans unrelated classes.
+- **Self Encapsulate Field**: hide the field behind getter and setter methods for more control.
+- **Replace Data with Object**: convert primitive fields to dedicated objects with richer behavior.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

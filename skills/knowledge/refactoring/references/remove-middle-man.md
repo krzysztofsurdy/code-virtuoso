@@ -1,29 +1,42 @@
+# Remove Middle Man
+
 ## Overview
 
-Remove Middle Man eliminates a class that does nothing but forward requests to another object. When a class consists primarily of delegation methods - each one simply calling the same method on an internal collaborator - the intermediary adds indirection without adding value. Exposing the delegate directly lets clients talk to the real object and trims away the pass-through layer.
+Remove Middle Man eliminates a class that only forwards requests to another object. When a class is mostly delegation methods, each calling the same method on an internal collaborator, the intermediary adds indirection and no value. Exposing the delegate lets clients talk to the real object and removes the pass-through layer.
 
-This technique is the inverse of Hide Delegate and is applied when the middle man has become unnecessary complexity rather than a useful abstraction.
+This is the inverse of Hide Delegate. Apply it when the middle man has become needless complexity instead of a useful abstraction.
+
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before: PHP 8.3+ code](#before-php-83-code)
+- [After: PHP 8.3+ code](#after-php-83-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
 
 ## Motivation
 
-- **Cut unnecessary indirection**: Chains of forwarding methods obscure which object actually performs the work
-- **Surface the real collaborator**: Direct access makes the code's intent transparent to readers
-- **Shrink the maintenance footprint**: Every new method on the delegate no longer requires a matching wrapper
-- **Streamline the class tree**: Removing hollow intermediaries keeps the design lean
-- **Speed up evolution**: Clients can adopt new delegate capabilities immediately, without waiting for wrapper methods to be added
+- **Cut indirection**: chains of forwarding methods hide which object does the work.
+- **Show the real collaborator**: direct access makes the code's intent clear to readers.
+- **Shrink the maintenance footprint**: a new method on the delegate no longer needs a matching wrapper.
+- **Simplify the class tree**: removing hollow intermediaries keeps the design lean.
+- **Speed up change**: clients can use new delegate capabilities at once, without waiting for wrapper methods.
 
 ## Mechanics
 
-1. **Identify the middle man**: Find classes that primarily delegate to another object
-2. **Check usage patterns**: Determine which delegated methods clients actually use
+1. **Identify the middle man**: find classes that mostly delegate to another object.
+2. **Check usage patterns**: find out which delegated methods clients use.
 3. **For each delegated method**:
-   - Create a getter method to access the delegated object
+   - Create a getter that returns the delegated object
    - Update all clients to use the delegated object directly
    - Remove the delegating method from the middle man
-4. **Remove unused delegation**: Eliminate wrapper methods as clients transition
-5. **Clean up**: Delete the middle man class if it becomes empty
+4. **Remove unused delegation**: delete wrapper methods as clients move over.
+5. **Clean up**: delete the middle man class if it ends up empty.
 
-## Before: PHP 8.3+ Code
+## Before: PHP 8.3+ code
 
 ```php
 class Department
@@ -93,7 +106,7 @@ echo $department->getManagerName();
 echo $department->getManagerSalary();
 ```
 
-## After: PHP 8.3+ Code
+## After: PHP 8.3+ code
 
 ```php
 class Department
@@ -147,24 +160,24 @@ echo $department->getManager()->getSalary();
 
 ## Benefits
 
-- **Transparent relationships**: Clients see which object they are really working with
-- **Zero wrapper overhead**: New delegate methods are available immediately without mirroring
-- **Leaner classes**: The former middle man sheds boilerplate, or disappears entirely
-- **Direct mockability**: Tests can inject or stub the delegate without navigating an extra layer
-- **Honest design**: The architecture reflects actual responsibilities rather than ceremonial forwarding
+- **Clear relationships**: clients see which object they work with.
+- **No wrapper upkeep**: new delegate methods are available at once, with no mirroring.
+- **Leaner classes**: the former middle man loses its boilerplate, or disappears.
+- **Direct mockability**: tests can inject or stub the delegate without going through an extra layer.
+- **Honest design**: the structure reflects actual responsibilities, not ceremonial forwarding.
 
-## When NOT to Use
+## When not to use
 
-- **Building an abstraction layer**: If the middle man provides valuable isolation from implementation details, keep it
-- **Encapsulation is critical**: In tightly coupled systems, the wrapper may be essential for security or validation
-- **API stability**: When the middle man shields clients from changes in the delegated object's interface
-- **Cross-cutting concerns**: When the middle man implements logging, authorization, or caching
-- **Early in design**: Until you're certain the abstraction isn't needed for future evolution
+- **Abstraction layer**: if the middle man isolates clients from implementation details, keep it.
+- **Encapsulation matters**: in tightly coupled systems, the wrapper may be needed for security or validation.
+- **API stability**: the middle man shields clients from changes in the delegated object's interface.
+- **Cross-cutting concerns**: the middle man implements logging, authorization, or caching.
+- **Early in design**: wait until you are sure the abstraction is not needed for future change.
 
-## Related Refactorings
+## Related refactorings
 
-- **Hide Delegate**: The opposite refactoring; introduce a middle man when you need to isolate clients from implementation changes
-- **Introduce Parameter Object**: Combine multiple delegated methods into a single parameter
-- **Extract Method**: Break down complex delegating logic into smaller, focused methods
-- **Encapsulate Field**: Protect direct access when needed, replacing it with controlled getter/setter methods
-- **Replace Delegation with Inheritance**: Sometimes inherit from the delegated class instead of delegating
+- **Hide Delegate**: the opposite refactoring. Introduce a middle man when you need to isolate clients from implementation changes.
+- **Introduce Parameter Object**: combine several delegated methods into a single parameter.
+- **Extract Method**: break complex delegating logic into smaller, focused methods.
+- **Encapsulate Field**: protect direct access when needed by replacing it with controlled getters and setters.
+- **Replace Delegation with Inheritance**: sometimes inherit from the delegated class instead of delegating.

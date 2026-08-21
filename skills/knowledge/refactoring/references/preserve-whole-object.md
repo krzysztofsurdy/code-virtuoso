@@ -1,6 +1,8 @@
+# Preserve Whole Object
+
 ## Overview
 
-Preserve Whole Object passes an entire object as a method argument instead of pulling individual values out of it first. When a caller extracts several fields from an object only to hand them to another method, passing the object itself simplifies the call site and keeps the extraction logic in one place.
+Preserve Whole Object passes an entire object as a method argument instead of pulling values out of it first. A caller sometimes extracts several fields from an object only to hand them to another method. Passing the object itself simplifies the call site and keeps the extraction logic in one place.
 
 Instead of:
 ```php
@@ -9,30 +11,40 @@ $high = $daysTempRange->getHigh();
 $withinPlan = $plan->withinRange($low, $high);
 ```
 
-We pass the whole object:
+Pass the whole object:
 ```php
 $withinPlan = $plan->withinRange($daysTempRange);
 ```
 
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after: PHP 8.3+ code](#before-and-after-php-83-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Motivation
 
-Extracting multiple values from an object at every call site is repetitive and fragile. If the receiving method later needs an additional piece of data, every caller must be updated to extract and pass the new value. By handing over the whole object, the receiving method can reach for whatever it needs internally, and callers remain untouched when requirements evolve.
+Extracting several values from an object at every call site is repetitive and fragile. If the receiving method later needs one more value, every caller must change to extract and pass it. When the method receives the whole object, it can read what it needs. Callers stay the same when requirements change.
 
-Key motivations include:
-- **Reduce boilerplate**: Eliminate repetitive extraction of values before method calls
-- **Improve maintainability**: Changes to what data a method needs only require updates in one place
-- **Simplify call sites**: Method calls become cleaner and more readable
+- **Less boilerplate**: no repeated extraction of values before method calls
+- **Easier maintenance**: a change in what data a method needs touches one place
+- **Simpler call sites**: method calls are shorter and easier to read
 
 ## Mechanics
 
-1. **Identify the pattern**: Find methods receiving multiple values extracted from the same object
-2. **Add new parameter**: Create a new method parameter accepting the whole object
-3. **Update method body**: Replace value parameters with appropriate method calls on the object
-4. **Update call sites**: Replace extracted value arguments with the whole object
-5. **Remove old parameters**: Delete the now-unused individual value parameters
-6. **Test**: Ensure all call sites work correctly with the change
+1. **Identify the pattern**: find methods that receive several values extracted from the same object.
+2. **Add a new parameter**: add a parameter that accepts the whole object.
+3. **Update the method body**: replace the value parameters with method calls on the object.
+4. **Update call sites**: pass the whole object instead of the extracted values.
+5. **Remove old parameters**: delete the individual value parameters that are no longer used.
+6. **Test**: check that every call site works with the change.
 
-## Before/After PHP 8.3+ Code
+## Before and after: PHP 8.3+ code
 
 ### Before
 ```php
@@ -113,28 +125,28 @@ class Client
 
 ## Benefits
 
-- **Shorter Parameter Lists**: Method signatures become concise and self-explanatory
-- **Resilient to Change**: The receiving method can access additional data without altering callers
-- **Less Duplication**: Extraction logic lives inside the method, not at every call site
-- **Stronger Abstractions**: Parameters express domain concepts rather than raw primitives
-- **Simpler Call Sites**: Callers pass one object instead of juggling several extracted values
+- **Shorter parameter lists**: method signatures are short and self-explanatory.
+- **Resilient to change**: the receiving method can use more data without changing callers.
+- **Less duplication**: extraction logic lives inside the method, not at every call site.
+- **Stronger abstractions**: parameters express domain concepts instead of raw primitives.
+- **Simpler call sites**: callers pass one object instead of several extracted values.
 
-## When NOT to Use
+## When not to use
 
-- **Domain Boundary Crossing**: When passing data across architectural boundaries (e.g., API responses), passing the whole object may expose internal structure
-- **Multiple Source Objects**: If values come from different objects, combining them into one artificial object may violate single responsibility
-- **Primitive-Only Methods**: Methods expecting only simple types may become overly coupled to specific object structures
-- **Primitive Obsession Anti-pattern**: Don't create wrapper objects just to avoid primitive parameters
-- **Data Transfer Objects**: For DTOs or value objects passed across services, individual properties may be more appropriate
+- **Crossing a domain boundary**: when data crosses an architectural boundary (e.g., API responses), passing the whole object may expose internal structure.
+- **Multiple source objects**: if the values come from different objects, combining them into one artificial object may violate single responsibility.
+- **Primitive-only methods**: a method that expects only simple types may become too coupled to a specific object structure.
+- **Primitive Obsession anti-pattern**: do not create wrapper objects just to avoid primitive parameters.
+- **Data Transfer Objects**: for DTOs or value objects passed across services, individual properties may be a better fit.
 
-## Related Refactorings
+## Related refactorings
 
-- **Introduce Parameter Object**: Creates a new object to group related parameters, often used before Preserve Whole Object
-- **Extract Class**: Helps identify cohesive data that should be passed together
-- **Encapsulate Query**: Focuses on hiding data access logic within objects
-- **Replace Parameter with Query**: Removes parameters by querying for values internally
+- **Introduce Parameter Object**: creates a new object to group related parameters. Often used before Preserve Whole Object.
+- **Extract Class**: helps identify cohesive data that should be passed together.
+- **Encapsulate Query**: hides data access logic inside objects.
+- **Replace Parameter with Query**: removes parameters by querying for values inside the method.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

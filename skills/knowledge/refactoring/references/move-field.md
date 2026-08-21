@@ -1,33 +1,46 @@
+# Move Field
+
 ## Overview
 
-Move Field relocates a field from one class to another that has a stronger claim to it. When a field is read or written more often by a different class than the one that currently holds it, moving the field aligns data ownership with actual usage. This tightens encapsulation, reduces coupling, and makes each class more cohesive.
+Move Field relocates a field from one class to another that has a stronger claim to it. When a different class reads or writes a field more often than the class that holds it, moving the field aligns data ownership with actual usage. This tightens encapsulation, reduces coupling, and makes each class more cohesive.
+
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics: step by step](#mechanics-step-by-step)
+- [Before: PHP 8.3+ example](#before-php-83-example)
+- [After: PHP 8.3+ example](#after-php-83-example)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
-- **Feature envy**: Another class accesses the field more than the owning class does
-- **Misplaced data**: The field logically belongs to a different concept in the domain
-- **Weak cohesion**: The field has little to do with the owning class's primary responsibility
-- **Tight coupling**: Moving the field would eliminate a dependency between two classes
-- **Duplicated access paths**: Multiple classes reach the field through indirect chains
-- **Preparing for Extract Class**: Moving fields often precedes extracting a group of related data into a new class
+- **Feature Envy**: another class accesses the field more than the owning class does
+- **Misplaced data**: the field logically belongs to a different concept in the domain
+- **Weak cohesion**: the field has little to do with the owning class's main responsibility
+- **Tight coupling**: moving the field would remove a dependency between two classes
+- **Duplicated access paths**: several classes reach the field through indirect chains
+- **Preparing for Extract Class**: moving fields often comes before extracting a group of related data into a new class
 
-### Why It Matters
+### Why it matters
 
-Placing data in the class that manages it most directly reduces the need for cross-class communication, makes each class easier to understand in isolation, and simplifies future refactoring.
+Placing data in the class that manages it most directly reduces cross-class communication, makes each class easier to understand on its own, and simplifies later refactoring.
 
-## Mechanics: Step-by-Step
+## Mechanics: step by step
 
-1. **Analyze usage**: Determine where the field is read and written across the codebase
-2. **Check safety**: Verify that moving the field will not create circular dependencies or break invariants
-3. **Create the field in the target**: Add the field declaration to the destination class
-4. **Add accessors if needed**: Provide getter and setter methods in the target class
-5. **Redirect the source**: Update the source class to access the field through the target
-6. **Delete the original**: Remove the field from its original location once all references are updated
-7. **Run the tests**: Confirm that all behavior is preserved
+1. **Analyze usage**: find where the field is read and written across the codebase.
+2. **Check safety**: verify that moving the field will not create circular dependencies or break invariants.
+3. **Create the field in the target**: add the field declaration to the destination class.
+4. **Add accessors if needed**: provide getter and setter methods in the target class.
+5. **Redirect the source**: update the source class to access the field through the target.
+6. **Delete the original**: remove the field from its original location once all references are updated.
+7. **Run the tests**: confirm that behavior is unchanged.
 
-## Before: PHP 8.3+ Example
+## Before: PHP 8.3+ example
 
 ```php
 <?php
@@ -107,7 +120,7 @@ class Order
 }
 ```
 
-## After: PHP 8.3+ Example
+## After: PHP 8.3+ example
 
 ```php
 <?php
@@ -194,27 +207,27 @@ class Order
 
 ## Benefits
 
-- **Stronger Encapsulation**: Data resides in the class responsible for managing it
-- **Lower Coupling**: Classes interact less because each manages its own state
-- **Higher Cohesion**: Fields and the methods that use them live together
-- **Clearer Ownership**: Code intent improves when data lives where it is used most
-- **Easier Maintenance**: Understanding data flow becomes simpler
-- **Enables Further Refactoring**: Often a precursor to Extract Class and other structural improvements
-- **Independent Testing**: Classes with their own data are easier to test without complex setup
+- **Stronger encapsulation**: data lives in the class responsible for managing it.
+- **Lower coupling**: classes interact less because each manages its own state.
+- **Higher cohesion**: fields and the methods that use them live together.
+- **Clearer ownership**: intent is easier to read when data sits where it is used most.
+- **Easier maintenance**: data flow is simpler to follow.
+- **Enables further refactoring**: often a precursor to Extract Class and other structural changes.
+- **Independent testing**: classes that own their data need less setup to test.
 
-## When NOT to Use
+## When not to use
 
-- **Source class is the primary consumer**: If the current class uses the field most, moving it creates unnecessary indirection
-- **Core identity field**: Fields that define what the class represents should stay
-- **Circular dependencies**: Moving the field would create a bidirectional dependency
-- **Hot path performance**: Added indirection can matter in tight loops (rare in practice)
-- **Unstable access patterns**: If usage is shifting, wait until the pattern stabilizes before moving
-- **Obscure dependencies**: In legacy code with hidden callers, a comprehensive test suite is needed before moving
+- **Source class is the main consumer**: if the current class uses the field most, moving it adds needless indirection.
+- **Core identity field**: fields that define what the class represents should stay.
+- **Circular dependencies**: moving the field would create a bidirectional dependency.
+- **Hot path performance**: added indirection can matter in tight loops (rare in practice).
+- **Unstable access patterns**: if usage is shifting, wait until the pattern settles.
+- **Obscure dependencies**: in legacy code with hidden callers, get a full test suite in place before moving.
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Class**: Often follows Move Field when multiple related fields migrate to a new class
-- **Move Method**: The companion refactoring - move methods alongside the fields they operate on
-- **Replace Data Value with Object**: Promotes a moved primitive field into a richer object
-- **Remove Middle Man**: Undo excessive indirection if Move Field creates too many delegation layers
-- **Replace Type Code with Subclasses**: For type-discriminator fields that should move with their associated behavior
+- **Extract Class**: often follows Move Field when several related fields migrate to a new class.
+- **Move Method**: the companion refactoring. Move methods alongside the fields they operate on.
+- **Replace Data Value with Object**: promotes a moved primitive field into a richer object.
+- **Remove Middle Man**: undo excessive indirection if Move Field creates too many delegation layers.
+- **Replace Type Code with Subclasses**: for type-discriminator fields that should move with their associated behavior.

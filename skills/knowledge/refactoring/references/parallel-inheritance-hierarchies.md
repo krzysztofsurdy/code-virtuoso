@@ -1,24 +1,31 @@
 # Parallel Inheritance Hierarchies
 
-## Overview
+Parallel Inheritance Hierarchies appear when two or more class hierarchies mirror each other. Adding a subclass to one hierarchy forces you to add a matching subclass to the other. This is a small annoyance at first. As the hierarchies grow, it becomes systematic duplication and fragile coupling between structures that should be independent.
 
-Parallel Inheritance Hierarchies emerge when two or more class hierarchies mirror each other's structure. Adding a subclass to one hierarchy compels you to add a corresponding subclass to the other. What starts as a minor inconvenience compounds as the hierarchies grow, producing systematic duplication and fragile coupling between structures that should be independent.
+## Contents
 
-## Why It's a Problem
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after examples](#before-and-after-examples)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
 
-Every new class added to one hierarchy demands a matching class in the other, doubling the maintenance effort. The implicit dependencies between the two structures are easy to overlook and hard to keep synchronized. As the hierarchies expand, the risk of inconsistencies rises, and the cognitive overhead of understanding the full picture grows substantially. Refactoring one hierarchy without accidentally breaking the other becomes increasingly difficult.
+## Why it's a problem
 
-## Signs and Symptoms
+Every new class in one hierarchy needs a matching class in the other, which doubles the maintenance effort. The hidden dependencies between the two structures are easy to miss and hard to keep in sync. As the hierarchies grow, inconsistencies become more likely and the whole picture is harder to understand. Refactoring one hierarchy without breaking the other gets harder over time.
 
-- Adding a subclass in one hierarchy always requires creating a matching subclass elsewhere
-- Two hierarchies grow in tandem with nearly identical structures
+## Signs and symptoms
+
+- Adding a subclass in one hierarchy always requires a matching subclass elsewhere
+- Two hierarchies grow together with nearly identical structures
 - Abstract base classes in separate hierarchies have mirrored method signatures
-- Structural changes in one hierarchy force corresponding adjustments in the other
-- Strong coupling between hierarchies that are nominally independent
+- Structural changes in one hierarchy force matching changes in the other
+- Strong coupling between hierarchies that are supposed to be independent
 
-## Before/After Examples
+## Before and after examples
 
-**Before: Parallel Hierarchies**
+**Before: parallel hierarchies**
 
 ```php
 <?php
@@ -68,7 +75,7 @@ class HTMLReportExporter extends ReportExporter
 }
 ```
 
-**After: Using Composition**
+**After: using composition**
 
 ```php
 <?php
@@ -124,31 +131,31 @@ readonly class HTMLFormatter implements ReportFormatter
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
-**1. Create References (Composition)**
-Replace inheritance relationships with composition by injecting instances of one hierarchy into the other. This decouples the structures and eliminates the need to maintain parallel subclasses.
+**1. Create references (composition)**
+Replace inheritance with composition by injecting instances of one hierarchy into the other. This decouples the structures and removes the need to maintain parallel subclasses.
 
-**2. Move Methods and Fields**
-Extract common behavior into shared classes that both hierarchies can use. Use Move Method and Move Field techniques to consolidate functionality.
+**2. Move Method and Move Field**
+Extract common behavior into shared classes that both hierarchies can use. Use Move Method and Move Field to consolidate it.
 
-**3. Use Strategy Pattern**
-Replace parallel hierarchies with a single class that delegates to strategy implementations. This simplifies the class structure significantly.
+**3. Use the Strategy pattern**
+Replace the parallel hierarchies with one class that delegates to strategy implementations. This simplifies the class structure.
 
-**4. Apply Decorator Pattern**
-When parallel hierarchies represent different concerns (e.g., export format vs. report type), use decorators to compose behaviors independently.
+**4. Apply the Decorator pattern**
+When the hierarchies represent different concerns (e.g., export format and report type), use decorators to compose behaviors independently.
 
 ## Exceptions
 
-- **True Parallel Requirements**: If two domains genuinely require parallel structures with different evolution paths, maintaining them may be acceptable.
-- **Legacy Systems**: Complete refactoring may be impractical; consider gradual migration using adapters.
-- **Performance-Critical Code**: In rare cases, explicit hierarchies may outperform composition; benchmark before refactoring.
+- **True parallel requirements**: if two domains need parallel structures that evolve differently, keeping them may be acceptable.
+- **Legacy systems**: a full refactoring may be impractical. Consider a gradual migration using adapters.
+- **Performance-critical code**: in rare cases, explicit hierarchies may outperform composition. Benchmark before refactoring.
 
-## Related Smells
+## Related smells
 
-- **Duplicate Code**: Parallel hierarchies are a structural form of systematic duplication spread across multiple classes.
-- **Feature Envy**: Methods in one hierarchy that constantly reference the other hierarchy's data suggest the logic belongs elsewhere.
-- **God Class**: Parallel hierarchies sometimes result from incorrectly splitting a single domain concept.
-- **Middle Man**: Consolidating via composition can introduce pointless delegation if not designed thoughtfully.
+- **Duplicate Code**: parallel hierarchies are a structural form of duplication spread across several classes.
+- **Feature Envy**: methods in one hierarchy that keep referencing the other hierarchy's data suggest the logic belongs elsewhere.
+- **God Class**: parallel hierarchies sometimes come from wrongly splitting a single domain concept.
+- **Middle Man**: consolidating with composition can add pointless delegation if the design is careless.
 
-Note: Small parallel hierarchies may not cause noticeable pain, but the cost grows proportionally with each new subclass pair. If attempting to consolidate the hierarchies produces messier code than the duplication itself, it may be more pragmatic to leave them as-is.
+Small parallel hierarchies may cause little pain, but the cost grows with each new subclass pair. If consolidating them produces messier code than the duplication, leaving them as they are can be the practical choice.

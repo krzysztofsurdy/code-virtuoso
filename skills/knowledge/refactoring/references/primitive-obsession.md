@@ -2,28 +2,38 @@
 
 ## Overview
 
-Primitive Obsession is the habit of using basic data types - strings, integers, floats, arrays - to represent domain concepts that deserve their own objects. Instead of an `Email` class with validation, you pass a raw string. Instead of a `Money` value object, you pass a float and a currency string separately. The result is logic scattered across the codebase, domain rules that are enforced inconsistently (or not at all), and code that fails to express the actual business vocabulary.
+Primitive Obsession is the habit of using basic data types (strings, integers, floats, arrays) to represent domain concepts that deserve their own objects. You pass a raw string instead of an `Email` class with validation. You pass a float and a currency string separately instead of a `Money` value object. The result is logic scattered across the codebase, domain rules enforced inconsistently or not at all, and code that does not express the business vocabulary.
 
-## Why It's a Problem
+## Contents
 
-- **Fragmented Logic**: Data and the operations that belong to it are spread across multiple classes instead of living together
-- **No Built-In Validation**: Primitives accept any value - a string meant to hold an email will happily accept "not-an-email"
-- **Weak Type Safety**: The compiler and IDE cannot distinguish between two strings that represent fundamentally different concepts
-- **Obscured Meaning**: Magic numbers and string constants hide business intent behind opaque values
-- **Repeated Validation**: The same constraints are checked in multiple places, leading to inconsistencies when one is updated and others are not
-- **Expensive Extensions**: Adding behavior related to a domain concept requires hunting down every location that manipulates the primitive
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
 
-## Signs and Symptoms
+## Why it's a problem
+
+- **Fragmented logic**: data and the operations that belong to it are spread across several classes.
+- **No built-in validation**: primitives accept any value. A string meant to hold an email accepts "not-an-email".
+- **Weak type safety**: the compiler and IDE cannot tell apart two strings that represent different concepts.
+- **Obscured meaning**: magic numbers and string constants hide business intent behind opaque values.
+- **Repeated validation**: the same constraints are checked in several places, and one gets updated while the others do not.
+- **Costly extensions**: adding behavior for a domain concept means finding every place that handles the primitive.
+
+## Signs and symptoms
 
 - Integers standing in for enumerated values (roles, statuses, permission levels)
-- Multiple related primitives passed as separate parameters (amount + currency, latitude + longitude)
+- Several related primitives passed as separate parameters (amount and currency, latitude and longitude)
 - String constants used as keys in associative arrays to simulate object fields
-- Magic numbers embedded directly in business logic
-- The same validation logic duplicated across different functions or classes
-- Comments explaining what a primitive value actually represents
-- Parameters named `$status`, `$type`, or `$role` that accept any arbitrary string
+- Magic numbers embedded in business logic
+- The same validation logic duplicated across functions or classes
+- Comments explaining what a primitive value represents
+- Parameters named `$status`, `$type`, or `$role` that accept any string
 
-## Before/After
+## Before and after
 
 ### Before: Primitive Obsession
 
@@ -59,7 +69,7 @@ class Order
 }
 ```
 
-### After: Using Meaningful Objects
+### After: meaningful objects
 
 ```php
 enum OrderStatus: string
@@ -145,27 +155,31 @@ class Order
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### 1. Replace Primitive with Enum
-Convert magic numbers/strings to strongly-typed enums for fixed sets of values:
-- Use `enum` for status codes, types, permissions
-- Provides IDE autocomplete and type checking
-- PHP 8.1+ feature with backed or pure enums
+
+Convert magic numbers and strings to typed enums for fixed sets of values:
+- Use `enum` for status codes, types, and permissions
+- Gives IDE autocomplete and type checking
+- PHP 8.1+ feature, with backed or pure enums
 
 ### 2. Extract Value Object
-Create small, immutable objects wrapping primitives with validation:
+
+Wrap primitives in small, immutable objects that validate their input:
 - `Money`, `Email`, `PhoneNumber`, `UserId`
-- Encapsulate validation logic
+- Keep validation logic inside the object
 - Use `readonly` classes for immutability (PHP 8.2+)
 
 ### 3. Introduce Parameter Object
+
 Group related primitive parameters into a data object:
-- Reduces parameter count in methods
+- Reduces the parameter count in methods
 - Makes relationships explicit
-- Easier to add new related data
+- Makes it easier to add related data later
 
 ### 4. Replace Array with Object
+
 Replace associative arrays with typed objects:
 - Better type hints and autocomplete
 - Self-documenting properties
@@ -174,17 +188,17 @@ Replace associative arrays with typed objects:
 ## Exceptions
 
 Primitive Obsession is acceptable when:
-- Working with configuration arrays or DTOs that are truly generic
-- Passing simple data through frameworks with type constraints
-- Building simple, throwaway scripts
-- Performance-critical numeric arrays (rare cases)
-- Interacting with external APIs that require primitive payloads
+- You work with configuration arrays or DTOs that are generic by nature
+- You pass simple data through frameworks with type constraints
+- You write simple, throwaway scripts
+- You handle performance-critical numeric arrays (rare)
+- You interact with external APIs that require primitive payloads
 
-## Related Smells
+## Related smells
 
-- **Data Clumps**: Groups of primitives that always appear together - the natural next step from Primitive Obsession is bundling them into an object
-- **Magic Numbers**: Unexplained numeric literals embedded in logic, which proper value objects or enums would eliminate
-- **Duplicate Code**: The same validation and constraint checks scattered across the codebase because there is no central type to enforce them
-- **Feature Envy**: Classes reaching into other objects to manipulate primitive fields, a pattern that disappears when those fields become rich objects
+- **Data Clumps**: groups of primitives that always appear together. The next step from Primitive Obsession is to bundle them into an object.
+- **Magic Numbers**: unexplained numeric literals in logic. Value objects or enums remove them.
+- **Duplicate Code**: the same validation and constraint checks scattered across the codebase because no central type enforces them.
+- **Feature Envy**: classes reaching into other objects to manipulate primitive fields. The pattern disappears when those fields become objects.
 
-The root cause is often pragmatic: creating a primitive field is faster than introducing a new class. But this shortcut accumulates over time. Replacing primitives with small objects improves type safety, centralizes validation, and makes duplicate code detection straightforward since the logic now lives in one place.
+The root cause is usually pragmatic: adding a primitive field is faster than adding a class. The shortcut costs more over time. Small objects improve type safety and keep validation in one place. They also make duplicate code easier to spot, because the logic now lives in one place.

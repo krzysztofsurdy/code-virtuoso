@@ -1,26 +1,36 @@
+# Parameterize Method
+
 ## Overview
 
-Parameterize Method merges several methods that do nearly the same thing into one method governed by a parameter. When multiple methods share the same structure but differ only in a literal value or a small constant, introducing a parameter to capture that difference removes the duplication and yields a single, flexible entry point.
+Parameterize Method merges several methods that do nearly the same thing into one method controlled by a parameter. When methods share the same structure and differ only in a literal value or small constant, a parameter can carry that difference. This removes the duplication and leaves a single entry point.
+
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after example (PHP 8.3+)](#before-and-after-example-php-83)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
 
 ## Motivation
 
-Codebases accumulate look-alike methods that vary in only a constant or threshold. This repetition leads to:
+Codebases collect look-alike methods that vary only in a constant or threshold. This repetition causes:
 
-- **Multiplied maintenance**: Every fix or enhancement must be applied across all variants
-- **Divergence risk**: Over time the copies drift apart, introducing subtle inconsistencies
-- **Difficult extension**: Each new variant demands yet another near-duplicate method
+- **Multiplied maintenance**: every fix or change must be applied to all variants
+- **Divergence risk**: the copies drift apart and introduce subtle inconsistencies
+- **Difficult extension**: each new variant needs yet another near-duplicate method
 
-Replacing the set of methods with one parameterized version gives you a single source of truth, a smaller API surface, and a straightforward path to supporting additional variants.
+One parameterized method gives you a single source of truth, a smaller API, and an easy way to add variants.
 
 ## Mechanics
 
-The refactoring process involves three main steps:
+1. **Identify common code**: compare the similar methods and find their shared logic.
+2. **Extract to a new method**: create a method with a parameter for the differing values.
+3. **Update call sites**: replace calls to the old methods with calls to the new one, then delete the old methods.
 
-1. **Identify common code**: Analyze similar methods to find their common logic
-2. **Extract to new method**: Create a new method with a parameter representing the differing values
-3. **Update call sites**: Replace calls to the old methods with calls to the new parameterized method, then delete the old methods
-
-## Before/After Example (PHP 8.3+)
+## Before and after example (PHP 8.3+)
 
 ### Before
 
@@ -79,24 +89,24 @@ $transferPrice = $processor->getPrice($product, 'transfer');
 
 ## Benefits
 
-- **Single source of truth**: Identical logic lives in one place, eliminating drift between copies
-- **Lower maintenance cost**: Bug fixes and enhancements apply once
-- **Easy extension**: Adding a new variant is a configuration change, not a new method
-- **Cleaner API**: Callers see one well-named method rather than a family of near-duplicates
-- **Simpler testing**: One method with parameterized test cases replaces many individual test methods
+- **Single source of truth**: identical logic lives in one place, so copies cannot drift.
+- **Lower maintenance cost**: a bug fix or change applies once.
+- **Easy extension**: a new variant is a configuration change, not a new method.
+- **Cleaner API**: callers see one well-named method instead of a family of near-duplicates.
+- **Simpler testing**: one method with parameterized test cases replaces many test methods.
 
-## When NOT to Use
+## When not to use
 
-- **Excessive complexity**: If the conditional logic becomes convoluted, the refactoring is counterproductive
-- **Fundamentally different operations**: Methods with similar patterns but truly distinct purposes should remain separate
-- **Performance-critical code**: Parameter checking might introduce unnecessary overhead in hot paths
-- **Unclear intent**: When parameterization obscures what the method does rather than clarifying it
+- **Excessive complexity**: if the conditional logic gets convoluted, the refactoring does more harm than good.
+- **Different operations**: methods with a similar shape but distinct purposes should stay separate.
+- **Performance-critical code**: checking the parameter adds overhead in hot paths.
+- **Unclear intent**: the parameter hides what the method does instead of clarifying it.
 
-Sometimes this refactoring can be taken too far, resulting in long, complicated methods instead of multiple simpler ones. If conditional logic becomes too complex, consider the inverse refactoring: Replace Parameter with Explicit Methods.
+This refactoring can be taken too far and leave one long, complicated method in place of several simple ones. If the conditional logic gets too complex, consider the inverse refactoring: Replace Parameter with Explicit Methods.
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Method**: Identify common code patterns before parameterizing
-- **Replace Parameter with Explicit Methods**: Reverse operation when conditional logic becomes too complex
-- **Remove Parameter**: Simplify methods by eliminating unused parameters
-- **Introduce Parameter Object**: When multiple related parameters accumulate, group them into an object
+- **Extract Method**: identify common code patterns before parameterizing.
+- **Replace Parameter with Explicit Methods**: the reverse operation, for when conditional logic gets too complex.
+- **Remove Parameter**: simplify methods by removing unused parameters.
+- **Introduce Parameter Object**: when several related parameters pile up, group them into an object.

@@ -1,30 +1,37 @@
 # Message Chains Code Smell
 
-## Overview
+Message chains appear when client code reaches a value by walking through a series of intermediate objects: `$a->getB()->getC()->getD()`. Each link is an implicit dependency on the internal structure of the previous object. The client must understand the object it holds and also the whole graph of relationships behind it.
 
-Message chains appear when client code reaches a value by walking through a series of intermediate objects: `$a->getB()->getC()->getD()`. Each link in the chain is an implicit dependency on the internal structure of the previous object. The client must understand not just the object it holds, but the entire graph of relationships behind it.
+This is a coupling problem. The client knows far more about the object structure than it should, and any change to the relationships along the chain ripples out to every caller that navigates the same path.
 
-This is a coupling problem. The client knows far more about the object structure than it should, and any change to the relationships between objects in the chain ripples outward to every caller that navigates the same path.
+## Contents
 
-## Why It's a Problem
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
 
-1. **Structural Coupling**: The client depends on the internal layout of multiple objects, not just the one it directly references
-2. **Fragile Paths**: Restructuring any relationship along the chain forces updates in every client that traverses it
-3. **Context-Bound Code**: Chain-dependent code cannot be reused in contexts where the object graph is structured differently
-4. **Inflexible Design**: Swapping implementations or restructuring object relationships becomes difficult when clients encode the navigation path directly
-5. **Obscured Dependencies**: The real dependency set is hidden - inspecting the direct class reveals only the first hop, not the full chain
+## Why it's a problem
 
-## Signs and Symptoms
+1. **Structural coupling**: the client depends on the internal layout of several objects, not just the one it references directly.
+2. **Fragile paths**: restructuring any relationship along the chain forces updates in every client that traverses it.
+3. **Context-bound code**: chain-dependent code cannot be reused where the object graph is structured differently.
+4. **Inflexible design**: swapping implementations or restructuring relationships is hard when clients encode the navigation path.
+5. **Obscured dependencies**: the real dependency set is hidden. Inspecting the direct class shows only the first hop.
+
+## Signs and symptoms
 
 - Chains of method calls like `$user->getAccount()->getBank()->getCode()`
-- Client code that demonstrates detailed knowledge of multiple objects' internal structure
+- Client code that shows detailed knowledge of the internal structure of several objects
 - Object relationship changes cascading into updates across many files
-- Tests that must mock entire chains of objects to isolate a single behavior
+- Tests that must mock entire chains of objects to isolate one behavior
 - Code that reads like a navigation instruction rather than a domain operation
 
-## Before/After
+## Before and after
 
-### Before: Message Chain
+### Before: message chain
 
 ```php
 <?php
@@ -72,7 +79,7 @@ class Order
 }
 ```
 
-### After: Hide Delegate / Encapsulate
+### After: Hide Delegate / encapsulate
 
 ```php
 <?php
@@ -128,48 +135,48 @@ class Customer
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### 1. Hide Delegate
 
 Create methods on intermediate objects that expose only what clients need, hiding the chain structure.
 
-- **When to use**: When you want to preserve the overall structure but reduce coupling
-- **How**: Add methods to intermediate objects that delegate to nested objects
-- **Result**: Client code depends only on the direct object, not the entire chain
+- **When to use**: you want to keep the overall structure but reduce coupling
+- **How**: add methods to intermediate objects that delegate to nested objects
+- **Result**: client code depends only on the direct object, not the whole chain
 
-### 2. Move Method / Extract and Move
+### 2. Move Method / Extract and move
 
 Identify what the client is actually trying to do and move that behavior to an object earlier in the chain.
 
-- **When to use**: When the operation belongs logically in an earlier object
-- **How**: Extract the logic and move it to a more appropriate location in the object graph
-- **Result**: Simplifies client code and places logic where it semantically belongs
+- **When to use**: the operation logically belongs in an earlier object
+- **How**: extract the logic and move it to a more appropriate place in the object graph
+- **Result**: simpler client code, with the logic where it semantically belongs
 
-### 3. Introduce Facade/Gateway Object
+### 3. Introduce Facade / Gateway object
 
-Create a facade that encapsulates access to complex object structures.
+Create a facade that encapsulates access to a complex object structure.
 
-- **When to use**: When dealing with particularly complex object graphs or multiple independent chains
-- **How**: Create a new object that knows about the structure and provides simplified access
-- **Result**: Centralizes knowledge of the structure in one place
+- **When to use**: the object graph is particularly complex, or there are several independent chains
+- **How**: create a new object that knows the structure and offers simplified access
+- **Result**: knowledge of the structure is centralized in one place
 
 ## Exceptions
 
-Message chains are acceptable in specific scenarios:
+Message chains are acceptable in these cases:
 
-- **Fluent APIs**: Intentional method chaining for building configurations or queries (e.g., query builders)
-- **DSLs**: Domain-specific languages that use chains for readability
-- **Data Access Chains**: Accessing navigational relationships in ORMs (e.g., `$user->profile->settings->theme`) where it represents valid domain relationships
-- **Standard Library**: Built-in methods like `array_map()` chains or stream operations
+- **Fluent APIs**: intentional method chaining for building configurations or queries (e.g., query builders)
+- **DSLs**: domain-specific languages that use chains for readability
+- **Data access chains**: navigating relationships in ORMs (e.g., `$user->profile->settings->theme`) where they represent valid domain relationships
+- **Standard library**: built-in methods like `array_map()` chains or stream operations
 
-The key difference: these are *designed* as chains, not *incidental* coupling.
+The difference is that these are *designed* as chains. The coupling is not incidental.
 
-## Related Smells
+## Related smells
 
-- **Middle Man**: The flip side of Message Chains - hiding too much delegation can obscure where functionality actually lives. Fixing chains aggressively can create Middle Man.
-- **Feature Envy**: A method reaching deep into another object's structure is often both envious and chain-dependent
-- **Inappropriate Intimacy**: The broader coupling problem of which Message Chains are a specific manifestation
-- **Data Clumps**: Objects that travel together along chains may signal data that should be grouped into a single object
+- **Middle Man**: the flip side of Message Chains. Hiding too much behind delegation obscures where functionality lives, so fixing chains too eagerly can create a Middle Man.
+- **Feature Envy**: a method reaching deep into another object's structure is often both envious and chain-dependent.
+- **Inappropriate Intimacy**: the broader coupling problem, of which Message Chains are one case.
+- **Data Clumps**: objects that travel together along chains may signal data that should be grouped into one object.
 
-Be careful not to overcorrect: hiding every chain behind delegation methods can make it impossible to find where real work happens. The goal is to balance encapsulation with transparency.
+Do not overcorrect. Hiding every chain behind delegation methods makes it hard to find where real work happens, so balance encapsulation with transparency.

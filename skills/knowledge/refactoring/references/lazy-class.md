@@ -1,35 +1,42 @@
 # Lazy Class
 
-## Overview
-
-A Lazy Class is one that does not carry enough weight to justify its presence in the codebase. Every class incurs a cost - developers must learn what it does, maintain it, and navigate around it. When a class contributes too little to offset these costs, it should be folded into another class or removed entirely.
+A Lazy Class does not carry enough weight to justify its place in the codebase. Every class has a cost: developers must learn what it does, maintain it, and navigate around it. When a class contributes too little to offset that cost, fold it into another class or remove it.
 
 This commonly happens when:
 - A class was built for future functionality that never arrived
-- Successive refactorings gradually stripped the class of its original responsibilities
-- A class acts as a thin pass-through to another class without adding meaningful logic
+- Successive refactorings stripped the class of its original responsibilities
+- A class acts as a thin pass-through to another class without adding logic
 
-## Why It's a Problem
+## Contents
+
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
+
+## Why it's a problem
 
 Each class in the codebase demands:
-- **Cognitive Investment**: Developers must understand its role and how it fits into the system
-- **Ongoing Upkeep**: Interface changes, documentation, and test maintenance all cost effort
-- **Structural Overhead**: Unnecessary classes add depth to hierarchies and widen the dependency graph
-- **Navigation Friction**: More files to browse and search through when working on related functionality
+- **Cognitive investment**: developers must understand its role and how it fits into the system
+- **Ongoing upkeep**: interface changes, documentation, and tests all cost effort
+- **Structural overhead**: unnecessary classes deepen hierarchies and widen the dependency graph
+- **Navigation friction**: more files to browse and search when working on related functionality
 
-Retaining classes that do not earn their keep steadily inflates technical debt without delivering compensating value.
+A class that does not earn its keep adds technical debt and returns nothing for it.
 
-## Signs and Symptoms
+## Signs and symptoms
 
-- A class has only one or two trivial methods that would fit naturally in another class
-- A subclass adds negligible functionality beyond what its parent already provides
+- A class has only one or two trivial methods that would fit in another class
+- A subclass adds almost nothing beyond what its parent already provides
 - A class exists mainly as a placeholder for anticipated future work
-- Removing the class would require only minor, localized refactoring
+- Removing the class would need only minor, localized refactoring
 - The class duplicates a narrow responsibility that another class already handles
 
-## Before/After
+## Before and after
 
-### Before: Lazy Utility Class
+### Before: lazy utility class
 
 ```php
 <?php
@@ -59,7 +66,7 @@ class User
 }
 ```
 
-### After: Inlined Responsibility
+### After: inlined responsibility
 
 ```php
 <?php
@@ -85,7 +92,7 @@ readonly class User
 }
 ```
 
-### Before: Lazy Subclass
+### Before: lazy subclass
 
 ```php
 <?php
@@ -111,7 +118,7 @@ class SimplePdfDocument extends PdfDocument
 }
 ```
 
-### After: Collapse Hierarchy
+### After: collapse hierarchy
 
 ```php
 <?php
@@ -134,12 +141,13 @@ readonly class PdfDocument extends Document
 // SimplePdfDocument removed entirely
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### 1. Inline Class
+
 Merge a lazy class's responsibilities into another class that uses it.
 
-**When to use**: The class is a thin wrapper or has methods that logically belong in another class.
+**When to use**: the class is a thin wrapper or has methods that logically belong in another class.
 
 **Process**:
 - Move all methods and properties to the target class
@@ -148,9 +156,10 @@ Merge a lazy class's responsibilities into another class that uses it.
 - Use private methods for internal logic
 
 ### 2. Collapse Hierarchy
-Remove unnecessary subclasses that don't add meaningful functionality.
 
-**When to use**: A subclass doesn't override or extend the parent meaningfully.
+Remove subclasses that add no meaningful functionality.
+
+**When to use**: a subclass does not override or extend the parent in any meaningful way.
 
 **Process**:
 - Copy any unique methods to the parent (if any)
@@ -158,33 +167,34 @@ Remove unnecessary subclasses that don't add meaningful functionality.
 - Delete the subclass
 - Simplify inheritance chains
 
-### 3. Remove as Placeholder
-Sometimes lazy classes exist as placeholders for future features.
+### 3. Remove as placeholder
 
-**When to use**: The functionality is truly anticipated but not yet needed.
+Some lazy classes exist as placeholders for future features.
+
+**When to use**: the functionality is expected but not yet needed.
 
 **Process**:
-- Document why it exists with clear comments
+- Document why the class exists
 - Set up code review guidelines for its use
-- Create a task to revisit if the feature materializes
-- Consider extracting to a separate module/plugin
+- Create a task to revisit it if the feature materializes
+- Consider extracting it to a separate module or plugin
 
 ## Exceptions
 
-Keep a class (as a lazy class) when:
+Keep a lazy class when:
 
-- **Planned Feature Development**: The class is explicitly reserved for near-term functionality with a documented roadmap
-- **Framework Requirements**: Inheritance hierarchies required by frameworks (e.g., Symfony entities, event subscribers) must follow specific patterns
-- **Plugin/Extension Points**: Classes designed as extension points for future or third-party plugins
-- **Backward Compatibility**: Removing a public class would break the API; deprecate instead
-- **Intentional Minimal Interface**: A class provides value through explicit simplicity and clarity, not just through method count
+- **Planned feature development**: the class is reserved for near-term functionality with a documented roadmap
+- **Framework requirements**: inheritance hierarchies required by frameworks (e.g., Symfony entities, event subscribers) must follow specific patterns
+- **Plugin or extension points**: classes designed as extension points for future or third-party plugins
+- **Backward compatibility**: removing a public class would break the API, so deprecate it instead
+- **Intentional minimal interface**: the class is valuable for its simplicity and clarity, not for its method count
 
-## Related Smells
+## Related smells
 
-- **Dead Code**: Code that is never executed - Lazy Classes are a class-level manifestation of the same problem
-- **Feature Envy**: A class that spends more time working with another class's data than its own often signals the logic belongs in that other class
-- **Speculative Generality**: Classes built for anticipated needs that never materialized - a common origin of Lazy Classes
-- **Middleware Classes**: Classes that exist solely to wire other classes together without contributing logic
-- **Duplicate Code**: Multiple small classes with overlapping functionality that could be consolidated into one
+- **Dead Code**: code that is never executed. A Lazy Class is a class-level form of the same problem.
+- **Feature Envy**: a class that works more with another class's data than its own often has logic that belongs in that other class.
+- **Speculative Generality**: classes built for needs that never materialized. A common origin of Lazy Classes.
+- **Middleware classes**: classes that exist only to wire other classes together without contributing logic.
+- **Duplicate Code**: several small classes with overlapping functionality that could be consolidated into one.
 
-Note: A Lazy Class sometimes exists intentionally to mark where future functionality will be added. In that case, keep it only if the planned work is imminent and documented. Otherwise, remove it and recreate it when the need is real - the balance should tip toward simplicity.
+A Lazy Class sometimes exists on purpose to mark where future functionality will go. Keep it only if the planned work is imminent and documented. Otherwise remove it and recreate it when the need is real.

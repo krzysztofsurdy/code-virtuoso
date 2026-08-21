@@ -1,32 +1,43 @@
+# Pull Up Constructor Body
+
 ## Overview
 
-Pull Up Constructor Body extracts repeated initialization logic from subclass constructors into a shared superclass constructor. When several subclasses perform the same setup steps - assigning the same fields, running the same validation - that common work belongs in the parent, leaving each subclass responsible only for its own unique initialization.
+Pull Up Constructor Body moves repeated initialization logic from subclass constructors into a shared superclass constructor. When several subclasses run the same setup steps, such as assigning the same fields or running the same validation, that work belongs in the parent. Each subclass then handles only its own initialization.
+
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after (PHP 8.3+ code)](#before-and-after-php-83-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
 
 ## Motivation
 
-Duplicated constructor code across sibling classes creates familiar problems:
+Duplicated constructor code across sibling classes causes familiar problems:
 
-- **Synchronized edits**: Changing the shared initialization forces updates in every subclass
-- **Consistency gaps**: A fix applied to one constructor can easily be missed in another
-- **Larger codebase**: Redundant lines inflate the size of the hierarchy without adding value
-- **Hidden commonality**: Developers may not realize that initialization logic is identical across classes
+- **Synchronized edits**: changing the shared initialization forces updates in every subclass.
+- **Consistency gaps**: a fix applied to one constructor is easy to miss in another.
+- **Larger codebase**: redundant lines add size to the hierarchy and no value.
+- **Hidden commonality**: developers may not notice that the initialization logic is identical across classes.
 
-Centralizing the shared portion in the superclass establishes a single authoritative version of the common setup and lets each subclass focus exclusively on what makes it different.
+Moving the shared part into the superclass gives one authoritative version of the common setup. Each subclass can then focus on what makes it different.
 
 ## Mechanics
 
-The refactoring follows these steps:
+1. **Analyze subclass constructors**: find identical or nearly identical initialization code across subclasses.
+2. **Create the superclass constructor**: define a constructor in the parent class that contains the shared logic.
+3. **Determine parameters**: include only the parameters the superclass needs. Subclasses may have additional parameters.
+4. **Call the parent constructor**: in each subclass constructor, call `parent::__construct()` as the first statement.
+5. **Remove duplicate code**: delete the redundant initialization code from the subclass constructors.
+6. **Test**: verify that instantiating every subclass behaves as before.
 
-1. **Analyze subclass constructors** - Identify identical or nearly identical initialization code across subclasses
-2. **Create superclass constructor** - Define a new constructor in the parent class that contains the shared logic
-3. **Determine parameters** - Include only parameters the superclass genuinely needs (subclasses may have additional parameters)
-4. **Call parent constructor** - Update each subclass constructor to call the superclass constructor as the first statement using `parent::__construct()`
-5. **Remove duplicate code** - Delete the now-redundant initialization code from subclass constructors
-6. **Test thoroughly** - Verify that all subclass instantiation behavior remains identical
+## Before and after (PHP 8.3+ code)
 
-## Before/After (PHP 8.3+ Code)
-
-### Before - Duplicate Constructor Logic
+### Before: duplicate constructor logic
 
 ```php
 abstract class Vehicle
@@ -71,7 +82,7 @@ class Motorcycle extends Vehicle
 }
 ```
 
-### After - Common Logic in Superclass
+### After: common logic in the superclass
 
 ```php
 abstract class Vehicle
@@ -124,28 +135,28 @@ class Motorcycle extends Vehicle
 
 ## Benefits
 
-- **One authoritative version**: Shared initialization lives in a single place
-- **Guaranteed consistency**: Every subclass initializes inherited properties through the same path
-- **Lighter subclasses**: Constructors shrink to only the subclass-specific setup
-- **Clearer hierarchy**: The parent-child relationship becomes explicit in the constructor chain
-- **Easier verification**: Testing the common setup requires exercising only the parent constructor
+- **One authoritative version**: shared initialization lives in a single place.
+- **Consistency**: every subclass initializes inherited properties through the same path.
+- **Lighter subclasses**: constructors shrink to the subclass-specific setup.
+- **Clearer hierarchy**: the parent-child relationship is explicit in the constructor chain.
+- **Easier verification**: testing the common setup means exercising only the parent constructor.
 
-## When NOT to Use
+## When not to use
 
-- **Minimal duplication** - If only one or two lines are duplicated, consider keeping them separate
-- **Fundamentally different initialization** - If subclasses initialize parent properties in substantially different ways, duplication may indicate a design problem better solved with composition
-- **Conditional logic complexity** - If pulling up creates overly complex conditional logic in the parent constructor, this is a code smell
-- **Parameter misalignment** - If subclasses require entirely different parameters, pulling up may hide design issues
-- **Interface contracts** - If constructors are meant to signal different contracts to clients, keep them separate
+- **Minimal duplication**: if only one or two lines are duplicated, consider keeping them separate.
+- **Different initialization**: if subclasses initialize parent properties in very different ways, the duplication may point to a design problem that composition would solve better.
+- **Conditional logic complexity**: if pulling up creates complex conditional logic in the parent constructor, that is a code smell.
+- **Parameter misalignment**: if subclasses need entirely different parameters, pulling up may hide design issues.
+- **Interface contracts**: if the constructors are meant to signal different contracts to clients, keep them separate.
 
-## Related Refactorings
+## Related refactorings
 
-- **Pull Up Method** - Similar concept applied to regular methods rather than constructors
-- **Extract Superclass** - Often used in conjunction when creating new common parent classes
-- **Replace Constructor with Factory Method** - Alternative for complex initialization logic
-- **Move Method** - For moving constructor logic to utility classes instead of up the hierarchy
+- **Pull Up Method**: the same idea applied to regular methods instead of constructors.
+- **Extract Superclass**: often used together with this refactoring when you create a new common parent class.
+- **Replace Constructor with Factory Method**: an alternative for complex initialization logic.
+- **Move Method**: for moving constructor logic to utility classes instead of up the hierarchy.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

@@ -1,20 +1,26 @@
 # Large Class Code Smell
 
-## Overview
+A Large Class has accumulated too many fields, methods, or lines of code, and handles responsibilities that belong in separate, focused classes. Growth is normal as a codebase evolves, but unchecked growth violates the Single Responsibility Principle. The class attracts new code because adding to it is easier than creating something new.
 
-A Large Class has accumulated too many fields, methods, or lines of code, handling responsibilities that should belong to separate, focused classes. Growth is natural as a codebase evolves, but unchecked expansion signals poor separation of concerns and a violation of the Single Responsibility Principle. The class becomes a gravitational center that attracts new code because adding to it is easier than creating something new.
+## Contents
 
-## Why It's a Problem
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
 
-Large classes create compounding difficulties:
-- They violate the Single Responsibility Principle by bundling unrelated concerns
-- Cognitive load spikes when developers try to understand the class as a whole
-- Testing becomes complex, fragile, and slow as the class touches many concerns
-- Duplication creeps in as developers copy logic elsewhere rather than untangling the class
-- Merge conflicts multiply because many developers touch the same file
-- Opportunities for simplification hide inside the sheer volume of code
+## Why it's a problem
 
-## Signs and Symptoms
+- It bundles unrelated concerns, which violates the Single Responsibility Principle.
+- Cognitive load spikes when developers try to understand the class as a whole.
+- Testing becomes complex, fragile, and slow because the class touches many concerns.
+- Duplication creeps in as developers copy logic elsewhere rather than untangle the class.
+- Merge conflicts multiply because many developers touch the same file.
+- Opportunities for simplification hide inside the volume of code.
+
+## Signs and symptoms
 
 - More than 15 public methods (excluding simple accessors)
 - The class exceeds 500-1000 lines of code
@@ -22,11 +28,11 @@ Large classes create compounding difficulties:
 - Methods that operate on distinct, non-overlapping subsets of the class's fields
 - Vague class names like "Manager," "Handler," "Helper," or "Service"
 - Locating specific functionality requires searching through the entire class
-- The corresponding test class mirrors the production class structure exactly
+- The test class mirrors the production class structure exactly
 
-## Before/After
+## Before and after
 
-### Before: Large User Management Class
+### Before: large user management class
 
 ```php
 <?php
@@ -84,7 +90,7 @@ class UserManager
 }
 ```
 
-### After: Separated Responsibilities
+### After: separated responsibilities
 
 ```php
 <?php
@@ -183,47 +189,51 @@ class UserEmailService
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### Extract Class
-When part of the class's data and methods naturally group together. Move them to a new class and keep a reference in the original.
-- Best for: Separating data models from behavior
-- Example: Extract `UserCredentials`, `UserProfile`, `UserAddress` above
+
+Use when part of the class's data and methods belong together. Move them to a new class and keep a reference in the original.
+- Best for: separating data models from behavior
+- Example: extract `UserCredentials`, `UserProfile`, `UserAddress` above
 
 ### Extract Subclass
-When certain behaviors are variations of the main class or used only in specific contexts.
-- Best for: Specialized versions of a class
+
+Use when certain behaviors are variations of the main class or used only in specific contexts.
+- Best for: specialized versions of a class
 - Example: `AdminUser extends User`
 
 ### Extract Interface
-Define a contract for operations clients depend on, implementing multiple interfaces.
-- Best for: Clarifying responsibilities and enabling polymorphism
+
+Define a contract for the operations clients depend on, and implement several interfaces where needed.
+- Best for: clarifying responsibilities and enabling polymorphism
 - Example: `interface PermissionChecker { public function hasPermission(string $p): bool; }`
 
 ### Duplicate Observed Data
-For classes managing UI state, separate data (model) from presentation (view).
+
+Use for classes that manage UI state: separate data (model) from presentation (view).
 - Best for: GUI and data synchronization
-- Example: Domain model + UI view model
+- Example: domain model plus UI view model
 
 ## Exceptions
 
 Large classes are acceptable when:
-- **Data Transfer Objects (DTOs)**: Classes primarily holding data with minimal logic are not a smell
-- **Enums with Complex Behavior**: Enums in PHP 8.1+ can legitimately have many cases and methods
-- **Generated Code**: Code generators often produce large classes; refactor the generator instead
-- **Established Patterns**: Some frameworks require large service classes; use composition over inheritance
-- **Domain Models**: Rich domain objects may have legitimate complexity; ensure they follow SRP within their domain
+- **Data Transfer Objects (DTOs)**: classes that mostly hold data with minimal logic are not a smell
+- **Enums with complex behavior**: enums in PHP 8.1+ can legitimately have many cases and methods
+- **Generated code**: code generators often produce large classes, so refactor the generator instead
+- **Established patterns**: some frameworks require large service classes, so use composition over inheritance
+- **Domain models**: rich domain objects may have legitimate complexity, but they should follow SRP within their domain
 
-## Related Smells
+## Related smells
 
-- **God Class**: The extreme form of Large Class - a class that not only does too much but also intimately knows other objects' internals
-- **Feature Envy**: Methods inside a large class that primarily use another class's data suggest those methods belong elsewhere
-- **Data Clumps**: Groups of related fields that should be extracted together into their own class
-- **Middle Man**: After extracting classes, beware of leaving behind shells that only delegate - those become Middle Man
-- **Lazy Class**: The inverse problem - classes with too little responsibility that should be merged back
+- **God Class**: the extreme form of Large Class. It does too much and also knows other objects' internals.
+- **Feature Envy**: methods in a large class that mostly use another class's data belong elsewhere.
+- **Data Clumps**: groups of related fields that should be extracted together into their own class.
+- **Middle Man**: after extracting classes, watch for shells that only delegate.
+- **Lazy Class**: the inverse problem. Classes with too little responsibility should be merged back.
 
 ---
 
-**Metrics to Watch**: Classes over 500 LOC, methods over 20, cyclomatic complexity per method > 10
+**Metrics to watch**: classes over 500 LOC, methods over 20, cyclomatic complexity per method above 10.
 
-The root cause is almost always the path of least resistance: it is easier to add a method to an existing class than to design a new one. Over time this incremental growth produces classes that no single developer can hold in their head. Splitting a large class into focused components not only improves comprehension but frequently reveals hidden duplication that the sheer size of the original class concealed.
+The root cause is almost always the path of least resistance: it is easier to add a method to an existing class than to design a new one. Over time this produces classes that no one can hold in their head. Splitting a large class makes it easier to understand. It often exposes duplication that the size of the original hid.

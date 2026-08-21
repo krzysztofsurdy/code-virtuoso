@@ -2,27 +2,37 @@
 
 ## Overview
 
-Refused Bequest occurs when a subclass inherits from a parent but ignores or actively rejects much of what it receives. The subclass might leave inherited methods unused, or override them solely to throw exceptions. This is a strong signal that the inheritance relationship is wrong - the subclass is borrowing code rather than genuinely being a specialized version of the parent. The Liskov Substitution Principle is the clearest casualty: you cannot safely substitute the child where the parent is expected.
+Refused Bequest occurs when a subclass inherits from a parent but ignores or rejects much of what it receives. The subclass may leave inherited methods unused, or override them only to throw exceptions. This signals a wrong inheritance relationship: the subclass borrows code and is not a true specialization of the parent. The Liskov Substitution Principle suffers most, because you cannot safely substitute the child where the parent is expected.
 
-## Why It's a Problem
+## Contents
 
-- **False "is-a" Relationship**: Inheritance should express a genuine conceptual specialization, not serve as a shortcut for code reuse
-- **Developer Confusion**: The class hierarchy sends misleading signals about what each class represents and how it should be used
-- **Artificial Coupling**: The subclass becomes dependent on a parent it has little real connection to
-- **Broken Substitutability**: Subclasses that throw exceptions on inherited methods cannot be used interchangeably with the parent
-- **Unpredictable Cascading**: Changes to the parent ripple into the subclass in unexpected ways
+- [Overview](#overview)
+- [Why it's a problem](#why-its-a-problem)
+- [Signs and symptoms](#signs-and-symptoms)
+- [Before and after](#before-and-after)
+- [Recommended refactorings](#recommended-refactorings)
+- [Exceptions](#exceptions)
+- [Related smells](#related-smells)
 
-## Signs and Symptoms
+## Why it's a problem
+
+- **False "is-a" relationship**: inheritance should express a real conceptual specialization, not act as a shortcut for code reuse.
+- **Developer confusion**: the hierarchy gives misleading signals about what each class represents and how to use it.
+- **Artificial coupling**: the subclass depends on a parent it has little real connection to.
+- **Broken substitutability**: subclasses that throw exceptions from inherited methods cannot replace the parent.
+- **Unpredictable cascading**: changes to the parent ripple into the subclass in unexpected ways.
+
+## Signs and symptoms
 
 - A subclass overrides parent methods only to throw exceptions or return dummy values
-- The majority of inherited methods and properties go unused in the subclass
-- Parent and child represent fundamentally different domain concepts
-- Client code uses type checks or instanceof rather than trusting polymorphism
-- Code reviewers question why the inheritance relationship exists
+- Most inherited methods and properties go unused in the subclass
+- Parent and child represent different domain concepts
+- Client code uses type checks or instanceof instead of trusting polymorphism
+- Code reviewers ask why the inheritance relationship exists
 
-## Before/After
+## Before and after
 
-### Problem: Bird Hierarchy (Before)
+### Problem: bird hierarchy (before)
 
 ```php
 <?php
@@ -62,7 +72,7 @@ class Penguin extends Bird
 }
 ```
 
-### Solution: Extract to Interface (After)
+### Solution: extract to interface (after)
 
 ```php
 <?php
@@ -111,10 +121,11 @@ class Penguin implements Swimmer, EggLayer
 }
 ```
 
-## Recommended Refactorings
+## Recommended refactorings
 
 ### 1. Replace Inheritance with Composition (Delegation)
-Use composition when classes share behavior but lack a genuine "is-a" relationship. Move shared code into helper classes.
+
+Use composition when classes share behavior but have no real "is-a" relationship. Move shared code into helper classes.
 
 ```php
 <?php
@@ -146,8 +157,9 @@ readonly class FileLogger
 }
 ```
 
-### 2. Extract a Proper Base Class
-Identify what's genuinely shared and create a minimal parent class with only essential members.
+### 2. Extract a proper base class
+
+Find what is shared and create a minimal parent class with only the essential members.
 
 ```php
 <?php
@@ -177,8 +189,9 @@ final class ConsoleLogger extends Logger
 }
 ```
 
-### 3. Use Enums for Type Safety
-Replace inheritance hierarchies with enums when representing fixed sets of related values.
+### 3. Use enums for type safety
+
+Replace inheritance hierarchies with enums when you model a fixed set of related values.
 
 ```php
 <?php
@@ -204,16 +217,16 @@ enum TransportMode
 
 ## Exceptions
 
-Refused Bequest is acceptable in these scenarios:
+Refused Bequest is acceptable in these cases:
 
-- **Deliberate interface compliance**: Using a base class for type-hinting while intentionally overriding methods (with clear documentation)
-- **Legacy code**: Gradual refactoring of inherited systems where immediate changes aren't feasible
-- **Template Method Pattern**: Abstract base class with some methods meant to be overridden while others are consistently used
-- **Library design**: When a base class defines a contract but implementations vary significantly
+- **Deliberate interface compliance**: a base class is used for type-hinting while methods are overridden on purpose (document this clearly)
+- **Legacy code**: gradual refactoring of inherited systems where immediate changes are not feasible
+- **Template Method pattern**: an abstract base class with some methods meant to be overridden and others used as they are
+- **Library design**: a base class defines a contract, and implementations vary a lot
 
-## Related Smells
+## Related smells
 
-- **Parallel Inheritance Hierarchies**: Multiple inheritance chains that mirror each other's structure
-- **Inappropriate Intimacy**: Classes that know too much about each other's implementation details
-- **Large Class**: An overly broad parent class is a common root cause - the child only needs a fraction of what the parent offers
-- **Lazy Class**: A subclass that contributes almost nothing beyond its parent
+- **Parallel Inheritance Hierarchies**: multiple inheritance chains that mirror each other's structure
+- **Inappropriate Intimacy**: classes that know too much about each other's implementation details
+- **Large Class**: an overly broad parent class is a common root cause. The child needs only a fraction of what the parent offers.
+- **Lazy Class**: a subclass that adds almost nothing beyond its parent

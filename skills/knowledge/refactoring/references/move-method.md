@@ -1,36 +1,48 @@
+# Move Method
+
 ## Overview
 
-Move Method transfers a method from one class to another where it fits more naturally. When a method depends more heavily on the data or behavior of a different class than the one housing it, relocating the method brings it closer to its actual collaborators, tightening cohesion and loosening inter-class dependencies.
+Move Method transfers a method to the class where it fits better. When a method depends more on the data or behavior of another class than on its own, moving it puts it next to its collaborators. Cohesion goes up and coupling between classes goes down.
+
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after: PHP 8.3+ example](#before-and-after-php-83-example)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
 
 ## Motivation
 
-As codebases evolve, methods drift away from the data they operate on. Indicators that a method belongs elsewhere include:
+Methods drift away from the data they work on as a codebase evolves. A method probably belongs elsewhere when:
 
-- The method reads or writes fields of another class more than its own
+- It reads or writes fields of another class more than its own
 - Most callers belong to a different class
-- The method introduces unnecessary coupling between otherwise independent classes
+- It couples two otherwise independent classes
 - Keeping it in place violates the Single Responsibility Principle
 
-Relocating the method to the class it interacts with most directly:
+Moving it to the class it interacts with most:
 
-- Aligns behavior with the data it manipulates
-- Cuts down on cross-class message traffic
-- Strengthens encapsulation within each class
-- Makes the code easier to navigate and reason about
+- Puts behavior next to the data it uses
+- Cuts message traffic between classes
+- Strengthens encapsulation in each class
+- Makes the code easier to navigate
 
 ## Mechanics
 
-1. **Analyze dependencies**: Examine which class members and parameters the method uses
-2. **Check visibility**: Ensure the method can be safely moved (check access permissions)
-3. **Handle references**: Identify all places where the method is called
-4. **Create in target class**: Define the method in the destination class with appropriate signature
-5. **Update calls**: Replace calls from the source class with calls to the target class
-6. **Remove original**: Delete the method from the source class
-7. **Test thoroughly**: Ensure all functionality remains intact
+1. **Analyze dependencies**: list the class members and parameters the method uses.
+2. **Check visibility**: confirm the method can be moved (check access permissions).
+3. **Find references**: identify every place that calls the method.
+4. **Create in the target class**: define the method in the destination class with a suitable signature.
+5. **Update calls**: replace calls from the source class with calls to the target class.
+6. **Remove the original**: delete the method from the source class.
+7. **Run the tests**: confirm that behavior is unchanged.
 
-## Before/After: PHP 8.3+ Example
+## Before and after: PHP 8.3+ example
 
-### Before: Method in Wrong Class
+### Before: method in the wrong class
 
 ```php
 class Account
@@ -77,7 +89,7 @@ class AccountType
 }
 ```
 
-### After: Method Moved to Target Class
+### After: method moved to the target class
 
 ```php
 class Account
@@ -124,10 +136,10 @@ class AccountType
 }
 ```
 
-### Advanced Example: Moving Complex Methods
+### Moving a longer method
 
 ```php
-// Before: Complex validation in PaymentProcessor that belongs in Payment
+// Before: validation in PaymentProcessor that belongs in Payment
 class PaymentProcessor
 {
     public function validatePayment(Payment $payment): bool
@@ -145,7 +157,7 @@ class PaymentProcessor
     }
 }
 
-// After: Validation moved to Payment class
+// After: validation moved to Payment class
 class Payment
 {
     private float $amount;
@@ -178,25 +190,25 @@ class PaymentProcessor
 
 ## Benefits
 
-- **Stronger Encapsulation**: Methods sit alongside the data they depend on
-- **Looser Coupling**: Classes become more self-contained and focused
-- **Improved Navigability**: Related logic is easier to locate when it lives next to its data
-- **Localized Changes**: Modifications to related functionality stay within a single class
-- **Well-Defined Responsibilities**: Each class takes ownership of a coherent set of operations
-- **Cleaner Public Interfaces**: APIs reflect genuine dependencies rather than historical accidents
+- **Stronger encapsulation**: methods sit next to the data they depend on.
+- **Looser coupling**: classes are more self-contained.
+- **Easier navigation**: related logic is found next to its data.
+- **Localized changes**: a change to related functionality stays inside one class.
+- **Clear responsibilities**: each class owns a coherent set of operations.
+- **Cleaner public interfaces**: APIs reflect real dependencies, not historical accidents.
 
-## When NOT to Use
+## When not to use
 
-- When the method needs access to private members of the source class that can't be exposed
-- When moving would create circular dependencies between classes
-- When the method is part of a public API heavily used by external code
-- When the target class is in a different layer of the application (violates layering)
-- When the method logic is generic and truly belongs in a utility or base class
+- The method needs private members of the source class that cannot be exposed.
+- Moving it would create circular dependencies between classes.
+- The method is part of a public API that external code relies on.
+- The target class is in a different layer of the application, so the move would break layering.
+- The method logic is generic and belongs in a utility or base class.
 
-## Related Refactorings
+## Related refactorings
 
-- **Extract Method**: Break down complex methods before moving them
-- **Extract Class**: If a class has too many responsibilities, extract a new class and move methods to it
-- **Introduce Parameter Object**: When moving a method requires passing multiple parameters
-- **Hide Delegate**: Reverse operation when you want to preserve the original interface
-- **Replace Temp with Query**: Often used alongside moving methods to simplify data flow
+- **Extract Method**: break down a complex method before moving it.
+- **Extract Class**: if a class has too many responsibilities, extract a new class and move methods to it.
+- **Introduce Parameter Object**: use it when moving a method requires passing many parameters.
+- **Hide Delegate**: the reverse operation, for when you want to keep the original interface.
+- **Replace Temp with Query**: often used alongside Move Method to simplify data flow.

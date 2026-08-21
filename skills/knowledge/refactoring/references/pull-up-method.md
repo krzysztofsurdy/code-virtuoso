@@ -1,21 +1,34 @@
+# Pull Up Method
+
 ## Overview
 
-Pull Up Method consolidates identical or nearly identical methods from multiple subclasses into their shared superclass. When sibling classes carry the same implementation of a method, hoisting it into the parent eliminates the redundancy and guarantees that every subclass uses a single, consistent version.
+Pull Up Method moves identical or nearly identical methods from several subclasses into their shared superclass. When sibling classes carry the same implementation, moving it to the parent removes the redundancy. Every subclass then uses one consistent version.
+
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after code](#before-and-after-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
 
 ## Motivation
 
-Duplicate methods spread across subclasses are a maintenance hazard. Each change must be replicated in every copy, and any omission introduces inconsistencies that surface as bugs. Pulling the method into the superclass creates one authoritative implementation that all children inherit, shrinking the codebase and making future modifications straightforward.
+Duplicate methods across subclasses are a maintenance hazard. Each change must be copied to every version, and a missed copy causes inconsistencies that show up as bugs. Pulling the method into the superclass gives one implementation that all children inherit. The codebase gets smaller and later changes are easier.
 
 ## Mechanics
 
-1. **Examine similar methods** across subclasses to identify candidates for consolidation
-2. **Standardize implementations** if methods differ slightly by adjusting their logic to work universally
-3. **Handle subclass-specific dependencies** using Pull Up Field or abstract getter/setter methods
-4. **Move the method** to the superclass
-5. **Remove duplicate implementations** from all subclasses
-6. **Test thoroughly** to ensure behavior remains consistent across the class hierarchy
+1. **Examine similar methods** across subclasses to find candidates for consolidation.
+2. **Standardize implementations**: if the methods differ slightly, adjust their logic so one version works for all.
+3. **Handle subclass-specific dependencies** with Pull Up Field or abstract getter and setter methods.
+4. **Move the method** to the superclass.
+5. **Remove the duplicate implementations** from all subclasses.
+6. **Test** that behavior is consistent across the class hierarchy.
 
-## Before/After Code
+## Before and after code
 
 ### Before (PHP 8.3+)
 
@@ -71,27 +84,27 @@ class Designer extends Employee {}
 
 ## Benefits
 
-- **No more copies**: A single implementation serves the entire hierarchy
-- **Automatic consistency**: All subclasses inherit the same logic without manual synchronization
-- **Lower bug risk**: Edits happen in one place, preventing one-off oversights
-- **Leaner hierarchy**: Subclasses shrink, making the class tree easier to scan
-- **Foundation for patterns**: A pulled-up method can become the skeleton of a Template Method
+- **No copies**: one implementation serves the whole hierarchy.
+- **Consistency**: all subclasses inherit the same logic with no manual syncing.
+- **Lower bug risk**: edits happen in one place, so no copy is missed.
+- **Leaner hierarchy**: subclasses shrink and the class tree is easier to scan.
+- **Foundation for patterns**: a pulled-up method can become the skeleton of a Template Method.
 
-## When NOT to Use
+## When not to use
 
-- When methods in subclasses have fundamentally different implementations and only appear similar on the surface
-- When pulling up a method would require the superclass to know about subclass-specific details
-- When the method relies on state that exists only in specific subclasses and cannot be abstracted
-- When the overhead of abstraction outweighs the benefit of code reuse
+- The subclass methods have different implementations and only look similar.
+- Pulling up the method would make the superclass depend on subclass-specific details.
+- The method relies on state that exists only in some subclasses and cannot be abstracted.
+- The cost of the abstraction is larger than the benefit of reuse.
 
-## Related Refactorings
+## Related refactorings
 
-- **Push Down Method**: The opposite operation; moves methods from superclass down to specific subclasses
-- **Pull Up Field**: Consolidates fields from subclasses into the superclass
-- **Extract Method**: Often used in conjunction to identify and isolate duplicate logic before pulling up
-- **Template Method Pattern**: Can be formed by pulling up methods and leaving specific steps to be overridden by subclasses
+- **Push Down Method**: the opposite operation. It moves methods from the superclass down to specific subclasses.
+- **Pull Up Field**: consolidates fields from subclasses into the superclass.
+- **Extract Method**: often used first to isolate duplicate logic before pulling it up.
+- **Template Method pattern**: can be formed by pulling up methods and leaving specific steps for subclasses to override.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

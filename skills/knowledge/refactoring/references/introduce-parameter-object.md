@@ -1,31 +1,38 @@
 # Introduce Parameter Object
 
-## Overview
+Introduce Parameter Object bundles a recurring group of parameters into a dedicated object. When the same cluster of arguments appears in several method signatures, replacing them with one object removes duplication, clarifies intent, and gives related behavior a place to live.
 
-Introduce Parameter Object bundles a recurring group of parameters into a dedicated object. When the same cluster of arguments appears across multiple method signatures, replacing them with a single object reduces duplication, clarifies intent, and opens the door for moving related behavior into the new class.
+## Contents
+
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after: PHP 8.3+ code](#before-and-after-php-83-code)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
 
 ## Motivation
 
-**The Problem**: Identical groups of parameters repeated across method signatures are a form of data clumping. Long parameter lists are hard to read, easy to misorder, and painful to extend.
+**The problem**: Identical groups of parameters repeated across method signatures are a form of data clumping. Long parameter lists are hard to read, easy to misorder, and painful to extend.
 
-**The Solution**: Create a small, typically immutable class that holds the related values. Pass one object instead of many primitives. This:
+**The solution**: Create a small, typically immutable class that holds the related values and pass one object instead of many primitives. This:
 
 - Replaces a long parameter list with a single, meaningful argument
 - Makes the method signature self-documenting through the object's class name
-- Centralizes validation logic that was previously duplicated at every call site
-- Provides a natural home for methods that operate on the grouped data
+- Centralizes validation that was previously duplicated at every call site
+- Gives methods that operate on the grouped data a natural home
 
 ## Mechanics
 
-1. **Define a new class** to represent the parameter group (typically readonly/immutable)
-2. **Add the new parameter** to the method signature alongside the existing ones
-3. **Migrate parameters one by one** into the object, updating callers as you go
-4. **Run tests after each step** to catch breakage early
-5. **Move related behavior** into the parameter object if it makes sense (validation, formatting, etc.)
+1. **Define a new class** for the parameter group (typically readonly/immutable).
+2. **Add the new parameter** to the method signature alongside the existing ones.
+3. **Migrate parameters one by one** into the object, updating callers as you go.
+4. **Run tests after each step** to catch breakage early.
+5. **Move related behavior** (validation, formatting, and so on) into the parameter object where it fits.
 
-## Before & After: PHP 8.3+ Code
+## Before and after: PHP 8.3+ code
 
-### Before: Multiple Parameters
+### Before: multiple parameters
 
 ```php
 class OrderService
@@ -64,7 +71,7 @@ class OrderService
 }
 ```
 
-### After: Parameter Object
+### After: parameter object
 
 ```php
 readonly class CustomerInfo
@@ -115,25 +122,25 @@ class OrderService
 
 ## Benefits
 
-- **Readable Signatures**: A single named parameter communicates the group's purpose at a glance
-- **Eliminated Duplication**: The same parameter cluster appears in one class definition, not in every method
-- **Easier Extension**: Adding a field to the group requires changing only the class, not every caller
-- **Centralized Validation**: Constraints are enforced once in the constructor, not scattered across call sites
-- **Stronger Types**: An object provides richer type information than a list of primitives
-- **Behavior Magnet**: The parameter object naturally attracts related methods (formatting, comparison, etc.)
+- **Readable signatures**: one named parameter shows the group's purpose at a glance.
+- **Less duplication**: the parameter cluster is defined in one class, not in every method.
+- **Easier extension**: adding a field to the group means changing the class, not every caller.
+- **Centralized validation**: constraints are enforced once, in the constructor.
+- **Stronger types**: an object carries more type information than a list of primitives.
+- **Behavior magnet**: the object attracts related methods such as formatting and comparison.
 
-## When NOT to Use
+## When not to use
 
-- Parameters that appear together by coincidence, not because they represent a coherent concept
-- The grouped parameters would be used in only one or two places
-- The additional class adds complexity without measurable benefit
-- The API is simple, stable, and unlikely to change
-- Existing domain models already encapsulate the data better
+- The parameters appear together by coincidence and do not form a coherent concept.
+- The group would be used in only one or two places.
+- The extra class adds complexity without measurable benefit.
+- The API is simple, stable, and unlikely to change.
+- An existing domain model already encapsulates the data better.
 
-## Related Refactorings
+## Related refactorings
 
-- **Replace Parameter with Query**: Simplify signatures by computing values instead of passing them
-- **Extract Class**: Split a parameter object that grows too large
-- **Move Method**: Relocate validation and formatting logic into the parameter object
-- **Remove Parameter**: Drop parameters that the parameter object makes unnecessary
-- **Preserve Whole Object**: Pass an existing object rather than pulling fields out of it
+- **Replace Parameter with Query**: simplify signatures by computing values instead of passing them.
+- **Extract Class**: split a parameter object that grows too large.
+- **Move Method**: relocate validation and formatting logic into the parameter object.
+- **Remove Parameter**: drop parameters that the parameter object makes unnecessary.
+- **Preserve Whole Object**: pass an existing object rather than pulling fields out of it.

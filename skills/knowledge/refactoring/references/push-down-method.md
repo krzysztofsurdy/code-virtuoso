@@ -2,27 +2,36 @@
 
 ## Overview
 
-Push Down Method relocates a method from a superclass into the specific subclass or subclasses that actually call it. When a parent class carries behavior that only a fraction of its children require, pushing the method down removes irrelevant operations from the parent and keeps each class focused on what it genuinely does.
+Push Down Method moves a method from a superclass into the subclass or subclasses that call it. When a parent class carries behavior that only some of its children need, pushing the method down removes irrelevant operations from the parent. Each class stays focused on what it does.
+
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before and after (PHP 8.3+)](#before-and-after-php-83)
+- [Benefits](#benefits)
+- [When not to use](#when-not-to-use)
+- [Related refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
 
 ## Motivation
 
 Apply Push Down Method when:
 
-- A method was designed for general use but turns out to be relevant to only one or a few subclasses
-- Hierarchy evolution or feature removal has left a method orphaned in the parent
+- A method was designed for general use but only one or a few subclasses need it
+- Changes to the hierarchy or removed features have left a method orphaned in the parent
 - The parent exposes behavior that does not apply to all descendants
-- Subclasses inherit methods they never invoke, producing a refused-bequest smell
+- Subclasses inherit methods they never call, which is the Refused Bequest smell
 
 ## Mechanics
 
-The refactoring process follows these straightforward steps:
+1. **Declare the method in the target subclass**: add the signature and implementation to the subclass that needs it.
+2. **Remove the method from the superclass**: delete the original from the parent class.
+3. **Update all references**: make sure every call to the method goes through the subclass where it now lives.
+4. **Verify type safety**: check that all usages occur within the intended subclass or after proper type narrowing.
 
-1. **Declare the method in the target subclass** - Add the method signature and implementation to the subclass that actually needs it
-2. **Remove the method from the superclass** - Delete the original method from the parent class
-3. **Update all references** - Ensure all calls to the method go through the subclass where it now resides
-4. **Verify type safety** - Check that all usages occur within the intended subclass or through proper type narrowing
-
-## Before/After (PHP 8.3+)
+## Before and after (PHP 8.3+)
 
 ### Before
 
@@ -107,28 +116,28 @@ final class Motorcycle extends Vehicle
 
 ## Benefits
 
-- **Focused parent class**: The superclass exposes only behavior common to all children
-- **Cleaner abstractions**: Irrelevant methods no longer appear on unrelated subclasses
-- **Less confusion**: Developers are not puzzled by inherited methods that have no meaning for certain classes
-- **Precise encapsulation**: Each class publishes exactly the interface it supports
-- **Localized impact**: Future changes to the method affect only the subclass that owns it
+- **Focused parent class**: the superclass exposes only behavior common to all children.
+- **Cleaner abstractions**: irrelevant methods no longer appear on unrelated subclasses.
+- **Less confusion**: developers are not puzzled by inherited methods that mean nothing for some classes.
+- **Precise encapsulation**: each class publishes the interface it supports.
+- **Localized impact**: later changes to the method affect only the subclass that owns it.
 
-## When NOT to Use
+## When not to use
 
-- **Avoid premature optimization** - Don't push down methods based on speculation about future usage
-- **Don't create duplication** - If multiple unrelated subclasses need the method, consider keeping it in the parent class instead
-- **Template Method pattern** - When a parent class method defines a skeleton that subclasses customize, keep it in the parent
-- **Polymorphic behavior** - If the method is part of a polymorphic contract, pushing it down breaks the Liskov Substitution Principle
-- **Shared functionality** - When several subclasses genuinely share the method, duplication introduces maintenance burden
+- **Speculation**: do not push down methods based on guesses about future usage.
+- **Duplication**: if several unrelated subclasses need the method, keep it in the parent.
+- **Template Method pattern**: when a parent method defines a skeleton that subclasses customize, keep it in the parent.
+- **Polymorphic behavior**: if the method is part of a polymorphic contract, pushing it down breaks the Liskov Substitution Principle.
+- **Shared functionality**: when several subclasses share the method, duplicating it adds maintenance burden.
 
-## Related Refactorings
+## Related refactorings
 
-- **Pull Up Method** - The inverse operation; moves methods from subclasses to the parent class
-- **Push Down Field** - Similar concept applied to fields instead of methods
-- **Extract Subclass** - Often paired with Push Down Method to create specialized subclasses
-- **Replace Type Code with Subclasses** - May involve pushing down methods to create type-specific behavior
+- **Pull Up Method**: the inverse operation. It moves methods from subclasses to the parent class.
+- **Push Down Field**: the same idea applied to fields instead of methods.
+- **Extract Subclass**: often paired with Push Down Method to create specialized subclasses.
+- **Replace Type Code with Subclasses**: may involve pushing down methods to create type-specific behavior.
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
