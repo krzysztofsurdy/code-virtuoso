@@ -1,24 +1,35 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After](#beforeafter)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Replace Array with Object converts arrays that hold a fixed set of semantically distinct values into dedicated objects with named properties. Arrays are built for homogeneous collections; when each index carries a specific meaning, an object with typed properties communicates that structure far more clearly and enables tooling support, validation, and encapsulation.
+Replace Array with Object converts an array that holds a fixed set of distinct values into a dedicated object with named properties. Arrays are meant for homogeneous collections. When each index has its own meaning, an object with typed properties states that structure directly. It also brings tooling support, validation, and encapsulation.
 
 ## Motivation
 
-Using positional array indices to represent structured data creates a number of hazards:
+Positional array indices used as structured data create several hazards:
 
-- **No type enforcement**: Any index can hold any value, defeating static analysis
-- **Opaque access**: `$person[0]` reveals nothing about what it contains; `$person->name` is self-explanatory
+- **No type enforcement**: Any index can hold any value, which defeats static analysis
+- **Opaque access**: `$person[0]` says nothing about what it contains; `$person->name` does
 - **Fragile ordering**: Inserting or reordering elements breaks every access site
-- **Missing IDE support**: Editors cannot autocomplete or rename array keys the way they can with properties
-- **No behavioral home**: Arrays cannot host methods, so related logic scatters elsewhere
+- **Missing IDE support**: Editors cannot autocomplete or rename array keys the way they can properties
+- **No home for behavior**: Arrays cannot have methods, so related logic ends up scattered elsewhere
 
-An object with named, typed properties makes the structure explicit and provides a natural home for associated behavior.
+An object with named, typed properties makes the structure explicit and gives related behavior a place to live.
 
 ## Mechanics
 
-1. Create a new class or value object with named properties matching array indices
-2. Add a constructor to initialize the object from array data (if needed)
-3. Add properties and methods for accessing and manipulating data
+1. Create a new class or value object with named properties matching the array indices
+2. Add a constructor to initialize the object from array data, if needed
+3. Add properties and methods for accessing and manipulating the data
 4. Replace all array creation calls with object instantiation
 5. Replace all array access (`$arr[0]`) with property access (`$obj->field`)
 6. Remove temporary array usage patterns
@@ -26,7 +37,7 @@ An object with named, typed properties makes the structure explicit and provides
 
 ## Before/After
 
-### Before: Using Arrays
+### Before: using arrays
 
 ```php
 // Poor: Magic indices, unclear structure
@@ -48,7 +59,7 @@ function displayUser($data): void {
 }
 ```
 
-### After: Using Objects (PHP 8.3+)
+### After: using objects (PHP 8.3+)
 
 ```php
 // Good: Self-documenting, type-safe
@@ -92,7 +103,7 @@ function displayUser(UserInfo $data): void {
 }
 ```
 
-### Complex Example: Coordinate Array
+### Coordinate array example
 
 ```php
 // Before: Numeric indices
@@ -132,31 +143,31 @@ $dist = $point->distance($moved);
 
 ## Benefits
 
-- **Compile-time safety**: Type hints catch misassignments before the code runs
+- **Type safety**: Type hints catch misassignments before the code runs
 - **Readable by default**: Named properties make every access self-documenting
-- **Full tooling support**: Autocomplete, rename refactoring, and static analysis all work out of the box
+- **Tooling support**: Autocomplete, rename refactoring, and static analysis all work
 - **Built-in validation**: Constructors can enforce invariants at creation time
 - **Room to grow**: Methods can be added without restructuring callers
-- **Easier test setup**: Objects with clear constructors are simpler to build in test fixtures
-- **Resilient to change**: Adding a property with a default does not break existing call sites
+- **Easier test setup**: Objects with clear constructors are simple to build in test fixtures
+- **Tolerant of change**: Adding a property with a default does not break existing call sites
 
-## When NOT to Use
+## When NOT to use
 
-- **Variable-Length Collections**: Use arrays or `Collection` objects for lists of unknown size
-- **Homogeneous Data**: Arrays are appropriate for collections of similar items
-- **Pure Data Transport**: Very simple DTOs might be overkill (though typed properties are still recommended)
-- **Legacy Code**: Gradual refactoring may be necessary; do this incrementally
-- **Performance-Critical Hot Paths**: Profile first; modern PHP is fast enough for most use cases
+- **Variable-length collections**: Use arrays or `Collection` objects for lists of unknown size
+- **Homogeneous data**: Arrays are appropriate for collections of similar items
+- **Pure data transport**: Very simple DTOs might be overkill (though typed properties are still recommended)
+- **Legacy code**: Refactor gradually, one usage at a time
+- **Performance-critical hot paths**: Profile first; modern PHP is fast enough for most use cases
 
 ## Related Refactorings
 
 - **Extract Class**: Move related properties into their own class
 - **Introduce Parameter Object**: Group method parameters into an object
-- **Replace Magic Numbers**: Use named constants alongside object properties
+- **Replace Magic Number with Symbolic Constant**: Use named constants alongside object properties
 - **Extract Value Object**: Create immutable objects that represent domain concepts
 - **Introduce Builder**: Use builders for complex object construction
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

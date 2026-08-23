@@ -1,23 +1,34 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After (PHP 8.3+)](#beforeafter-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Replace Parameter with Method Call trims method signatures by removing parameters whose values can be obtained internally. Instead of requiring the caller to compute and pass a value, the method fetches it on its own through a query call.
+Replace Parameter with Method Call shortens method signatures by removing parameters whose values the method can get itself. The caller no longer computes and passes the value. The method fetches it through a query call.
 
 ## Motivation
 
-Lengthy parameter lists make methods harder to read and call correctly. This refactoring tackles that complexity by:
+Long parameter lists are hard to read and easy to call wrong. This refactoring helps by:
 
-- Removing parameters that were added speculatively for hypothetical future use
-- Cutting down the mental effort of tracking intermediate values across multiple call sites
-- Producing shorter, more expressive method signatures
-- Lowering the coupling between the calling code and the method's internals
+- Removing parameters that were added "just in case" for future use
+- Reducing the effort of tracking intermediate values across call sites
+- Giving methods shorter, clearer signatures
+- Lowering the coupling between calling code and the method's internals
 
 ## Mechanics
 
-1. **Check independence**: Confirm that the value-retrieval logic does not depend on parameters of the method being refactored
-2. **Extract if complex**: If the retrieval logic is non-trivial, move it into its own dedicated method first
+1. **Check independence**: Confirm the value-retrieval logic does not depend on parameters of the method being changed
+2. **Extract if complex**: If the retrieval logic is non-trivial, move it into its own method first
 3. **Substitute references**: Replace every use of the parameter inside the method with a call to the retrieval method
-4. **Drop the parameter**: Remove the now-unused parameter from the method signature
-5. **Fix call sites**: Delete the corresponding argument from every caller
+4. **Drop the parameter**: Remove the unused parameter from the method signature
+5. **Fix call sites**: Delete the matching argument from every caller
 
 ## Before/After (PHP 8.3+)
 
@@ -78,28 +89,28 @@ $price = $order->getPrice();
 
 ## Benefits
 
-- **Leaner signatures**: Fewer parameters mean methods are easier to understand and invoke
-- **Lower coupling**: The method no longer relies on the caller to supply internally obtainable data
-- **Stronger encapsulation**: The object retrieves its own information rather than depending on external computation
-- **Cleaner call sites**: Calling code becomes more concise and focused
-- **Localized changes**: Modifications to how a value is computed affect only the object that owns it
+- **Shorter signatures**: Fewer parameters make methods easier to understand and call
+- **Lower coupling**: The method no longer depends on the caller for data it can get itself
+- **Better encapsulation**: The object retrieves its own information instead of relying on outside computation
+- **Cleaner call sites**: Calling code is shorter and more focused
+- **Localized changes**: A change in how a value is computed affects only the object that owns it
 
-## When NOT to Use
+## When NOT to use
 
-- **Caller-dependent values**: If the value varies based on caller context and cannot be derived internally, the parameter is necessary
-- **Multiple contexts need different inputs**: When the same method must produce different results depending on what the caller provides
+- **Caller-dependent values**: If the value depends on the caller's context and cannot be derived internally, keep the parameter
+- **Different inputs per context**: The same method must give different results depending on what the caller provides
 - **Hot code paths**: Repeated internal queries may be slower than passing a precomputed value
-- **Cross-object data**: When the value belongs to a different object's domain and should not be fetched here
-- **Intentional flexibility**: If you expect to inject alternative values for testing or future variations
+- **Cross-object data**: The value belongs to another object's domain and should not be fetched here
+- **Intended flexibility**: You expect to inject alternative values for testing or future variations
 
 ## Related Refactorings
 
 - **Extract Method**: Apply when the retrieval logic is complex enough to warrant its own method
-- **Add Parameter**: The inverse refactoring, used when you need to widen a method's flexibility
-- **Simplify Method Calls**: The broader family of refactorings aimed at reducing parameter list complexity
-- **Remove Parameter**: A closely related technique for eliminating parameters that are no longer referenced
+- **Add Parameter**: The inverse refactoring, used when a method needs more flexibility
+- **Simplify Method Calls**: The broader family of refactorings that reduce parameter list complexity
+- **Remove Parameter**: A related technique for eliminating parameters that are no longer used
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

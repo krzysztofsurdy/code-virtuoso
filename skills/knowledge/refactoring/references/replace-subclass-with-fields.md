@@ -1,29 +1,39 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After](#beforeafter)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+
 ## Overview
 
-Replace Subclass with Fields collapses a class hierarchy by eliminating subclasses whose only purpose is to return different values for a set of fields. Instead of maintaining separate subclass definitions, a single class with configurable fields - typically populated through factory methods - handles all the variation.
+Replace Subclass with Fields collapses a class hierarchy by removing subclasses whose only job is to return different values for a set of fields. A single class with configurable fields, usually set through factory methods, handles all the variation.
 
-This refactoring is appropriate when subclasses carry no behavioral differences beyond assigning distinct field values.
+Use it when the subclasses differ only in the field values they assign.
 
 ## Motivation
 
-Subclasses that differ only in the data they store introduce unnecessary structural complexity:
+Subclasses that differ only in the data they store add structure for no gain:
 
-- **Excessive class count**: Multiple classes exist that functionally do the same thing with slightly different data
-- **Redundant maintenance**: Changes to shared logic must be propagated across every subclass
-- **Obscured instantiation**: Client code must know which subclass to construct for each scenario
+- **Too many classes**: Several classes do the same thing with slightly different data
+- **Redundant maintenance**: Changes to shared logic must be applied across every subclass
+- **Hidden instantiation rules**: Client code must know which subclass to build for each case
 - **Repeated boilerplate**: Each subclass duplicates constructor logic
-- **Testing overhead**: Covering many classes that behave almost identically is wasteful
+- **Testing overhead**: Covering many classes that behave almost the same is wasteful
 
-Consolidating these subclasses into the parent class with configurable fields reduces the number of types in the system and makes the design easier to navigate and maintain.
+Folding these subclasses into the parent class with configurable fields means fewer types and a design that is easier to navigate.
 
 ## Mechanics
 
-1. **Identify data-only subclasses**: Find subclasses that differ solely in how they initialize inherited fields
-2. **Introduce factory methods**: Add static factory methods to the parent class for each variant
-3. **Shift field initialization**: Let the factory methods set the appropriate field values directly
+1. **Identify data-only subclasses**: Find subclasses that differ only in how they initialize inherited fields
+2. **Introduce factory methods**: Add a static factory method to the parent class for each variant
+3. **Shift field initialization**: Let the factory methods set the field values directly
 4. **Delete subclasses**: Remove the now-redundant subclass definitions
 5. **Redirect client code**: Update all instantiation sites to use the factory methods
-6. **Verify**: Run the test suite to confirm that behavior is unchanged
+6. **Verify**: Run the test suite to confirm behavior is unchanged
 
 ## Before/After
 
@@ -112,25 +122,25 @@ $intern = Employee::createIntern('Charlie');
 
 ## Benefits
 
-- **Fewer classes**: Removes subclasses that carry no real behavioral weight
-- **Simpler hierarchy**: The type structure becomes flatter and easier to visualize
-- **Centralized logic**: All behavior lives in a single class, simplifying maintenance
-- **Expressive construction**: Factory methods communicate the purpose of each variant clearly
-- **Easier instantiation**: Callers use descriptive factory methods rather than remembering subclass names
-- **Strong typing**: A single class with typed properties (especially in PHP 8.3+) provides clear contracts
-- **Easy extension**: Adding a new variant means adding one factory method, not an entire class
+- **Fewer classes**: Removes subclasses that add no behavior
+- **Simpler hierarchy**: The type structure is flatter and easier to picture
+- **Centralized logic**: All behavior lives in one class, which simplifies maintenance
+- **Expressive construction**: Factory methods state the purpose of each variant
+- **Easier instantiation**: Callers use descriptive factory methods instead of remembering subclass names
+- **Strong typing**: One class with typed properties (in PHP 8.3+) gives a clear contract
+- **Easy extension**: A new variant is one factory method, not a whole class
 
-## When NOT to Use
+## When NOT to use
 
-- **Behavioral differences exist**: If subclasses override methods beyond mere initialization, they deserve to remain
+- **Behavioral differences**: If subclasses override methods beyond initialization, keep them
 - **Non-trivial constructors**: If subclass constructors contain significant setup logic, the hierarchy may be justified
-- **Polymorphic contracts**: When subclasses implement different interfaces, collapsing them is inappropriate
-- **Field explosion**: If the parent class would accumulate many optional fields, subclasses might actually be clearer
+- **Polymorphic contracts**: If subclasses implement different interfaces, do not collapse them
+- **Field explosion**: If the parent class would collect many optional fields, subclasses may be clearer
 - **API compatibility**: If external code depends on the subclass types, removing them is a breaking change
 
 ## Related Refactorings
 
-- **Replace Conditional with Polymorphism**: Consider if the resulting single class develops switch statements on the type field
-- **Extract Superclass**: Used when you want to share behavior among multiple classes by factoring it upward
-- **Factory Method Pattern**: The factory methods introduced here follow this design pattern
-- **Replace Type Code with Subclass**: The inverse refactoring, applied when distinct behavior needs to be introduced
+- **Replace Conditional with Polymorphism**: Consider it if the single class starts to grow switch statements on the type field
+- **Extract Superclass**: Use it to share behavior among several classes by moving it up
+- **Factory Method Pattern**: The factory methods introduced here follow this pattern
+- **Replace Type Code with Subclass**: The inverse refactoring, applied when distinct behavior is needed

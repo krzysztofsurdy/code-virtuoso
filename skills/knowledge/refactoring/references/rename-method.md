@@ -1,31 +1,39 @@
 # Rename Method
 
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After Examples (PHP 8.3+)](#beforeafter-examples-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+
 ## Overview
 
-Rename Method gives a method a name that accurately describes what it does. When a method's name no longer matches its behavior - due to evolving requirements, hasty initial naming, or broadened scope - renaming it restores clarity and lets readers understand intent without diving into the implementation.
+Rename Method gives a method a name that describes what it does. When the name no longer matches the behavior, renaming restores clarity. The cause may be changed requirements, a hasty first name, or a method that grew in scope. Readers can then understand intent without reading the implementation.
 
 ## Motivation
 
-Methods acquire poor names for several reasons:
-- Rushed initial development leaves temporary names in place
-- Method functionality evolves beyond its original scope
-- Inconsistent naming conventions across the codebase
-- Comments become necessary to explain what a poorly-named method does
+Methods end up with poor names for several reasons:
+- Rushed early development leaves temporary names in place
+- The method's functionality grows beyond its original scope
+- Naming conventions are inconsistent across the codebase
+- Comments are needed to explain what a poorly named method does
 
-A misleading name forces every reader to inspect the method body before trusting what it does, slowing comprehension and increasing the chance of misuse.
+A misleading name forces every reader to inspect the method body before trusting it. That slows reading and makes misuse more likely.
 
 ## Mechanics
 
-The refactoring process follows these essential steps:
-
 1. **Declare a new method** with the desired name, copying the original implementation
-2. **Delegate the old method** to call the new method to maintain backward compatibility during transition
-3. **Find and update all references** throughout the codebase to use the new method name
-4. **Remove the old method** once all references are updated, or mark as deprecated if it's a public API
+2. **Delegate the old method** to the new one so existing callers keep working during the transition
+3. **Find and update all references** in the codebase to use the new name
+4. **Remove the old method** once all references are updated, or mark it as deprecated if it is a public API
 
 ## Before/After Examples (PHP 8.3+)
 
-### Example 1: Descriptive Method Name
+### Example 1: descriptive method name
 
 **Before:**
 ```php
@@ -66,7 +74,7 @@ class UserRepository
 $user = $repository->findUserById(1);
 ```
 
-### Example 2: Boolean Getter Clarity
+### Example 2: boolean getter clarity
 
 **Before:**
 ```php
@@ -111,7 +119,7 @@ if ($order->isReadyForProcessing()) {
 }
 ```
 
-### Example 3: Transformation Methods
+### Example 3: transformation methods
 
 **Before:**
 ```php
@@ -154,25 +162,25 @@ class ProductPresenter
 
 ## Benefits
 
-- **Instant comprehension** - Well-chosen names let readers grasp purpose without opening the method body
-- **Lower cognitive overhead** - Developers spend time building features, not deciphering cryptic labels
-- **Fewer misuses** - A precise name makes it hard to call the wrong method by mistake
-- **Reduced comment dependency** - The name itself serves as documentation
-- **Stronger IDE assistance** - Autocomplete and search become more useful with descriptive names
-- **Consistent vocabulary** - Renaming brings a method in line with the project's naming conventions
+- **Instant comprehension**: A well-chosen name tells readers the purpose without opening the method body
+- **Lower cognitive overhead**: Developers spend time building features, not deciphering cryptic labels
+- **Fewer misuses**: A precise name makes it hard to call the wrong method by mistake
+- **Fewer comments**: The name itself documents the method
+- **Better IDE assistance**: Autocomplete and search work better with descriptive names
+- **Consistent vocabulary**: The method matches the project's naming conventions
 
-## When NOT to Use
+## When NOT to use
 
-- **Public API contracts** - Renaming public methods breaks backward compatibility; use deprecation instead
-- **Framework hooks** - Methods that override parent/interface contracts shouldn't be renamed
-- **Legacy systems** - When widely dependent code can't be updated simultaneously
-- **Name conflicts** - If a new name conflicts with existing methods in the class hierarchy
-- **During active development** - Wait until functionality stabilizes before finalizing names
+- **Public API contracts**: Renaming public methods breaks backward compatibility; deprecate instead
+- **Framework hooks**: Methods that override parent or interface contracts should not be renamed
+- **Legacy systems**: Widely dependent code cannot be updated all at once
+- **Name conflicts**: The new name collides with an existing method in the class hierarchy
+- **During active development**: Wait until the functionality stabilizes before settling on names
 
 ## Related Refactorings
 
-- **Extract Method** - Often applied before Rename Method to isolate and clarify functionality
-- **Move Method** - Combines renaming with relocating methods to more appropriate classes
-- **Change Function Declaration** - Related technique for updating function signatures alongside names
-- **Rename Variable** - Similar principle applied to variable naming clarity
-- **Deprecation** - Use PHP 8.1+ `#[Deprecated]` attribute for safe public API transitions
+- **Extract Method**: Often applied before Rename Method to isolate and clarify functionality
+- **Move Method**: Combines renaming with relocating a method to a more appropriate class
+- **Change Function Declaration**: Related technique for updating function signatures alongside names
+- **Rename Variable**: The same principle applied to variable names
+- **Deprecation**: Use the PHP 8.1+ `#[Deprecated]` attribute for safe public API transitions

@@ -1,30 +1,41 @@
 # Replace Inheritance with Delegation
 
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After Examples](#beforeafter-examples)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Replace Inheritance with Delegation swaps an "extends" relationship for a composition-based approach where the former subclass holds a reference to the former superclass and forwards only the calls it genuinely needs. When a class inherits from another solely to reuse implementation - not because it represents a genuine specialization - delegation models the actual dependency more accurately.
+Replace Inheritance with Delegation swaps an "extends" relationship for composition. The former subclass holds a reference to the former superclass and forwards only the calls it needs. When a class inherits from another only to reuse its implementation, and is not a real specialization of it, delegation models the dependency more accurately.
 
 ## Motivation
 
-### When to Consider This Refactoring
+### When to consider this refactoring
 
-**Liskov Substitution Principle Violation**: The inheritance exists solely to reuse implementation details, not because the derived class is a legitimate specialization of its parent. Instances of the subclass cannot faithfully stand in for the superclass.
+**Liskov Substitution Principle violation**: The inheritance exists only to reuse implementation, and the derived class is not a real specialization of its parent. Instances of the subclass cannot stand in for the superclass.
 
-**Partial Method Inheritance**: Only a handful of methods from the parent are relevant to the child. The remaining inherited methods leak into the public surface, confusing callers about which operations are part of the class's true contract.
+**Partial method inheritance**: Only a few of the parent's methods are relevant to the child. The rest leak into the public surface and confuse callers about which operations belong to the class's contract.
 
-**Design Clarity**: When the subclass functions as a wrapper or adapter around another class rather than being a genuine subtype, composition expresses that relationship far more honestly.
+**Design clarity**: The subclass acts as a wrapper or adapter around another class and is not a real subtype. Composition states that relationship honestly.
 
 ## Mechanics
 
-1. **Introduce a delegate field** in the subclass to store a reference to the former superclass
+1. **Introduce a delegate field** in the subclass to hold a reference to the former superclass
 2. **Write forwarding methods** for every inherited method that clients still need
-3. **Rewire internal logic** so that it operates through the delegate rather than through inherited state
+3. **Rewire internal logic** to work through the delegate instead of inherited state
 4. **Drop the inheritance declaration** from the class definition
-5. **Set up the delegate** inside the constructor
+5. **Set up the delegate** in the constructor
 
 ## Before/After Examples
 
-### Before: Inheritance Misuse
+### Before: inheritance misuse
 
 ```php
 <?php
@@ -66,7 +77,7 @@ final readonly class InstrumentedStack extends Stack
 }
 ```
 
-### After: Delegation Pattern
+### After: delegation
 
 ```php
 <?php
@@ -125,27 +136,27 @@ final class InstrumentedStack
 
 ## Benefits
 
-- **Controlled surface area**: The class exposes only the methods it explicitly forwards, hiding irrelevant parent operations
+- **Controlled surface area**: The class exposes only the methods it forwards and hides irrelevant parent operations
 - **Interchangeable delegates**: Different implementations can be injected without changing the wrapper's contract
-- **Natural strategy fit**: Delegation naturally supports runtime algorithm swapping via the Strategy pattern
-- **Honest modeling**: The code reflects a "uses" relationship rather than a misleading "is-a" relationship
-- **Reduced coupling**: The wrapper is not bound to the full interface of the delegate's class hierarchy
+- **Strategy fit**: Delegation supports swapping algorithms at runtime through the Strategy pattern
+- **Honest modeling**: The code shows a "uses" relationship instead of a misleading "is-a"
+- **Lower coupling**: The wrapper is not bound to the full interface of the delegate's class hierarchy
 
-## When NOT to Use
+## When NOT to use
 
-- **Authentic Specialization**: The subclass truly is a more specific variant of the superclass (e.g., `Dog extends Animal`)
-- **Polymorphic Collections**: Code depends on treating instances of the subclass as the superclass type
-- **Interface Contracts**: Consumers expect the subclass to satisfy the superclass contract via inheritance
-- **Minimal Hierarchies**: Small, straightforward inheritance trees that have no design violations
+- **Real specialization**: The subclass is a more specific variant of the superclass (for example, `Dog extends Animal`)
+- **Polymorphic collections**: Code treats instances of the subclass as the superclass type
+- **Interface contracts**: Consumers expect the subclass to satisfy the superclass contract through inheritance
+- **Small hierarchies**: Small inheritance trees with no design violations
 
 ## Related Refactorings
 
-- **Extract Superclass**: The reverse operation - factor shared code upward into a new parent class
-- **Strategy Pattern**: A pattern that frequently emerges naturally once delegation is in place
+- **Extract Superclass**: The reverse operation. Move shared code up into a new parent class
+- **Strategy Pattern**: Often appears once delegation is in place
 - **Adapter Pattern**: A structurally similar composition technique for bridging mismatched interfaces
-- **Decorator Pattern**: Another composition-based approach for layering additional behavior
+- **Decorator Pattern**: Another composition-based approach, used to layer on extra behavior
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

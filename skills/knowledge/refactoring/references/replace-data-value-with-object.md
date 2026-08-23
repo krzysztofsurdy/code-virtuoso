@@ -1,35 +1,46 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before: PHP 8.3+ example](#before-php-83-example)
+- [After: PHP 8.3+ example](#after-php-83-example)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+
 ## Overview
 
-Replace Data Value with Object promotes a bare primitive - a string, integer, or similar simple type - into a dedicated class. What starts as a single field often accumulates validation rules, formatting logic, and related operations that do not belong on the host class. Wrapping the value in its own object gives that behavior a proper home and turns a passive piece of data into an active participant in the domain model.
+Replace Data Value with Object turns a bare primitive (a string, integer, or similar simple type) into a dedicated class. A single field often picks up validation rules, formatting logic, and related operations that do not belong on the host class. Wrapping the value in its own object gives that behavior a home and makes the data an active part of the domain model.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
-- **Primitive obsession**: Using strings or integers to represent domain concepts (IDs, codes, amounts)
-- **Scattered validation**: Same validation logic repeated in multiple places
-- **Missing behavior**: Data lacks associated operations that belong conceptually with it
-- **Weak type safety**: Using generic primitives instead of domain-specific types
-- **Inconsistent representation**: The same concept handled differently in different parts of code
-- **Expandable requirements**: A simple value may need additional properties or methods
-- **Cross-cutting concerns**: Formatting, parsing, or validation applied repeatedly
+- **Primitive obsession**: Strings or integers represent domain concepts (IDs, codes, amounts)
+- **Scattered validation**: The same validation logic is repeated in several places
+- **Missing behavior**: The data lacks operations that belong with it
+- **Weak type safety**: Generic primitives are used instead of domain-specific types
+- **Inconsistent representation**: The same concept is handled differently in different parts of the code
+- **Growing requirements**: A simple value may need more properties or methods
+- **Cross-cutting concerns**: Formatting, parsing, or validation is applied repeatedly
 
-### Why It Matters
+### Why it matters
 
-Elevating a primitive to a first-class object centralizes validation, attaches behavior to the data it belongs with, and replaces vague types with explicit domain vocabulary. The result is a codebase where business rules are enforced at the point of creation rather than scattered across consumers.
+Making a primitive a first-class object centralizes validation, attaches behavior to the data it belongs with, and replaces vague types with explicit domain vocabulary. Business rules are then enforced where the value is created, not scattered across consumers.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
-1. **Identify the primitive**: Find the simple data value needing object treatment
-2. **Create new class**: Design a dedicated class representing the concept
-3. **Define constructor**: Implement validation and initialization logic
+1. **Identify the primitive**: Find the simple data value that needs to become an object
+2. **Create the class**: Design a dedicated class for the concept
+3. **Define the constructor**: Implement validation and initialization logic
 4. **Add factory methods**: Consider named constructors for common creation patterns
 5. **Encapsulate behavior**: Move related logic into the new class
-6. **Replace usages**: Update code to use the new object instead of primitive
-7. **Test thoroughly**: Ensure behavior and validation work correctly
-8. **Refine interface**: Optimize public API based on actual usage patterns
+6. **Replace usages**: Update code to use the new object instead of the primitive
+7. **Run the tests**: Check that behavior and validation work
+8. **Refine the interface**: Adjust the public API based on how it is actually used
 
-## Before: PHP 8.3+ Example
+## Before: PHP 8.3+ example
 
 ```php
 <?php
@@ -114,7 +125,7 @@ class OrderProcessor
 }
 ```
 
-## After: PHP 8.3+ Example
+## After: PHP 8.3+ example
 
 ```php
 <?php
@@ -240,27 +251,27 @@ class OrderProcessor
 
 ## Benefits
 
-- **Enforced invariants**: Validation happens once, at construction, rather than at every use site
-- **Behavior co-location**: Operations on the value live next to the value itself
-- **Explicit domain vocabulary**: Type names like `Email` and `Money` make code read like prose
-- **Immutability by design**: Value objects are typically `readonly`, eliminating accidental mutation
+- **Enforced invariants**: Validation happens once, at construction, not at every use site
+- **Behavior next to data**: Operations on the value live with the value
+- **Domain vocabulary**: Type names like `Email` and `Money` make the code read clearly
+- **Immutability**: Value objects are typically `readonly`, which prevents accidental mutation
 - **Meaningful equality**: Objects can define what "same" means for their domain concept
-- **Isolated testability**: Each value object can be tested independently of the rest of the system
-- **Reduced primitive coupling**: Consumers depend on domain abstractions, not raw strings and integers
+- **Isolated testing**: Each value object can be tested independently of the rest of the system
+- **Less primitive coupling**: Consumers depend on domain types, not raw strings and integers
 
-## When NOT to Use
+## When NOT to use
 
-- **Simple pass-through values**: If the primitive needs no validation or behavior, keep it simple
-- **External API contracts**: Don't wrap third-party data; maintain compatibility
-- **High-volume operations**: Excessive object creation may impact performance (profile first)
-- **Performance-critical tight loops**: Though usually negligible with modern PHP
-- **Legacy systems with strict contracts**: Refactoring may break existing interfaces
-- **Not yet stabilized requirements**: Wait until the concept's role is clear
+- **Pass-through values**: If the primitive needs no validation or behavior, keep it as is
+- **External API contracts**: Do not wrap third-party data; keep compatibility
+- **High-volume operations**: Creating many objects may affect performance (profile first)
+- **Performance-critical tight loops**: The cost is usually negligible in modern PHP
+- **Legacy systems with strict contracts**: The refactoring may break existing interfaces
+- **Unsettled requirements**: Wait until the concept's role is clear
 
 ## Related Refactorings
 
-- **Extract Class**: When a value object needs to become a full entity with identity
+- **Extract Class**: Use it when a value object needs to become a full entity with identity
 - **Introduce Parameter Object**: Groups multiple parameters as a value object
 - **Move Method**: Transfer behavior from procedural code into the new value object
 - **Replace Type Code with Classes**: Converts enumerations to value objects with behavior
-- **Hide Delegate**: Encapsulates value object access behind a simpler interface
+- **Hide Delegate**: Hides access to the value object behind a simpler interface

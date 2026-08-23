@@ -1,30 +1,41 @@
 # Replace Delegation with Inheritance
 
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After Examples](#beforeafter-examples)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Replace Delegation with Inheritance converts a class that wraps another object and forwards most of its methods into a subclass of that object. When a class delegates virtually its entire public interface to a single collaborator, the wrapper layer adds mechanical boilerplate without contributing meaningful abstraction. Inheriting directly removes the forwarding code and lets the subclass access parent behavior natively.
+Replace Delegation with Inheritance turns a class that wraps another object and forwards most of its methods into a subclass of that object. When a class forwards nearly its whole public interface to one collaborator, the wrapper is boilerplate and adds no abstraction. Inheriting directly removes the forwarding code. The subclass then uses the parent's behavior as its own.
 
 ## Motivation
 
-Delegation is a powerful composition tool, but its advantage erodes when:
+Delegation is a useful way to compose objects, but it loses its value when:
 
 - A class delegates to **only one** delegate object
 - The class delegates **all or most** public methods of that delegate
-- Wrapper methods create unnecessary code duplication
+- Wrapper methods duplicate code for no gain
 
-In these scenarios, inheritance provides a simpler, cleaner design without sacrificing flexibility when the inheritance relationship is semantically correct.
+In these cases inheritance is simpler, as long as the inheritance relationship makes sense.
 
 ## Mechanics
 
 1. **Establish inheritance**: Make your class extend the delegate class
 2. **Remove delegation methods**: Delete wrapper methods one by one
-3. **Replace field access**: Change all references to the delegate field with `this`
+3. **Replace field access**: Change all references to the delegate field to `this`
 4. **Delete the delegate field**: Once all delegation methods are removed
-5. **Test thoroughly**: Ensure polymorphic behavior remains correct
+5. **Run the tests**: Check that polymorphic behavior is still correct
 
 ## Before/After Examples
 
-### Before: Delegation Pattern
+### Before: delegation
 
 ```php
 readonly class PersonAddress
@@ -85,7 +96,7 @@ class Employee
 }
 ```
 
-### After: Inheritance Pattern
+### After: inheritance
 
 ```php
 readonly class PersonAddress
@@ -134,29 +145,29 @@ final class Employee extends PersonAddress
 
 ## Benefits
 
-- **Eliminated boilerplate**: Forwarding methods vanish, replaced by inherited behavior
-- **Automatic synchronization**: Changes to the parent class are picked up without touching the subclass
-- **Semantic clarity**: An "is-a" relationship is expressed through the type system rather than implied by code patterns
-- **Unified interface**: One coherent class instead of mirrored method signatures
-- **Polymorphic substitution**: The subclass can be used wherever the parent type is expected
+- **Less boilerplate**: Forwarding methods disappear and inherited behavior takes their place
+- **Stays in sync**: Changes to the parent class reach the subclass without edits
+- **Clear relationship**: The type system states the "is-a" relationship instead of leaving it implied
+- **One interface**: One class instead of mirrored method signatures
+- **Substitutability**: The subclass can be used wherever the parent type is expected
 
-## When NOT to Use
+## When NOT to use
 
-- **Partial delegation**: If your class only delegates *some* methods, not all - this violates Liskov Substitution Principle and breaks polymorphic contracts
-- **Multiple inheritance needed**: If the class already extends another class (use composition instead)
-- **Semantically incorrect**: If the relationship is truly "has-a" not "is-a"
-- **Encapsulation breaking**: If inheritance exposes methods that should remain hidden
-- **Loose coupling preferred**: When delegation better expresses optional dependency
+- **Partial delegation**: If your class delegates only *some* methods, inheriting violates the Liskov Substitution Principle and breaks polymorphic contracts
+- **Multiple inheritance needed**: If the class already extends another class, use composition instead
+- **Wrong relationship**: The relationship is "has-a", not "is-a"
+- **Broken encapsulation**: Inheritance would expose methods that should stay hidden
+- **Loose coupling preferred**: Delegation better expresses an optional dependency
 
 ## Related Refactorings
 
 - **Extract Superclass**: Create a common parent for multiple delegating classes
-- **Hide Delegate**: Reverse operation - convert inheritance to delegation for better encapsulation
+- **Hide Delegate**: The reverse operation. Convert inheritance to delegation for better encapsulation
 - **Replace Type Code with Subclasses**: Use inheritance to handle variant behaviors
-- **Form Template Method**: When subclasses have similar structure, extract common behavior
-- **Introduce Strategy Pattern**: Use composition when multiple algorithms apply to same data
+- **Form Template Method**: When subclasses have a similar structure, extract the common behavior
+- **Introduce Strategy Pattern**: Use composition when several algorithms apply to the same data
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

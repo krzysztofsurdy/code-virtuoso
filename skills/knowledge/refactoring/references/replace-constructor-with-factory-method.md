@@ -1,31 +1,40 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After: PHP 8.3+ code](#beforeafter-php-83-code)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Replace Constructor with Factory Method introduces a static creation method that takes over the job of instantiating objects. A factory method can perform logic that constructors cannot - selecting which subclass to return, caching previously created instances, or expressing intent through a descriptive name. The constructor itself often becomes private, funneling all creation through the factory.
+Replace Constructor with Factory Method introduces a static creation method that takes over instantiation. A factory method can do things a constructor cannot. It can pick which subclass to return, return a cached instance, or express intent through a descriptive name. The constructor often becomes private, so all creation goes through the factory.
 
 ## Motivation
 
-This refactoring becomes essential in several scenarios:
+Use this refactoring in these situations:
 
-1. **Subclass-based type handling**: After refactoring type codes into subclasses, factory methods enable returning the correct subclass instance based on parameters - something constructors cannot accomplish.
+1. **Subclass-based type handling**: After turning type codes into subclasses, a factory method can return the right subclass for the given parameters. A constructor cannot.
 
-2. **Complex initialization logic**: When constructors perform operations beyond simple field assignment, a factory method can better express intent and manage this complexity.
+2. **Complex initialization logic**: When a constructor does more than assign fields, a factory method states the intent better and holds the complexity.
 
-3. **Multiple creation modes**: Support different object creation scenarios without cluttering the constructor.
+3. **Multiple creation modes**: Support different ways of creating an object without cluttering the constructor.
 
-4. **Object caching and reuse**: Return pre-existing cached objects instead of always creating new instances.
+4. **Object caching and reuse**: Return an existing cached object instead of always creating a new one.
 
 ## Mechanics
-
-The refactoring follows these steps:
 
 1. Create a static factory method that calls the constructor and handles additional logic
 2. Replace all constructor calls with factory method invocations
 3. Mark the constructor as private to prevent direct instantiation
 4. Extract non-construction logic from the constructor into the factory method
 
-## Before/After: PHP 8.3+ Code
+## Before/After: PHP 8.3+ code
 
-**Before** (Complex constructor with type code):
+**Before** (complex constructor with type code):
 
 ```php
 class Employee
@@ -59,7 +68,7 @@ class Employee
 $employee = new Employee(1, 'John', 50000);
 ```
 
-**After** (Factory method with polymorphic returns):
+**After** (factory method with polymorphic returns):
 
 ```php
 abstract class Employee
@@ -104,7 +113,7 @@ class Developer extends Employee
 $employee = Employee::create(1, 'John', 50000);
 ```
 
-**Example with caching**:
+**Example with caching:**
 
 ```php
 class DatabaseConnection
@@ -142,27 +151,27 @@ $conn2 = DatabaseConnection::create('localhost', 'mydb');
 ## Benefits
 
 - **Subclass selection**: The factory can inspect arguments and return the appropriate concrete type
-- **Meaningful names**: Methods like `createFromArray()` or `withDefaults()` reveal purpose far better than a generic constructor
-- **Instance reuse**: The factory can return cached objects rather than always allocating fresh ones
-- **Clean separation**: Creation decisions live in the factory, keeping the constructor focused on field assignment
-- **Test-friendly**: Factories are straightforward to stub or mock in unit tests
+- **Meaningful names**: Methods like `createFromArray()` or `withDefaults()` reveal purpose better than a generic constructor
+- **Instance reuse**: The factory can return cached objects instead of allocating new ones
+- **Separation of concerns**: Creation decisions live in the factory and the constructor only assigns fields
+- **Testability**: Factories are easy to stub or mock in unit tests
 
-## When NOT to Use
+## When NOT to use
 
-- **Simple constructors**: Avoid this refactoring if the constructor performs only basic field assignment
-- **Performance-critical code**: If object instantiation is a bottleneck and factory method overhead matters
-- **Immutable value objects**: For simple value objects where direct construction is clearer
-- **Framework-managed objects**: Avoid if your framework requires direct constructor access for dependency injection
-- **One-time usage**: If factory method is called in only one place, direct construction may be clearer
+- **Simple constructors**: Skip it if the constructor only assigns fields
+- **Performance-critical code**: Object instantiation is a bottleneck and factory method overhead matters
+- **Immutable value objects**: For simple value objects, direct construction is clearer
+- **Framework-managed objects**: The framework needs direct constructor access for dependency injection
+- **Single call site**: If the factory method would be called in only one place, direct construction may be clearer
 
 ## Related Refactorings
 
 - **Replace Type Code with Subclasses**: Often used in conjunction with this refactoring
 - **Change Value to Reference**: Factory methods help implement object identity and caching
 - **Extract Method**: Use to simplify factory method logic
-- **Factory Method design pattern**: This refactoring implements this fundamental design pattern
+- **Factory Method design pattern**: This refactoring is an application of that pattern
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

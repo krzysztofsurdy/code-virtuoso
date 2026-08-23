@@ -1,36 +1,47 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After Examples](#beforeafter-examples)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Replace Method with Method Object extracts a complex method into its own dedicated class. The method's logic becomes the central operation of this new object, its parameters become constructor arguments, and its local variables become instance fields. This technique is especially helpful when a method has grown unwieldy due to many parameters, tangled logic, or heavily interdependent local variables.
+Replace Method with Method Object moves a complex method into its own class. The method's logic becomes the main operation of the new object, its parameters become constructor arguments, and its local variables become instance fields. It helps most when a method has grown hard to handle because of many parameters, tangled logic, or local variables that depend on each other.
 
 ## Motivation
 
 ### Problem
-- **Unwieldy methods**: Methods packed with parameters and local variables become hard to follow
-- **Low reusability**: Logic locked inside a single class cannot be extracted or tested on its own
-- **Difficult decomposition**: Splitting the method into smaller pieces within the same class feels awkward
-- **Testing friction**: Exercising specific branches of intricate logic means instantiating the entire host class
-- **Bloated signatures**: Methods with long parameter lists are cumbersome to call and maintain
+- **Unwieldy methods**: A method with many parameters and local variables is hard to follow
+- **Low reusability**: Logic locked inside one class cannot be reused or tested on its own
+- **Hard to decompose**: Splitting the method into smaller pieces in the same class is awkward
+- **Testing friction**: Exercising specific branches of complex logic means building the whole host class
+- **Long signatures**: A long parameter list is hard to call and maintain
 
 ### Solution
 Introduce a new class where:
 - The method becomes a public operation (typically `__invoke()` or `execute()`)
-- Parameters are received through the constructor
-- Local variables are promoted to instance properties
-- The original logic migrates into the class
+- Parameters arrive through the constructor
+- Local variables become instance properties
+- The original logic moves into the class
 
 ## Mechanics
 
-1. Create a new class with a descriptive name (e.g., `CalculateOrderTotal`, `GenerateReport`)
+1. Create a new class with a descriptive name (for example, `CalculateOrderTotal` or `GenerateReport`)
 2. Accept all method parameters through the constructor
-3. Promote local variables to instance properties
+3. Turn local variables into instance properties
 4. Move the method body into a `__invoke()` or `execute()` method
-5. Replace the original method with an instantiation and invocation of the new class
+5. Replace the original method with code that creates the new class and invokes it
 6. Run the full test suite to confirm identical behavior
-7. Decompose the new class into private helper methods as appropriate
+7. Split the new class into private helper methods where that helps
 
 ## Before/After Examples
 
-### Before: Complex Method with Multiple Parameters
+### Before: complex method with multiple parameters
 
 ```php
 class OrderProcessor
@@ -64,7 +75,7 @@ class OrderProcessor
 }
 ```
 
-### After: Method Object Pattern
+### After: method object
 
 ```php
 // New dedicated class
@@ -137,31 +148,31 @@ class OrderProcessor
 
 ## Benefits
 
-- **Readable structure**: Complex logic splits into named private methods that describe each step's purpose
-- **Independent testability**: The method object can be instantiated and tested without the original host class
-- **Clean decomposition**: Intricate logic breaks down into manageable pieces within a cohesive class
+- **Readable structure**: Complex logic splits into named private methods that describe each step
+- **Independent testing**: The method object can be built and tested without the original host class
+- **Easier decomposition**: Complex logic breaks into small pieces inside one cohesive class
 - **Portability**: The method object can be used from different contexts and callers
-- **Single Responsibility**: Each class exists for exactly one reason
-- **Easier inspection**: State lives in instance fields, making it straightforward to inspect during debugging
-- **Callable syntax**: Using `__invoke()` makes the object callable, yielding elegant PHP 8.3+ usage
+- **Single Responsibility**: Each class has one reason to exist
+- **Easier debugging**: State lives in instance fields, so it is easy to inspect
+- **Callable syntax**: `__invoke()` makes the object callable like a function
 
-## When NOT to Use
+## When NOT to use
 
-- **Straightforward methods**: If the method is short and easy to understand, creating a whole class is overkill
-- **Hot paths**: Object construction has negligible cost, but if called billions of times, weigh the trade-off
-- **Truly one-off logic**: For genuinely unrepeated logic, the overhead of a dedicated class may not pay for itself
-- **Simple parameter forwarding**: If the method just passes arguments without complex logic, extract a smaller helper instead
+- **Simple methods**: If the method is short and easy to understand, a whole class is overkill
+- **Hot paths**: Object construction costs little, but if the method runs billions of times, weigh the trade-off
+- **One-off logic**: For logic that is never reused, a dedicated class may not pay for itself
+- **Plain parameter forwarding**: If the method only passes arguments along, extract a smaller helper instead
 - **Conflicting architecture**: Do not introduce this pattern if the codebase follows a different architectural convention
 
 ## Related Refactorings
 
 - **Extract Method**: Often the first refactoring to try when complex logic appears inside a method
-- **Extract Class**: A broader variant that pulls out entire responsibilities rather than a single operation
-- **Decompose Conditional**: Helpful for simplifying branching logic before promoting it to a method object
-- **Introduce Parameter Object**: Pairs well with this technique to bundle related constructor arguments
-- **Strategy Pattern**: Method objects frequently evolve into Strategy implementations with interchangeable variants
+- **Extract Class**: A broader variant that pulls out a whole responsibility instead of a single operation
+- **Decompose Conditional**: Simplifies branching logic before you move it to a method object
+- **Introduce Parameter Object**: Pairs with this technique to bundle related constructor arguments
+- **Strategy Pattern**: Method objects often grow into Strategy implementations with interchangeable variants
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

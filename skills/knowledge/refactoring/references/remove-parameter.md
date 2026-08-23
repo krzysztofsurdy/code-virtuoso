@@ -1,29 +1,37 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After Example (PHP 8.3+)](#beforeafter-example-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+
 ## Overview
 
-Remove Parameter strips an unused parameter from a method signature. When a parameter is never referenced inside the method body, it adds noise to the interface and forces callers to supply a value that serves no purpose. Dropping it produces a cleaner contract that accurately reflects what the method actually needs.
+Remove Parameter strips an unused parameter from a method signature. A parameter that is never used in the method body adds noise to the interface. It also forces callers to pass a value that does nothing. Dropping it makes the contract match what the method needs.
 
 ## Motivation
 
 Unused parameters cause several problems:
 
-- **Wasted attention**: Developers spend effort figuring out why the parameter exists when it contributes nothing
-- **Misleading signatures**: The method promises to use data it ignores, eroding trust in the API
-- **Heavier call sites**: Callers must construct and pass an argument that is immediately discarded
+- **Wasted attention**: Developers spend time working out why the parameter exists when it contributes nothing
+- **Misleading signatures**: The method appears to use data it ignores, which erodes trust in the API
+- **Heavier call sites**: Callers must build and pass an argument that is immediately discarded
 - **Speculative design**: Parameters are often added "just in case" for changes that never arrive
 
 ## Mechanics
 
-The refactoring process follows these steps:
-
-1. **Identify unused parameters**: Scan the method body to find parameters that are never referenced.
-2. **Check for overrides**: Verify if the parameter is used in superclass or subclass implementations.
-3. **Update callers**: Find all places where this method is called and update them to omit the unused argument.
-4. **Remove the parameter**: Delete the parameter from the method signature.
-5. **Handle public APIs**: For public methods, consider deprecation before complete removal.
+1. **Identify unused parameters**: Scan the method body for parameters that are never referenced.
+2. **Check for overrides**: Verify whether the parameter is used in superclass or subclass implementations.
+3. **Update callers**: Find every call to the method and drop the unused argument.
+4. **Remove the parameter**: Delete it from the method signature.
+5. **Handle public APIs**: For public methods, consider deprecation before removing the parameter outright.
 
 ## Before/After Example (PHP 8.3+)
 
-### Before: Unused Parameter
+### Before: unused parameter
 
 ```php
 class UserService
@@ -39,7 +47,7 @@ class UserService
 $service->updateEmail($user, 'new@example.com', 'this is never used');
 ```
 
-### After: Parameter Removed
+### After: parameter removed
 
 ```php
 class UserService
@@ -55,7 +63,7 @@ class UserService
 $service->updateEmail($user, 'new@example.com');
 ```
 
-### With Named Arguments (PHP 8.0+)
+### With named arguments (PHP 8.0+)
 
 ```php
 class ReportGenerator
@@ -82,7 +90,7 @@ class ReportGenerator
     }
 }
 
-// Callers using named arguments adapt automatically
+// Callers using named arguments keep working
 $generator->generate(
     report: $myReport,
     format: 'pdf',
@@ -95,22 +103,21 @@ $generator->generate(
 
 - **Honest interface**: The signature lists exactly the data the method consumes
 - **Lighter call sites**: Callers no longer fabricate throwaway arguments
-- **Reduced confusion**: Future readers are not left wondering what the parameter was for
+- **Less confusion**: Future readers do not wonder what the parameter was for
 - **Simpler testing**: Fewer arguments to set up in test doubles and fixtures
-- **Tighter contracts**: The relationship between caller and method is unambiguous
 
-## When NOT to Use
+## When NOT to use
 
 Avoid this refactoring if:
 
-- **The parameter is used in subclass/superclass implementations**: Polymorphic methods must maintain compatible signatures.
-- **The method is part of a widely-used public API**: Removing parameters could break external code.
-- **It's required by an interface contract**: Implementing an interface requires matching the method signature.
-- **The parameter might be needed for forward compatibility**: In libraries, sometimes parameters are kept for future use.
+- **The parameter is used in subclass or superclass implementations**: Polymorphic methods must keep compatible signatures.
+- **The method is part of a widely used public API**: Removing parameters could break external code.
+- **An interface contract requires it**: An implementing method must match the interface signature.
+- **The parameter is kept for forward compatibility**: Libraries sometimes reserve parameters for future use.
 
 ## Related Refactorings
 
-- **Add Parameter**: The opposite refactoring; use when a method needs additional data.
+- **Add Parameter**: The opposite refactoring; use it when a method needs additional data.
 - **Rename Method**: Often combined with Remove Parameter to better reflect intent.
-- **Change Method Signature**: A broader refactoring that encompasses parameter changes.
-- **Extract Method**: May eliminate parameters by creating focused, single-responsibility methods.
+- **Change Method Signature**: A broader refactoring that covers parameter changes.
+- **Extract Method**: Can eliminate parameters by creating small, focused methods.

@@ -1,16 +1,28 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before: conditional logic](#before-conditional-logic)
+- [After: polymorphic implementation (PHP 8.3+)](#after-polymorphic-implementation-php-83)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Replace Conditional with Polymorphism transforms branching logic - switch statements, if-else ladders - into a class hierarchy where each variant implements its own version of the method. Instead of inspecting a type code or flag to decide which path to follow, you let the object itself carry the right behavior, dispatched automatically through method overriding.
+Replace Conditional with Polymorphism turns branching logic (switch statements, if-else ladders) into a class hierarchy where each variant implements its own version of the method. Instead of checking a type code or flag to pick a path, the object carries the right behavior. Method overriding dispatches to it.
 
 ## Motivation
 
-Conditional branches that select behavior based on object type or category introduce several structural weaknesses:
+Conditionals that select behavior by object type or category have several weaknesses:
 
 - **Shotgun surgery**: Adding a new variant means hunting down and modifying every conditional that checks the type
-- **Closed for extension**: The code must be edited, not extended, to accommodate new cases
+- **Closed for extension**: New cases mean editing existing code instead of adding to it
 - **Scattered knowledge**: The same branching logic is often duplicated across multiple methods
-- **External interrogation**: Callers must ask "what kind are you?" rather than simply requesting an action
-- **Hard-to-isolate tests**: Each branch shares the same method, making focused unit testing awkward
+- **External interrogation**: Callers must ask "what kind are you?" instead of requesting an action
+- **Hard-to-isolate tests**: All branches share one method, which makes focused unit tests awkward
 
 ## Mechanics
 
@@ -21,7 +33,7 @@ Conditional branches that select behavior based on object type or category intro
 5. Remove conditional branches progressively
 6. Replace conditional calls with polymorphic method invocations
 
-## Before: Conditional Logic
+## Before: conditional logic
 
 ```php
 class Bird
@@ -51,7 +63,7 @@ $bird = new Bird('african', 100, false);
 echo $bird->getSpeed(); // Must know implementation details
 ```
 
-## After: Polymorphic Implementation (PHP 8.3+)
+## After: polymorphic implementation (PHP 8.3+)
 
 ```php
 abstract class Bird
@@ -105,36 +117,36 @@ $birds = [
 ];
 
 foreach ($birds as $bird) {
-    echo $bird->getSpeed(); // Correct implementation called automatically
+    echo $bird->getSpeed(); // The right implementation is called
 }
 ```
 
 ## Benefits
 
 - **Open for extension**: New variants require only a new subclass; existing code stays untouched
-- **Compile-time guarantees**: The type system ensures every subclass provides the required method
-- **Focused testing**: Each subclass can be verified independently with targeted unit tests
-- **Self-documenting structure**: The hierarchy makes the set of variants visible at a glance
-- **Encapsulated variation**: Each subclass owns its own logic, preventing cross-contamination
-- **Aligned with SOLID**: Naturally satisfies the Open/Closed, Single Responsibility, and Liskov Substitution principles
+- **Compile-time guarantees**: The type system requires every subclass to provide the method
+- **Focused testing**: Each subclass can be tested independently
+- **Visible structure**: The hierarchy shows the set of variants at a glance
+- **Encapsulated variation**: Each subclass owns its own logic
+- **SOLID alignment**: Satisfies the Open/Closed, Single Responsibility, and Liskov Substitution principles
 
-## When NOT to Use
+## When NOT to use
 
-- **Simple conditionals**: If the conditional logic is trivial and unlikely to change, leave it as-is
-- **Unrelated conditions**: When conditionals check unrelated properties rather than object type/state
-- **Few variants**: If there are only 2 variants and no plans for extension, polymorphism may be overkill
-- **Feature flags**: Temporary feature toggles are better handled with decorators or strategies
-- **Mutually exclusive states**: Consider State Pattern instead if object state changes frequently
+- **Simple conditionals**: If the logic is trivial and unlikely to change, leave it alone
+- **Unrelated conditions**: The conditionals check unrelated properties rather than object type or state
+- **Few variants**: With only 2 variants and no plans for more, polymorphism may be overkill
+- **Feature flags**: Temporary toggles are better handled with decorators or strategies
+- **Changing state**: If object state changes frequently, consider the State Pattern instead
 
 ## Related Refactorings
 
 - **Strategy Pattern**: Use when you need to switch algorithms at runtime (similar mechanics, different intent)
-- **State Pattern**: Use when object behavior changes based on internal state transitions
-- **Template Method Pattern**: Define algorithm skeleton in base class, let subclasses fill in details
+- **State Pattern**: Use when object behavior changes with internal state transitions
+- **Template Method Pattern**: Define the algorithm skeleton in the base class and let subclasses fill in the details
 - **Decorator Pattern**: Add behavior dynamically without subclassing
 - **Extract Method**: Often a prerequisite step before applying this refactoring
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

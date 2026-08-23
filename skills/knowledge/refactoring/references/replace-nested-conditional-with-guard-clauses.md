@@ -1,32 +1,41 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After: PHP 8.3+ code](#beforeafter-php-83-code)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-The "Replace Nested Conditional with Guard Clauses" refactoring flattens deeply nested if-else trees into a linear sequence of guard clauses. A guard clause is an early return or throw that handles a special case before the main logic runs. This approach eliminates the "pyramid of doom" where each additional nesting level pushes code further to the right, making it progressively harder to read.
+Replace Nested Conditional with Guard Clauses flattens deeply nested if-else trees into a linear sequence of guard clauses. A guard clause is an early return or throw that handles a special case before the main logic runs. This removes the "pyramid of doom", where each nesting level pushes the code further right and makes it harder to read.
 
 ## Motivation
 
-Deeply nested conditionals introduce several concrete problems:
+Deeply nested conditionals cause several problems:
 
-- **Obscured intent**: The core logic gets buried under layers of indentation, forcing readers to mentally track multiple branches at once
-- **Appearance of ad-hoc development**: Heavy nesting often signals that conditions were added reactively rather than designed deliberately
-- **Mental burden**: Every nesting level demands that the reader maintain additional context, reducing comprehension speed
-- **Harder testing**: Deeply branching code paths multiply the number of scenarios that need coverage
-- **Greater defect risk**: Intricate conditional structures are fertile ground for off-by-one errors and overlooked edge cases
+- **Hidden intent**: The core logic is buried under layers of indentation, and readers must track several branches at once
+- **Look of ad-hoc growth**: Heavy nesting often means conditions were added as needed instead of designed
+- **Mental load**: Each nesting level adds context the reader must hold, which slows reading
+- **Harder testing**: Deeply branching paths multiply the scenarios that need coverage
+- **More defects**: Complex conditional structures breed off-by-one errors and missed edge cases
 
-Guard clauses solve these issues by handling all boundary conditions at the top of the method, leaving the primary ("happy") path to flow unindented and uninterrupted.
+Guard clauses handle all boundary conditions at the top of the method. The main ("happy") path then runs unindented and uninterrupted.
 
 ## Mechanics
 
-The refactoring proceeds through these steps:
+1. **Spot guard conditions**: Identify branches that end in early returns, throws, or other exits
+2. **Hoist to the top**: Move these guard clauses to the start of the method
+3. **Flatten the structure**: Turn nested if-else trees into a sequence of independent if statements
+4. **Drop the else blocks**: Let the guard clause returns make the else branches unnecessary
+5. **Merge where possible**: Combine related guard conditions with logical operators when that improves clarity
 
-1. **Spot guard conditions**: Identify branches that result in early returns, throws, or other exits
-2. **Hoist to the top**: Move these guard clauses to the beginning of the method
-3. **Flatten the structure**: Convert nested if-else trees into a sequence of independent if-statements
-4. **Drop the else blocks**: Let guard clause returns eliminate the need for else branches
-5. **Merge where possible**: Combine related guard conditions using logical operators when it improves clarity
+## Before/After: PHP 8.3+ code
 
-## Before/After: PHP 8.3+ Code
-
-### Before (Nested Conditionals)
+### Before (nested conditionals)
 
 ```php
 public function calculateSalary(Employee $employee): float
@@ -47,7 +56,7 @@ public function calculateSalary(Employee $employee): float
 }
 ```
 
-### After (Guard Clauses)
+### After (guard clauses)
 
 ```php
 public function calculateSalary(Employee $employee): float
@@ -68,7 +77,7 @@ public function calculateSalary(Employee $employee): float
 }
 ```
 
-### Complex Example with Early Exits
+### Complex example with early exits
 
 ```php
 // Before
@@ -114,30 +123,30 @@ public function processOrder(Order $order, Customer $customer): void
 
 ## Benefits
 
-- **Linear readability**: Code progresses top-to-bottom with minimal indentation
-- **Visible preconditions**: Guard clauses make boundary handling explicit right at the start
+- **Linear reading**: Code runs top to bottom with little indentation
+- **Visible preconditions**: Guard clauses show boundary handling at the start
 - **Isolated test paths**: Each guard and the main path can be tested independently
-- **Lower maintenance cost**: Future developers can grasp the method's logic quickly
-- **Less mental overhead**: No need to mentally track which else branch corresponds to which if
-- **Fewer temporary variables**: Eliminates intermediary result variables used only for conditional routing
+- **Lower maintenance cost**: Future developers grasp the method's logic quickly
+- **Less mental load**: No need to track which else belongs to which if
+- **Fewer temporary variables**: No result variables used only to route through conditionals
 
-## When NOT to Use
+## When NOT to use
 
 This refactoring may not fit when:
 
 - **Tightly coupled conditions**: If conditions depend on each other's results, polymorphism may be more appropriate
 - **Rich domain logic**: For substantial business rules, consider **Replace Conditional with Polymorphism** instead
-- **Binary success/failure**: When there is exactly one success path and one failure path, a simple if-else is already clear
-- **Performance-sensitive loops**: Early exits via exceptions carry overhead; use sparingly in tight iterations
+- **Binary success or failure**: With exactly one success path and one failure path, a plain if-else is already clear
+- **Performance-sensitive loops**: Early exits through exceptions have a cost; use them sparingly in tight iterations
 
 ## Related Refactorings
 
-- **Decompose Conditional**: Extract complex boolean expressions into named methods to improve clarity
-- **Replace Conditional with Polymorphism**: Use inheritance or interfaces when decision trees represent type-based behavior
-- **Extract Method**: Move guard clause logic into dedicated helper methods for improved readability
+- **Decompose Conditional**: Extract complex boolean expressions into named methods
+- **Replace Conditional with Polymorphism**: Use inheritance or interfaces when decision trees encode type-based behavior
+- **Extract Method**: Move guard clause logic into helper methods
 - **Consolidate Duplicate Conditional Fragments**: Merge guard clauses that lead to the same outcome
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

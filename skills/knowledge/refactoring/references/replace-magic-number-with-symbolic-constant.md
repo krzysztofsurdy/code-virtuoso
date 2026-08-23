@@ -1,33 +1,45 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before: PHP 8.3+ example](#before-php-83-example)
+- [After: PHP 8.3+ example](#after-php-83-example)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Replace Magic Number with Symbolic Constant removes opaque numeric literals from code by introducing well-named constants in their place. Magic numbers are raw numeric values embedded throughout the codebase with no explanation of what they represent, making it difficult to understand intent or safely change values. Named constants turn the code into its own documentation and centralize value definitions for easier maintenance.
+Replace Magic Number with Symbolic Constant swaps opaque numeric literals for named constants. A magic number is a raw value in the code with no hint of what it means, so readers cannot tell the intent and cannot safely change it. Named constants document the code and keep each value defined in one place.
 
 ## Motivation
 
-### When to Apply
+### When to apply
 
-- **Opaque numerics**: Numeric literals appear with no surrounding context to explain their meaning
-- **Duplicated values**: The same number surfaces in multiple locations across the codebase
-- **Domain-specific meaning**: Numbers encode business rules or domain concepts
-- **Configurable thresholds**: Values that may shift as requirements evolve
-- **Ambiguous purpose**: Readers must guess or trace what a particular number signifies
-- **Scattered updates**: Modifying a value means hunting through the codebase for every occurrence
+- **Opaque numerics**: A numeric literal has no surrounding context to explain it
+- **Duplicated values**: The same number appears in several places
+- **Domain meaning**: The number encodes a business rule or domain concept
+- **Configurable thresholds**: The value may change as requirements change
+- **Ambiguous purpose**: Readers must guess or trace what a number means
+- **Scattered updates**: Changing a value means searching the codebase for every occurrence
 
-### Why It Matters
+### Why it matters
 
-Magic numbers accumulate technical debt by concealing purpose and making code brittle. When a value needs to change, every occurrence must be located and updated individually - an error-prone process that invites inconsistencies. Named constants make the intent self-evident, centralize changes to a single definition, and reduce the chance of introducing bugs during maintenance.
+Magic numbers hide purpose and make code brittle. When a value changes, every occurrence must be found and updated by hand. That is error-prone and invites inconsistencies. A named constant states the intent and puts the change in one definition.
 
-## Mechanics: Step-by-Step
+## Mechanics
 
 1. **Locate magic numbers**: Scan the codebase for unexplained numeric literals
-2. **Determine semantics**: Figure out what each number represents within the domain
+2. **Determine meaning**: Work out what each number represents in the domain
 3. **Pick a descriptive name**: Choose a constant name that conveys the value's role
 4. **Declare the constant**: Define it as a class constant, global constant, or enum member
 5. **Swap in the constant**: Replace every occurrence of the raw number with the named constant
-6. **Confirm correctness**: Verify that program behavior has not changed
-7. **Evaluate scope**: Place the constant at the appropriate visibility level (local, class, or global)
+6. **Confirm correctness**: Verify that behavior has not changed
+7. **Check scope**: Give the constant the right visibility (local, class, or global)
 
-## Before: PHP 8.3+ Example
+## Before: PHP 8.3+ example
 
 ```php
 <?php
@@ -77,7 +89,7 @@ class PricingCalculator
 }
 ```
 
-## After: PHP 8.3+ Example
+## After: PHP 8.3+ example
 
 ```php
 <?php
@@ -138,7 +150,7 @@ class PricingCalculator
 }
 ```
 
-Alternatively, use enums for related constants in PHP 8.3+:
+Related constants can also go in an enum:
 
 ```php
 <?php
@@ -163,31 +175,31 @@ class PricingCalculator
 
 ## Benefits
 
-- **Clarity of intent**: Named constants reveal what each value means, making the code self-explanatory
-- **Fewer inconsistencies**: A single definition prevents errors that arise from updating some occurrences but missing others
-- **Simpler maintenance**: Value changes require editing only one line
+- **Clear intent**: Named constants say what each value means
+- **Fewer inconsistencies**: One definition prevents updating some occurrences and missing others
+- **Simpler maintenance**: A value change is a one-line edit
 - **Domain alignment**: Constant names mirror business terminology
-- **Debugging aid**: Named values appear in stack traces and debugging tools rather than anonymous numbers
-- **Type safety**: Enum-based constants provide compile-time validation in PHP 8.1+
-- **Review-friendliness**: Reviewers can understand purpose without needing extra comments
+- **Debugging aid**: Named values show up in stack traces and debugging tools instead of anonymous numbers
+- **Type safety**: Enum-based constants provide type validation in PHP 8.1+
+- **Easier review**: Reviewers see the purpose without extra comments
 
-## When NOT to Use
+## When NOT to use
 
-- **Self-evident numbers**: Some values (e.g., loop counters starting at 0 or 1) are universally understood and need no constant
-- **Array indices**: Wrapping simple indices in constants often adds noise without improving clarity
-- **Version strings**: Embedded version identifiers are sometimes intentionally left inline
-- **Industry conventions**: Universally recognized values (e.g., HTTP status 200) rarely benefit from a named constant
-- **Over-abstraction**: Excessive naming for trivial arithmetic can obscure rather than illuminate
+- **Self-evident numbers**: Some values (for example, loop counters starting at 0 or 1) are understood by everyone and need no constant
+- **Array indices**: Wrapping simple indices in constants often adds noise without adding clarity
+- **Version strings**: Version identifiers are sometimes left inline on purpose
+- **Industry conventions**: Widely recognized values (for example, HTTP status 200) rarely benefit from a named constant
+- **Over-abstraction**: Naming every piece of trivial arithmetic can hide the logic
 
 ## Related Refactorings
 
-- **Extract Variable**: A parallel technique that extracts complex expressions into descriptively named variables
-- **Introduce Parameter Object**: Bundles related constants into a cohesive object
-- **Extract Class**: Useful when a cluster of related magic numbers deserves its own class
-- **Replace Type Code with Subclasses**: An alternative when numeric categories represent distinct behavioral variants
-- **Replace Magic Number with Symbolic Constant (Enum)**: The idiomatic PHP 8.1+ approach using backed enums
+- **Extract Variable**: A similar technique that moves complex expressions into descriptively named variables
+- **Introduce Parameter Object**: Bundles related constants into one object
+- **Extract Class**: Useful when a group of related magic numbers deserves its own class
+- **Replace Type Code with Subclasses**: An alternative when numeric categories stand for distinct behaviors
+- **Replace Magic Number with Symbolic Constant (Enum)**: The PHP 8.1+ approach using backed enums
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 

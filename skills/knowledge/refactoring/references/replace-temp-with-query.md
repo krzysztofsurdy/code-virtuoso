@@ -1,38 +1,49 @@
+## Contents
+
+- [Overview](#overview)
+- [Motivation](#motivation)
+- [Mechanics](#mechanics)
+- [Before/After PHP 8.3+ code examples](#beforeafter-php-83-code-examples)
+- [Benefits](#benefits)
+- [When NOT to use](#when-not-to-use)
+- [Related Refactorings](#related-refactorings)
+- [Examples in other languages](#examples-in-other-languages)
+
 ## Overview
 
-Replace Temp with Query swaps temporary variables that hold intermediate computation results for method calls that perform those computations on demand. The calculation logic moves into its own method, and every place that previously read the variable now calls that method instead.
+Replace Temp with Query swaps temporary variables that hold intermediate results for method calls that compute the same values on demand. The calculation moves into its own method, and every place that read the variable now calls that method.
 
-Rather than storing a computed value in a local variable, you define a method that produces the result and invoke it wherever the value is needed.
+Instead of storing a computed value in a local variable, you define a method that produces it and call that method wherever the value is needed.
 
 ## Motivation
 
-Temporary variables introduce several issues:
+Temporary variables cause several problems:
 
-- **Trapped scope**: Variables are visible only within the declaring method, preventing reuse elsewhere
-- **Cognitive weight**: Each additional temp adds one more thing a reader must track while understanding the method
-- **Repeated logic**: The same calculation may be duplicated in other methods with no shared implementation
-- **Untestable logic**: Calculations buried in local variables cannot be unit tested independently
-- **Long methods**: Methods stuffed with temporaries are a common indicator that logic should be extracted
+- **Trapped scope**: A variable is visible only in the method that declares it, so other methods cannot reuse it
+- **Cognitive weight**: Each temp is one more thing the reader must track
+- **Repeated logic**: The same calculation may be duplicated in other methods
+- **Untestable logic**: A calculation buried in a local variable cannot be unit tested on its own
+- **Long methods**: A method full of temporaries often has logic that should be extracted
 
-Replacing temps with query methods yields:
+Replacing temps with query methods gives you:
 
-- **Clear separation of concerns**: Each method encapsulates a single computation
-- **Independent testability**: Extracted methods can be verified in isolation
-- **Reuse**: Other methods within the class can call the same query
+- **Separation of concerns**: Each method encapsulates one computation
+- **Independent testing**: Extracted methods can be tested in isolation
+- **Reuse**: Other methods in the class can call the same query
 - **Self-documenting code**: Method names describe what is being calculated
 
 ## Mechanics
 
 1. **Find the temporary variable** that stores a calculated result
-2. **Create a method** that returns the same calculated result
-3. **Transfer the calculation** into the new method body
+2. **Create a method** that returns the same result
+3. **Move the calculation** into the new method body
 4. **Replace all reads** of the temporary variable with calls to the new method
 5. **Delete the variable declaration**
-6. **Set visibility** to private if the method is only needed within the class
+6. **Make the method private** if it is only needed inside the class
 
-## Before/After PHP 8.3+ Code Examples
+## Before/After PHP 8.3+ code examples
 
-### Before: Using Temporary Variables
+### Before: temporary variables
 
 ```php
 <?php
@@ -78,7 +89,7 @@ $order = new Order(quantity: 100, itemPrice: 15.0, basePrice: 0);
 $totalPrice = $order->getPrice();
 ```
 
-### After: Using Query Methods
+### After: query methods
 
 ```php
 <?php
@@ -127,7 +138,7 @@ $order = new Order(quantity: 100, itemPrice: 15.0, basePrice: 0);
 $totalPrice = $order->getPrice();
 ```
 
-### Complex Example with Multiple Temporaries
+### Complex example with multiple temporaries
 
 **Before:**
 ```php
@@ -195,32 +206,32 @@ class Invoice
 
 ## Benefits
 
-- **Readable intent**: Method names act as inline documentation, making each computation's purpose clear
-- **Centralized changes**: Adjusting calculation logic requires editing only one method
-- **Isolated testing**: Extracted query methods can be unit tested on their own
-- **Cross-method reuse**: Other methods in the class can invoke the same queries
-- **Shorter methods**: Moving calculations out makes the host method more concise
-- **Focused responsibility**: Each method handles exactly one concern
-- **Unlocks further refactoring**: Opens doors for Extract Class or Move Method down the line
+- **Readable intent**: Method names document the purpose of each computation
+- **Centralized changes**: Changing a calculation means editing one method
+- **Isolated testing**: Query methods can be unit tested on their own
+- **Cross-method reuse**: Other methods in the class can call the same queries
+- **Shorter methods**: Moving calculations out makes the host method shorter
+- **Focused responsibility**: Each method handles one concern
+- **Prepares further refactoring**: Makes Extract Class or Move Method easier later
 
-## When NOT to Use
+## When NOT to use
 
-- **Performance-sensitive code**: Repeated method calls may be measurably slower than a cached local variable (consider memoization as a compromise)
-- **Trivial single-use expressions**: For very simple, one-off calculations, a temp may be more straightforward
-- **Tight loops**: Method call overhead in hot loops can accumulate
-- **Complex conditionals**: Sometimes a well-named temporary variable makes a multi-clause conditional easier to follow than nested method calls
+- **Performance-sensitive code**: Repeated method calls may be measurably slower than a cached local variable (memoization is a compromise)
+- **Trivial single-use expressions**: For a very simple, one-off calculation, a temp is plainer
+- **Tight loops**: Method call overhead adds up in hot loops
+- **Complex conditionals**: A well-named temporary variable can make a multi-clause conditional easier to follow than nested method calls
 
-In these scenarios, you might keep the temp but still extract the method for clarity, or add memoization to avoid redundant computation.
+In these cases you can keep the temp and still extract the method for clarity, or add memoization to avoid repeated computation.
 
 ## Related Refactorings
 
 - **Extract Method**: The complementary technique that creates the query method itself
-- **Introduce Parameter Object**: When many temporaries exist, bundling them into a value object may be more appropriate
+- **Introduce Parameter Object**: When there are many temporaries, bundling them into a value object may fit better
 - **Introduce Variable**: Use a descriptive temp to simplify a complex expression before deciding whether to extract a method
 - **Cache Query Result**: Memoize the result of expensive query methods to preserve performance
-- **Remove Middle Man**: Avoid over-extracting queries that simply delegate to another method
+- **Remove Middle Man**: Avoid extracting queries that only delegate to another method
 
-## Examples in Other Languages
+## Examples in other languages
 
 ### Java
 
