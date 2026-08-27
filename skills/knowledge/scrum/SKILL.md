@@ -9,7 +9,7 @@ user-invocable: false
 
 A lightweight framework for delivering complex products through iterative, incremental work. Scrum is founded on empiricism (knowledge from experience) and lean thinking (reduce waste, focus on essentials). Teams work in fixed-length iterations called Sprints, inspecting and adapting continuously.
 
-## Three Pillars
+## Three pillars
 
 | Pillar | Meaning |
 |---|---|
@@ -17,7 +17,7 @@ A lightweight framework for delivering complex products through iterative, incre
 | **Inspection** | Scrum artifacts and progress must be inspected frequently to detect problems |
 | **Adaptation** | When inspection reveals deviation, adjust immediately |
 
-## Five Values
+## Five values
 
 Commitment, Focus, Openness, Respect, Courage. The Scrum Team commits to achieving goals, focuses on Sprint work, is open about challenges, respects each other as capable people, and has courage to do the right thing.
 
@@ -25,9 +25,9 @@ Commitment, Focus, Openness, Respect, Courage. The Scrum Team commits to achievi
 
 ## Sprint Goal
 
-The Sprint Goal is the single objective for the Sprint. It is the commitment of the Sprint Backlog. The Sprint Goal provides focus and coherence, encouraging the Scrum Team to work together rather than on separate initiatives.
+The Sprint Goal is the single objective for the Sprint. It is the commitment of the Sprint Backlog. It gives the Scrum Team focus and coherence, so they work together rather than on separate initiatives.
 
-### Quick Template (Focus / Impact / Confirmation)
+### Quick template (Focus / Impact / Confirmation)
 
 ```
 Our focus is on [outcome].
@@ -37,7 +37,7 @@ This will be confirmed when [measurable event happens].
 
 **Example:** "Our focus is on sending a basic notification email containing a report link. We believe it delivers confidence to our finance team. This will be confirmed when we have an email in an inbox with a working link."
 
-### SMART Criteria
+### SMART criteria
 
 | Criterion | Applied to Sprint Goals |
 |---|---|
@@ -47,7 +47,7 @@ This will be confirmed when [measurable event happens].
 | **Relevant** | Connects to the Product Goal and delivers stakeholder value |
 | **Time-bound** | Bounded by the Sprint duration |
 
-### Anti-Patterns
+### Anti-patterns
 
 | Anti-Pattern | Problem | Fix |
 |---|---|---|
@@ -64,7 +64,7 @@ See [Sprint Goals Reference](references/sprint-goals.md) for 5 complete template
 
 ## Scrum Events
 
-All events are timeboxed. Shorter Sprints use proportionally shorter event timeboxes. Every event is an opportunity to inspect and adapt.
+All events are timeboxed. Shorter Sprints use proportionally shorter event timeboxes. Every event is a chance to inspect and adapt.
 
 | Event | Timebox (1-month Sprint) | Purpose | Key Output |
 |---|---|---|---|
@@ -74,7 +74,7 @@ All events are timeboxed. Shorter Sprints use proportionally shorter event timeb
 | **Sprint Review** | Max 4 hours | Inspect the Increment and adapt the Product Backlog | Feedback, updated Product Backlog |
 | **Sprint Retrospective** | Max 3 hours | Inspect the team's process and plan improvements | Improvement actions for next Sprint |
 
-### Sprint Planning: Three Topics
+### Sprint Planning: three topics
 
 1. **Why is this Sprint valuable?** - Product Owner proposes how to increase value; team defines Sprint Goal
 2. **What can be done this Sprint?** - Developers select Product Backlog items based on capacity and velocity
@@ -116,7 +116,7 @@ The Definition of Done creates transparency by giving everyone a shared understa
 
 ---
 
-## Sprint Goal Quality Checklist
+## Sprint Goal quality checklist
 
 Before committing to a Sprint Goal, verify:
 

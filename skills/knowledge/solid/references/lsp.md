@@ -1,33 +1,45 @@
 # Liskov Substitution Principle (LSP)
 
+## Contents
+
+- [Definition](#definition)
+- [Why it matters](#why-it-matters)
+- [Detecting violations](#detecting-violations)
+- [The classic violation: Rectangle and Square](#the-classic-violation-rectangle-and-square)
+- [Before/After: PHP 8.3+](#beforeafter-php-83)
+- [LSP rules summary](#lsp-rules-summary)
+- [Examples in other languages](#examples-in-other-languages)
+- [Common pitfalls](#common-pitfalls)
+- [Related principles](#related-principles)
+
 ## Definition
 
-Any instance of a supertype should be interchangeable with an instance of its subtype without breaking the program's correctness. If class `B` extends class `A`, then every place that accepts `A` must work flawlessly when given `B` instead.
+An instance of a subtype should be usable anywhere an instance of its supertype is expected, without breaking the program's correctness. If class `B` extends class `A`, every place that accepts `A` must work when given `B` instead.
 
-Barbara Liskov articulated this concept in 1987. The practical takeaway: if your code operates against a base type, it must continue to behave correctly when any derived type is substituted in — no unexpected exceptions, no broken contracts, no hidden side effects.
+Barbara Liskov introduced this concept in 1987. In practice: if your code works against a base type, it must keep behaving correctly when any derived type is substituted in. That means no unexpected exceptions, no broken contracts, and no hidden side effects.
 
-## Why It Matters
+## Why it matters
 
-LSP serves as the safety net for inheritance and polymorphism. When it is violated, code that depends on a base type fails unpredictably when confronted with a subtype. The consequences include:
+LSP is the safety net for inheritance and polymorphism. When it is violated, code that depends on a base type fails unpredictably when it receives a subtype. The consequences include:
 
-- **Runtime surprises** — methods throw exceptions or produce unexpected results
-- **Brittle polymorphism** — generic code must resort to type checks to work around misbehaving subtypes
-- **Deceptive hierarchies** — the inheritance structure implies an "is-a" relationship, but the behavior tells a different story
-- **Cascading defensiveness** — one problematic subtype forces protective checks throughout the entire system
+- **Runtime surprises**: methods throw exceptions or produce unexpected results
+- **Brittle polymorphism**: generic code needs type checks to work around misbehaving subtypes
+- **Deceptive hierarchies**: the inheritance structure implies an "is-a" relationship, but the behavior says otherwise
+- **Cascading defensiveness**: one problematic subtype forces protective checks throughout the system
 
-## Detecting Violations
+## Detecting violations
 
-Be on the lookout for these patterns:
+Look for these patterns:
 
-- **Subclass methods that throw "not supported" exceptions** — an unmistakable sign that the subtype cannot honor the parent's contract
-- **Type-checking in consumer code** — `if ($animal instanceof Dog)` indicates that something cannot be handled generically
-- **Overridden methods that do nothing** — hollow implementations undermine the expected behavior
-- **Strengthened preconditions** — the subtype requires stricter input than the parent advertises
-- **Weakened postconditions** — the subtype delivers less or something different compared to what the parent guarantees
+- **Subclass methods that throw "not supported" exceptions**: a clear sign that the subtype cannot honor the parent's contract
+- **Type-checking in consumer code**: `if ($animal instanceof Dog)` means something cannot be handled generically
+- **Overridden methods that do nothing**: empty implementations break the expected behavior
+- **Strengthened preconditions**: the subtype requires stricter input than the parent advertises
+- **Weakened postconditions**: the subtype delivers less, or something different, than the parent guarantees
 
-## The Classic Violation: Rectangle and Square
+## The classic violation: Rectangle and Square
 
-The most well-known LSP violation shows that a mathematical "is-a" relationship does not automatically translate to a behavioral one:
+The best-known LSP violation shows that a mathematical "is-a" relationship does not translate to a behavioral one:
 
 ```php
 <?php
@@ -85,7 +97,7 @@ function doubleWidth(Rectangle $rect): void
 }
 ```
 
-**Fix: Use composition or immutable value objects instead**
+**Fix: use composition or immutable value objects instead**
 
 ```php
 <?php
@@ -121,7 +133,7 @@ final readonly class Square implements Shape
 }
 ```
 
-## Before/After — PHP 8.3+
+## Before/After: PHP 8.3+
 
 ### Before: Bird hierarchy where Penguin breaks the contract
 
@@ -145,7 +157,7 @@ class Bird
 
 class Sparrow extends Bird
 {
-    // Works fine — sparrows can fly
+    // Works fine: sparrows can fly
 }
 
 class Penguin extends Bird
@@ -153,7 +165,7 @@ class Penguin extends Bird
     public function fly(): string
     {
         throw new RuntimeException('Penguins cannot fly!');
-        // Violates LSP — code expecting Bird::fly() to return string gets an exception
+        // Violates LSP: code expecting Bird::fly() to return string gets an exception
     }
 }
 
@@ -166,7 +178,7 @@ function migrateBirds(array $birds): void
 }
 ```
 
-### After: Separate flying capability from bird identity
+### After: separate flying capability from bird identity
 
 ```php
 <?php
@@ -218,14 +230,14 @@ final readonly class Penguin implements SwimmingBird
 function migrateBirds(FlyingBird ...$birds): void
 {
     foreach ($birds as $bird) {
-        echo $bird->fly(); // Always safe — only FlyingBirds accepted
+        echo $bird->fly(); // Always safe: only FlyingBirds accepted
     }
 }
 ```
 
-## LSP Rules Summary
+## LSP rules summary
 
-| Rule | Meaning | Violation Example |
+| Rule | Meaning | Violation example |
 |---|---|---|
 | **No strengthened preconditions** | Subtype can't demand more than parent | Parent accepts `int`, subtype only accepts positive `int` |
 | **No weakened postconditions** | Subtype must deliver at least what parent promises | Parent returns non-empty array, subtype returns `null` |
@@ -249,7 +261,7 @@ public class ElectricCar extends Vehicle {
     @Override
     public void refuel(int liters) {
         throw new UnsupportedOperationException("Electric cars don't use fuel");
-        // Violates LSP — consumers expect refuel() to work
+        // Violates LSP: consumers expect refuel() to work
     }
 }
 ```
@@ -309,7 +321,7 @@ class ReadOnlyStorage(FileStorage):
 
     def delete(self, key: str) -> None:
         raise PermissionError("This storage is read-only")
-    # Violates LSP — consumer expecting FileStorage can't write
+    # Violates LSP: consumer expecting FileStorage can't write
 ```
 
 **After:**
@@ -348,7 +360,7 @@ class FileStorage(WritableStorage):
 class CacheStorage(ReadableStorage):
     def read(self, key: str) -> str:
         return self._cache.get(key, "")
-    # No write/delete — and no one expects them
+    # No write/delete, and no one expects them
 ```
 
 ### TypeScript
@@ -380,7 +392,7 @@ class CappedStack<T> extends Stack<T> {
   push(item: T): void {
     if (this.items.length >= this.maxSize) {
       throw new Error("Stack is full");
-      // Violates LSP — strengthened precondition
+      // Violates LSP: strengthened precondition
     }
     super.push(item);
   }
@@ -483,15 +495,15 @@ public:
 };
 ```
 
-## Common Pitfalls
+## Common pitfalls
 
-- **Assuming real-world "is-a" equals code "is-a"** — a Square is a Rectangle in geometry, but its mutable behavior is incompatible with a mutable Rectangle's contract
-- **Empty method overrides** — overriding a method to do nothing is nearly always a violation
-- **Catching and swallowing exceptions** — wrapping violations in try-catch does not fix them, it merely conceals them
-- **Excessive reliance on inheritance** — favor composition when a subtype cannot fully satisfy the parent's contract
+- **Assuming real-world "is-a" equals code "is-a"**: a Square is a Rectangle in geometry, but its mutable behavior is incompatible with a mutable Rectangle's contract
+- **Empty method overrides**: overriding a method to do nothing is almost always a violation
+- **Catching and swallowing exceptions**: wrapping violations in try-catch hides them without fixing them
+- **Relying too much on inheritance**: favor composition when a subtype cannot fully satisfy the parent's contract
 
-## Related Principles
+## Related principles
 
-- **Open/Closed (OCP)** — LSP enables polymorphic extension; without LSP, swapping in subtypes undermines OCP
-- **Interface Segregation (ISP)** — narrower interfaces make it easier to honor the complete contract
-- **Design by Contract** — Eiffel's precondition/postcondition system formalizes what LSP requires
+- **Open/Closed (OCP)**: LSP enables polymorphic extension; without LSP, swapping in subtypes undermines OCP
+- **Interface Segregation (ISP)**: narrower interfaces make it easier to honor the full contract
+- **Design by Contract**: Eiffel's precondition/postcondition system formalizes what LSP requires

@@ -7,11 +7,11 @@ user-invocable: false
 
 # Security
 
-Security is not a feature — it is a property of every feature. Every endpoint, every form, every data flow, every integration point must be designed with security in mind from the start. Bolting security on after the fact is expensive, error-prone, and often incomplete.
+Security is a property of every feature, not a feature of its own. Design every endpoint, form, data flow, and integration point with security in mind from the start. Adding security afterward is expensive, error-prone, and usually incomplete.
 
-This skill provides stack-agnostic guidance for building secure applications. It covers the OWASP Top 10, input validation, authentication and authorization patterns, data protection, secrets management, security headers, and common antipatterns.
+This skill gives stack-agnostic guidance for building secure applications. It covers the OWASP Top 10, input validation, authentication and authorization patterns, data protection, secrets management, security headers, and common antipatterns.
 
-## When to Use
+## When to use
 
 Consult this skill when:
 
@@ -26,9 +26,9 @@ Consult this skill when:
 
 ## OWASP Top 10
 
-The OWASP Top 10 (2021 edition) represents the most critical security risks to web applications. Use this as a starting checklist — not an exhaustive list.
+The OWASP Top 10 (2021 edition) lists the most serious security risks to web applications. Use it as a starting checklist, not a full list.
 
-| # | Vulnerability | What It Is | Primary Defense |
+| # | Vulnerability | What it is | Primary defense |
 |---|---|---|---|
 | A01 | Broken Access Control | Users act outside intended permissions | Deny by default, enforce server-side | [reference](references/owasp-top-10.md) |
 | A02 | Cryptographic Failures | Sensitive data exposed due to weak/missing crypto | Use strong algorithms, encrypt in transit and at rest | [reference](references/owasp-top-10.md) |
@@ -41,43 +41,43 @@ The OWASP Top 10 (2021 edition) represents the most critical security risks to w
 | A09 | Logging Failures | Insufficient logging and monitoring | Log security events, set up alerting | [reference](references/owasp-top-10.md) |
 | A10 | SSRF | Server tricked into making unintended requests | Allowlist destinations, sanitize URLs | [reference](references/owasp-top-10.md) |
 
-## Input Validation
+## Input validation
 
-Input validation is the first line of defense. Validate at every system boundary — not just at the UI.
+Input validation is the first line of defense. Validate at every system boundary, not just at the UI.
 
 **Core principles:**
 
-- **Validate on the server** — client-side validation is a UX convenience, not a security control
-- **Allowlist over denylist** — define what is acceptable rather than trying to block what is dangerous
-- **Validate type, length, format, and range** — a "name" field should not accept 10MB of data or contain control characters
-- **Reject unexpected input** — fail closed, do not attempt to "clean" malicious input and proceed
-- **Canonicalize before validation** — normalize Unicode, decode URL encoding, resolve path traversals before checking
+- **Validate on the server**: client-side validation is a UX convenience, not a security control
+- **Allowlist over denylist**: define what is acceptable rather than trying to block what is dangerous
+- **Validate type, length, format, and range**: a "name" field should not accept 10MB of data or contain control characters
+- **Reject unexpected input**: fail closed, do not try to "clean" malicious input and proceed
+- **Canonicalize before validation**: normalize Unicode, decode URL encoding, and resolve path traversals before checking
 
-**Type coercion dangers:**
+**Type coercion:**
 
-Loose type comparisons can bypass security checks. A string "0" might equal integer 0 or boolean false depending on the language. Always use strict comparison operators and explicit type casting.
+Loose type comparisons can bypass security checks. A string "0" might equal integer 0 or boolean false depending on the language. Use strict comparison operators and explicit type casting.
 
 **Parameterized queries:**
 
-Never concatenate user input into SQL, LDAP, or OS commands. Always use parameterized queries or prepared statements. This applies to ORMs too — raw query methods bypass ORM protections. See [secure coding reference](references/secure-coding.md) for details.
+Never concatenate user input into SQL, LDAP, or OS commands. Use parameterized queries or prepared statements. This applies to ORMs too, because raw query methods bypass ORM protections. See [secure coding reference](references/secure-coding.md) for details.
 
-## Authentication Patterns
+## Authentication patterns
 
-Authentication verifies identity — "who are you?" See [auth patterns reference](references/auth-patterns.md) for detailed guidance.
+Authentication verifies identity: "who are you?" See [auth patterns reference](references/auth-patterns.md) for detailed guidance.
 
 **Password hashing:**
 
-- Use bcrypt, scrypt, or Argon2id — never MD5, SHA-1, or SHA-256 alone for passwords
+- Use bcrypt, scrypt, or Argon2id. Never use MD5, SHA-1, or SHA-256 alone for passwords
 - Salts must be unique per password and generated by the hashing library
 - Never store plain-text passwords, never use reversible encryption for passwords
-- Enforce minimum complexity but avoid overly restrictive rules that push users to weaker patterns
+- Enforce minimum complexity, but avoid restrictive rules that push users toward weaker patterns
 
 **Multi-factor authentication (MFA):**
 
 - TOTP (time-based one-time passwords) is the baseline
 - WebAuthn/passkeys provide the strongest phishing resistance
 - SMS-based MFA is better than nothing but vulnerable to SIM swapping
-- Always provide recovery codes
+- Provide recovery codes
 
 **Session management:**
 
@@ -89,48 +89,48 @@ Authentication verifies identity — "who are you?" See [auth patterns reference
 
 **Token-based auth (JWT caveats):**
 
-- JWTs are not sessions — they cannot be revoked without additional infrastructure
-- Always validate the signature algorithm server-side; reject `alg: none`
+- JWTs are not sessions, and they cannot be revoked without extra infrastructure
+- Validate the signature algorithm server-side; reject `alg: none`
 - Keep tokens short-lived (minutes, not hours)
 - Use refresh tokens for long-lived sessions; store them securely
-- Never store sensitive data in JWT payloads — they are base64-encoded, not encrypted
+- Never store sensitive data in JWT payloads. They are base64-encoded, not encrypted
 
 **OAuth2 flows:**
 
-- Authorization Code with PKCE — standard for web and mobile apps
-- Client Credentials — for machine-to-machine communication
-- Never use Implicit flow — it is deprecated for security reasons
+- Authorization Code with PKCE: standard for web and mobile apps
+- Client Credentials: for machine-to-machine communication
+- Never use Implicit flow. It is deprecated for security reasons
 
-## Authorization Patterns
+## Authorization patterns
 
-Authorization determines permissions — "what are you allowed to do?" Authorization is not authentication. See [auth patterns reference](references/auth-patterns.md) for details.
+Authorization determines permissions: "what are you allowed to do?" It is not the same as authentication. See [auth patterns reference](references/auth-patterns.md) for details.
 
 **Principle of least privilege:**
 
 - Grant the minimum permissions needed for a task
-- Default to deny — explicitly grant access rather than revoking it
+- Default to deny: grant access explicitly rather than revoking it
 - Time-bound elevated privileges when possible
 
 **Role-Based Access Control (RBAC):**
 
 - Assign permissions to roles, assign roles to users
 - Keep roles coarse-grained; avoid role explosion
-- Check permissions, not role names, in application code — this decouples authorization logic from role definitions
+- Check permissions, not role names, in application code. This decouples authorization logic from role definitions
 
 **Attribute-Based Access Control (ABAC):**
 
 - Decisions based on attributes of user, resource, action, and environment
 - More flexible than RBAC for complex policies (e.g., "managers can approve expenses under $10,000 during business hours")
-- Higher complexity — use when RBAC is insufficient
+- More complex, so use it when RBAC is insufficient
 
 **Common authorization mistakes:**
 
-- Checking authorization only in the UI — always enforce server-side
+- Checking authorization only in the UI. Always enforce it server-side
 - Relying on obscurity (unguessable URLs) instead of access controls
 - Failing to check authorization on every request (including API calls, file downloads, and indirect references)
-- IDOR (Insecure Direct Object Reference) — always verify the user has access to the specific resource they are requesting
+- IDOR (Insecure Direct Object Reference): always verify the user has access to the specific resource they are requesting
 
-## Data Protection
+## Data protection
 
 **Encryption at rest:**
 
@@ -143,23 +143,23 @@ Authorization determines permissions — "what are you allowed to do?" Authoriza
 
 - Use TLS 1.2+ for all network communication
 - Disable older protocols (SSL, TLS 1.0, TLS 1.1)
-- Validate certificates properly — do not disable certificate verification
+- Validate certificates; do not disable certificate verification
 
 **PII handling:**
 
 - Identify and classify all personally identifiable information
-- Minimize collection — do not collect data you do not need
-- Implement data retention policies — delete data when no longer needed
+- Minimize collection: do not collect data you do not need
+- Implement data retention policies and delete data when it is no longer needed
 - Provide data export and deletion capabilities for compliance (GDPR, CCPA)
-- Mask PII in logs — never log passwords, tokens, credit card numbers, or full SSNs
+- Mask PII in logs. Never log passwords, tokens, credit card numbers, or full SSNs
 
 **Secure deletion:**
 
 - Overwrite sensitive data before freeing memory (when the language allows)
-- Ensure database deletions actually remove data (not just soft-delete for sensitive records)
-- Consider backup retention — deleted data may persist in backups
+- Make sure database deletions actually remove data (not just soft-delete for sensitive records)
+- Consider backup retention: deleted data may persist in backups
 
-## Secrets Management
+## Secrets management
 
 **Never in code or config files:**
 
@@ -187,11 +187,11 @@ Authorization determines permissions — "what are you allowed to do?" Authoriza
 - Design systems to support rotation without downtime (support two active versions during transition)
 - Automate rotation where possible
 
-## Security Headers
+## Security headers
 
-Configure these HTTP response headers on every response. Each addresses a specific class of attack.
+Set these HTTP response headers on every response. Each addresses a specific class of attack.
 
-| Header | Purpose | Recommended Value |
+| Header | Purpose | Recommended value |
 |---|---|---|
 | `Content-Security-Policy` (CSP) | Prevents XSS by controlling which sources can load content | Start with a restrictive policy; avoid `unsafe-inline` and `unsafe-eval` |
 | `Strict-Transport-Security` (HSTS) | Forces HTTPS for all future requests | `max-age=63072000; includeSubDomains; preload` |
@@ -205,28 +205,28 @@ Configure these HTTP response headers on every response. Each addresses a specif
 - Do not use `Access-Control-Allow-Origin: *` for authenticated endpoints
 - Allowlist specific origins
 - Be restrictive with `Access-Control-Allow-Methods` and `Access-Control-Allow-Headers`
-- Understand that CORS is enforced by browsers — it does not protect server-to-server calls
+- Remember that browsers enforce CORS. It does not protect server-to-server calls
 
-## Common Antipatterns
+## Common antipatterns
 
-These are frequently encountered mistakes that create vulnerabilities:
+These mistakes show up often and create vulnerabilities:
 
-- **Security through obscurity** — hiding URLs, using unpredictable IDs, or obfuscating code is not a security control. It supplements real controls; it never replaces them.
-- **Client-side validation only** — any validation done in JavaScript or mobile code can be bypassed. Always validate server-side.
-- **Homegrown cryptography** — never implement your own encryption, hashing, or random number generation. Use well-tested libraries.
-- **Overly permissive CORS** — `Access-Control-Allow-Origin: *` combined with credentials is a vulnerability. Be specific about allowed origins.
-- **Storing secrets in repositories** — even in "private" repos, secrets in code spread through forks, CI systems, and developer machines.
-- **Disabling security features for convenience** — turning off CSRF protection, SSL verification, or authentication in "development" mode that leaks to production.
-- **Trusting internal networks** — zero-trust means verifying identity and authorization even for internal service-to-service calls.
-- **Ignoring dependency vulnerabilities** — known vulnerabilities in dependencies are among the easiest attack vectors. Scan and update regularly.
-- **Logging sensitive data** — passwords, tokens, credit card numbers, and PII in logs create a secondary exposure surface.
-- **Catching and silencing exceptions** — swallowing errors hides security failures. Log them (without sensitive details) and fail safely.
+- **Security through obscurity**: hiding URLs, using unpredictable IDs, or obfuscating code is not a security control. It supplements real controls and never replaces them.
+- **Client-side validation only**: any validation done in JavaScript or mobile code can be bypassed. Always validate server-side.
+- **Homegrown cryptography**: never implement your own encryption, hashing, or random number generation. Use well-tested libraries.
+- **Overly permissive CORS**: `Access-Control-Allow-Origin: *` combined with credentials is a vulnerability. Be specific about allowed origins.
+- **Storing secrets in repositories**: even in "private" repos, secrets in code spread through forks, CI systems, and developer machines.
+- **Disabling security features for convenience**: turning off CSRF protection, SSL verification, or authentication in a "development" mode that leaks to production.
+- **Trusting internal networks**: zero-trust means verifying identity and authorization even for internal service-to-service calls.
+- **Ignoring dependency vulnerabilities**: known vulnerabilities in dependencies are among the easiest attack vectors. Scan and update regularly.
+- **Logging sensitive data**: passwords, tokens, credit card numbers, and PII in logs create a second exposure surface.
+- **Catching and silencing exceptions**: swallowing errors hides security failures. Log them (without sensitive details) and fail safely.
 
-## Security Review Checklist
+## Security review checklist
 
 Use this checklist when reviewing code, designing features, or preparing for release:
 
-**Input/Output:**
+**Input and output:**
 - [ ] All user input is validated server-side
 - [ ] Parameterized queries used for all database operations
 - [ ] Output is encoded/escaped for the appropriate context (HTML, URL, JavaScript, SQL)

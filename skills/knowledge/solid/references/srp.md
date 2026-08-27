@@ -1,33 +1,44 @@
 # Single Responsibility Principle (SRP)
 
+## Contents
+
+- [Definition](#definition)
+- [Why it matters](#why-it-matters)
+- [Detecting violations](#detecting-violations)
+- [Before/After: PHP 8.3+](#beforeafter-php-83)
+- [Before/After: real-world scenario, invoice processing](#beforeafter-real-world-scenario-invoice-processing)
+- [Examples in other languages](#examples-in-other-languages)
+- [Common pitfalls](#common-pitfalls)
+- [Related principles](#related-principles)
+
 ## Definition
 
-Every class should be accountable for exactly one aspect of the system's functionality. That aspect should be fully contained within the class, and the class should have no other obligations.
+Every class should be accountable for exactly one aspect of the system's functionality. That aspect should be fully contained in the class, and the class should have no other obligations.
 
-In Robert C. Martin's framing, "responsibility" equates to "a reason for change." When you can identify multiple, independent motivations for modifying a class, that class carries more than one responsibility.
+In Robert C. Martin's framing, "responsibility" means "a reason for change." If you can name several independent reasons to modify a class, it has more than one responsibility.
 
-## Why It Matters
+## Why it matters
 
-When a single class juggles several concerns, a modification to one concern can inadvertently destabilize another. This produces brittle code where unrelated features are tied together through shared internal state. SRP addresses this by confining each class to a single dimension of change.
+When one class handles several concerns, a change to one concern can break another. The code becomes brittle, with unrelated features tied together through shared internal state. SRP confines each class to a single dimension of change.
 
 **Advantages of following SRP:**
-- Changes stay contained — updating the notification system does not jeopardize the business rules
-- Naming becomes straightforward — difficulty choosing a class name often signals that the class is overloaded
-- Testing is more targeted — each class presents a well-defined, verifiable contract
-- Reusability increases — narrowly focused classes fit naturally into other contexts
-- Parallel development is easier — separate responsibilities reside in separate files, reducing merge friction
+- Changes stay contained: updating the notification system does not put the business rules at risk
+- Naming is easier: difficulty choosing a class name often signals that the class does too much
+- Testing is more targeted: each class has a small, verifiable contract
+- Reuse is easier: narrowly focused classes fit into other contexts
+- Parallel development is easier: separate responsibilities live in separate files, which reduces merge conflicts
 
-## Detecting Violations
+## Detecting violations
 
 Watch for these indicators:
 
-- **Class name contains "And" or "Manager"** — `UserAndEmailManager` is a clear sign of bundled concerns
-- **Methods that operate on disjoint subsets of fields** — when half the methods never touch half the properties, the class likely merges two distinct concerns
-- **Disparate imports** — a class pulling in both persistence drivers and email libraries is probably overextended
-- **Excessive line count** — not definitive, but classes growing beyond 200-300 lines frequently break SRP
-- **Changes driven by different stakeholders** — when marketing and operations both trigger edits to the same file, responsibilities have been conflated
+- **Class name contains "And" or "Manager"**: `UserAndEmailManager` is a clear sign of bundled concerns
+- **Methods that operate on disjoint subsets of fields**: when half the methods never touch half the properties, the class likely merges two concerns
+- **Unrelated imports**: a class that pulls in both persistence drivers and email libraries probably does too much
+- **Excessive line count**: not definitive, but classes over 200-300 lines often break SRP
+- **Changes driven by different stakeholders**: when marketing and operations both trigger edits to the same file, responsibilities are mixed
 
-## Before/After — PHP 8.3+
+## Before/After: PHP 8.3+
 
 ### Before: Report class handles data, formatting, and delivery
 
@@ -79,7 +90,7 @@ final class SalesReport
 
 This class has **three** reasons to change: data retrieval logic, output formatting, and delivery mechanism.
 
-### After: Each concern in its own class
+### After: each concern in its own class
 
 ```php
 <?php
@@ -152,9 +163,9 @@ final readonly class FileReportDelivery implements ReportDelivery
 }
 ```
 
-Now each class changes for exactly one reason. Adding PDF formatting or Slack delivery requires zero changes to existing classes.
+Now each class changes for exactly one reason. Adding PDF formatting or Slack delivery requires no changes to existing classes.
 
-## Before/After — Real-World Scenario: Invoice Processing
+## Before/After: real-world scenario, invoice processing
 
 ### Before: Invoice class validates, calculates, persists, and notifies
 
@@ -194,7 +205,7 @@ final class Invoice
 }
 ```
 
-### After: Separated responsibilities
+### After: separated responsibilities
 
 ```php
 <?php
@@ -338,13 +349,13 @@ class TaskManager:
             if task["title"] == title:
                 task["done"] = True
 
-    # Persistence — different reason to change
+    # Persistence: different reason to change
     def save_to_file(self, path: str) -> None:
         import json
         with open(path, "w") as f:
             json.dump(self.tasks, f)
 
-    # Display — yet another reason to change
+    # Display: yet another reason to change
     def print_report(self) -> None:
         for task in self.tasks:
             status = "DONE" if task["done"] else "TODO"
@@ -517,14 +528,14 @@ public:
 };
 ```
 
-## Common Pitfalls
+## Common pitfalls
 
-- **Over-splitting**: Avoid creating one class per method. SRP clusters related methods that share a single *reason to change*, not one method per class.
-- **Confusing "responsibility" with "action"**: A `UserRepository` performing CRUD operations is perfectly valid — every method changes for the same reason (the persistence strategy).
-- **God service classes**: Names like `ApplicationService` or `UtilityHelper` are warning signs — they tend to accumulate unrelated logic over time.
+- **Over-splitting**: Do not create one class per method. SRP groups related methods that share a single *reason to change*.
+- **Confusing "responsibility" with "action"**: A `UserRepository` that performs CRUD operations is valid, because every method changes for the same reason (the persistence strategy).
+- **God service classes**: Names like `ApplicationService` or `UtilityHelper` are warning signs. They tend to accumulate unrelated logic over time.
 
-## Related Principles
+## Related principles
 
-- **Interface Segregation (ISP)** — applies the same single-focus idea at the interface level
-- **Separation of Concerns** — a broader architectural guideline that SRP realizes at the class level
-- **Cohesion** — SRP drives high cohesion by keeping related behavior grouped together
+- **Interface Segregation (ISP)**: applies the same single-focus idea at the interface level
+- **Separation of Concerns**: a broader architectural guideline that SRP applies at the class level
+- **Cohesion**: SRP drives high cohesion by keeping related behavior together

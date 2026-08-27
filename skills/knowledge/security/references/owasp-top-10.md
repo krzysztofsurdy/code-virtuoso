@@ -1,20 +1,33 @@
 # OWASP Top 10 (2021)
 
-The OWASP Top 10 is the most widely recognized standard for web application security risks. This reference covers each vulnerability in detail with concrete defenses.
+The OWASP Top 10 is the most widely recognized standard for web application security risks. This reference covers each vulnerability with concrete defenses.
+
+## Contents
+
+- [A01: Broken Access Control](#a01-broken-access-control)
+- [A02: Cryptographic Failures](#a02-cryptographic-failures)
+- [A03: Injection](#a03-injection)
+- [A04: Insecure Design](#a04-insecure-design)
+- [A05: Security Misconfiguration](#a05-security-misconfiguration)
+- [A06: Vulnerable and Outdated Components](#a06-vulnerable-and-outdated-components)
+- [A07: Identification and Authentication Failures](#a07-identification-and-authentication-failures)
+- [A08: Software and Data Integrity Failures](#a08-software-and-data-integrity-failures)
+- [A09: Security Logging and Monitoring Failures](#a09-security-logging-and-monitoring-failures)
+- [A10: Server-Side Request Forgery (SSRF)](#a10-server-side-request-forgery-ssrf)
 
 ## A01: Broken Access Control
 
-**What it is:** Users can act outside their intended permissions — viewing other users' data, modifying records they should not access, or elevating privileges.
+**What it is:** Users can act outside their intended permissions: viewing other users' data, modifying records they should not access, or elevating privileges.
 
 **How it happens:**
 - Missing authorization checks on API endpoints or server-side functions
-- Insecure Direct Object References (IDOR) — changing an ID in a URL to access another user's data
+- Insecure Direct Object References (IDOR): changing an ID in a URL to access another user's data
 - CORS misconfiguration allowing unauthorized origins
 - Metadata manipulation (tampering with JWT, cookies, or hidden fields)
 - Accessing admin pages as an unprivileged user
 
 **Primary defenses:**
-- Deny by default — require explicit grants for every resource
+- Deny by default: require explicit grants for every resource
 - Enforce authorization server-side on every request, not just in the UI
 - Validate that the current user owns or has access to the specific resource
 - Disable directory listing on web servers
@@ -24,7 +37,7 @@ The OWASP Top 10 is the most widely recognized standard for web application secu
 
 ## A02: Cryptographic Failures
 
-**What it is:** Sensitive data exposed due to weak, missing, or misused cryptography — formerly called "Sensitive Data Exposure."
+**What it is:** Sensitive data exposed due to weak, missing, or misused cryptography. Formerly called "Sensitive Data Exposure."
 
 **How it happens:**
 - Transmitting data in clear text (HTTP, FTP, SMTP without TLS)
@@ -64,7 +77,7 @@ The OWASP Top 10 is the most widely recognized standard for web application secu
 
 ## A04: Insecure Design
 
-**What it is:** Missing or ineffective security controls resulting from flawed design — not implementation bugs, but architectural weaknesses.
+**What it is:** Missing or ineffective security controls resulting from flawed design. These are architectural weaknesses, not implementation bugs.
 
 **How it happens:**
 - No threat modeling during design phase
@@ -78,7 +91,7 @@ The OWASP Top 10 is the most widely recognized standard for web application secu
 - Establish secure design patterns and use them consistently
 - Write abuse cases alongside use cases
 - Limit resource consumption by design (rate limits, quotas)
-- Implement defense in depth — multiple layers of controls
+- Implement defense in depth: multiple layers of controls
 
 **Detection:** Review architectural decisions and design documents. Ask "what if an attacker does X?" for every user-facing flow. Conduct design reviews with security-focused team members.
 
@@ -142,7 +155,7 @@ The OWASP Top 10 is the most widely recognized standard for web application secu
 - Implement multi-factor authentication
 - Enforce password complexity requirements and check against breached password lists
 - Rate limit and progressively delay failed login attempts
-- Use secure session management (see Authentication Patterns in SKILL.md)
+- Use secure session management (see Authentication patterns in SKILL.md)
 - Invalidate sessions on logout, password change, and after inactivity
 - Generate high-entropy session IDs with a cryptographically secure generator
 
@@ -150,7 +163,7 @@ The OWASP Top 10 is the most widely recognized standard for web application secu
 
 ## A08: Software and Data Integrity Failures
 
-**What it is:** Code and infrastructure that does not verify integrity — allowing attackers to inject malicious updates, tamper with data, or compromise CI/CD pipelines.
+**What it is:** Code and infrastructure that does not verify integrity, which lets attackers inject malicious updates, tamper with data, or compromise CI/CD pipelines.
 
 **How it happens:**
 - Using libraries from untrusted sources without integrity verification
@@ -162,7 +175,7 @@ The OWASP Top 10 is the most widely recognized standard for web application secu
 **Primary defenses:**
 - Verify digital signatures on software updates and dependencies
 - Use package managers with integrity checking (lock files, checksums)
-- Secure CI/CD pipelines — require code review, limit deployment permissions
+- Secure CI/CD pipelines: require code review, limit deployment permissions
 - Avoid deserializing untrusted data; if unavoidable, use allowlists for permitted types
 - Implement integrity checks on critical data (checksums, HMAC)
 
@@ -170,7 +183,7 @@ The OWASP Top 10 is the most widely recognized standard for web application secu
 
 ## A09: Security Logging and Monitoring Failures
 
-**What it is:** Insufficient logging, monitoring, and alerting that allow attackers to operate undetected, maintain persistence, and pivot to other systems.
+**What it is:** Insufficient logging, monitoring, and alerting that lets attackers operate undetected, maintain persistence, and pivot to other systems.
 
 **How it happens:**
 - Not logging security-relevant events (logins, failed logins, access denials)
@@ -191,7 +204,7 @@ The OWASP Top 10 is the most widely recognized standard for web application secu
 
 ## A10: Server-Side Request Forgery (SSRF)
 
-**What it is:** An attacker makes the server send requests to unintended destinations — accessing internal services, cloud metadata endpoints, or other protected resources.
+**What it is:** An attacker makes the server send requests to unintended destinations, such as internal services, cloud metadata endpoints, or other protected resources.
 
 **How it happens:**
 - Application fetches URLs provided by users without validation

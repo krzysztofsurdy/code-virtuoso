@@ -1,31 +1,42 @@
 # Open/Closed Principle (OCP)
 
+## Contents
+
+- [Definition](#definition)
+- [Why it matters](#why-it-matters)
+- [Detecting violations](#detecting-violations)
+- [Before/After: PHP 8.3+](#beforeafter-php-83)
+- [Techniques for achieving OCP](#techniques-for-achieving-ocp)
+- [Examples in other languages](#examples-in-other-languages)
+- [Common pitfalls](#common-pitfalls)
+- [Related principles](#related-principles)
+
 ## Definition
 
-Software entities (classes, modules, functions) should welcome extension but resist modification. It should be possible to introduce new behavior into a system without altering existing, already-tested code.
+Software entities (classes, modules, functions) should be open to extension and closed to modification. It should be possible to add new behavior without changing existing, already-tested code.
 
-Bertrand Meyer first articulated this principle, and Robert C. Martin later adapted it for object-oriented design. The central idea is straightforward: modifying working code carries risk. Instead, architect systems so that new requirements are fulfilled by writing *new* code that integrates with existing structures.
+Bertrand Meyer first described this principle, and Robert C. Martin later adapted it for object-oriented design. Modifying working code carries risk. Design systems so that new requirements are met by writing *new* code that plugs into existing structures.
 
-## Why It Matters
+## Why it matters
 
-Each time you edit existing code to accommodate a new feature, you risk destabilizing something that already works. OCP steers you toward designs where:
+Each time you edit existing code to add a feature, you risk breaking something that already works. OCP pushes you toward designs where:
 
-- **New features mean new code** — existing classes stay untouched
-- **The testing overhead remains manageable** — you only validate new additions rather than re-verifying the entire system
-- **Deployment risk drops** — modules that have not changed need no redeployment
-- **Teams can work concurrently** — developers add features independently without stepping on each other
+- **New features mean new code**: existing classes stay untouched
+- **Testing overhead stays manageable**: you validate only the new additions rather than re-verifying the whole system
+- **Deployment risk drops**: modules that have not changed need no redeployment
+- **Teams can work concurrently**: developers add features independently without stepping on each other
 
-## Detecting Violations
+## Detecting violations
 
 Indicators that OCP is not being followed:
 
-- **Expanding switch/match blocks** — introducing a new type means appending another case
-- **If-else chains based on type** — `if ($shape instanceof Circle)` scattered throughout the codebase
-- **Shotgun surgery** — introducing a single feature requires touching five or more files
-- **The "just add another case" habit** — a pattern of extending functionality by editing existing code
-- **Reluctance to touch existing code** — this suggests the design does not support safe extension
+- **Growing switch/match blocks**: a new type means appending another case
+- **If-else chains based on type**: `if ($shape instanceof Circle)` scattered throughout the codebase
+- **Shotgun surgery**: a single feature requires touching five or more files
+- **The "just add another case" habit**: extending functionality by editing existing code
+- **Reluctance to touch existing code**: this suggests the design does not support safe extension
 
-## Before/After — PHP 8.3+
+## Before/After: PHP 8.3+
 
 ### Before: Adding a new shape requires modifying AreaCalculator
 
@@ -67,7 +78,7 @@ final class AreaCalculator
 }
 ```
 
-### After: New shapes extend without modifying existing code
+### After: new shapes extend without modifying existing code
 
 ```php
 <?php
@@ -126,9 +137,9 @@ final class AreaCalculator
 }
 ```
 
-### Real-World Example: Notification System
+### Real-world example: notification system
 
-**Before — adding a channel means editing the notifier:**
+**Before: adding a channel means editing the notifier:**
 
 ```php
 <?php
@@ -153,7 +164,7 @@ final class Notifier
 }
 ```
 
-**After — new channels are added by creating new classes:**
+**After: new channels are added by creating new classes:**
 
 ```php
 <?php
@@ -205,13 +216,13 @@ final readonly class Notifier
 // Adding PushNotificationChannel requires ZERO edits to existing code
 ```
 
-## Techniques for Achieving OCP
+## Techniques for achieving OCP
 
-1. **Strategy Pattern** — inject interchangeable algorithms through interfaces
-2. **Template Method** — outline the algorithm skeleton in a base class and let subclasses fill in the specifics
-3. **Decorator Pattern** — layer additional behavior on top of existing objects
-4. **Plugin Architecture** — discover and load extensions dynamically at runtime
-5. **Event/Observer Pattern** — allow new listeners to respond to existing events without touching the event source
+1. **Strategy Pattern**: inject interchangeable algorithms through interfaces
+2. **Template Method**: define the algorithm skeleton in a base class and let subclasses fill in the specifics
+3. **Decorator Pattern**: layer additional behavior on top of existing objects
+4. **Plugin architecture**: discover and load extensions at runtime
+5. **Event/Observer Pattern**: let new listeners respond to existing events without touching the event source
 
 ## Examples in Other Languages
 
@@ -445,14 +456,14 @@ public:
 };
 ```
 
-## Common Pitfalls
+## Common pitfalls
 
-- **Speculative generality** — Do not abstract prematurely. Wait until a second implementation is genuinely needed before extracting an interface.
-- **Over-engineering** — A straightforward helper function does not warrant a plugin architecture. Reserve OCP for areas where change is *probable*.
-- **Leaky abstractions** — If every new implementation demands changes to the interface itself, the abstraction boundary is drawn in the wrong place.
+- **Speculative generality**: Do not abstract too early. Wait until a second implementation is needed before extracting an interface.
+- **Over-engineering**: A plain helper function does not need a plugin architecture. Reserve OCP for areas where change is *probable*.
+- **Leaky abstractions**: If every new implementation forces changes to the interface itself, the abstraction boundary is in the wrong place.
 
-## Related Principles
+## Related principles
 
-- **Strategy Pattern** — the most prevalent technique for achieving OCP
-- **Liskov Substitution (LSP)** — subtypes must behave correctly through the base interface for OCP to function
-- **Dependency Inversion (DIP)** — the abstractions that permit extension are the same abstractions DIP calls for
+- **Strategy Pattern**: the most common technique for achieving OCP
+- **Liskov Substitution (LSP)**: subtypes must behave correctly through the base interface for OCP to work
+- **Dependency Inversion (DIP)**: the abstractions that allow extension are the same ones DIP calls for

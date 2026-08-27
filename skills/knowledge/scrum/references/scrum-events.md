@@ -1,6 +1,14 @@
 # Scrum Events
 
-Every Scrum event is a formal opportunity to inspect and adapt. Events create regularity and minimize the need for ad-hoc meetings. Skipping events or exceeding timeboxes erodes the empirical process.
+Every Scrum event is a formal opportunity to inspect and adapt. Events create regularity and reduce the need for ad-hoc meetings. Skipping events or exceeding timeboxes erodes the empirical process.
+
+## Contents
+
+- [The Sprint](#the-sprint)
+- [Sprint Planning](#sprint-planning)
+- [Daily Scrum](#daily-scrum)
+- [Sprint Review](#sprint-review)
+- [Sprint Retrospective](#sprint-retrospective)
 
 ---
 
@@ -13,7 +21,7 @@ The Sprint is the container for all other events. Sprints are fixed-length itera
 - Quality standards (Definition of Done) remain constant
 - Scope may be clarified and renegotiated with the Product Owner as the team learns more
 - Only the Product Owner has authority to cancel a Sprint (when the Sprint Goal becomes obsolete)
-- Shorter Sprints reduce risk, generate faster feedback, and limit cost of going in the wrong direction
+- Shorter Sprints reduce risk, give faster feedback, and limit the cost of going in the wrong direction
 
 ---
 
@@ -23,7 +31,7 @@ Initiates the Sprint by establishing what will be done and how. The entire Scrum
 
 **Timebox:** 8 hours maximum for a 1-month Sprint. Proportionally shorter for shorter Sprints.
 
-### Topic 1: Why Is This Sprint Valuable?
+### Topic 1: Why is this Sprint valuable?
 
 The Product Owner proposes how the product could increase value and importance in this Sprint. The Scrum Team collaborates to define the Sprint Goal.
 
@@ -33,7 +41,7 @@ The Product Owner proposes how the product could increase value and importance i
 - The Sprint Goal must be finalized before planning concludes
 - Avoid letting the team jump to "how" before agreeing on "why"
 
-### Topic 2: What Can Be Done This Sprint?
+### Topic 2: What can be done this Sprint?
 
 Developers select items from the Product Backlog for the Sprint. The team discusses which items can be completed within the Sprint.
 
@@ -43,7 +51,7 @@ Developers select items from the Product Backlog for the Sprint. The team discus
 - If an item is too large, break it down or negotiate a smaller slice with the PO
 - Refine items enough that the team is confident they understand the work
 
-### Topic 3: How Will the Work Get Done?
+### Topic 3: How will the work get done?
 
 Developers plan how to create an Increment that meets the Definition of Done. Items are decomposed into tasks, typically one day or smaller.
 
@@ -53,7 +61,7 @@ Developers plan how to create an Increment that meets the Definition of Done. It
 - Identify dependencies and risks early
 - Do not plan every task in detail - just enough to start confidently
 
-### Sprint Planning Anti-Patterns
+### Sprint Planning anti-patterns
 
 | Anti-Pattern | Fix |
 |---|---|
@@ -71,7 +79,7 @@ A 15-minute event for the Developers to inspect progress toward the Sprint Goal 
 
 **Timebox:** 15 minutes, same time and place every day.
 
-### Structure Options
+### Structure options
 
 The Daily Scrum is for the Developers. They choose the structure. Common formats:
 
@@ -90,7 +98,7 @@ The Daily Scrum is for the Developers. They choose the structure. Common formats
 - If yes: brief updates, move on
 - If no: what do we need to change today?
 
-### Daily Scrum Anti-Patterns
+### Daily Scrum anti-patterns
 
 | Anti-Pattern | Fix |
 |---|---|
@@ -116,7 +124,7 @@ The Scrum Team presents Sprint results to key stakeholders and collaborates on w
 4. **Inspect the Product Backlog** - Based on progress and new information, what should come next?
 5. **Collaborate on next steps** - Stakeholders and team discuss emerging opportunities, market changes, budget
 
-### Facilitation Tips
+### Facilitation tips
 
 - Invite stakeholders who have a genuine interest in the Sprint Goal
 - Include the Sprint Goal in the invitation so stakeholders can assess relevance
@@ -125,7 +133,7 @@ The Scrum Team presents Sprint results to key stakeholders and collaborates on w
 - Capture feedback as Product Backlog items or adjustments to existing items
 - Avoid turning it into a sign-off ceremony - it is a collaboration session
 
-### Sprint Review Anti-Patterns
+### Sprint Review anti-patterns
 
 | Anti-Pattern | Fix |
 |---|---|
@@ -143,7 +151,7 @@ The team inspects the previous Sprint regarding individuals, interactions, proce
 
 **Timebox:** 3 hours maximum for a 1-month Sprint.
 
-### Retrospective Formats
+### Retrospective formats
 
 #### Start-Stop-Continue
 
@@ -181,16 +189,16 @@ Visual metaphor. Draw a sailboat:
 
 Good for teams that respond to visual facilitation.
 
-### Facilitation Tips
+### Facilitation tips
 
 - Vary the format every few sprints to avoid staleness
 - Create psychological safety - no blame, focus on systems not individuals
 - Timebox each phase (gather data, discuss, decide on actions)
 - Limit actions to 1-3 per retrospective - fewer, concrete actions beat a long wish list
 - Track previous action items - start each retro by reviewing what was committed last time
-- The Scrum Master participates as a team member, not just a facilitator
+- The Scrum Master takes part as a team member as well as the facilitator
 
-### Retrospective Anti-Patterns
+### Retrospective anti-patterns
 
 | Anti-Pattern | Fix |
 |---|---|

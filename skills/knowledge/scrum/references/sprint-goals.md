@@ -2,11 +2,18 @@
 
 A Sprint Goal is a concise statement that gives the Sprint purpose, direction, and focus. Think of it as the Commander's Intent: what are we trying to achieve, and why does it matter? The Sprint Goal does not change during a Sprint. If discoveries invalidate it entirely, the Product Owner may cancel the Sprint.
 
-## Five Templates
+## Contents
+
+- [Five templates](#five-templates)
+- [SMART criteria applied to Sprint Goals](#smart-criteria-applied-to-sprint-goals)
+- [Common anti-patterns and fixes](#common-anti-patterns-and-fixes)
+- [Practical tips](#practical-tips)
+
+## Five templates
 
 ### 1. Focus / Impact / Confirmation Template
 
-The most widely used format. Three parts that force clarity on outcome, value, and verification.
+The most widely used format. Its three parts cover outcome, value, and verification.
 
 **Format:**
 ```
@@ -86,12 +93,12 @@ Benefit:   Sales team saves 2 hours per week on report preparation
 ```
 Feature:   Role-based access control for the admin panel
 Advantage: Granular permissions replace the all-or-nothing approach
-Benefit:   Security team grants minimum necessary access, reducing risk exposure
+Benefit:   Security team grants the minimum access needed, which reduces risk
 ```
 
 ---
 
-### 4. FOCUS Evaluation Framework
+### 4. FOCUS evaluation framework
 
 An acronym for evaluating Sprint Goal quality after drafting. Similar to INVEST for User Stories.
 
@@ -137,7 +144,7 @@ Write the Sprint Goal as a news headline capturing the successful Sprint outcome
 
 ---
 
-## SMART Criteria Applied to Sprint Goals
+## SMART criteria applied to Sprint Goals
 
 ### Specific
 
@@ -169,11 +176,11 @@ The goal must connect to the current Product Goal and business priorities.
 
 ### Time-bound
 
-Every Sprint Goal is inherently time-bound by the Sprint duration. Ensure the scope fits the timebox. If it does not fit, reduce scope rather than extending the Sprint.
+Every Sprint Goal is inherently time-bound by the Sprint duration. Fit the scope to the timebox. If it does not fit, reduce scope rather than extending the Sprint.
 
 ---
 
-## Common Anti-Patterns and Fixes
+## Common anti-patterns and fixes
 
 | Anti-Pattern | Example | Why It Fails | Fix |
 |---|---|---|---|
@@ -186,7 +193,7 @@ Every Sprint Goal is inherently time-bound by the Sprint duration. Ensure the sc
 
 ---
 
-## Practical Tips
+## Practical tips
 
 1. **Treat the Sprint Goal as an elevator pitch** - if you had 30 seconds with an executive, could you explain what the team is doing and why?
 2. **Show progression across sprints** - Sprint 1: "Basic shopping cart with add/remove", Sprint 2: "Checkout with payment processing", Sprint 3: "Order confirmation and email receipts"

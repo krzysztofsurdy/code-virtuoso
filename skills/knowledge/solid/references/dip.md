@@ -1,33 +1,44 @@
 # Dependency Inversion Principle (DIP)
 
+## Contents
+
+- [Definition](#definition)
+- [Why it matters](#why-it-matters)
+- [Detecting violations](#detecting-violations)
+- [Before/After: PHP 8.3+](#beforeafter-php-83)
+- [Examples in other languages](#examples-in-other-languages)
+- [Who owns the abstraction?](#who-owns-the-abstraction)
+- [Common pitfalls](#common-pitfalls)
+- [Related principles](#related-principles)
+
 ## Definition
 
 1. High-level modules should not depend on low-level modules. Both should depend on abstractions.
 2. Abstractions should not depend on details. Details should depend on abstractions.
 
-DIP flips the conventional dependency direction in software architecture. Rather than having business logic import database drivers and HTTP libraries directly, it defines interfaces that infrastructure code must conform to.
+DIP flips the usual dependency direction. Business logic does not import database drivers and HTTP libraries directly. It defines interfaces that infrastructure code must conform to.
 
-## Why It Matters
+## Why it matters
 
-Without DIP, high-level business rules become tangled with low-level infrastructure details. Switching your database from MySQL to PostgreSQL should not force you to rewrite your order processing logic. DIP establishes a clean boundary:
+Without DIP, high-level business rules get tangled with low-level infrastructure details. Switching your database from MySQL to PostgreSQL should not force you to rewrite your order processing logic. DIP sets a clear boundary:
 
-- **Business logic remains infrastructure-free** — no framework or driver imports pollute domain code
-- **Infrastructure becomes interchangeable** — swap databases, message brokers, or external APIs without altering business rules
-- **Testing becomes straightforward** — inject test doubles in place of real infrastructure
-- **Deployment gains flexibility** — run the same business logic against different infrastructure configurations
-- **Teams operate independently** — the domain team and infrastructure team code against opposite sides of a shared interface
+- **Business logic stays free of infrastructure**: no framework or driver imports in domain code
+- **Infrastructure is interchangeable**: swap databases, message brokers, or external APIs without changing business rules
+- **Testing is simpler**: inject test doubles in place of real infrastructure
+- **Deployment is more flexible**: run the same business logic against different infrastructure configurations
+- **Teams work independently**: the domain team and the infrastructure team code against opposite sides of a shared interface
 
-## Detecting Violations
+## Detecting violations
 
 Indicators that dependency inversion is absent:
 
-- **Direct `new` of infrastructure classes inside business logic** — `new MySqlConnection()` appearing in a service class
-- **Import statements pointing downward** — domain code importing from `Infrastructure\` or `vendor\` namespaces
-- **Hardcoded file paths, URLs, or connection strings** — configuration embedded directly in logic
-- **"I can't test this without a database"** — if unit tests require external systems, DIP is being violated
-- **Constructors that create their own dependencies** — rather than receiving them through injection
+- **Direct `new` of infrastructure classes inside business logic**: `new MySqlConnection()` in a service class
+- **Import statements pointing downward**: domain code importing from `Infrastructure\` or `vendor\` namespaces
+- **Hardcoded file paths, URLs, or connection strings**: configuration embedded in logic
+- **"I can't test this without a database"**: if unit tests need external systems, DIP is being violated
+- **Constructors that create their own dependencies**: instead of receiving them through injection
 
-## Before/After — PHP 8.3+
+## Before/After: PHP 8.3+
 
 ### Before: Business logic directly depends on infrastructure
 
@@ -61,7 +72,7 @@ final class OrderProcessor
 
 This class cannot be tested without MySQL, SendGrid, and a writable filesystem. Changing any infrastructure component requires editing business logic.
 
-### After: Business logic depends on abstractions
+### After: business logic depends on abstractions
 
 ```php
 <?php
@@ -135,9 +146,9 @@ final readonly class EmailCustomerNotifier implements CustomerNotifier
 }
 ```
 
-Now the business logic is testable with simple in-memory fakes, and infrastructure can be swapped freely.
+Now the business logic is testable with in-memory fakes, and infrastructure can be swapped freely.
 
-### Dependency Direction Diagram
+### Dependency direction diagram
 
 ```
 WITHOUT DIP:
@@ -200,7 +211,7 @@ public class WeatherDashboard {
     }
 }
 
-// Infrastructure implementation — can be swapped freely
+// Infrastructure implementation: can be swapped freely
 public class OpenWeatherApiProvider implements WeatherProvider {
     private final HttpClient client;
     private final String apiKey;
@@ -216,7 +227,7 @@ public class OpenWeatherApiProvider implements WeatherProvider {
     }
 }
 
-// Test double — no HTTP calls needed
+// Test double: no HTTP calls needed
 public class FakeWeatherProvider implements WeatherProvider {
     @Override
     public WeatherData fetch(String city) {
@@ -455,9 +466,9 @@ public:
 };
 ```
 
-## Who Owns the Abstraction?
+## Who owns the abstraction?
 
-A frequently overlooked detail: **the abstraction belongs to the high-level module**, not the low-level one.
+**The abstraction belongs to the high-level module**, not the low-level one.
 
 ```
 WRONG:
@@ -469,18 +480,18 @@ RIGHT:
   Infrastructure/ implements Domain/OrderRepository
 ```
 
-The domain layer declares what it needs. Infrastructure adapts to satisfy those needs. This is what "inversion" refers to — the dependency arrow points toward the domain, not away from it.
+The domain layer declares what it needs. Infrastructure adapts to meet those needs. That is the "inversion": the dependency arrow points toward the domain, not away from it.
 
-## Common Pitfalls
+## Common pitfalls
 
-- **Interfaces that mirror implementations** — if your `DatabaseOrderRepository` interface exposes methods like `executeSql()`, you have merely wrapped the implementation detail in an abstraction name
-- **Single-implementation interfaces** — DIP does not mean "create an interface for everything." Only introduce abstractions at boundaries where substitution delivers real value (testing, swappability)
-- **Service locator anti-pattern** — `Container::get(OrderRepository::class)` still couples your code to the container. Prefer constructor injection instead.
-- **Abstracting prematurely** — hold off until you genuinely need a second implementation or require testability before introducing the abstraction
+- **Interfaces that mirror implementations**: if your `DatabaseOrderRepository` interface exposes methods like `executeSql()`, you have only given the implementation detail an abstract name
+- **Single-implementation interfaces**: DIP does not mean "create an interface for everything." Introduce abstractions only at boundaries where substitution has real value (testing, swappability)
+- **Service locator anti-pattern**: `Container::get(OrderRepository::class)` still couples your code to the container. Prefer constructor injection.
+- **Abstracting too early**: wait until you need a second implementation or testability before introducing the abstraction
 
-## Related Principles
+## Related principles
 
-- **Open/Closed (OCP)** — the abstractions DIP introduces are the extension points that OCP depends on
-- **Interface Segregation (ISP)** — focused interfaces make for stronger abstraction boundaries
-- **Clean Architecture** — DIP is the cornerstone of hexagonal and ports-and-adapters architecture
-- **Dependency Injection** — the mechanism (constructor injection, DI containers) through which DIP is realized in practice
+- **Open/Closed (OCP)**: the abstractions DIP introduces are the extension points OCP depends on
+- **Interface Segregation (ISP)**: focused interfaces make stronger abstraction boundaries
+- **Clean Architecture**: DIP is the cornerstone of hexagonal and ports-and-adapters architecture
+- **Dependency Injection**: the mechanism (constructor injection, DI containers) through which DIP is applied in practice

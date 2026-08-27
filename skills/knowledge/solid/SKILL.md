@@ -7,32 +7,32 @@ user-invocable: false
 
 # SOLID Principles
 
-Five core principles of object-oriented design that lead to systems which are simpler to maintain, test, and extend. Robert C. Martin (Uncle Bob) formalized these ideas, and Michael Feathers coined the SOLID acronym.
+Five core principles of object-oriented design that make systems simpler to maintain, test, and extend. Robert C. Martin (Uncle Bob) formalized these ideas, and Michael Feathers coined the SOLID acronym.
 
-## Principle Index
+## Principle index
 
 | Principle | Summary | Reference |
 |---|---|---|
-| **S** — Single Responsibility | A class should have only one reason to change | [reference](references/srp.md) |
-| **O** — Open/Closed | Open for extension, closed for modification | [reference](references/ocp.md) |
-| **L** — Liskov Substitution | Subtypes must be substitutable for their base types | [reference](references/lsp.md) |
-| **I** — Interface Segregation | Prefer many specific interfaces over one general-purpose interface | [reference](references/isp.md) |
-| **D** — Dependency Inversion | Depend on abstractions, not concretions | [reference](references/dip.md) |
+| **S**: Single Responsibility | A class should have only one reason to change | [reference](references/srp.md) |
+| **O**: Open/Closed | Open for extension, closed for modification | [reference](references/ocp.md) |
+| **L**: Liskov Substitution | Subtypes must be substitutable for their base types | [reference](references/lsp.md) |
+| **I**: Interface Segregation | Prefer many specific interfaces over one general-purpose interface | [reference](references/isp.md) |
+| **D**: Dependency Inversion | Depend on abstractions, not concretions | [reference](references/dip.md) |
 
-## Why SOLID Matters
+## Why SOLID matters
 
 Without SOLID, codebases gradually develop these problems:
 
-- **Rigidity** — one change ripples through many unrelated modules
-- **Fragility** — modifying one area breaks another seemingly unconnected area
-- **Immobility** — components are so intertwined that extracting them for reuse is impractical
-- **Viscosity** — doing things correctly is harder than hacking around the design
+- **Rigidity**: one change ripples through many unrelated modules
+- **Fragility**: modifying one area breaks another, seemingly unconnected area
+- **Immobility**: components are so intertwined that extracting them for reuse is impractical
+- **Viscosity**: doing things correctly is harder than hacking around the design
 
-SOLID tackles each of these by defining clear boundaries, explicit contracts, and flexible points for extension.
+SOLID addresses each of these with clear boundaries, explicit contracts, and defined points for extension.
 
-## Quick Decision Guide
+## Quick decision guide
 
-| Symptom | Likely Violated Principle | Fix |
+| Symptom | Likely violated principle | Fix |
 |---|---|---|
 | Class does too many things | **SRP** | Split into focused classes |
 | Adding a feature requires editing existing classes | **OCP** | Introduce polymorphism or strategy |
@@ -40,9 +40,9 @@ SOLID tackles each of these by defining clear boundaries, explicit contracts, an
 | Classes forced to implement unused methods | **ISP** | Break interface into smaller ones |
 | High-level module imports low-level details | **DIP** | Introduce an abstraction layer |
 
-## Quick Examples
+## Quick examples
 
-### SRP — Before and After
+### SRP: before and after
 
 ```php
 // BEFORE: Class handles both user data AND email sending
@@ -65,7 +65,7 @@ class UserNotifier {
 }
 ```
 
-### OCP — Extend Without Modifying
+### OCP: extend without modifying
 
 ```php
 interface DiscountPolicy {
@@ -88,7 +88,7 @@ class FlatDiscount implements DiscountPolicy {
 }
 ```
 
-### DIP — Depend on Abstractions
+### DIP: depend on abstractions
 
 ```php
 // High-level policy depends on abstraction, not on database details
@@ -105,26 +105,26 @@ class PlaceOrderHandler {
 }
 ```
 
-## Relationships Between Principles
+## Relationships between principles
 
-The five principles complement and reinforce one another:
+The five principles reinforce one another:
 
-- **SRP + ISP**: Both narrow the surface area of a class or interface to a single, focused concern
-- **OCP + DIP**: Abstractions are the mechanism that enables extension without modification
-- **LSP + OCP**: Correct substitutability is essential for polymorphic extension to work
-- **ISP + DIP**: Well-segregated interfaces make it easier to depend on precisely the right abstraction
+- **SRP + ISP**: Both narrow a class or interface to a single concern
+- **OCP + DIP**: Abstractions are what make extension without modification possible
+- **LSP + OCP**: Polymorphic extension only works if subtypes are correctly substitutable
+- **ISP + DIP**: Well-segregated interfaces make it easier to depend on exactly the right abstraction
 
-## Common Misconceptions
+## Common misconceptions
 
-- **"One method per class"** — SRP means one *reason to change*, not one method. A class can contain many methods as long as they all serve the same responsibility.
-- **"Never modify existing code"** — OCP does not prohibit bug fixes. It means *new behavior* should be introducible without changing existing working code.
-- **"Always use interfaces"** — DIP calls for depending on abstractions. Sometimes a well-crafted base class is the appropriate abstraction. Do not create interfaces for classes that will never have a second implementation.
-- **"Inheritance is bad"** — LSP does not discourage inheritance. It establishes rules for *correct* inheritance so that subtypes remain safely substitutable.
+- **"One method per class"**: SRP means one *reason to change*, not one method. A class can have many methods as long as they serve the same responsibility.
+- **"Never modify existing code"**: OCP does not prohibit bug fixes. It means *new behavior* should be addable without changing existing working code.
+- **"Always use interfaces"**: DIP calls for depending on abstractions. Sometimes a base class is the right abstraction. Do not create interfaces for classes that will never have a second implementation.
+- **"Inheritance is bad"**: LSP does not discourage inheritance. It sets rules for *correct* inheritance so that subtypes stay substitutable.
 
-## Best Practices
+## Best practices
 
-- Adopt SOLID incrementally — do not refactor everything in one pass
+- Adopt SOLID incrementally. Do not refactor everything in one pass
 - Treat SOLID as a diagnostic tool: when code resists change, check which principle is being violated
-- Pair with design patterns — Strategy (OCP), Adapter (DIP), and Decorator (OCP) are direct implementations of SOLID ideas
-- Write tests first — TDD naturally steers designs toward SOLID compliance
+- Pair with design patterns: Strategy (OCP), Adapter (DIP), and Decorator (OCP) are direct implementations of SOLID ideas
+- Write tests first. TDD steers designs toward SOLID compliance
 - Target PHP 8.3+ with strict typing, readonly classes, and enums

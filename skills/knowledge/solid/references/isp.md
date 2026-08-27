@@ -1,32 +1,43 @@
 # Interface Segregation Principle (ISP)
 
+## Contents
+
+- [Definition](#definition)
+- [Why it matters](#why-it-matters)
+- [Detecting violations](#detecting-violations)
+- [Before/After: PHP 8.3+](#beforeafter-php-83)
+- [Examples in other languages](#examples-in-other-languages)
+- [How small should interfaces be?](#how-small-should-interfaces-be)
+- [Common pitfalls](#common-pitfalls)
+- [Related principles](#related-principles)
+
 ## Definition
 
-Clients should never be compelled to depend on methods they do not use. Rather than defining one broad interface, design smaller, targeted interfaces so that implementing classes only need to deal with the methods relevant to their role.
+Clients should not be forced to depend on methods they do not use. Instead of one broad interface, design smaller, targeted interfaces so that implementing classes only deal with the methods relevant to their role.
 
-Robert C. Martin developed ISP after consulting work at Xerox, where a monolithic `Job` interface had expanded to serve printers, staplers, and fax machines alike — forcing every implementation to stub out methods it could not meaningfully support.
+Robert C. Martin developed ISP while consulting at Xerox, where a monolithic `Job` interface had grown to serve printers, staplers, and fax machines alike. Every implementation had to stub out methods it could not meaningfully support.
 
-## Why It Matters
+## Why it matters
 
-Oversized interfaces introduce unnecessary coupling. When a class depends on an interface with 20 methods but actually calls only 3, it is still tethered to the remaining 17. Any modification to those unused methods triggers recompilation and risks breakage. ISP promotes focused contracts that:
+Oversized interfaces add needless coupling. When a class depends on an interface with 20 methods but calls only 3, it is still tied to the other 17. Any change to those unused methods can trigger recompilation and risks breakage. ISP favors focused contracts that:
 
-- **Minimize coupling** — clients depend exclusively on what they truly need
-- **Enhance clarity** — compact interfaces convey purpose more effectively
-- **Streamline testing** — mocking a 3-method interface is far simpler than faking a 20-method one
-- **Support composition** — classes adopt only the interfaces that match their capabilities
-- **Reduce LSP violations** — narrow interfaces make it more practical to fulfill every method in the contract
+- **Minimize coupling**: clients depend only on what they need
+- **Improve clarity**: small interfaces state their purpose better
+- **Simplify testing**: mocking a 3-method interface is far easier than faking a 20-method one
+- **Support composition**: classes adopt only the interfaces that match their capabilities
+- **Reduce LSP violations**: narrow interfaces make it practical to fulfill every method in the contract
 
-## Detecting Violations
+## Detecting violations
 
 Warning signs to watch for:
 
-- **Interfaces with many methods** — 10 or more methods is a strong indicator of bloat
-- **Implementing classes with empty or throwing methods** — `throw new \RuntimeException('Not implemented')`
-- **"I only need half of this"** — when consumers routinely ignore most of an interface
-- **Adapters that partially delegate** — wrapping a large interface just to expose a subset of its methods
-- **Interface names containing "And"** — `ReadableAndWritableAndDeletable` should be three separate interfaces
+- **Interfaces with many methods**: 10 or more methods is a strong sign of bloat
+- **Implementing classes with empty or throwing methods**: `throw new \RuntimeException('Not implemented')`
+- **"I only need half of this"**: consumers routinely ignore most of an interface
+- **Adapters that partially delegate**: wrapping a large interface just to expose a subset of its methods
+- **Interface names containing "And"**: `ReadableAndWritableAndDeletable` should be three separate interfaces
 
-## Before/After — PHP 8.3+
+## Before/After: PHP 8.3+
 
 ### Before: One fat interface for all workers
 
@@ -94,7 +105,7 @@ final class Robot implements Worker
 }
 ```
 
-### After: Focused interfaces for each capability
+### After: focused interfaces for each capability
 
 ```php
 <?php
@@ -139,13 +150,13 @@ final class Manager implements Workable, Feedable, MeetingAttendee, ReportWriter
 final class Robot implements Workable
 {
     public function work(): void { echo 'Assembling parts'; }
-    // No forced stubs — Robot only implements what it can actually do
+    // No forced stubs: Robot only implements what it can actually do
 }
 ```
 
-### Real-World Example: Document Handling
+### Real-world example: document handling
 
-**Before — one bloated interface:**
+**Before: one bloated interface:**
 
 ```php
 <?php
@@ -171,7 +182,7 @@ final class PdfDocument implements Document
 }
 ```
 
-**After — segregated by capability:**
+**After: segregated by capability:**
 
 ```php
 <?php
@@ -410,7 +421,7 @@ class PublicCatalog implements ReadRepository<Product> {
   async findAll() { /* ... */ }
   async count() { /* ... */ }
   async exists(id: string) { /* ... */ }
-  // No write methods — clean contract
+  // No write methods: clean contract
 }
 
 class AdminCatalog implements ReadRepository<Product>, WriteRepository<Product> {
@@ -480,25 +491,25 @@ public:
 };
 ```
 
-## How Small Should Interfaces Be?
+## How small should interfaces be?
 
-There is no universal number, but here are useful guidelines:
+There is no universal number, but these guidelines help:
 
-- **1 method** — typical for functional interfaces (Strategy, Command patterns)
-- **2-5 methods** — standard for a well-scoped capability
-- **6+ methods** — worth evaluating whether it can be decomposed
-- **Role-based grouping** — methods that are invariably invoked together belong in the same interface
+- **1 method**: typical for functional interfaces (Strategy, Command patterns)
+- **2-5 methods**: standard for a well-scoped capability
+- **6+ methods**: check whether it can be decomposed
+- **Role-based grouping**: methods that are always called together belong in the same interface
 
 The litmus test: if any implementation would need to stub or throw on a method, the interface is too broad.
 
-## Common Pitfalls
+## Common pitfalls
 
-- **Excessive micro-interfaces** — decomposing every method into its own interface introduces unnecessary complexity. Group methods that are always consumed together.
-- **Interface explosion** — 50 single-method interfaces is worse than 5 thoughtfully designed ones. Identify the natural boundaries.
-- **Marker interfaces without behavior** — empty interfaces used solely for type discrimination add little value in most languages.
+- **Too many micro-interfaces**: giving every method its own interface adds complexity. Group methods that are always consumed together.
+- **Interface explosion**: 50 single-method interfaces is worse than 5 well-designed ones. Find the natural boundaries.
+- **Marker interfaces without behavior**: empty interfaces used only for type discrimination add little value in most languages.
 
-## Related Principles
+## Related principles
 
-- **Single Responsibility (SRP)** — ISP applies the same single-focus philosophy at the interface level
-- **Liskov Substitution (LSP)** — segregated interfaces make it simpler to fulfill every obligation in the contract
-- **Dependency Inversion (DIP)** — compact interfaces serve as better abstractions to depend on
+- **Single Responsibility (SRP)**: ISP applies the same single-focus idea at the interface level
+- **Liskov Substitution (LSP)**: segregated interfaces make it easier to fulfill every obligation in the contract
+- **Dependency Inversion (DIP)**: small interfaces make better abstractions to depend on
