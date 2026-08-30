@@ -1,16 +1,26 @@
 # Handoff Patterns
 
-When tasks in a plan are sequential, the orchestrator must pass structured state from task N to task N+1. The handoff is the bridge between isolated agent sessions - it carries just enough context for the next subagent to work effectively without inheriting the previous agent's full history.
+When tasks in a plan are sequential, the orchestrator must pass structured state from task N to task N+1. The handoff bridges isolated agent sessions. It carries just enough context for the next subagent to work without inheriting the previous agent's full history.
 
-## Core Principle
+## Contents
 
-**Compress, do not replay.** The next subagent needs decisions, artifacts, and relevant changes - not a transcript of what happened. Every line in a handoff should answer the question: "Does the next agent need this to do its job?"
+- [Core principle](#core-principle)
+- [Three handoff formats](#three-handoff-formats)
+- [Choosing the right format](#choosing-the-right-format)
+- [What never goes in a handoff](#what-never-goes-in-a-handoff)
+- [Handoff quality checklist](#handoff-quality-checklist)
+- [Progressive context](#progressive-context)
+- [Edge cases](#edge-cases)
 
-## Three Handoff Formats
+## Core principle
+
+**Compress, do not replay.** The next subagent needs decisions, artifacts, and relevant changes, not a transcript of what happened. Every line in a handoff should answer the question: "Does the next agent need this to do its job?"
+
+## Three handoff formats
 
 Choose the format based on how deeply the next task depends on the previous one.
 
-### 1. Diff Summary
+### 1. Diff summary
 
 **When to use:** The next task has a light dependency - it needs to know what files changed and what interfaces were introduced, but does not need to understand why decisions were made.
 
@@ -36,7 +46,7 @@ Choose the format based on how deeply the next task depends on the previous one.
 - CreateOrderRequest is a simple DTO with public readonly properties
 ```
 
-### 2. Decision Log
+### 2. Decision log
 
 **When to use:** Design choices were made during the previous task that constrain or inform the next task. The next subagent needs to understand WHY things were done a certain way, not just what changed.
 
@@ -76,7 +86,7 @@ Choose the format based on how deeply the next task depends on the previous one.
 - PriceResult contains: subtotal, taxAmount, total (all in cents)
 ```
 
-### 3. Full Handoff
+### 3. Full handoff
 
 **When to use:** The next task will directly modify or extend what the previous task created. The subagent needs to understand the complete picture: what changed, why, and how the pieces fit together.
 
@@ -131,16 +141,16 @@ Choose the format based on how deeply the next task depends on the previous one.
 - None blocking. Task 06 can proceed as planned.
 ```
 
-## Choosing the Right Format
+## Choosing the right format
 
 | Signal | Format |
 |---|---|
 | Next task uses output from this task but does not modify it | Diff summary |
 | Design decisions were made that constrain the next task | Decision log |
 | Next task directly extends or modifies this task's output | Full handoff |
-| Unsure | Default to decision log - it covers the most common case without excessive bulk |
+| Unsure | Default to decision log. It covers the most common case without much bulk |
 
-## What Never Goes in a Handoff
+## What never goes in a handoff
 
 | Excluded content | Why |
 |---|---|
@@ -151,7 +161,7 @@ Choose the format based on how deeply the next task depends on the previous one.
 | Reviewer feedback | Unless a review finding directly affects the next task, it stays with the completed task. |
 | Token counts or timing | Operational metrics are for the orchestrator's log, not the next agent's context. |
 
-## Handoff Quality Checklist
+## Handoff quality checklist
 
 Before including a handoff in the next task's brief:
 
@@ -163,7 +173,7 @@ Before including a handoff in the next task's brief:
 - [ ] The handoff answers: "What does the next agent need to know?"
 - [ ] The handoff is under 40 lines (if longer, it may be carrying too much)
 
-## Progressive Context
+## Progressive context
 
 As tasks progress through a plan, handoffs can reference earlier handoffs by task ID rather than repeating their content:
 
@@ -174,19 +184,19 @@ As tasks progress through a plan, handoffs can reference earlier handoffs by tas
 - Task 04 changes (this handoff): Added PricingStrategy interface used by OrderService::create()
 ```
 
-This keeps later handoffs from growing unboundedly while still providing traceability. If the subagent needs detail from an earlier task, it can request the specific handoff by ID.
+This keeps later handoffs from growing without limit while keeping them traceable. If the subagent needs detail from an earlier task, it can request the specific handoff by ID.
 
-## Edge Cases
+## Edge cases
 
-### First Task in the Plan
+### First task in the plan
 
 No handoff exists. The brief's "Context from Prior Tasks" section should say: "None - this is the first task."
 
-### Task That Produces No Code Changes
+### Task that produces no code changes
 
 Some tasks produce documentation, configuration, or analysis rather than code. The handoff still applies - describe what was produced and where it lives.
 
-### Task That Was Re-Scoped Mid-Execution
+### Task that was re-scoped mid-execution
 
 If the orchestrator re-scoped a task after the subagent started, the handoff must note the deviation from the original plan:
 

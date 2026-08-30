@@ -1,13 +1,13 @@
 ---
 name: subagent-driven-development
-description: "Execute a multi-task implementation plan by dispatching one fresh subagent per task with isolated context, then applying a two-stage review (spec compliance and code quality) before advancing. Use when you have a written plan with 3+ tasks, when tasks would otherwise cause context bleed, when you need reproducible per-task output, or when review gates are non-negotiable. Covers per-task briefing templates, the two-stage review rubric, structured hand-off between dependent tasks, and anti-patterns like shared long-context drift and skipped reviews. Complements dispatching-parallel-agents (for fan-out work) and executing-plans. Triggers: 'execute this plan', 'work through these tasks', 'dispatch per task', 'one-task-at-a-time', 'review-gated implementation'."
+description: "Executes a multi-task implementation plan by dispatching one fresh subagent per task with isolated context, then running a two-stage review (spec compliance, then code quality) before advancing. Use when a written plan has 3+ tasks, when tasks would cause context bleed, when per-task output must be reproducible, or when review gates are required. Covers briefing templates, the review rubric, hand-offs between dependent tasks, and anti-patterns like shared long-context drift and skipped reviews. Complements dispatching-parallel-agents and executing-plans. Triggers: 'execute this plan', 'work through these tasks', 'dispatch per task', 'one-task-at-a-time', 'review-gated implementation'."
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---
 
 # Subagent-Driven Development
 
-An orchestration pattern for executing multi-task implementation plans by dispatching one fresh subagent per task, reviewing each task through two gates (spec compliance, then code quality), and advancing only after both gates pass. The orchestrator stays lean - it coordinates, briefs, reviews, and hands off. It never implements.
+An orchestration pattern for executing multi-task implementation plans. The orchestrator dispatches one fresh subagent per task, reviews each task through two gates (spec compliance, then code quality), and advances only after both gates pass. The orchestrator stays lean: it coordinates, briefs, reviews, and hands off. It never implements.
 
 ## Core Principles
 
@@ -19,7 +19,7 @@ An orchestration pattern for executing multi-task implementation plans by dispat
 | **Orchestrator stays lean** | The orchestrator reads the plan, dispatches agents, reviews output, and decides next steps. It does not implement, debug, or accumulate working-memory bloat. |
 | **Fail fast, fix forward** | When a review gate fails, return specific feedback to the subagent for a focused fix cycle. After two failed fix attempts, re-scope or escalate - do not loop indefinitely. |
 
-## When to Use
+## When to use
 
 | Situation | Why this pattern fits |
 |---|---|
@@ -29,7 +29,7 @@ An orchestration pattern for executing multi-task implementation plans by dispat
 | Quality-sensitive work requiring audit trails | Two-stage review produces documented accept/reject decisions per task |
 | Delegating to less capable models for mechanical work | Tight briefs and review gates compensate for reduced reasoning capacity |
 
-## When NOT to Use
+## When not to use
 
 | Situation | Better alternative |
 |---|---|
@@ -39,13 +39,13 @@ An orchestration pattern for executing multi-task implementation plans by dispat
 | Tasks that require deep shared state across every step | Single long-running session with periodic checkpoints |
 | Fewer than 3 tasks | Execute directly and self-review - the ceremony exceeds the value |
 
-## The Loop
+## The loop
 
-Execute one task at a time through this seven-phase cycle. The orchestrator drives each phase.
+Run one task at a time through this seven-phase cycle. The orchestrator drives each phase.
 
-### Phase 1: Brief the Subagent
+### Phase 1: Brief the subagent
 
-Compose a task brief containing everything the subagent needs to execute independently. The brief is the subagent's entire world - anything not in the brief does not exist for it.
+Compose a task brief with everything the subagent needs to work independently. The brief is the subagent's entire world: anything not in it does not exist for the subagent.
 
 Include:
 - Task identifier and goal (one sentence)
@@ -57,16 +57,16 @@ Include:
 
 See [Task Brief Template](references/task-brief-template.md) for the full structure.
 
-### Phase 2: Dispatch with Isolation
+### Phase 2: Dispatch with isolation
 
-Launch the subagent with a fresh context window. Provide the brief as the initial prompt. If the platform supports worktree isolation, use it - the subagent should not be able to corrupt the main working tree.
+Launch the subagent with a fresh context window and give it the brief as the initial prompt. If the platform supports worktree isolation, use it so the subagent cannot corrupt the main working tree.
 
 Key rules:
 - Never paste the full plan into the subagent - only the current task brief
 - Never let the subagent inherit the orchestrator's conversation history
 - Preload only the skills the subagent needs for this specific task
 
-### Phase 3: Receive Artifacts
+### Phase 3: Receive artifacts
 
 The subagent completes work and reports back with one of four statuses:
 
@@ -77,7 +77,7 @@ The subagent completes work and reports back with one of four statuses:
 | **Needs context** | Provide the missing information and re-dispatch (do NOT guess on the subagent's behalf) |
 | **Blocked** | Assess the blocker - provide context, re-scope the task, or escalate to a human |
 
-### Phase 4: Stage 1 Review - Spec Compliance
+### Phase 4: Stage 1 review (spec compliance)
 
 Verify that the output matches the brief's acceptance criteria. This is a mechanical check: does the artifact do what was asked?
 
@@ -92,7 +92,7 @@ If Stage 1 fails: return specific findings to the subagent with the failing crit
 
 See [Review Rubric](references/review-rubric.md) for the full spec compliance checklist.
 
-### Phase 5: Stage 2 Review - Code Quality
+### Phase 5: Stage 2 review (code quality)
 
 Once spec compliance passes, evaluate the quality of the implementation. This is a judgment call: is the code correct, clean, and maintainable?
 
@@ -120,7 +120,7 @@ The orchestrator makes one of three decisions:
 
 Never accept with known open issues. Never defer critical findings to "clean up later."
 
-### Phase 7: Hand Off to Next Task
+### Phase 7: Hand off to the next task
 
 Prepare the hand-off summary for the next task's brief. Include only what the next subagent needs:
 
@@ -133,9 +133,9 @@ See [Handoff Patterns](references/handoff-patterns.md) for structured hand-off f
 
 ---
 
-## Task Brief
+## Task brief
 
-A task brief is the contract between the orchestrator and the subagent. It must be self-contained - the subagent should be able to execute the task using only the brief and the codebase, with no additional conversation.
+A task brief is the contract between the orchestrator and the subagent. It must be self-contained: the subagent should be able to execute the task using only the brief and the codebase, with no additional conversation.
 
 Essential sections:
 1. **Task ID and goal** - what to accomplish in one sentence
@@ -149,24 +149,24 @@ See [Task Brief Template](references/task-brief-template.md) for the complete te
 
 ---
 
-## Two-Stage Review Rubric
+## Two-stage review rubric
 
-The two stages serve different purposes and must not be combined or skipped:
+The two stages have different purposes. Do not combine or skip them:
 
 | Stage | Purpose | Character |
 |---|---|---|
 | **Stage 1: Spec Compliance** | Does the output match the brief? | Mechanical - checkable against acceptance criteria |
 | **Stage 2: Code Quality** | Is the implementation well-crafted? | Judgmental - requires expertise and context |
 
-Stage 1 must pass before Stage 2 begins. There is no value in reviewing code quality on an implementation that does not meet its specification.
+Stage 1 must pass before Stage 2 begins. Reviewing code quality on an implementation that misses its spec is wasted effort.
 
 See [Review Rubric](references/review-rubric.md) for the detailed rubric with severity levels.
 
 ---
 
-## Handoff Patterns
+## Handoff patterns
 
-When tasks have sequential dependencies, the orchestrator must pass structured state from task N to task N+1. The goal is minimal, precise context - not a dump of everything that happened.
+When tasks have sequential dependencies, the orchestrator must pass structured state from task N to task N+1. The goal is minimal, precise context, not a dump of everything that happened.
 
 Three formats, chosen by dependency depth:
 
@@ -180,7 +180,7 @@ See [Handoff Patterns](references/handoff-patterns.md) for templates and example
 
 ---
 
-## Anti-Patterns
+## Anti-patterns
 
 | Anti-Pattern | Why it fails | Fix |
 |---|---|---|
@@ -197,7 +197,7 @@ See [Anti-Patterns](references/anti-patterns.md) for detailed analysis and recov
 
 ---
 
-## Quality Checklist
+## Quality checklist
 
 Before advancing from one task to the next:
 
@@ -213,11 +213,11 @@ Before advancing from one task to the next:
 
 ---
 
-## Critical Rules
+## Critical rules
 
-1. **One agent, one task.** Never reuse a subagent across tasks. Fresh context prevents drift and ensures each task is evaluated on its own merits.
+1. **One agent, one task.** Never reuse a subagent across tasks. Fresh context prevents drift and lets each task be judged on its own merits.
 
-2. **Both review stages are mandatory.** Spec compliance and code quality serve different purposes. Skipping either one allows a different class of defect to pass through.
+2. **Both review stages are mandatory.** Spec compliance and code quality catch different problems. Skipping either one lets a different class of defect through.
 
 3. **Stage 1 before Stage 2.** Do not review code quality on an implementation that does not meet its specification. Fix the spec gap first.
 
@@ -225,7 +225,7 @@ Before advancing from one task to the next:
 
 5. **Cap fix attempts at two.** If the subagent cannot resolve an issue after two rounds of feedback, the task scope is wrong or the agent lacks capability. Re-scope or escalate.
 
-6. **Orchestrator never implements.** The moment the orchestrator starts writing code, it accumulates context that degrades its coordination ability. Delegate everything.
+6. **Orchestrator never implements.** Once the orchestrator starts writing code, its context fills with detail and its coordination suffers. Delegate everything.
 
 7. **Hand-off summaries, not history dumps.** Pass compressed, structured state between tasks. The next subagent needs decisions and artifacts, not a transcript of what happened.
 

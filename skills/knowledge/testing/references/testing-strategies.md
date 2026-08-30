@@ -1,18 +1,30 @@
 # Testing Strategies by Architecture Layer
 
+## Contents
+
+- [Overview](#overview)
+- [Domain / business logic](#domain--business-logic)
+- [Application services / use cases](#application-services--use-cases)
+- [Repositories / data access](#repositories--data-access)
+- [API endpoints / controllers](#api-endpoints--controllers)
+- [UI components](#ui-components)
+- [Cross-cutting / end-to-end](#cross-cutting--end-to-end)
+- [Test data management](#test-data-management)
+- [Continuous testing](#continuous-testing)
+
 ## Overview
 
-Different layers of an application have different responsibilities, dependencies, and failure modes. An effective test strategy matches the test type to the layer, pushing verification to the lowest level that provides confidence while using higher-level tests sparingly for integration assurance.
+Each layer of an application has different responsibilities, dependencies, and failure modes. Match the test type to the layer. Push verification down to the lowest level that gives confidence, and use higher-level tests sparingly to check that the pieces fit.
 
-## Domain / Business Logic
+## Domain / business logic
 
-The core of your application — rules, calculations, state machines, validations.
+The core of the application: rules, calculations, state machines, validations.
 
 **Test type:** Unit tests
 **Approach:**
-- State-based verification — call a method, assert on the result or resulting state
-- No I/O, no databases, no network — pure logic
-- Use real collaborators (value objects, domain services) — avoid mocks
+- State-based verification: call a method, assert on the result or resulting state
+- No I/O, no databases, no network, only pure logic
+- Use real collaborators (value objects, domain services) and avoid mocks
 - Test edge cases thoroughly: boundary values, empty inputs, overflow, invalid combinations
 
 **What to assert:**
@@ -20,35 +32,35 @@ The core of your application — rules, calculations, state machines, validation
 - Exceptions and error conditions
 - Invariants that must always hold
 
-**Goal:** Fast, comprehensive coverage of all business rules. This layer should have the most tests.
+**Goal:** Fast coverage of all business rules. This layer should have the most tests.
 
-## Application Services / Use Cases
+## Application services / use cases
 
 Orchestration layer that coordinates domain objects and infrastructure.
 
 **Test type:** Unit tests with test doubles for infrastructure ports
 **Approach:**
 - Stub or fake infrastructure dependencies (repositories, message buses, external service clients)
-- Use real domain objects — do not mock the domain layer
+- Use real domain objects and do not mock the domain layer
 - Verify that the service orchestrates correctly: calls the right ports with the right data
 
 **What to assert:**
-- Correct domain objects are created/modified
+- Correct domain objects are created or modified
 - Infrastructure ports are called with expected arguments
 - The right events or commands are dispatched
 - Error scenarios are handled (not found, conflicts, authorization failures)
 
 **Goal:** Verify coordination logic without slow infrastructure.
 
-## Repositories / Data Access
+## Repositories / data access
 
 The layer that persists and retrieves data from databases, file systems, or external stores.
 
 **Test type:** Integration tests with a real database
 **Approach:**
 - Use test containers, in-memory databases, or dedicated test database instances
-- Each test starts with a clean state (truncate tables or use transactions that roll back)
-- Test actual queries, mappings, and constraints — not mock behavior
+- Start each test from a clean state (truncate tables or use transactions that roll back)
+- Test actual queries, mappings, and constraints, not mock behavior
 
 **What to assert:**
 - Data is persisted correctly and can be retrieved
@@ -58,7 +70,7 @@ The layer that persists and retrieves data from databases, file systems, or exte
 
 **Goal:** Catch query bugs, mapping errors, and schema mismatches that unit tests cannot detect.
 
-## API Endpoints / Controllers
+## API endpoints / controllers
 
 The layer that accepts external requests and returns responses.
 
@@ -77,7 +89,7 @@ The layer that accepts external requests and returns responses.
 
 **Goal:** Verify the API contract is correct and stable. Catch serialization, routing, and validation bugs.
 
-## UI Components
+## UI components
 
 Interactive elements that users see and interact with.
 
@@ -86,7 +98,7 @@ Interactive elements that users see and interact with.
 - Render components in isolation with controlled props/inputs
 - Simulate user interactions (clicks, typing, navigation)
 - Assert on the rendered output and triggered events
-- Avoid asserting on CSS classes or DOM structure — assert on visible text and behavior
+- Avoid asserting on CSS classes or DOM structure; assert on visible text and behavior
 
 **What to assert:**
 - Correct rendering for different states (loading, error, empty, populated)
@@ -96,7 +108,7 @@ Interactive elements that users see and interact with.
 
 **Goal:** Verify component behavior without a full browser or backend.
 
-## Cross-Cutting / End-to-End
+## Cross-cutting / end-to-end
 
 Complete user journeys through the entire system.
 
@@ -104,7 +116,7 @@ Complete user journeys through the entire system.
 **Approach:**
 - Automate critical business workflows (sign up, purchase, core CRUD flows)
 - Run against a fully deployed environment (or realistic local stack)
-- Keep the number small — 5-15 critical paths, not hundreds
+- Keep the number small: 5-15 critical paths, not hundreds
 - Use stable selectors and explicit waits to reduce flakiness
 
 **What to assert:**
@@ -112,11 +124,11 @@ Complete user journeys through the entire system.
 - Data flows correctly across all layers
 - Integrations with real external services work (or use sandboxed test accounts)
 
-**Goal:** Final confidence check that the system works as a whole. Not the place to test edge cases.
+**Goal:** A final check that the system works as a whole. Not the place to test edge cases.
 
-## Test Data Management
+## Test data management
 
-Consistent, reliable test data is critical across all layers.
+Consistent, reliable test data matters at every layer.
 
 ### Builders
 
@@ -134,28 +146,28 @@ Pre-defined templates for common test scenarios:
 
 Static data loaded before tests run:
 - Useful for reference data (countries, currencies, roles)
-- Dangerous for mutable data — leads to coupling between tests
+- Dangerous for mutable data, because it couples tests to each other
 - Prefer builders/factories for test-specific data
 
-## Continuous Testing
+## Continuous testing
 
-Testing is only valuable if it runs consistently and provides fast feedback.
+Tests only pay off if they run consistently and give fast feedback.
 
-### Pre-Commit / Pre-Push Hooks
+### Pre-commit / pre-push hooks
 - Run unit tests and linting before code reaches the repository
-- Must complete in under 30 seconds to avoid friction
+- Keep them under 30 seconds to avoid friction
 
-### CI Pipeline
+### CI pipeline
 - Run the full test suite on every push and pull request
 - Separate fast tests (unit) from slow tests (integration, e2e) into parallel stages
 - Fail fast: run the fastest tests first
 
-### Test Parallelization
+### Test parallelization
 - Unit tests should be parallelizable by default (no shared state)
 - Integration tests may need isolated databases or namespaced resources
-- E2E tests are hardest to parallelize — use independent user accounts or data sets
+- E2E tests are the hardest to parallelize; use independent user accounts or data sets
 
-### Monitoring Test Health
-- Track test suite duration over time — alert on regressions
-- Track flaky test rates — quarantine and fix flaky tests immediately
-- Track coverage trends — not as a target, but as a signal of untested areas
+### Monitoring test health
+- Track test suite duration over time and alert on regressions
+- Track flaky test rates, and quarantine and fix flaky tests immediately
+- Track coverage trends as a signal of untested areas, not as a target

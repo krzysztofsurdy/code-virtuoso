@@ -1,14 +1,23 @@
 # Verification Checklist by Task Type
 
-Step-by-step checklists for verifying work by the type of change. Every item requires captured output, not a mental check.
+Step-by-step checklists for verifying work by type of change. Every item requires captured output, not a mental check.
 
 ---
 
-## Code Change
+## Contents
 
-Any modification to source code — new features, refactors, bug fixes, performance improvements.
+- [Code change](#code-change)
+- [Configuration change](#configuration-change)
+- [Database / schema change](#database--schema-change)
+- [Infrastructure change](#infrastructure-change)
+- [Documentation change](#documentation-change)
+- [Dependency update](#dependency-update)
 
-### Required Checks
+## Code change
+
+Any modification to source code: new features, refactors, bug fixes, performance improvements.
+
+### Required checks
 
 1. **Run the full test suite**
    ```
@@ -66,26 +75,26 @@ Any modification to source code — new features, refactors, bug fixes, performa
    - Expected: only intended files are modified
    - Capture: list of changed files, any untracked files
 
-### Bug Fix Extras
+### Bug fix extras
 
 When the code change is a bug fix, add these checks:
 
-6. **Red-green verification** — confirm the test fails WITHOUT the fix
+6. **Red-green verification**: confirm the test fails WITHOUT the fix
    - Revert only the fix (keep the test)
-   - Run the specific test — it must FAIL
+   - Run the specific test (it must FAIL)
    - Restore the fix
-   - Run the specific test — it must PASS
+   - Run the specific test (it must PASS)
    - This proves the test actually catches the bug
 
-7. **Regression suite** — run the full suite to confirm nothing else broke
+7. **Regression suite**: run the full suite to confirm nothing else broke
 
 ---
 
-## Configuration Change
+## Configuration change
 
-Any modification to config files — environment variables, feature flags, service configuration, build config.
+Any modification to config files: environment variables, feature flags, service configuration, build config.
 
-### Required Checks
+### Required checks
 
 1. **Validate config syntax**
    ```
@@ -98,7 +107,7 @@ Any modification to config files — environment variables, feature flags, servi
    - Expected: valid syntax, exit code 0
    - Capture: validation output, exit code
 
-2. **Application startup** — restart the application with the new config
+2. **Application startup**: restart the application with the new config
    ```
    npm run dev
    python manage.py runserver
@@ -108,7 +117,7 @@ Any modification to config files — environment variables, feature flags, servi
    - Expected: application starts without errors
    - Capture: startup logs showing successful initialization
 
-3. **Smoke test affected feature** — exercise the specific feature the config change targets
+3. **Smoke test affected feature**: exercise the specific feature the config change targets
    ```
    curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health
    curl -s http://localhost:8080/api/affected-endpoint | head -20
@@ -116,18 +125,18 @@ Any modification to config files — environment variables, feature flags, servi
    - Expected: feature responds correctly with new config
    - Capture: HTTP status, response body or relevant excerpt
 
-4. **Verify config is loaded** — confirm the application is actually using the new values
+4. **Verify config is loaded**: confirm the application is using the new values
    - Check application logs for config loading messages
    - Hit a debug or diagnostic endpoint if available
    - Confirm the behavioral change is visible
 
 ---
 
-## Database / Schema Change
+## Database / schema change
 
-Any modification to database schema — migrations, seed data, index changes, constraint modifications.
+Any modification to database schema: migrations, seed data, index changes, constraint modifications.
 
-### Required Checks
+### Required checks
 
 1. **Migration runs forward**
    ```
@@ -151,7 +160,7 @@ Any modification to database schema — migrations, seed data, index changes, co
    - Expected: rollback completes without error, schema returns to previous state
    - Capture: rollback output, exit code
 
-3. **Re-apply migration** — run forward again after rollback
+3. **Re-apply migration**: run forward again after rollback
    - Expected: migration applies cleanly a second time (idempotency check)
    - Capture: migration output, exit code
 
@@ -169,20 +178,20 @@ Any modification to database schema — migrations, seed data, index changes, co
    - Expected: queries return expected results
    - Capture: query output
 
-6. **Data integrity** — if the migration transforms data, verify correctness
+6. **Data integrity**: if the migration transforms data, verify correctness
    - Check row counts before and after
    - Spot-check transformed records
    - Verify constraints are enforced
 
 ---
 
-## Infrastructure Change
+## Infrastructure change
 
 Any modification to deployment configuration, cloud resources, networking, or operational tooling.
 
-### Required Checks
+### Required checks
 
-1. **Dry run / plan** — preview what will change before applying
+1. **Dry run / plan**: preview what will change before applying
    ```
    terraform plan
    pulumi preview
@@ -202,7 +211,7 @@ Any modification to deployment configuration, cloud resources, networking, or op
    - Expected: apply succeeds, exit code 0
    - Capture: apply output, resource status
 
-3. **Health check** — verify the deployed service is healthy
+3. **Health check**: verify the deployed service is healthy
    ```
    curl -s http://service:port/health
    kubectl get pods -l app=myapp
@@ -212,33 +221,33 @@ Any modification to deployment configuration, cloud resources, networking, or op
    - Expected: all instances healthy, expected replica count, no crash loops
    - Capture: health check response, pod/container status
 
-4. **Smoke test** — exercise critical paths through the deployed service
+4. **Smoke test**: exercise critical paths through the deployed service
    ```
    curl -s -w "\n%{http_code}" http://service:port/api/critical-endpoint
    ```
    - Expected: expected HTTP status and response shape
    - Capture: status code, response body or excerpt
 
-5. **Rollback test** — verify that rollback works before considering done
+5. **Rollback test**: verify that rollback works before considering done
    - Roll back to the previous version
    - Verify health check passes on the previous version
    - Re-deploy the new version
    - This proves you have a safe exit path
 
-6. **Monitoring check** — verify that observability is intact
+6. **Monitoring check**: verify that observability is intact
    - Confirm logs are flowing to the logging system
    - Confirm metrics are being reported
    - Confirm alerts are not firing
 
 ---
 
-## Documentation Change
+## Documentation change
 
-Any modification to docs — README files, API docs, architecture docs, runbooks, inline code comments.
+Any modification to docs: README files, API docs, architecture docs, runbooks, inline code comments.
 
-### Required Checks
+### Required checks
 
-1. **Links resolve** — check for broken links
+1. **Links resolve**: check for broken links
    ```
    markdown-link-check README.md
    find docs/ -name "*.md" -exec markdown-link-check {} \;
@@ -246,19 +255,19 @@ Any modification to docs — README files, API docs, architecture docs, runbooks
    - Expected: zero broken links
    - Capture: link check output
 
-2. **Code examples execute** — any code block in documentation must work
+2. **Code examples execute**: any code block in documentation must work
    - Copy each code example
    - Run it in the appropriate environment
    - Verify it produces the documented output
    - Expected: all examples produce expected output
    - Capture: execution output for each example
 
-3. **Formatting renders correctly** — preview the rendered output
+3. **Formatting renders correctly**: preview the rendered output
    - View in a markdown renderer or the target documentation platform
    - Check: headings, tables, code blocks, images, diagrams
    - Expected: all elements render as intended
 
-4. **Content accuracy** — verify claims match the current codebase
+4. **Content accuracy**: verify claims match the current codebase
    - File paths mentioned in docs exist
    - API endpoints documented match actual routes
    - Configuration options documented match actual config schema
@@ -274,11 +283,11 @@ Any modification to docs — README files, API docs, architecture docs, runbooks
 
 ---
 
-## Dependency Update
+## Dependency update
 
-Any modification to project dependencies — version bumps, new packages, removed packages.
+Any modification to project dependencies: version bumps, new packages, removed packages.
 
-### Required Checks
+### Required checks
 
 1. **Lock file is updated**
    ```
@@ -292,7 +301,7 @@ Any modification to project dependencies — version bumps, new packages, remove
    - Expected: lock file changes match the intended update, no unexpected changes
    - Capture: install output, lock file diff summary
 
-2. **Install succeeds** — clean install from lock file
+2. **Install succeeds**: clean install from lock file
    ```
    rm -rf node_modules && npm ci
    pip install -r requirements.txt
@@ -301,13 +310,13 @@ Any modification to project dependencies — version bumps, new packages, remove
    - Expected: all dependencies resolve, exit code 0
    - Capture: install output, exit code
 
-3. **Full test suite passes** — dependency changes can break anything
-   - Run the complete test suite (same commands as Code Change step 1)
+3. **Full test suite passes**: dependency changes can break anything
+   - Run the complete test suite (same commands as Code change step 1)
    - Expected: zero failures
    - Capture: full test output
 
-4. **Build succeeds** — dependency changes can break compilation
-   - Run the full build (same commands as Code Change step 4)
+4. **Build succeeds**: dependency changes can break compilation
+   - Run the full build (same commands as Code change step 4)
    - Expected: exit code 0
    - Capture: build output
 

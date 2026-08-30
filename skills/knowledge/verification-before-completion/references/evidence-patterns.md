@@ -1,28 +1,36 @@
 # Evidence Patterns
 
-What counts as evidence that work is done — and what does not. Evidence is captured output from an executed command. Everything else is assertion.
+What counts as evidence that work is done, and what does not. Evidence is captured output from an executed command. Everything else is assertion.
 
 ---
 
-## The Evidence Rule
+## Contents
+
+- [The evidence rule](#the-evidence-rule)
+- [Valid evidence by category](#valid-evidence-by-category)
+- [Invalid evidence (non-evidence)](#invalid-evidence-non-evidence)
+- [Evidence strength tiers](#evidence-strength-tiers)
+- [Combining evidence](#combining-evidence)
+
+## The evidence rule
 
 Evidence must be:
 
-1. **Produced** — a command was actually executed
-2. **Captured** — the output is visible, not just remembered
-3. **Current** — from the current session, after the latest change
-4. **Complete** — covers the full verification surface, not a subset
-5. **Interpretable** — someone else can read it and reach the same conclusion
+1. **Produced**: a command was actually run
+2. **Captured**: the output is visible, not just remembered
+3. **Current**: from the current session, after the latest change
+4. **Complete**: covers the full verification surface, not a subset
+5. **Interpretable**: someone else can read it and reach the same conclusion
 
 If any of these properties is missing, it is not evidence.
 
 ---
 
-## Valid Evidence by Category
+## Valid evidence by category
 
-### Test Results
+### Test results
 
-| Evidence Format | Example | What It Proves |
+| Evidence format | Example | What it proves |
 |---|---|---|
 | Test runner summary with counts | `42 passed, 0 failed, 0 skipped` | All tests in scope pass |
 | Individual test output (verbose) | `PASS src/auth.test.js (2.1s)` | Specific test file passes |
@@ -66,9 +74,9 @@ BUILD SUCCESSFUL in 12s
 Exit code: 0
 ```
 
-### Lint Results
+### Lint results
 
-| Evidence Format | Example | What It Proves |
+| Evidence format | Example | What it proves |
 |---|---|---|
 | Linter summary | `0 errors, 0 warnings` | Code meets style and quality rules |
 | Clean output (no lines) | `$ eslint . && echo "clean"` -> `clean` | No violations detected |
@@ -93,14 +101,14 @@ $ golangci-lint run
 Exit code: 0
 
 # Rust
-$ cargo clippy - -D warnings
+$ cargo clippy -- -D warnings
 # (no output = clean)
 Exit code: 0
 ```
 
-### Type Check Results
+### Type check results
 
-| Evidence Format | Example | What It Proves |
+| Evidence format | Example | What it proves |
 |---|---|---|
 | Type checker summary | `Found 0 errors in 47 files` | No type errors in the codebase |
 | Exit code 0 | Command completed successfully | Type system is satisfied |
@@ -124,17 +132,17 @@ $ pyright
 Exit code: 0
 ```
 
-### Build Results
+### Build results
 
-| Evidence Format | Example | What It Proves |
+| Evidence format | Example | What it proves |
 |---|---|---|
 | Build success message | `Build succeeded` | Compilation and bundling completed |
 | Artifact exists | `ls dist/bundle.js` shows file | Build produced expected output |
 | Exit code 0 | Build command completed | Build pipeline passed |
 
-### HTTP / API Results
+### HTTP / API results
 
-| Evidence Format | Example | What It Proves |
+| Evidence format | Example | What it proves |
 |---|---|---|
 | Status code | `HTTP/1.1 200 OK` | Endpoint responds with expected status |
 | Response body | `{"status":"healthy","version":"2.3.1"}` | Response contains expected data |
@@ -149,18 +157,18 @@ $ curl -s -w "\nHTTP_CODE:%{http_code}\n" http://localhost:8080/api/users/1
 HTTP_CODE:200
 ```
 
-### Deployment Results
+### Deployment results
 
-| Evidence Format | Example | What It Proves |
+| Evidence format | Example | What it proves |
 |---|---|---|
 | Deployment log | `Deployed v2.3.1 to production` | Deployment command succeeded |
 | Health check response | `{"status":"UP"}` | Service is running and responding |
 | Pod/container status | `Running  1/1  Age: 30s` | Container started and is stable |
 | Version endpoint | `{"version":"2.3.1"}` | Correct version is deployed |
 
-### Git State
+### Git state
 
-| Evidence Format | Example | What It Proves |
+| Evidence format | Example | What it proves |
 |---|---|---|
 | `git status` output | `nothing to commit, working tree clean` | All changes are committed |
 | `git diff --stat` output | `3 files changed, 47 insertions(+), 12 deletions(-)` | Scope of changes is known |
@@ -168,13 +176,13 @@ HTTP_CODE:200
 
 ---
 
-## Invalid Evidence (Non-Evidence)
+## Invalid evidence (non-evidence)
 
-These are common assertions that sound like evidence but prove nothing.
+These assertions sound like evidence but prove nothing.
 
-### Self-Assertions
+### Self-assertions
 
-| Statement | Why It Fails |
+| Statement | Why it fails |
 |---|---|
 | "I tested it" | No command shown, no output captured. Unverifiable. |
 | "I ran the tests" | Which tests? What was the result? Where is the output? |
@@ -183,33 +191,33 @@ These are common assertions that sound like evidence but prove nothing.
 
 ### Predictions
 
-| Statement | Why It Fails |
+| Statement | Why it fails |
 |---|---|
 | "Should work" | Prediction about the future. Not a measurement of the present. |
 | "Should be fine" | Optimism is not a verification strategy. |
 | "This will fix it" | Confidence in a change is not proof of its correctness. |
 | "No issues expected" | Expectation is not observation. |
 
-### Vague Summaries
+### Vague summaries
 
-| Statement | Why It Fails |
+| Statement | Why it fails |
 |---|---|
 | "Tests pass" | Which tests? How many? Show the output. |
 | "Build is clean" | What was the build command? What was the exit code? |
 | "Looks correct" | Visual inspection is not systematic verification. |
 | "Everything works" | Universal claims require universal evidence. |
 
-### Past Tense Without Current Proof
+### Past tense without current proof
 
-| Statement | Why It Fails |
+| Statement | Why it fails |
 |---|---|
 | "It was working earlier" | Earlier is not now. Changes since then invalidate earlier results. |
 | "Tests passed before my change" | Your change is exactly what needs to be tested. |
 | "The CI was green on the last commit" | This commit is different from the last commit. |
 
-### Delegated Trust
+### Delegated trust
 
-| Statement | Why It Fails |
+| Statement | Why it fails |
 |---|---|
 | "The CI will catch it" | CI is a safety net, not a substitute for local verification. |
 | "The reviewer will check" | Code review catches logic issues, not missing tests. |
@@ -218,33 +226,33 @@ These are common assertions that sound like evidence but prove nothing.
 
 ---
 
-## Evidence Strength Tiers
+## Evidence strength tiers
 
-Not all evidence is equally strong. Prefer higher tiers.
+Evidence varies in strength. Prefer higher tiers.
 
 | Tier | Type | Example | Strength |
 |---|---|---|---|
-| 1 | Automated test suite (full) | `pytest: 156 passed, 0 failed` | Strongest — reproducible, comprehensive |
-| 2 | Automated single check | `eslint: 0 errors` | Strong — reproducible, focused |
-| 3 | Command output (manual) | `curl: HTTP 200, body matches` | Moderate — reproducible but not automated |
-| 4 | Log inspection | "Deploy log shows version 2.3.1" | Weak — depends on log fidelity |
-| 5 | Visual inspection | "UI renders correctly" | Weakest — subjective, not reproducible |
+| 1 | Automated test suite (full) | `pytest: 156 passed, 0 failed` | Strongest: reproducible, comprehensive |
+| 2 | Automated single check | `eslint: 0 errors` | Strong: reproducible, focused |
+| 3 | Command output (manual) | `curl: HTTP 200, body matches` | Moderate: reproducible but not automated |
+| 4 | Log inspection | "Deploy log shows version 2.3.1" | Weak: depends on log fidelity |
+| 5 | Visual inspection | "UI renders correctly" | Weakest: subjective, not reproducible |
 
-Tier 1-2 evidence is required for completion claims. Tier 3 supplements but does not replace automated checks. Tier 4-5 is additional context, never sufficient on its own.
+Tier 1-2 evidence is required for completion claims. Tier 3 supplements but does not replace automated checks. Tier 4-5 is additional context and is never enough on its own.
 
 ---
 
-## Combining Evidence
+## Combining evidence
 
-A complete verification claim combines multiple evidence types:
+A full verification claim combines several evidence types:
 
 ```
 Verification complete:
-- Tests: `npm test` — 47 passed, 0 failed, exit code 0
-- Lint: `eslint .` — 0 errors, 0 warnings, exit code 0  
-- Types: `tsc --noEmit` — 0 errors, exit code 0
-- Build: `npm run build` — succeeded, exit code 0
-- Smoke: `curl localhost:3000/health` — 200 OK, {"status":"healthy"}
+- Tests: `npm test` - 47 passed, 0 failed, exit code 0
+- Lint: `eslint .` - 0 errors, 0 warnings, exit code 0
+- Types: `tsc --noEmit` - 0 errors, exit code 0
+- Build: `npm run build` - succeeded, exit code 0
+- Smoke: `curl localhost:3000/health` - 200 OK, {"status":"healthy"}
 ```
 
 This is evidence. The reader can verify every claim. Compare to:

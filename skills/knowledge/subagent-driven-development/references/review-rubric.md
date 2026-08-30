@@ -1,19 +1,28 @@
 # Two-Stage Review Rubric
 
-Every task output passes through two sequential review stages before the orchestrator accepts it. The stages serve different purposes and must not be combined, reordered, or skipped.
+Every task output passes through two sequential review stages before the orchestrator accepts it. The stages have different purposes. Do not combine, reorder, or skip them.
 
-## Why Two Stages
+## Contents
+
+- [Why two stages](#why-two-stages)
+- [Stage 1: Spec compliance](#stage-1-spec-compliance)
+- [Stage 2: Code quality](#stage-2-code-quality)
+- [Decision matrix](#decision-matrix)
+- [Review efficiency](#review-efficiency)
+- [Re-review after fixes](#re-review-after-fixes)
+
+## Why two stages
 
 A single review pass conflates two distinct questions:
 
 1. **Did the subagent do what was asked?** (specification conformance)
 2. **Did the subagent do it well?** (implementation quality)
 
-These require different review postures. Spec compliance is mechanical - checkable against the brief's acceptance criteria. Quality review is judgmental - it requires expertise, context awareness, and trade-off evaluation.
+These require different review postures. Spec compliance is mechanical: check it against the brief's acceptance criteria. Quality review is judgmental and needs expertise, context, and trade-off evaluation.
 
-Combining them leads to a common failure mode: the reviewer gets distracted by code style issues while an acceptance criterion is quietly unmet. Separating the stages forces discipline.
+Combining them leads to a common failure mode: the reviewer gets distracted by code style issues while an acceptance criterion is quietly unmet. Separating the stages prevents this.
 
-## Stage 1: Spec Compliance
+## Stage 1: Spec compliance
 
 **Purpose:** Verify that the task output satisfies every acceptance criterion from the brief.
 
@@ -31,7 +40,7 @@ Combining them leads to a common failure mode: the reviewer gets distracted by c
 | 6 | **Out-of-scope compliance** | Nothing listed in the "out of scope" section was touched |
 | 7 | **Artifact completeness** | All expected artifacts (code, tests, configs, migrations) are present |
 
-### Severity Levels
+### Severity levels
 
 | Severity | Definition | Action |
 |---|---|---|
@@ -39,7 +48,7 @@ Combining them leads to a common failure mode: the reviewer gets distracted by c
 | **Concern** | An acceptance criterion is met but in an unexpected way that may cause issues | Note for Stage 2 review. Does not block Stage 2 entry. |
 | **Pass** | All criteria met, scope respected, artifacts complete | Proceed to Stage 2. |
 
-### Stage 1 Output Format
+### Stage 1 output format
 
 ```
 ## Spec Compliance Review: [TASK-ID]
@@ -65,7 +74,7 @@ Combining them leads to a common failure mode: the reviewer gets distracted by c
 2. [another, if applicable]
 ```
 
-## Stage 2: Code Quality
+## Stage 2: Code quality
 
 **Purpose:** Evaluate the quality of the implementation across correctness, maintainability, security, and testing.
 
@@ -85,7 +94,7 @@ Combining them leads to a common failure mode: the reviewer gets distracted by c
 | 4 | **Type safety** | Correct types used, no unsafe casts, generics applied where appropriate |
 | 5 | **Concurrency** | Thread safety where relevant, no race conditions, proper synchronization |
 
-#### Design and Maintainability
+#### Design and maintainability
 
 | # | Check | What to look for |
 |---|---|---|
@@ -112,7 +121,7 @@ Combining them leads to a common failure mode: the reviewer gets distracted by c
 | 16 | **Memory** | No unbounded collections, streaming for large data sets, no leaks |
 | 17 | **Unnecessary work** | No redundant computations, appropriate caching, efficient algorithms |
 
-#### Test Quality
+#### Test quality
 
 | # | Check | What to look for |
 |---|---|---|
@@ -122,7 +131,7 @@ Combining them leads to a common failure mode: the reviewer gets distracted by c
 | 21 | **Test independence** | No shared mutable state, no execution order dependencies |
 | 22 | **Readability** | Test names describe the scenario and expected outcome |
 
-### Severity Levels
+### Severity levels
 
 | Severity | Definition | Action |
 |---|---|---|
@@ -130,7 +139,7 @@ Combining them leads to a common failure mode: the reviewer gets distracted by c
 | **Warning** | Code smell, performance concern, missing edge case, or maintainability issue that will cause problems over time | Should fix before acceptance. Orchestrator decides if it blocks. |
 | **Suggestion** | Style improvement, naming tweak, or minor refactoring that would improve clarity | Record for future improvement. Does not block acceptance. |
 
-### Stage 2 Output Format
+### Stage 2 output format
 
 ```
 ## Code Quality Review: [TASK-ID]
@@ -165,7 +174,7 @@ Combining them leads to a common failure mode: the reviewer gets distracted by c
 - Verdict rationale: [why accept/reject]
 ```
 
-## Decision Matrix
+## Decision matrix
 
 After both stages complete, the orchestrator decides:
 
@@ -178,16 +187,16 @@ After both stages complete, the orchestrator decides:
 | Fail | Not started | **Return** - subagent fixes spec issues, then full re-review (both stages) |
 | Fail (after 2 attempts) | Not started | **Abort** - re-scope the task or escalate |
 
-## Review Efficiency
+## Review efficiency
 
-To keep reviews fast without sacrificing thoroughness:
+To keep reviews fast without making them shallow:
 
-- Stage 1 should take under 2 minutes for a well-scoped task - it is a checklist comparison
+- Stage 1 should take under 2 minutes for a well-scoped task, since it is a checklist comparison
 - Stage 2 depth scales with risk - mechanical changes get a lighter review than security-critical ones
 - Use existing project tooling (linters, static analysis, test coverage reports) as Stage 2 inputs rather than manually checking what tools can catch
 - When dispatching a reviewer subagent, include the brief's acceptance criteria so the reviewer does not need to search for them
 
-## Re-Review After Fixes
+## Re-review after fixes
 
 When a subagent fixes issues and resubmits:
 

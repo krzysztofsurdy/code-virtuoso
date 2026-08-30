@@ -1,6 +1,14 @@
 # Task Brief Template
 
-A task brief is the complete contract between the orchestrator and a subagent. It must be self-contained - the subagent should be able to execute the task using only this brief and access to the codebase, with zero additional conversation required.
+A task brief is the complete contract between the orchestrator and a subagent. It must be self-contained: the subagent should be able to execute the task using only this brief and access to the codebase, with no further conversation.
+
+## Contents
+
+- [Template](#template)
+- [Field-by-field guidance](#field-by-field-guidance)
+- [Brief quality checklist](#brief-quality-checklist)
+- [Sizing guidance](#sizing-guidance)
+- [Adaptation for different agent types](#adaptation-for-different-agent-types)
 
 ## Template
 
@@ -36,9 +44,9 @@ Do NOT paste conversation history or full diffs.]
 - If the task cannot be completed as specified: report what was accomplished and what remains, with a clear explanation of the blocker.
 ```
 
-## Field-by-Field Guidance
+## Field-by-field guidance
 
-### Task ID and Title
+### Task ID and title
 
 The task ID ties back to the plan. Use whatever scheme the plan uses (numbered, ticketed, or named). The title should be descriptive enough that someone reading just the title understands the scope.
 
@@ -69,9 +77,9 @@ List everything the subagent needs to find in the codebase. Be explicit about fi
   - The project uses a constraint-based validation library (see composer.json)
 ```
 
-### Context from Prior Tasks
+### Context from prior tasks
 
-This field carries the hand-off summary from the previous task in the sequence. Its purpose is to inform the subagent about decisions and changes that affect its work - not to replay what happened.
+This field carries the hand-off summary from the previous task in the sequence. It tells the subagent about decisions and changes that affect its work. It does not replay what happened.
 
 When the task is first in the sequence:
 ```
@@ -94,7 +102,7 @@ What NOT to include:
 - The previous task's full brief
 - Commentary about how well the previous task went
 
-### Acceptance Criteria
+### Acceptance criteria
 
 Each criterion must be independently verifiable. Write them so that a reviewer can check each one without subjective judgment.
 
@@ -116,7 +124,7 @@ Bad criteria:
 3. Tests exist (no specificity about what is tested)
 ```
 
-### Out of Scope
+### Out of scope
 
 Explicit boundaries prevent scope creep. List things the subagent might reasonably attempt but should not.
 
@@ -127,7 +135,7 @@ Explicit boundaries prevent scope creep. List things the subagent might reasonab
 - Do NOT add logging - that is a cross-cutting concern handled separately
 ```
 
-### Failure Handling
+### Failure handling
 
 Default instructions that apply to most tasks:
 
@@ -149,7 +157,7 @@ Customize when the task has specific risk:
   Migration failures require orchestrator review before re-attempting.
 ```
 
-## Brief Quality Checklist
+## Brief quality checklist
 
 Before dispatching a brief, verify:
 
@@ -161,9 +169,9 @@ Before dispatching a brief, verify:
 - [ ] Failure handling instructions are present
 - [ ] The brief is self-contained - a new agent can execute it without asking questions
 
-## Sizing Guidance
+## Sizing guidance
 
-A well-scoped task brief should describe work that a subagent can complete in a single session without exceeding its context window. Signs that a task is too large:
+A well-scoped brief describes work a subagent can finish in one session without exceeding its context window. Signs that a task is too large:
 
 | Signal | Action |
 |---|---|
@@ -173,9 +181,9 @@ A well-scoped task brief should describe work that a subagent can complete in a 
 | The context section exceeds 20 lines | The task depends on too much prior work - consider a checkpoint |
 | You cannot describe the goal in one sentence | The task contains multiple goals - split them |
 
-## Adaptation for Different Agent Types
+## Adaptation for different agent types
 
-The template works for any subagent role. Adjust emphasis based on the dispatch target:
+The template works for any subagent role. Shift the emphasis to match the dispatch target:
 
 | Agent Type | Brief emphasis |
 |---|---|

@@ -1,8 +1,20 @@
 # Anti-Patterns
 
-Common failure modes when executing plans with subagents. Each anti-pattern includes detection signals, why it causes problems, and how to recover.
+Common failure modes when executing plans with subagents. Each entry lists detection signals, why it fails, and how to recover.
 
-## 1. Shared Long Context
+## Contents
+
+- [1. Shared long context](#1-shared-long-context)
+- [2. Skipped review gates](#2-skipped-review-gates)
+- [3. "Looks fine" reviews](#3-looks-fine-reviews)
+- [4. Oversized tasks](#4-oversized-tasks)
+- [5. Pasting the full plan](#5-pasting-the-full-plan)
+- [6. Infinite fix loops](#6-infinite-fix-loops)
+- [7. Skipping handoffs](#7-skipping-handoffs)
+- [8. Orchestrator implements](#8-orchestrator-implements)
+- [Pattern summary](#pattern-summary)
+
+## 1. Shared long context
 
 **What it looks like:** The orchestrator reuses a single agent across multiple tasks, or pastes the full conversation history into each new subagent's brief.
 
@@ -22,7 +34,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 
 ---
 
-## 2. Skipped Review Gates
+## 2. Skipped review gates
 
 **What it looks like:** The orchestrator advances to the next task without running one or both review stages. Common rationalizations: "this change is small," "I can see it is correct," "we are behind schedule."
 
@@ -32,7 +44,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 - No accept/reject decisions recorded in the implementation log
 - Orchestrator says "looks good" without referencing specific acceptance criteria
 
-**Why it fails:** Small errors compound. A missed edge case in task 2 becomes a data corruption bug discovered in task 7, when the cost of fixing it is 10x higher. Review gates exist precisely for the "obviously correct" changes - those are where assumptions go unchecked.
+**Why it fails:** Small errors compound. A missed edge case in task 2 becomes a data corruption bug discovered in task 7, when the cost of fixing it is 10x higher. Review gates exist for the "obviously correct" changes, because those are where assumptions go unchecked.
 
 **Recovery:**
 1. Stop forward progress
@@ -43,7 +55,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 
 ---
 
-## 3. "Looks Fine" Reviews
+## 3. "Looks fine" reviews
 
 **What it looks like:** The review consists of a quick glance and a verdict of "looks good" without systematically checking the rubric.
 
@@ -54,7 +66,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 - Review time is under 30 seconds for non-trivial changes
 - Review says "all criteria met" without listing which criteria
 
-**Why it fails:** Without a rubric, reviews rely on the reviewer's attention span and mood. Systematic issues are missed because the reviewer is not looking for them. The review becomes a rubber stamp that provides false confidence.
+**Why it fails:** Without a rubric, reviews rely on the reviewer's attention span and mood. Systematic issues are missed because the reviewer is not looking for them. The review becomes a rubber stamp that gives false confidence.
 
 **Recovery:**
 1. Re-run the review using the full rubric from the review reference
@@ -65,7 +77,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 
 ---
 
-## 4. Oversized Tasks
+## 4. Oversized tasks
 
 **What it looks like:** A single task requires modifying 10+ files, has 15 acceptance criteria, or cannot be described in a one-sentence goal.
 
@@ -76,7 +88,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 - The task brief exceeds 50 lines
 - The goal sentence contains "and" connecting two distinct behaviors
 
-**Why it fails:** Large tasks exceed what a single agent can hold in working memory. The agent loses track of earlier acceptance criteria while working on later ones. Quality drops because the agent is context-fatigued by the time it reaches the last items. Reviews become superficial because the reviewer is overwhelmed by the volume of changes.
+**Why it fails:** Large tasks exceed what a single agent can hold in working memory. The agent loses track of earlier acceptance criteria while working on later ones. Quality drops by the time the agent reaches the last items. Reviews become superficial because the reviewer is overwhelmed by the volume of changes.
 
 **Recovery:**
 1. Split the oversized task into smaller tasks, each with a single clear goal
@@ -90,7 +102,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 
 ---
 
-## 5. Pasting the Full Plan
+## 5. Pasting the full plan
 
 **What it looks like:** The orchestrator copies the entire implementation plan into the subagent's context, rather than extracting only the current task's brief.
 
@@ -110,7 +122,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 
 ---
 
-## 6. Infinite Fix Loops
+## 6. Infinite fix loops
 
 **What it looks like:** The subagent fails a review, fixes the issue, fails again on the same or a new issue, fixes again, and the cycle continues past two iterations.
 
@@ -134,7 +146,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 
 ---
 
-## 7. Skipping Handoffs
+## 7. Skipping handoffs
 
 **What it looks like:** The orchestrator moves to the next task without preparing a handoff summary, assuming the next subagent will "figure it out" from the codebase.
 
@@ -154,7 +166,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 
 ---
 
-## 8. Orchestrator Implements
+## 8. Orchestrator implements
 
 **What it looks like:** The orchestrator, instead of dispatching a subagent, starts writing code directly. Often begins with "let me just quickly fix this" or "this is a one-line change."
 
@@ -175,7 +187,7 @@ Common failure modes when executing plans with subagents. Each anti-pattern incl
 
 ---
 
-## Pattern Summary
+## Pattern summary
 
 | # | Anti-Pattern | Core Failure | Prevention |
 |---|---|---|---|
