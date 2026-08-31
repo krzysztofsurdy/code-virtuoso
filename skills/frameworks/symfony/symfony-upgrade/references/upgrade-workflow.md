@@ -260,7 +260,7 @@ If `composer recipes:update` produces conflicts you cannot resolve:
 
 ```bash
 # Reset the recipe update
-git checkout - .
+git checkout -- .
 
 # Apply manually by reading the recipe diff
 composer recipes symfony/framework-bundle  # shows diff details

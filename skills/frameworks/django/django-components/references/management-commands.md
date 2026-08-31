@@ -86,7 +86,7 @@ Opens the database command-line client:
 ```bash
 ./manage.py dbshell                          # Default database
 ./manage.py dbshell --database other         # Specific database
-./manage.py dbshell - -c 'SELECT 1'         # Pass args to client (PostgreSQL)
+./manage.py dbshell -- -c 'SELECT 1'         # Pass args to client (PostgreSQL)
 ```
 
 #### inspectdb
