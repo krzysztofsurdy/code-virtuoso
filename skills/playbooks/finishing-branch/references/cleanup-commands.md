@@ -1,10 +1,19 @@
 # Cleanup Commands
 
-After a branch is merged, leftover references accumulate: local branches that no longer exist on the remote, remote tracking branches for deleted remotes, orphaned worktrees, and upstream configurations that point nowhere. Regular cleanup prevents confusion and keeps the local repository lean.
+After a branch is merged, leftovers pile up: local branches that no longer exist on the remote, remote tracking branches for deleted remotes, orphaned worktrees, and upstream configurations that point nowhere. Regular cleanup avoids confusion and keeps the local repository small.
 
-## Branch Cleanup
+## Contents
 
-### Delete a Single Merged Branch
+- [Branch cleanup](#branch-cleanup)
+- [Worktree cleanup](#worktree-cleanup)
+- [Upstream cleanup](#upstream-cleanup)
+- [Batch cleanup operations](#batch-cleanup-operations)
+- [Recovering from cleanup mistakes](#recovering-from-cleanup-mistakes)
+- [Configuration for automatic cleanup](#configuration-for-automatic-cleanup)
+
+## Branch cleanup
+
+### Delete a single merged branch
 
 ```bash
 # Delete local branch (safe - refuses if branch has unmerged commits)
@@ -14,7 +23,7 @@ git branch -d feat/my-branch
 git push origin --delete feat/my-branch
 ```
 
-### Delete All Merged Local Branches
+### Delete all merged local branches
 
 ```bash
 # List branches merged into main (excluding main itself and current branch)
@@ -24,9 +33,9 @@ git branch --merged main | grep -vE '^\*|main|master|develop'
 git branch --merged main | grep -vE '^\*|main|master|develop' | xargs git branch -d
 ```
 
-### Prune Remote Tracking References
+### Prune remote tracking references
 
-Remote branches that were deleted on the server still appear locally as `origin/feat/old-branch` until pruned.
+Remote branches that were deleted on the server still appear locally as `origin/feat/old-branch` until you prune them.
 
 ```bash
 # Remove stale remote tracking branches
@@ -39,7 +48,7 @@ git config --global fetch.prune true
 git branch -r
 ```
 
-### Find Branches That Were Never Merged
+### Find branches that were never merged
 
 ```bash
 # List branches NOT merged into main
@@ -52,11 +61,11 @@ git branch -D feat/abandoned-experiment
 
 ---
 
-## Worktree Cleanup
+## Worktree cleanup
 
-Worktrees are lightweight checkouts that share the same repository. Orphaned worktrees (where the directory was deleted without `git worktree remove`) leave stale metadata.
+Worktrees are lightweight checkouts that share one repository. If a worktree directory is deleted without `git worktree remove`, stale metadata stays behind.
 
-### Remove a Specific Worktree
+### Remove a specific worktree
 
 ```bash
 # Clean removal (removes the directory and metadata)
@@ -66,17 +75,17 @@ git worktree remove /path/to/worktree
 git worktree remove --force /path/to/worktree
 ```
 
-### List All Worktrees
+### List all worktrees
 
 ```bash
 git worktree list
 ```
 
-Output shows the path, HEAD commit, and branch for each worktree.
+The output shows the path, HEAD commit, and branch for each worktree.
 
-### Prune Stale Worktree Metadata
+### Prune stale worktree metadata
 
-If a worktree directory was manually deleted (e.g., `rm -rf`), the metadata in `.git/worktrees/` becomes stale.
+If a worktree directory was deleted by hand (e.g., `rm -rf`), the metadata in `.git/worktrees/` becomes stale.
 
 ```bash
 # Dry run: see what would be pruned
@@ -86,7 +95,7 @@ git worktree prune --dry-run
 git worktree prune
 ```
 
-### Clean Up All Worktrees After a Feature
+### Clean up all worktrees after a feature
 
 ```bash
 # List worktrees to identify which to remove
@@ -102,9 +111,9 @@ git worktree prune
 
 ---
 
-## Upstream Cleanup
+## Upstream cleanup
 
-### Remove a Stale Upstream Tracking Reference
+### Remove a stale upstream tracking reference
 
 If a remote branch was deleted but your local branch still tracks it:
 
@@ -116,7 +125,7 @@ git rev-parse --abbrev-ref --symbolic-full-name @{u}
 git branch --unset-upstream feat/my-branch
 ```
 
-### Remove a Remote Entirely
+### Remove a remote entirely
 
 If a fork or temporary remote is no longer needed:
 
@@ -130,9 +139,9 @@ git remote remove fork-origin
 
 ---
 
-## Batch Cleanup Operations
+## Batch cleanup operations
 
-### Full Post-Merge Cleanup Sequence
+### Full post-merge cleanup sequence
 
 Run this after merging a feature branch:
 
@@ -157,9 +166,9 @@ git worktree remove /path/to/worktree 2>/dev/null || true
 git worktree prune
 ```
 
-### Weekly Maintenance Sweep
+### Weekly maintenance sweep
 
-Run periodically to prevent accumulation:
+Run periodically so leftovers do not build up:
 
 ```bash
 # Prune remote references
@@ -183,11 +192,11 @@ git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -d
 
 ---
 
-## Recovering from Cleanup Mistakes
+## Recovering from cleanup mistakes
 
-### Accidentally Deleted an Unmerged Branch
+### Accidentally deleted an unmerged branch
 
-Branches are just pointers to commits. The commits still exist in the reflog for at least 30 days (default `gc.reflogExpire`).
+A branch is only a pointer to a commit. The commits stay in the reflog for at least 30 days (default `gc.reflogExpire`).
 
 ```bash
 # Find the commit the branch pointed to
@@ -200,9 +209,9 @@ git reflog --all | grep "the commit message"
 git checkout -b feat/accidentally-deleted <sha>
 ```
 
-### Accidentally Removed a Worktree with Uncommitted Changes
+### Accidentally removed a worktree with uncommitted changes
 
-If changes were committed, they are in the reflog and recoverable. If changes were uncommitted (only in the working directory), they are lost - this is why you should always commit or stash before removing a worktree.
+If the changes were committed, they are in the reflog and you can recover them. Uncommitted changes (only in the working directory) are lost, so always commit or stash before removing a worktree.
 
 ```bash
 # Find commits that were in the worktree
@@ -212,7 +221,7 @@ git reflog --all
 git checkout -b recovered-branch <sha>
 ```
 
-### Accidentally Deleted a Remote Branch
+### Accidentally deleted a remote branch
 
 If the remote branch is gone but the local branch still exists:
 
@@ -221,19 +230,19 @@ If the remote branch is gone but the local branch still exists:
 git push -u origin feat/my-branch
 ```
 
-If both local and remote are gone, use the reflog recovery method above to recreate the local branch, then push.
+If both local and remote are gone, recreate the local branch with the reflog method above, then push.
 
 ---
 
-## Configuration for Automatic Cleanup
+## Configuration for automatic cleanup
 
-### Auto-Prune on Fetch
+### Auto-prune on fetch
 
 ```bash
 git config --global fetch.prune true
 ```
 
-### Auto-Delete Remote Branch on PR Merge
+### Auto-delete remote branch on PR merge
 
 Most hosting platforms support this:
 
@@ -241,4 +250,4 @@ Most hosting platforms support this:
 - **GitLab:** Project Settings > Merge Requests > "Enable 'Delete source branch' option by default"
 - **Bitbucket:** Repository Settings > Merge Strategies > "Close source branch"
 
-Enabling auto-delete reduces manual cleanup to local branches and worktrees only.
+With auto-delete on, manual cleanup is limited to local branches and worktrees.

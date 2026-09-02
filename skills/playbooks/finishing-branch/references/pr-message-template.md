@@ -1,6 +1,14 @@
 # PR Message Template
 
-A pull request message serves three audiences: the reviewer who needs to understand the change now, the developer who will read `git log` in six months, and the automation that parses titles for changelogs and release notes. Write for all three.
+A pull request message has three audiences: the reviewer who needs to understand the change now, the developer who will read `git log` in six months, and the automation that parses titles for changelogs and release notes. Write for all three.
+
+## Contents
+
+- [Template](#template)
+- [Writing guidance](#writing-guidance)
+- [Sizing the message to the change](#sizing-the-message-to-the-change)
+- [Cross-reference: pr-message-writer skill](#cross-reference-pr-message-writer-skill)
+- [Platform-specific notes](#platform-specific-notes)
 
 ## Template
 
@@ -42,11 +50,11 @@ Closes #TICKET-ID
 
 ---
 
-## Writing Guidance
+## Writing guidance
 
 ### Title
 
-- Keep under 72 characters
+- Keep it under 72 characters
 - Use the conventional commit format when the project uses it: `type(scope): description`
 - Use imperative mood: "Add email verification" not "Added email verification"
 - Include the ticket number if the project convention requires it
@@ -69,16 +77,16 @@ WIP: stuff
 JIRA-123
 ```
 
-### Summary Section
+### Summary section
 
 - State **what** changed and **why** in plain language
-- Link to the ticket or issue - do not make reviewers search for context
+- Link to the ticket or issue so reviewers do not have to search for context
 - If there is no ticket, explain the motivation directly
-- One to three sentences maximum
+- One to three sentences at most
 
-### Changes Section
+### Changes section
 
-- List concrete, specific changes - not vague descriptions
+- List concrete, specific changes, not vague descriptions
 - Group related changes together
 - Call out anything surprising or non-obvious
 - If the PR is part of a stack, explain where it sits in the sequence
@@ -100,14 +108,14 @@ JIRA-123
 - Fixed things
 ```
 
-### Test Plan Section
+### Test plan section
 
 - Describe how a reviewer can verify the change works
 - Include both manual verification steps and automated test descriptions
 - Be specific enough that someone unfamiliar with the feature can follow the steps
 - Mark items as checkboxes so reviewers can check them off
 
-### Risks Section
+### Risks section
 
 - Be honest about what could break
 - Mention backward compatibility concerns
@@ -115,20 +123,20 @@ JIRA-123
 - Describe the rollback plan if the change causes issues in production
 - If there are no meaningful risks, say "Low risk - backward-compatible change with no migration" rather than omitting the section
 
-### Rollout Section
+### Rollout section
 
-- Include only when the change requires deployment coordination
+- Include it only when the change requires deployment coordination
 - Mention feature flags, environment variables, or configuration changes
 - Note any monitoring dashboards or alerts to watch after deployment
-- Omit for simple changes that deploy normally
+- Omit it for simple changes that deploy normally
 
 ---
 
-## Sizing the Message to the Change
+## Sizing the message to the change
 
 Not every PR needs every section. Scale the message to the complexity of the change.
 
-| PR Complexity | Required Sections | Optional Sections |
+| PR complexity | Required sections | Optional sections |
 |---|---|---|
 | Trivial (typo, config tweak) | Summary only | - |
 | Small (single concern, < 100 lines) | Summary, Changes | Test Plan |
@@ -138,26 +146,26 @@ Not every PR needs every section. Scale the message to the complexity of the cha
 
 ---
 
-## Cross-Reference: pr-message-writer Skill
+## Cross-reference: pr-message-writer skill
 
-For comprehensive, interactive PR message generation, use the `pr-message-writer` skill. It provides:
+For interactive PR message generation, use the `pr-message-writer` skill. It provides:
 
 - Structured templates with dynamic sections based on change type
 - Automated diff analysis to suggest content
-- Verification queries to ensure completeness
+- Verification queries to check completeness
 - Customizable templates for different project conventions
 
 This reference provides the template and guidelines. The `pr-message-writer` skill provides the interactive workflow for generating the actual message from your branch's diff and commit history.
 
 ---
 
-## Platform-Specific Notes
+## Platform-specific notes
 
 ### GitHub
 
-GitHub parses the first line of the squash-merge message as the commit title. Ensure your PR title follows commit conventions if your team uses squash-and-merge.
+GitHub uses the first line of the squash-merge message as the commit title. If your team uses squash-and-merge, make the PR title follow your commit conventions.
 
-Keywords in the PR body automatically close issues: `Closes #123`, `Fixes #456`, `Resolves #789`.
+Keywords in the PR body close issues: `Closes #123`, `Fixes #456`, `Resolves #789`.
 
 ### GitLab
 

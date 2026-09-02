@@ -7,18 +7,18 @@ argument-hint: "[command: create, list, switch, remove] [optional: worktree-name
 
 # Worktree Management
 
-Git worktrees let you check out multiple branches of the same repository into separate directories simultaneously. Each worktree has its own working directory and index while sharing the same `.git` object store and history. This is useful for running parallel development sessions, reviewing a PR while mid-feature, or isolating experimental changes without stashing or committing half-finished work.
+Git worktrees let you check out several branches of one repository into separate directories at the same time. Each worktree has its own working directory and index, and all of them share the same `.git` object store and history. This is useful for parallel development sessions, for reviewing a PR while mid-feature, and for isolating experimental changes without stashing or committing half-finished work.
 
 ## Core Principles
 
 | Principle | Meaning |
 |---|---|
-| **Isolation without duplication** | Worktrees share git history but keep working directories separate - no need to clone the repo again |
+| **Isolation without duplication** | Worktrees share git history but keep working directories separate, so you do not clone the repo again |
 | **Safety first** | Always check for uncommitted changes and unpushed commits before removing a worktree |
-| **Clean up after yourself** | Stale worktree entries and orphaned branches accumulate - prune regularly |
+| **Clean up after yourself** | Stale worktree entries and orphaned branches pile up, so prune regularly |
 | **Convention over configuration** | Use a consistent directory layout (`.worktrees/<name>/`) and branch naming (`worktree-<name>`) |
 
-## Quick Reference
+## Quick reference
 
 | Command | What it does | When to use |
 |---|---|---|
@@ -72,11 +72,11 @@ List all active worktrees with their branches, paths, and status.
    ```bash
    git worktree list --porcelain
    ```
-3. For each worktree, gather uncommitted change count:
+3. For each worktree, get the uncommitted change count:
    ```bash
    git -C <worktree-path> status --short 2>/dev/null
    ```
-4. Display a clean table:
+4. Display a table:
    ```
    Active worktrees:
 
@@ -126,11 +126,11 @@ Remove one or all worktrees from the current repository.
    git worktree list
    ```
    If no worktrees exist beyond the main working tree, say: "No worktrees to clean up." and stop.
-3. Determine what to remove:
-   - If argument is `all` - remove all worktrees (except the main working tree).
-   - If a specific name was provided - remove only that worktree.
-   - If no argument - show the list and present an interactive prompt (or the platform's equivalent): "Which worktree should I remove? Enter the name, or type `all` to remove everything."
-4. **Safety check** - for each worktree being removed:
+3. Decide what to remove:
+   - If the argument is `all`, remove all worktrees (except the main working tree).
+   - If a specific name was provided, remove only that worktree.
+   - If there is no argument, show the list and present an interactive prompt (or the platform's equivalent): "Which worktree should I remove? Enter the name, or type `all` to remove everything."
+4. **Safety check.** For each worktree being removed:
    ```bash
    git -C <worktree-path> status --short
    git -C <worktree-path> log --oneline @{upstream}..HEAD 2>/dev/null
@@ -142,7 +142,7 @@ Remove one or all worktrees from the current repository.
      - 1 unpushed commit
    These will be permanently lost. Continue? (yes/no)
    ```
-   Wait for explicit confirmation before proceeding.
+   Wait for explicit confirmation before continuing.
 5. For each worktree to remove:
    ```bash
    git worktree remove <path> --force

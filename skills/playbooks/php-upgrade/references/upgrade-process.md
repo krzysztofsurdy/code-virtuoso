@@ -1,10 +1,18 @@
 # PHP Upgrade Process
 
-## Tool Configuration
+## Contents
+
+- [Tool configuration](#tool-configuration)
+- [CI pipeline setup](#ci-pipeline-setup)
+- [Docker strategy](#docker-strategy)
+- [Composer platform configuration](#composer-platform-configuration)
+- [Step-by-step command sequence](#step-by-step-command-sequence)
+
+## Tool configuration
 
 ### Rector
 
-Rector uses AST (Abstract Syntax Tree) parsing to transform PHP code automatically. It supports upgrades from PHP 5.3 through 8.4+.
+Rector parses PHP into an AST (Abstract Syntax Tree) and transforms the code automatically. It supports upgrades from PHP 5.3 through 8.4+.
 
 **Installation:**
 
@@ -73,7 +81,7 @@ return RectorConfig::configure()
 
 ### PHPCompatibility
 
-PHP_CodeSniffer ruleset that detects cross-version compatibility issues. Produces the same results regardless of the PHP version running the analysis.
+A PHP_CodeSniffer ruleset that detects cross-version compatibility issues. It gives the same results whichever PHP version runs the analysis.
 
 **Installation:**
 
@@ -96,7 +104,7 @@ vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 8.4- --re
 
 ### php-parallel-lint
 
-Checks PHP syntax in parallel, approximately 20x faster than serial checking.
+Checks PHP syntax in parallel, about 20x faster than serial checking.
 
 **Installation:**
 
@@ -119,7 +127,7 @@ vendor/bin/parallel-lint --exclude vendor --exclude var src/ tests/ config/
 
 ### Symfony PHPUnit Bridge
 
-Shows deprecation summary at the end of test reports, categorized by source.
+Shows a deprecation summary at the end of test reports, grouped by source.
 
 **Installation:**
 
@@ -149,9 +157,9 @@ composer require --dev symfony/phpunit-bridge
 
 ---
 
-## CI Pipeline Setup
+## CI pipeline setup
 
-### Recommended CI Steps
+### Recommended CI steps
 
 ```yaml
 # Example GitHub Actions workflow
@@ -176,9 +184,9 @@ php-upgrade-check:
       run: vendor/bin/rector process --dry-run
 ```
 
-### Matrix Testing Strategy
+### Matrix testing strategy
 
-During the transition period, run tests against both the current and target PHP versions:
+During the transition, run tests against both the current and target PHP versions:
 
 1. Add both versions to your CI matrix
 2. Once all checks pass on the new version, remove the old version
@@ -186,9 +194,9 @@ During the transition period, run tests against both the current and target PHP 
 
 ---
 
-## Docker Strategy
+## Docker strategy
 
-### Updating PHP Version in Docker
+### Updating the PHP version in Docker
 
 ```dockerfile
 # Update the base image tag
@@ -198,7 +206,7 @@ FROM php:8.4-fpm-alpine
 RUN docker-php-ext-install pdo_mysql intl opcache
 ```
 
-**Rebuild cleanly:**
+**Rebuild from scratch:**
 
 ```bash
 docker compose build --no-cache
@@ -207,7 +215,7 @@ docker compose up -d
 
 **Rollback:** Revert the Dockerfile version tag and rebuild.
 
-### Multi-Stage Testing
+### Multi-stage testing
 
 ```dockerfile
 # Build stage with target PHP version
@@ -220,9 +228,9 @@ RUN vendor/bin/phpunit
 
 ---
 
-## Composer Platform Configuration
+## Composer platform configuration
 
-Always set `config.platform.php` to match your lowest deployment target. This ensures Composer resolves dependencies for the correct PHP version regardless of what runs locally.
+Always set `config.platform.php` to match your lowest deployment target. Composer then resolves dependencies for the correct PHP version regardless of what runs locally.
 
 ```json
 {
@@ -237,12 +245,12 @@ Always set `config.platform.php` to match your lowest deployment target. This en
 **Why this matters:**
 
 - Without it, Composer may install packages that work on your local PHP 8.4 but fail on production PHP 8.3
-- It prevents `--ignore-platform-reqs` temptation
+- It removes the temptation to use `--ignore-platform-reqs`
 - CI and production get the same dependency versions
 
 ---
 
-## Step-by-Step Command Sequence
+## Step-by-step command sequence
 
 For upgrading from PHP 8.3 to 8.4 (adjust versions as needed):
 

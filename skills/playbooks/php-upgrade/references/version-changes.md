@@ -2,11 +2,19 @@
 
 Per-version summary of breaking changes, deprecations, and new features that affect upgrade decisions.
 
+## Contents
+
+- [PHP 8.0](#php-80)
+- [PHP 8.1](#php-81)
+- [PHP 8.2](#php-82)
+- [PHP 8.3](#php-83)
+- [PHP 8.4](#php-84)
+
 ---
 
 ## PHP 8.0
 
-### New Features
+### New features
 
 **Named arguments:**
 ```php
@@ -54,8 +62,8 @@ $country = $user?->getAddress()?->getCountry()?->getCode();
 public function list(): Response { }
 ```
 
-### Breaking Changes
-- `\` is now always treated as a literal backslash in strings with no escape sequence
+### Breaking changes
+- `\` is always treated as a literal backslash in strings with no escape sequence
 - `match` is a reserved keyword
 - Stricter type coercions for internal functions
 - Sorting algorithms are now stable
@@ -66,7 +74,7 @@ public function list(): Response { }
 
 ## PHP 8.1
 
-### New Features
+### New features
 
 **Enums:**
 ```php
@@ -127,7 +135,7 @@ $fn = strlen(...);
 $fn = $object->method(...);
 ```
 
-### Breaking Changes
+### Breaking changes
 - `MYSQLI_STMT_ATTR_UPDATE_MAX_LENGTH` no longer has an effect
 - `MYSQLI_STORE_RESULT_COPY_DATA` no longer has an effect
 - Serialization of internal classes may have changed
@@ -137,7 +145,7 @@ $fn = $object->method(...);
 
 ## PHP 8.2
 
-### New Features
+### New features
 
 **Readonly classes:**
 ```php
@@ -171,7 +179,7 @@ trait HasVersion
 }
 ```
 
-### Breaking Changes and Deprecations
+### Breaking changes and deprecations
 
 **Dynamic properties deprecated (major impact):**
 ```php
@@ -208,14 +216,14 @@ $GLOBALS['key'] = 'value';
 $val = $GLOBALS['key'];
 ```
 
-- `utf8_encode()` and `utf8_decode()` deprecated - use `mb_convert_encoding()` instead
-- `${var}` string interpolation deprecated - use `{$var}` instead
+- `utf8_encode()` and `utf8_decode()` deprecated. Use `mb_convert_encoding()` instead
+- `${var}` string interpolation deprecated. Use `{$var}` instead
 
 ---
 
 ## PHP 8.3
 
-### New Features
+### New features
 
 **Typed class constants:**
 ```php
@@ -260,7 +268,7 @@ $constName = 'MAX_RETRIES';
 $value = Config::{$constName};
 ```
 
-### Breaking Changes
+### Breaking changes
 - `DateRangeError` replaces `ValueError` for out-of-range epochs in date functions
 - `DateInvalidOperationException` for non-special relative time subtraction
 - `mb_strimwidth()` with negative widths deprecated
@@ -272,7 +280,7 @@ $value = Config::{$constName};
 
 ## PHP 8.4
 
-### New Features
+### New features
 
 **Property hooks:**
 ```php
@@ -329,7 +337,7 @@ $hasActive = array_any($users, fn($u) => $u['active']);
 $allActive = array_all($users, fn($u) => $u['active']);
 ```
 
-### Breaking Changes and Deprecations
+### Breaking changes and deprecations
 
 **Implicit nullable types deprecated (high impact):**
 ```php
@@ -340,17 +348,17 @@ function save(string $name = null): void { }
 function save(?string $name = null): void { }
 ```
 
-This is one of the most widespread changes - Rector handles it automatically.
+This is one of the most widespread changes. Rector handles it.
 
 **Other deprecations:**
 - GET/POST session tracking deprecated (non-cookie session handling)
-- `session_set_save_handler()` with individual callbacks deprecated - use `SessionHandlerInterface`
+- `session_set_save_handler()` with individual callbacks deprecated. Use `SessionHandlerInterface`
 - DOM extension: `DOMDocument`, `DOMElement` etc. old methods deprecated in favor of `\Dom\` namespace classes
 - `E_STRICT` constant deprecated
 - `strtolower()`/`strtoupper()` no longer locale-sensitive
 - Calling `new` without parentheses on no-argument constructors deprecated: `new Foo;` should be `new Foo()`
 
-### Rector Configuration for 8.4
+### Rector configuration for 8.4
 
 ```php
 use Rector\Config\RectorConfig;

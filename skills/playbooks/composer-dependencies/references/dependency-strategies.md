@@ -1,33 +1,41 @@
 # Dependency Strategies
 
-## Constraint Selection Guide
+## Contents
 
-### For Applications
+- [Constraint selection guide](#constraint-selection-guide)
+- [Automated update tools](#automated-update-tools)
+- [Abandoned package handling](#abandoned-package-handling)
+- [Update frequency recommendations](#update-frequency-recommendations)
+- [composer-unused](#composer-unused)
 
-| Scenario | Recommended Constraint | Reason |
+## Constraint selection guide
+
+### For applications
+
+| Scenario | Recommended constraint | Reason |
 |---|---|---|
 | Most dependencies | `^1.2.3` (caret) | Allows non-breaking updates per semver |
-| Known regression in a patch | `1.2.3` (exact, temporarily) | Pin until regression is fixed upstream |
-| Pre-1.0 packages | `^0.3` (caret) | Respects semver instability: `>=0.3.0 <0.4.0` |
+| Known regression in a patch | `1.2.3` (exact, temporarily) | Pin until the regression is fixed upstream |
+| Pre-1.0 packages | `^0.3` (caret) | Follows semver for unstable packages: `>=0.3.0 <0.4.0` |
 | Symfony packages with Flex | `*` in require, version in `extra.symfony.require` | Flex manages the actual constraint |
 | Development tools | `^` with `--dev` | Same strategy, separate section |
 
-After updating, run `composer bump` to raise lower bounds to currently installed versions. This prevents accidental downgrades and improves dependency resolution speed.
+After updating, run `composer bump` to raise lower bounds to the currently installed versions. This prevents accidental downgrades and speeds up dependency resolution.
 
-### For Libraries
+### For libraries
 
 | Rule | Reason |
 |---|---|
-| Always use `^` (caret) | Maximizes interoperability - don't cause dependency hell for consumers |
+| Always use `^` (caret) | Keeps the library compatible with as many projects as possible, so consumers do not hit dependency conflicts |
 | Support multiple major versions when practical | e.g., `^6.4\|^7.0` for Symfony packages |
-| Never use `composer bump` on library constraints | Narrows the range for consumers |
-| `composer bump --dev-only` is safe | Dev dependencies don't affect consumers |
+| Never use `composer bump` on library constraints | It narrows the range for consumers |
+| `composer bump --dev-only` is safe | Dev dependencies do not affect consumers |
 
 ---
 
-## Automated Update Tools
+## Automated update tools
 
-### Dependabot (GitHub Native)
+### Dependabot (GitHub native)
 
 Configuration file: `.github/dependabot.yml`
 
@@ -57,15 +65,15 @@ updates:
 ```
 
 Key settings:
-- `versioning-strategy: lockfile-only` - updates only the lock file, not constraints in `composer.json` (safest for applications)
+- `versioning-strategy: lockfile-only` updates only the lock file, not the constraints in `composer.json`. This is the safest choice for applications
 - Group related packages into single PRs to reduce noise
-- Set `ignore` rules for packages where major updates require manual planning
+- Set `ignore` rules for packages where major updates need manual planning
 
 **Limitation:** Dependabot may not respect `extra.symfony.require` in Flex projects.
 
 ### Renovate Bot
 
-More powerful alternative to Dependabot. Works on GitHub, GitLab, Bitbucket, Azure DevOps.
+An alternative to Dependabot with more options. Works on GitHub, GitLab, Bitbucket, and Azure DevOps.
 
 Configuration file: `renovate.json`
 
@@ -96,33 +104,33 @@ Configuration file: `renovate.json`
 
 Advantages over Dependabot:
 - Better monorepo support
-- Dependency Dashboard for visibility
+- A Dependency Dashboard for visibility
 - More granular scheduling and grouping
-- Supports 90+ package managers
+- Support for 90+ package managers
 - `rangeStrategy: update-lockfile` is similar to Dependabot's `lockfile-only`
 
 ---
 
-## Abandoned Package Handling
+## Abandoned package handling
 
 ### Detection
 
-Composer warns during install/update:
+Composer warns during install and update:
 
 ```
 Package vendor/old-package is abandoned, you should avoid using it.
 Use vendor/new-package instead.
 ```
 
-### Replacement Process
+### Replacement process
 
-1. **Check suggested replacement** in the Composer warning
+1. **Check the suggested replacement** in the Composer warning
 2. **Search Packagist** for alternatives: https://packagist.org
-3. **Compare candidates** by: maintenance activity, download count, PHP version support, test coverage
-4. **Check API compatibility** - is the replacement a drop-in or does it require refactoring?
-5. **Wrap behind an interface** if replacement APIs differ significantly (adapter pattern)
+3. **Compare candidates** by maintenance activity, download count, PHP version support, and test coverage
+4. **Check API compatibility.** Is the replacement a drop-in, or does it require refactoring?
+5. **Wrap it behind an interface** if the replacement's API differs a lot (adapter pattern)
 
-### Proactive Monitoring
+### Proactive monitoring
 
 ```bash
 # Find packages not actually used in code
@@ -133,31 +141,31 @@ vendor/bin/composer-unused
 composer outdated --direct  # packages with no updates for 2+ years may be abandoned
 ```
 
-### Signs a Package May Be Abandoned Soon
+### Signs a package may be abandoned soon
 
 - No commits in 12+ months
-- Open issues/PRs with no response
+- Open issues or PRs with no response
 - No support for recent PHP versions
-- Single maintainer with no activity
+- A single maintainer with no activity
 - No CI/CD pipeline
 
 ---
 
-## Update Frequency Recommendations
+## Update frequency recommendations
 
-| Update Type | Frequency | Approach |
+| Update type | Frequency | Approach |
 |---|---|---|
 | Security patches | Immediately | `composer audit` in CI, auto-merge Dependabot security PRs |
 | Patch updates | Weekly | Batch all patch updates, auto-merge if tests pass |
 | Minor updates | Biweekly | Review changelogs, group by ecosystem (Symfony, Doctrine) |
-| Major updates | As needed | One at a time, dedicated branch, thorough testing |
+| Major updates | As needed | One at a time, dedicated branch, full testing |
 | Full audit | Monthly | `composer outdated --direct`, review abandoned packages |
 
 ---
 
 ## composer-unused
 
-Finds packages declared in `composer.json` that are not actually imported in your code.
+Finds packages declared in `composer.json` that your code does not import.
 
 ```bash
 composer require --dev composer-unused/composer-unused

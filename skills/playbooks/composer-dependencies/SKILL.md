@@ -1,6 +1,6 @@
 ---
 name: composer-dependencies
-description: Composer dependency management playbook for safe, systematic package updates. Use when the user asks to update Composer dependencies, audit packages for security vulnerabilities, manage composer.lock, configure Dependabot or Renovate for automated updates, replace abandoned packages, or resolve version conflicts. Covers patch/minor/major update strategies, composer audit, semantic versioning constraints, lock file hygiene, and the changelog-first update workflow.
+description: Composer dependency management playbook for safe package updates. Use when the user asks to update Composer dependencies, audit packages for security vulnerabilities, manage composer.lock, configure Dependabot or Renovate for automated updates, replace abandoned packages, or resolve version conflicts. Covers patch/minor/major update strategies, composer audit, semantic versioning constraints, lock file hygiene, and the changelog-first update workflow.
 user-invocable: true
 ---
 
@@ -12,28 +12,28 @@ Dependency updates are maintenance, not features. Do them regularly in small bat
 
 | Principle | Meaning |
 |---|---|
-| **Changelog first** | Before any major dependency update, search the web for the package's changelog/UPGRADE file or ask the user to provide it - never guess what changed |
-| **Security first** | Run `composer audit` before and after every update - vulnerabilities take priority over everything |
-| **Small batches** | Update one package or one logical group at a time - never update everything at once |
-| **Lock file is truth** | Always commit `composer.lock` - production uses `composer install`, never `composer update` |
+| **Changelog first** | Before any major dependency update, search the web for the package's changelog or UPGRADE file, or ask the user for it. Never guess what changed |
+| **Security first** | Run `composer audit` before and after every update. Vulnerabilities take priority over everything |
+| **Small batches** | Update one package or one logical group at a time. Never update everything at once |
+| **Lock file is truth** | Always commit `composer.lock`. Production uses `composer install`, never `composer update` |
 | **Verify before merging** | Every update must pass the full test suite and static analysis before merging |
-| **Caret by default** | Use `^` constraints for most dependencies - it balances stability with receiving fixes |
+| **Caret by default** | Use `^` constraints for most dependencies. They balance stability with receiving fixes |
 
 ---
 
-## Critical First Step: Read the Changelog
+## First step: read the changelog
 
 Before updating any dependency to a new major version, you MUST obtain the actual changelog:
 
 1. **Search the web** for `{package-name} CHANGELOG` or `{package-name} UPGRADE guide` (e.g., `doctrine/orm UPGRADE.md github`)
-2. **Or ask the user** to provide the changelog / release notes
+2. **Or ask the user** to provide the changelog or release notes
 3. **Check the package's GitHub repository** for `CHANGELOG.md`, `UPGRADE.md`, or release notes
 
-This is non-negotiable for major updates. Each package has unique breaking changes that static skill knowledge cannot capture. For patch and minor updates, changelogs are recommended but not blocking.
+This is required for major updates. Each package has its own breaking changes, and this skill cannot know them. For patch and minor updates, changelogs are recommended but do not block the update.
 
 ---
 
-## Update Strategies by Risk Level
+## Update strategies by risk level
 
 | Strategy | Scope | Risk | Frequency | Command |
 |---|---|---|---|---|
@@ -44,7 +44,7 @@ This is non-negotiable for major updates. Each package has unique breaking chang
 
 ---
 
-## Essential Commands
+## Essential commands
 
 | Command | Purpose |
 |---|---|
@@ -60,7 +60,7 @@ This is non-negotiable for major updates. Each package has unique breaking chang
 
 ---
 
-## Security Auditing
+## Security auditing
 
 ### composer audit
 
@@ -74,50 +74,50 @@ composer audit
 composer audit --format=json
 ```
 
-Returns non-zero exit code when vulnerabilities are found - use as a CI gate.
+It returns a non-zero exit code when vulnerabilities are found, so you can use it as a CI gate.
 
-Since Composer 2.9 (November 2025), `composer update` and `composer require` automatically block installation of packages with known security advisories by default.
+Since Composer 2.9, `composer update` and `composer require` block installation of packages with known security advisories by default.
 
 ### roave/security-advisories
 
-Preventive complement to `composer audit`. Declares `conflict` rules against all known vulnerable versions, preventing them from being installed.
+A preventive complement to `composer audit`. It declares `conflict` rules against all known vulnerable versions, so they cannot be installed.
 
 ```bash
 composer require --dev roave/security-advisories:dev-latest
 ```
 
-Must always be pinned to `dev-latest` (never a tagged version).
+Always pin it to `dev-latest`, never to a tagged version.
 
 Quick check: `composer update --dry-run roave/security-advisories`
 
-See [Update Workflow Reference](references/update-workflow.md) for the complete step-by-step update process.
+See [Update Workflow Reference](references/update-workflow.md) for the full step-by-step update process.
 
 ---
 
-## Version Constraints
+## Version constraints
 
-| Operator | Example | Range | Use Case |
+| Operator | Example | Range | Use case |
 |---|---|---|---|
 | `^` (caret) | `^1.2.3` | `>=1.2.3 <2.0.0` | **Default for most dependencies** |
-| `~` (tilde) | `~1.2.3` | `>=1.2.3 <1.3.0` | Conservative - patch updates only |
+| `~` (tilde) | `~1.2.3` | `>=1.2.3 <1.3.0` | Conservative, patch updates only |
 | `~` (minor) | `~1.2` | `>=1.2.0 <2.0.0` | Same as `^1.2` in practice |
 | Exact | `1.2.3` | Only `1.2.3` | Avoid except for known regressions |
 | `*` (wildcard) | `1.2.*` | `>=1.2.0 <1.3.0` | Avoid in production |
 
-**Pre-1.0 packages:** The caret respects semver for unstable packages: `^0.3` means `>=0.3.0 <0.4.0`, and `^0.0.3` means `>=0.0.3 <0.0.4`.
+**Pre-1.0 packages:** The caret follows semver for unstable packages. `^0.3` means `>=0.3.0 <0.4.0`, and `^0.0.3` means `>=0.0.3 <0.0.4`.
 
 ---
 
-## Lock File Management
+## Lock file management
 
 | Rule | Reason |
 |---|---|
-| Always commit `composer.lock` for applications | Ensures identical versions across all environments |
-| Use `composer install` in CI and production | Reads from lock file, guarantees reproducible builds |
-| Use `composer update` only intentionally | Resolves constraints anew, writes new lock file |
+| Always commit `composer.lock` for applications | Gives identical versions in all environments |
+| Use `composer install` in CI and production | Reads from the lock file, so builds are reproducible |
+| Use `composer update` only intentionally | Resolves constraints anew and writes a new lock file |
 | Never edit `composer.lock` manually | Let Composer manage it |
-| Use `--no-dev` in production | Exclude development dependencies |
-| Use `--optimize-autoloader` in production | Generate optimized class map |
+| Use `--no-dev` in production | Excludes development dependencies |
+| Use `--optimize-autoloader` in production | Generates an optimized class map |
 
 Production install command:
 
@@ -127,27 +127,27 @@ composer install --no-dev --optimize-autoloader --no-interaction
 
 ---
 
-## Abandoned Packages
+## Abandoned packages
 
-Composer warns about abandoned packages during install/update. Handle them proactively:
+Composer warns about abandoned packages during install and update. Deal with them early:
 
-1. **Check the warning** - some suggest a replacement package directly
+1. **Check the warning.** Some suggest a replacement package directly
 2. **Search Packagist** for maintained alternatives
-3. **Use `composer why vendor/package`** to understand who depends on it
-4. **Wrap risky dependencies** behind interfaces (adapter pattern) to make future replacement easier
-5. **Use `composer-unused`** to find packages in `composer.json` that are not actually used in code
+3. **Run `composer why vendor/package`** to see who depends on it
+4. **Wrap risky dependencies** behind interfaces (adapter pattern) so they are easier to replace later
+5. **Run `composer-unused`** to find packages in `composer.json` that the code does not use
 
 ---
 
-## Quick Reference: Update Checklist
+## Quick reference: update checklist
 
 - [ ] Run `composer audit` to check for security vulnerabilities
 - [ ] Run `composer outdated --direct` to see what needs updating
 - [ ] Create a dedicated branch for the update
 - [ ] Update one package or logical group at a time
-- [ ] Run full test suite after each update
+- [ ] Run the full test suite after each update
 - [ ] Run static analysis (PHPStan/Psalm)
-- [ ] Run `composer audit` again post-update
+- [ ] Run `composer audit` again after the update
 - [ ] Commit both `composer.json` and `composer.lock`
 - [ ] Optionally run `composer bump` to raise lower bounds (apps only)
 - [ ] Deploy via `composer install --no-dev --optimize-autoloader`
@@ -160,7 +160,7 @@ Composer warns about abandoned packages during install/update. Handle them proac
 | Reference | Contents |
 |---|---|
 | [Update Workflow](references/update-workflow.md) | Step-by-step update process, CI integration with Dependabot/Renovate, major update handling, and troubleshooting |
-| [Dependency Strategies](references/dependency-strategies.md) | Versioning strategies, constraint selection, automated update tools configuration, and abandoned package handling |
+| [Dependency Strategies](references/dependency-strategies.md) | Versioning strategies, constraint selection, automated update tool configuration, and abandoned package handling |
 
 ---
 

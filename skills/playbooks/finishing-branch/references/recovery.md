@@ -1,10 +1,17 @@
 # Recovery
 
-Things go wrong. Branches get force-pushed, unmerged work gets deleted, rebases go sideways. Git is designed to be recoverable - almost nothing is truly lost if you know where to look. The reflog is your safety net.
+Things go wrong. Branches get force-pushed, unmerged work gets deleted, rebases go sideways. Git is built to be recoverable, and almost nothing is lost if you know where to look. The reflog is your safety net.
 
-## Understanding the Reflog
+## Contents
 
-The reflog records every change to every branch tip and HEAD in your local repository. Even after a branch is deleted, the commits it pointed to remain in the reflog for at least 30 days.
+- [Understanding the reflog](#understanding-the-reflog)
+- [Recovery scenarios](#recovery-scenarios)
+- [Recovery checklist](#recovery-checklist)
+- [Reflog expiry](#reflog-expiry)
+
+## Understanding the reflog
+
+The reflog records every change to every branch tip and HEAD in your local repository. Even after a branch is deleted, the commits it pointed to stay in the reflog for at least 30 days.
 
 ```bash
 # View the reflog for HEAD (all recent operations)
@@ -20,15 +27,15 @@ git reflog --all --grep="the commit message"
 git reflog --date=iso
 ```
 
-**Key principle:** If it was committed, it is recoverable from the reflog. If it was only in the working directory (never committed or stashed), it is gone.
+**Key principle:** If it was committed, you can recover it from the reflog. If it was only in the working directory (never committed or stashed), it is gone.
 
 ---
 
-## Recovery Scenarios
+## Recovery scenarios
 
-### Force-Pushed the Wrong Branch
+### Force-pushed the wrong branch
 
-You ran `git push --force` and overwrote commits on a branch - either your own or someone else's.
+You ran `git push --force` and overwrote commits on a branch, either your own or someone else's.
 
 **If you overwrote your own branch:**
 
@@ -61,11 +68,11 @@ git fetch origin
 git reset --hard origin/main
 ```
 
-**Prevention:** Always use `--force-with-lease` instead of `--force`. It refuses to push if the remote has commits you have not fetched, preventing accidental overwrites.
+**Prevention:** Always use `--force-with-lease` instead of `--force`. It refuses to push if the remote has commits you have not fetched, so you cannot overwrite them by accident.
 
 ---
 
-### Deleted an Unmerged Branch
+### Deleted an unmerged branch
 
 You ran `git branch -D feat/important-work` and the branch had commits not merged anywhere.
 
@@ -101,7 +108,7 @@ git checkout -b feat/important-work <sha>
 
 ---
 
-### Lost a Stash
+### Lost a stash
 
 You ran `git stash drop` or `git stash clear` and lost work.
 
@@ -117,13 +124,13 @@ git show <sha>
 git stash apply <sha>
 ```
 
-**Prevention:** Prefer committing WIP changes on a branch over stashing. Branches are easier to track and recover.
+**Prevention:** Commit WIP changes on a branch instead of stashing them. Branches are easier to track and recover.
 
 ---
 
-### Rebase Went Wrong
+### Rebase went wrong
 
-A rebase is producing conflicts on every commit and you want to start over.
+A rebase produces conflicts on every commit and you want to start over.
 
 **During the rebase (before completing):**
 
@@ -153,9 +160,9 @@ git push --force-with-lease origin feat/my-branch
 
 ---
 
-### Merged to the Wrong Target Branch
+### Merged to the wrong target branch
 
-You merged your feature branch into `develop` instead of `main` (or vice versa).
+You merged your feature branch into `develop` instead of `main` (or the other way around).
 
 **If the merge has not been pushed:**
 
@@ -183,11 +190,11 @@ git merge --no-ff feat/my-branch
 git push
 ```
 
-Note: `-m 1` tells `git revert` to treat the first parent (the target branch before merge) as the mainline.
+`-m 1` tells `git revert` to treat the first parent (the target branch before the merge) as the mainline.
 
 ---
 
-### Accidentally Reset --hard and Lost Uncommitted Changes
+### Accidentally reset --hard and lost uncommitted changes
 
 You ran `git reset --hard` and lost changes that were staged but not committed.
 
@@ -209,11 +216,11 @@ git show <blob-sha> > recovered-file.ext
 
 **For unstaged changes (never added or committed):** These are gone. Git only tracks content that has been staged or committed.
 
-**Prevention:** Commit early and often. Even a `git commit -m "WIP"` is recoverable; unstaged edits are not.
+**Prevention:** Commit early and often. Even a `git commit -m "WIP"` is recoverable, and unstaged edits are not.
 
 ---
 
-### PR Branch Diverged from Base After Force-Push
+### PR branch diverged from base after force-push
 
 You rebased and force-pushed your PR branch. Now the PR shows unexpected changes because the base branch has moved.
 
@@ -227,23 +234,23 @@ git push --force-with-lease
 git merge-base HEAD origin/main
 ```
 
-On most hosting platforms, the PR will recalculate the diff after the force-push. If it does not, close and reopen the PR.
+On most hosting platforms, the PR recalculates the diff after the force-push. If it does not, close and reopen the PR.
 
 ---
 
-## Recovery Checklist
+## Recovery checklist
 
 When something goes wrong:
 
-1. **Do not panic.** If it was committed, it is almost certainly recoverable.
-2. **Stop executing commands.** Do not compound the mistake with more actions.
-3. **Check the reflog** - `git reflog` is always the first step.
-4. **Identify the target commit** - the SHA of the state you want to return to.
-5. **Restore the state** - `git reset`, `git checkout -b`, or `git push --force-with-lease` as appropriate.
-6. **Verify the recovery** - check `git log`, `git diff`, and run tests.
-7. **Communicate** - if the mistake affected a shared branch, notify the team immediately.
+1. **Do not panic.** If it was committed, you can almost certainly recover it.
+2. **Stop running commands.** More actions can make the mistake worse.
+3. **Check the reflog.** `git reflog` is always the first step.
+4. **Identify the target commit.** This is the SHA of the state you want to return to.
+5. **Restore the state.** Use `git reset`, `git checkout -b`, or `git push --force-with-lease` as appropriate.
+6. **Verify the recovery.** Check `git log` and `git diff`, and run tests.
+7. **Communicate.** If the mistake affected a shared branch, notify the team immediately.
 
-## Reflog Expiry
+## Reflog expiry
 
 By default, reflog entries expire after 90 days (reachable commits) or 30 days (unreachable commits). After expiry, commits may be garbage collected and become unrecoverable.
 

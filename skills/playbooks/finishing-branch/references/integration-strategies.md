@@ -1,12 +1,20 @@
 # Integration Strategies
 
-Choosing the right integration strategy determines the shape of your history, the ease of reverting changes, and how much friction the team experiences during code review. There is no universally correct answer - the right choice depends on team size, release model, and commit discipline.
+The integration strategy decides the shape of your history, how easy it is to revert a change, and how much friction the team feels during code review. No answer is right everywhere. The best choice depends on team size, release model, and commit discipline.
 
-## Strategy Overview
+## Contents
 
-### Direct Merge (--no-ff)
+- [Strategy overview](#strategy-overview)
+- [Decision matrix](#decision-matrix)
+- [Rebase vs merge: when to use each](#rebase-vs-merge-when-to-use-each)
+- [Stacked PRs](#stacked-prs)
+- [Handling upstream changes](#handling-upstream-changes)
 
-Creates a merge commit that preserves the branch's commit history as a visible branch in the graph.
+## Strategy overview
+
+### Direct merge (--no-ff)
+
+Creates a merge commit that keeps the branch's commit history visible as a branch in the graph.
 
 ```bash
 git checkout main
@@ -15,15 +23,15 @@ git merge --no-ff feat/my-branch -m "Merge feat/my-branch: add email verificatio
 git push origin main
 ```
 
-**Pros:** Full history preserved. Easy to revert entire feature by reverting the merge commit. Branch topology visible in `git log --graph`.
+**Pros:** Full history is preserved. You can revert the whole feature by reverting the merge commit. Branch topology is visible in `git log --graph`.
 
-**Cons:** Noisy history with many merge commits. Harder to bisect. History graph becomes complex with many parallel branches.
+**Cons:** Many merge commits make the history noisy and harder to bisect. The graph gets complex with many parallel branches.
 
-**Best for:** Open-source projects with audit requirements, teams that value seeing exactly how work was developed.
+**Best for:** Open-source projects with audit requirements, and teams that want to see exactly how work was developed.
 
 ---
 
-### Squash and Merge
+### Squash and merge
 
 Collapses all branch commits into a single commit on the target branch.
 
@@ -38,15 +46,15 @@ git push origin main
 # Via PR (most hosting platforms support "Squash and merge" button)
 ```
 
-**Pros:** Clean, linear history. Each commit on main represents one complete, reviewed change. Excellent for `git bisect`.
+**Pros:** Clean, linear history. Each commit on main is one complete, reviewed change. Works well with `git bisect`.
 
-**Cons:** Loses individual commit attribution. Intermediate development steps are invisible. Cannot cherry-pick individual changes from the branch after squashing.
+**Cons:** Individual commit attribution is lost. Intermediate development steps are invisible. After squashing, you cannot cherry-pick individual changes from the branch.
 
-**Best for:** Teams where feature branches have messy, work-in-progress commits. Teams that want one commit per PR on main.
+**Best for:** Teams whose feature branches have messy, work-in-progress commits, and teams that want one commit per PR on main.
 
 ---
 
-### Rebase and Merge (Fast-Forward)
+### Rebase and merge (fast-forward)
 
 Replays your branch commits on top of the target branch tip, then fast-forwards the target branch pointer.
 
@@ -64,32 +72,32 @@ git push origin main
 
 **Pros:** Linear history with individual commits preserved. No merge commits. Clean `git log`. Good for `git bisect`.
 
-**Cons:** Rewrites commit hashes (breaks references to old SHAs). Requires clean commit discipline - every commit should compile and pass tests. Conflicts must be resolved per commit during rebase.
+**Cons:** Commit hashes change, which breaks references to old SHAs. Every commit should compile and pass tests. Conflicts must be resolved per commit during the rebase.
 
-**Best for:** Teams with strong commit discipline who want linear history without losing individual commits.
+**Best for:** Teams with strong commit discipline who want linear history and keep their individual commits.
 
 ---
 
-### Pull Request (Any Merge Strategy)
+### Pull request (any merge strategy)
 
-Push the branch to the remote and open a PR/MR for review. The merge strategy is then applied when the PR is approved.
+Push the branch to the remote and open a PR/MR for review. The merge strategy is applied when the PR is approved.
 
 ```bash
 git push -u origin feat/my-branch
 # Open PR via CLI or web UI (see Phase 6 in SKILL.md)
 ```
 
-The hosting platform applies the configured merge strategy (merge commit, squash, or rebase) when the PR is merged. Most teams configure a default and allow authors to choose per PR.
+The hosting platform applies the configured merge strategy (merge commit, squash, or rebase) when the PR is merged. Most teams set a default and let authors choose per PR.
 
 **Best for:** Any team that requires code review, CI gates, or an audit trail of approvals.
 
 ---
 
-## Decision Matrix
+## Decision matrix
 
 Use this matrix to pick the right strategy for your situation.
 
-| Factor | Direct Merge | Squash | Rebase | PR (any) |
+| Factor | Direct merge | Squash | Rebase | PR (any) |
 |---|---|---|---|---|
 | Requires code review | No | No | No | Yes |
 | Preserves individual commits | Yes | No | Yes | Depends on merge strategy |
@@ -99,35 +107,35 @@ Use this matrix to pick the right strategy for your situation.
 | CI gate enforcement | No (manual) | No (manual) | No (manual) | Yes (automated) |
 | Works with stacked branches | Awkward | No (destroys intermediate SHAs) | Yes (with care) | Yes |
 
-### Quick Decision Guide
+### Quick decision guide
 
-1. **Does the team require review before merge?** - Use a PR workflow with your preferred merge strategy.
-2. **Is the branch history clean and meaningful?** - Use rebase and merge to preserve commits linearly.
-3. **Is the branch history messy with WIP commits?** - Use squash and merge to collapse into one clean commit.
-4. **Do you need to see branch topology in the graph?** - Use direct merge with `--no-ff`.
-5. **Solo project or pre-approved change?** - Direct merge or rebase, depending on history preference.
+1. **Does the team require review before merge?** Use a PR workflow with your preferred merge strategy.
+2. **Is the branch history clean and meaningful?** Use rebase and merge to keep the commits in a line.
+3. **Is the branch history messy with WIP commits?** Use squash and merge to collapse it into one clean commit.
+4. **Do you need to see branch topology in the graph?** Use direct merge with `--no-ff`.
+5. **Solo project or pre-approved change?** Use direct merge or rebase, depending on your history preference.
 
 ---
 
-## Rebase vs Merge: When to Use Each
+## Rebase vs merge: when to use each
 
-### Use Rebase When
+### Use rebase when
 
 - You are the only author on the branch
 - The branch has not been shared with others (or others are not basing work on it)
 - You want a linear history without merge commits
 - You need to clean up commits before merging (interactive rebase)
 
-### Use Merge When
+### Use merge when
 
 - The branch is shared and others have based work on it
-- You need to preserve the exact branch topology for audit purposes
-- You want easy single-commit reverts of entire features
+- You need to keep the exact branch topology for audit purposes
+- You want to revert a whole feature with a single commit
 - The team is not comfortable with rebase workflows
 
-### The Golden Rule of Rebase
+### The golden rule of rebase
 
-**Never rebase commits that exist on a remote branch that others are working from.** Rebasing rewrites commit hashes. If someone else has based work on the old hashes, their history will diverge and they will need to force-reconcile.
+**Never rebase commits that exist on a remote branch that others are working from.** Rebasing rewrites commit hashes. If someone else has based work on the old hashes, their history diverges and they have to reconcile it by force.
 
 ```bash
 # Safe: rebase your local-only commits onto updated main
@@ -145,9 +153,9 @@ git push --force-with-lease origin feat/my-branch
 
 ## Stacked PRs
 
-Stacked PRs break a large feature into a chain of dependent pull requests. Each PR builds on the previous one and is reviewable independently.
+Stacked PRs break a large feature into a chain of dependent pull requests. Each PR builds on the previous one and can be reviewed on its own.
 
-### When to Stack
+### When to stack
 
 - The full feature would produce a PR over 400 lines
 - Changes span multiple layers (database, service, API, UI)
@@ -177,7 +185,7 @@ git push -u origin feat/user-verification-ui
 # Open PR #3 targeting feat/user-email-verification
 ```
 
-### Maintaining the Stack
+### Maintaining the stack
 
 When a reviewer requests changes to an earlier PR:
 
@@ -197,7 +205,7 @@ git rebase feat/user-email-verification
 git push --force-with-lease
 ```
 
-### After the Base PR Merges
+### After the base PR merges
 
 ```bash
 # Update main
@@ -218,15 +226,15 @@ glab mr update <mr-number> --target-branch main
 
 ### Pitfalls
 
-- **Squash-merging breaks the stack.** If the base PR is squash-merged, downstream branches still reference the old individual commits. You must rebase onto main after squash. Prefer merge commits or rebase-merge for stacked workflows.
-- **Review burden shifts.** Each PR is small, but reviewers must understand the full context. Include a link to the overall design in each PR description.
+- **Squash-merging breaks the stack.** If the base PR is squash-merged, downstream branches still reference the old individual commits. You must rebase onto main after the squash. Prefer merge commits or rebase-merge for stacked workflows.
+- **Review burden shifts.** Each PR is small, but reviewers must understand the full context. Link the overall design in each PR description.
 - **Force-push cascades.** A change to PR 1 requires rebasing PR 2 and PR 3. Automate this or accept the overhead.
 
 ---
 
-## Handling Upstream Changes
+## Handling upstream changes
 
-Before integrating, ensure your branch is current with the target.
+Before integrating, bring your branch up to date with the target.
 
 ```bash
 # Option 1: Rebase (produces linear history)
@@ -240,4 +248,4 @@ git merge origin/main
 # Re-run verification after merge
 ```
 
-After either operation, re-run the full verification suite. Merging or rebasing can introduce subtle bugs even without textual conflicts - a clean merge does not guarantee correct behavior.
+After either operation, re-run the full verification suite. A merge or rebase can introduce subtle bugs even without textual conflicts, because a clean merge does not guarantee correct behavior.

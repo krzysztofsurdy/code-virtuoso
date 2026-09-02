@@ -1,23 +1,31 @@
 # Supplement Configuration Reference
 
+## Contents
+
+- [Overview](#overview)
+- [File location](#file-location)
+- [Questions](#questions)
+- [Supplement file format](#supplement-file-format)
+- [Updating your supplement](#updating-your-supplement)
+
 ## Overview
 
-The ticket-delivery skill uses a supplement file stored alongside the skill (e.g., `.supplement.md` in the skill directory) to adapt to your specific development environment. This file is created automatically on first run through an interactive questionnaire.
+The ticket-delivery skill reads a supplement file stored alongside the skill (e.g., `.supplement.md` in the skill directory) to adapt to your development environment. The skill creates this file on first run through an interactive questionnaire.
 
-The supplement uses simple `KEY: value` entries that the skill references as `$VARIABLE` placeholders throughout the workflow phases.
+The supplement uses simple `KEY: value` entries. The skill references them as `$VARIABLE` placeholders throughout the workflow phases.
 
-## File Location
+## File location
 
 Store the supplement file alongside this skill, for example as `.supplement.md` in the skill directory. The exact path depends on your platform and how skills are installed.
 
 ## Questions
 
-### 1. Ticket System
+### 1. Ticket system
 
 **Question:** "What ticket/issue tracking system do you use?"
 **Options:** GitHub Issues, GitLab Issues, Jira, Linear, Other
 **Follow-up:** "Do you have an integration tool for fetching tickets? If so, what is the tool name? (e.g., an MCP tool like `mcp__jira__get_issue`, a CLI command, or an API integration)"
-**How it is used:** Determines how tickets are fetched in Phase 1. If an integration tool is available, the skill fetches ticket details automatically. Otherwise, it asks you to paste the ticket title, description, and acceptance criteria.
+**How it is used:** Sets how tickets are fetched in Phase 1. If an integration tool is available, the skill fetches ticket details with it. Otherwise, it asks you to paste the ticket title, description, and acceptance criteria.
 **Example supplement entry:**
 ```
 TICKET_SYSTEM: jira
@@ -25,12 +33,12 @@ TICKET_MCP_TOOL: mcp__jira__get_issue
 TICKET_ID_PATTERN: PROJ-XXXXX
 ```
 
-### 2. Version Control
+### 2. Version control
 
 **Question:** "What version control hosting platform do you use?"
 **Options:** Bitbucket, GitHub, GitLab, Other
 **Follow-up:** "What CLI tool do you use for PRs? (`gh`, `glab`, or none)" and "What is your main branch name?"
-**How it is used:** Determines the CLI command for PR creation in Phase 8 and the base branch for checkout/rebase operations in Phases 2 and 5.
+**How it is used:** Sets the CLI command for PR creation in Phase 8 and the base branch for checkout/rebase operations in Phases 2 and 5.
 **Example supplement entry:**
 ```
 VCS_PLATFORM: github
@@ -38,12 +46,12 @@ VCS_CLI: gh
 MAIN_BRANCH: main
 ```
 
-### 3. Error Tracking
+### 3. Error tracking
 
 **Question:** "What error tracking system do you use?"
 **Options:** Bugsnag, Datadog, Sentry, None
 **Follow-up:** "Do you have an integration tool for fetching error details? If so, what is the tool name?"
-**How it is used:** For bug tickets, Phase 1 uses this to fetch stack traces, error frequency, and affected file paths. If no tool is configured, the skill asks you to paste relevant error information.
+**How it is used:** For bug tickets, Phase 1 uses it to fetch stack traces, error frequency, and affected file paths. If no tool is configured, the skill asks you to paste relevant error information.
 **Example supplement entry:**
 ```
 ERROR_TRACKING: sentry
@@ -55,7 +63,7 @@ ERROR_TRACKING_MCP_TOOL: mcp__sentry__get_issue
 **Question:** "What logging/observability platform do you use?"
 **Options:** CloudWatch, Datadog, ELK Stack, Grafana, None
 **Follow-up:** "Do you have tool access to logs, or will you paste log snippets manually?"
-**How it is used:** For bug tickets, Phase 1 can fetch or request log entries around the error timeframe to provide additional context for investigation.
+**How it is used:** For bug tickets, Phase 1 can fetch or request log entries around the error timeframe as extra context for the investigation.
 **Example supplement entry:**
 ```
 LOGGING_PLATFORM: grafana
@@ -68,31 +76,31 @@ LOGGING_MCP_TOOL: mcp__grafana__query_logs
 **Question:** "What ORM or database abstraction do you use?"
 **Options:** ActiveRecord, Doctrine, Eloquent, Prisma, TypeORM, None / raw SQL
 **Follow-up:** "Can you run read-only queries during development? If so, what command?" (e.g., `rails console`, `php bin/console doctrine:query:sql`, `npx prisma db execute`)
-**How it is used:** During Phase 3 investigation, the skill may need to verify current data state or understand schema. The ORM choice also affects how entity/model files are located and interpreted.
+**How it is used:** During Phase 3 investigation, the skill may need to verify current data state or understand schema. The ORM choice also affects how entity and model files are located and read.
 **Example supplement entry:**
 ```
 ORM: doctrine
 DB_QUERY_COMMAND: php bin/console doctrine:query:sql
 ```
 
-### 6. CI/CD Hooks
+### 6. CI/CD hooks
 
 **Question:** "What pre-commit hooks does your project run, and which ones should be skipped during iterative development?"
 **Options:** Free-form answer
 **Follow-up:** "What is the skip command prefix?" (e.g., `SKIP=lint,test`, `--no-verify`)
-**How it is used:** During Phase 6 TDD cycles, rapid commits may need to skip slow hooks (linting, full test suites) that will run in CI anyway. The final commit before PR should run all hooks.
+**How it is used:** During Phase 6 TDD cycles, frequent commits may need to skip slow hooks (linting, full test suites) that will run in CI anyway. The final commit before PR should run all hooks.
 **Example supplement entry:**
 ```
 SKIP_HOOKS: SKIP=lint,schema-validate git
 PRE_COMMIT_HOOKS: lint, test, schema-validate, migration-diff
 ```
 
-### 7. Testing Framework
+### 7. Testing framework
 
 **Question:** "What testing framework does your project use?"
 **Options:** Go test, Jest, PHPUnit, pytest, RSpec, Other
 **Follow-up:** "What is the command to run a single test file?" and "Do you prefer London-style (mockist) or Chicago-style (classicist) TDD?"
-**How it is used:** Drives the entire Phase 6 TDD cycle. The test command is used to run individual test files during red-green-refactor, and the TDD style preference guides how tests are structured (heavy mocking vs. integration-style).
+**How it is used:** Drives the Phase 6 TDD cycle. The test command runs individual test files during red-green-refactor, and the TDD style preference guides how tests are structured (heavy mocking vs. integration-style).
 **Example supplement entry:**
 ```
 TEST_FRAMEWORK: phpunit
@@ -105,7 +113,7 @@ TDD_STYLE: london
 **Question:** "What is your project's architecture?"
 **Options:** Microservices, Modular monolith, Monolith
 **Follow-up:** "Do you have an admin panel? If so, what framework?" (e.g., ActiveAdmin, Filament, Nova, Sonata Admin, custom) and "What API layer do you use?" (REST, GraphQL, both, none)
-**How it is used:** Shapes Phase 3 investigation scope. For monoliths, all layers are explored in one codebase. For microservices, the skill asks which service the ticket targets. The admin panel and API layer settings determine which investigation sub-phases are relevant.
+**How it is used:** Sets the scope of the Phase 3 investigation. For monoliths, all layers are explored in one codebase. For microservices, the skill asks which service the ticket targets. The admin panel and API layer settings decide which investigation sub-phases apply.
 **Example supplement entry:**
 ```
 ARCHITECTURE: monolith
@@ -113,21 +121,21 @@ ADMIN_PANEL: none
 API_LAYER: rest
 ```
 
-### 9. PR Conventions
+### 9. PR conventions
 
 **Question:** "What branch naming pattern does your team use?"
 **Options:** Free-form, with examples shown
 **Follow-up:** "What commit message format do you use?"
-**How it is used:** Determines branch names in Phase 5 and commit message formatting in Phase 6. The skill fills in the ticket ID and description automatically.
+**How it is used:** Sets branch names in Phase 5 and commit message format in Phase 6. The skill fills in the ticket ID and description.
 **Example supplement entry:**
 ```
 BRANCH_PATTERN: feat/$TICKET_ID-short-description
 COMMIT_FORMAT: $TICKET_ID: description of change
 ```
 
-## Supplement File Format
+## Supplement file format
 
-The complete supplement file looks like this:
+A full supplement file looks like this:
 
 ```markdown
 # Ticket Workflow Supplement
@@ -175,10 +183,10 @@ BRANCH_PATTERN: feat/$TICKET_ID-short-description
 COMMIT_FORMAT: $TICKET_ID: description of change
 ```
 
-## Updating Your Supplement
+## Updating your supplement
 
 **To re-run the full setup:** Delete the supplement file and invoke the ticket-delivery skill again.
 
 **To edit a single value:** Open the file directly and modify the relevant line. Changes take effect on the next skill invocation.
 
-**To add custom variables:** You can add any `KEY: value` lines to the file. The skill will ignore keys it does not recognize, but they can be useful for your own reference or for custom workflow extensions.
+**To add custom variables:** You can add any `KEY: value` lines to the file. The skill ignores keys it does not recognize, but they can serve as your own notes or support custom workflow extensions.

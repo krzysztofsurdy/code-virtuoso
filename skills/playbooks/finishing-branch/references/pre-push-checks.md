@@ -1,12 +1,20 @@
 # Pre-Push Checks
 
-Verification before pushing ensures that CI will not fail on something you could have caught locally. Run checks in order from fastest to slowest - fail fast, fix early.
+Checking before you push means CI does not fail on something you could have caught locally. Run checks from fastest to slowest so failures show up early.
 
-## Verification Order
+## Contents
 
-The order matters. Linting takes seconds; integration tests take minutes. Do not wait for a slow test suite to discover a missing semicolon.
+- [Verification order](#verification-order)
+- [CI parity](#ci-parity)
+- [Conflict detection](#conflict-detection)
+- [Pre-push hook setup](#pre-push-hook-setup)
+- [Checklist before every push](#checklist-before-every-push)
 
-| Step | What It Catches | Typical Duration | Example Commands |
+## Verification order
+
+Order matters. Linting takes seconds and integration tests take minutes, so do not wait for a slow suite to find a missing semicolon.
+
+| Step | What it catches | Typical duration | Example commands |
 |---|---|---|---|
 | 1. Lint | Formatting, style violations, syntax errors | 1-10 seconds | `make lint`, `npm run lint`, `cargo clippy`, `flake8` |
 | 2. Type check | Type mismatches, missing interfaces, wrong signatures | 5-30 seconds | `npx tsc --noEmit`, `mypy .`, `phpstan analyse`, `cargo check` |
@@ -15,19 +23,19 @@ The order matters. Linting takes seconds; integration tests take minutes. Do not
 | 5. Build | Compilation errors, missing assets, bundle failures | 10-120 seconds | `make build`, `npm run build`, `cargo build --release`, `docker build .` |
 | 6. Smoke test | Obvious runtime failures after build | 10-60 seconds | `make smoke`, application-specific health check |
 
-### When to Skip Steps
+### When to skip steps
 
-- **Skip integration tests** only if they require infrastructure you do not have locally (databases, external services) and CI will run them.
-- **Skip the build step** if your language does not require a build (interpreted languages without a bundler).
-- **Never skip lint, type check, or unit tests.** These are fast enough to always run.
+- **Skip integration tests** only if they need infrastructure you do not have locally (databases, external services) and CI will run them.
+- **Skip the build step** if your language does not need a build (interpreted languages without a bundler).
+- **Never skip lint, type check, or unit tests.** They are fast enough to run every time.
 
 ---
 
-## CI Parity
+## CI parity
 
 Local checks should mirror CI as closely as possible. If CI runs a check you do not run locally, you will push broken code and waste a CI cycle.
 
-### Achieving Parity
+### Achieving parity
 
 ```bash
 # Option 1: Use the same Makefile targets locally and in CI
@@ -40,19 +48,19 @@ make ci          # runs lint, typecheck, test, build in sequence
 docker compose run --rm app make ci
 ```
 
-### Common Parity Gaps
+### Common parity gaps
 
 | Gap | Symptom | Fix |
 |---|---|---|
-| Different language version | Tests pass locally, fail in CI | Use `.tool-versions`, `Dockerfile`, or version manager to pin versions |
+| Different language version | Tests pass locally, fail in CI | Use `.tool-versions`, `Dockerfile`, or a version manager to pin versions |
 | Missing environment variables | Tests pass locally (vars in shell), fail in CI | Use `.env.test` or CI-specific config files |
 | Different dependency versions | Behavior differs between local and CI | Always run `install` (not `update`) from the lock file |
 | OS-specific behavior | Works on macOS, fails on Linux CI | Test in a container matching CI's OS |
-| Database state | Tests pass on populated local DB, fail on clean CI DB | Always run from migrations, never assume existing data |
+| Database state | Tests pass on a populated local DB, fail on a clean CI DB | Always run from migrations, never assume existing data |
 
 ---
 
-## Conflict Detection
+## Conflict detection
 
 Before pushing, verify your branch can merge cleanly into the target.
 
@@ -68,7 +76,7 @@ git merge --no-commit --no-ff origin/main
 git merge --abort  # clean up the attempted merge
 ```
 
-### Resolving Conflicts Before Push
+### Resolving conflicts before push
 
 ```bash
 # Option 1: Rebase onto the updated target (rewrites your commits)
@@ -88,11 +96,11 @@ After resolving conflicts, re-run the full verification suite. Conflict resoluti
 
 ---
 
-## Pre-Push Hook Setup
+## Pre-push hook setup
 
-Automate verification so it runs on every `git push` without thinking about it.
+Run verification on every `git push` with a hook, so you do not have to remember it.
 
-### Using Git Hooks Directly
+### Using git hooks directly
 
 ```bash
 # .git/hooks/pre-push (must be executable: chmod +x)
@@ -112,9 +120,9 @@ make test-unit || exit 1
 echo "All pre-push checks passed."
 ```
 
-### Using a Hook Manager
+### Using a hook manager
 
-Hook managers make hooks portable across the team by storing configuration in the repository.
+Hook managers make hooks portable across the team by storing the configuration in the repository.
 
 **Husky (Node.js projects):**
 
@@ -158,18 +166,18 @@ pre-push:
 }
 ```
 
-### Bypassing Hooks in Emergencies
+### Bypassing hooks in emergencies
 
 ```bash
 # Skip pre-push hook (use sparingly and only with good reason)
 git push --no-verify
 ```
 
-This should be rare. If you find yourself bypassing hooks regularly, the hooks are too slow or too strict - fix the hooks, do not work around them.
+This should be rare. If you bypass hooks often, they are too slow or too strict. Fix the hooks instead of working around them.
 
 ---
 
-## Checklist Before Every Push
+## Checklist before every push
 
 - [ ] `git status` shows a clean working tree (all changes committed or stashed intentionally)
 - [ ] Lint passes with zero errors

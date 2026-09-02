@@ -1,8 +1,16 @@
 # Composer Update Workflow
 
-## Step-by-Step Safe Update Process
+## Contents
 
-### 1. Audit Current State
+- [Step-by-step safe update process](#step-by-step-safe-update-process)
+- [Handling major version updates](#handling-major-version-updates)
+- [Symfony-specific dependency updates](#symfony-specific-dependency-updates)
+- [CI integration](#ci-integration)
+- [Troubleshooting](#troubleshooting)
+
+## Step-by-step safe update process
+
+### 1. Audit the current state
 
 ```bash
 # Check for security vulnerabilities first
@@ -15,13 +23,13 @@ composer outdated --direct
 composer validate --strict
 ```
 
-### 2. Create a Dedicated Branch
+### 2. Create a dedicated branch
 
 ```bash
 git checkout -b chore/dependency-updates
 ```
 
-### 3. Apply Patch Updates (Lowest Risk)
+### 3. Apply patch updates (lowest risk)
 
 ```bash
 # Preview what would change
@@ -39,7 +47,7 @@ git add composer.json composer.lock
 git commit -m "Update dependencies (patch versions)"
 ```
 
-### 4. Apply Minor Updates
+### 4. Apply minor updates
 
 ```bash
 # Preview
@@ -54,7 +62,7 @@ git add composer.json composer.lock
 git commit -m "Update dependencies (minor versions)"
 ```
 
-### 5. Handle Major Updates (One at a Time)
+### 5. Handle major updates (one at a time)
 
 ```bash
 # Check what prevents upgrading
@@ -73,7 +81,7 @@ git add composer.json composer.lock
 git commit -m "Update vendor/package to v2.0"
 ```
 
-### 6. Post-Update Verification
+### 6. Post-update verification
 
 ```bash
 # Security check again
@@ -89,11 +97,11 @@ composer bump
 
 ---
 
-## Handling Major Version Updates
+## Handling major version updates
 
-Major updates require special care because they may contain breaking changes.
+Major updates need extra care because they may contain breaking changes.
 
-### Investigation Phase
+### Investigation phase
 
 ```bash
 # What version are we on?
@@ -109,21 +117,21 @@ composer why vendor/package
 composer update vendor/package --with-all-dependencies --dry-run
 ```
 
-### Execution Phase
+### Execution phase
 
 1. Read the package's CHANGELOG.md and UPGRADE guide
 2. Search your codebase for deprecated API usage
 3. Update the constraint in `composer.json` if needed
 4. Run `composer update vendor/package --with-all-dependencies`
-5. Fix compilation/runtime errors
-6. Run tests, fix failures
-7. Commit with a descriptive message referencing the major version change
+5. Fix compilation and runtime errors
+6. Run tests and fix failures
+7. Commit with a descriptive message that references the major version change
 
-### When the Update Breaks Things
+### When the update breaks things
 
 ```bash
 # Revert and investigate
-git checkout - composer.json composer.lock
+git checkout -- composer.json composer.lock
 composer install
 
 # Try a more targeted approach
@@ -134,9 +142,9 @@ composer why-not vendor/package 3.0
 
 ---
 
-## Symfony-Specific Dependency Updates
+## Symfony-specific dependency updates
 
-### Updating Symfony Packages
+### Updating Symfony packages
 
 With Flex:
 
@@ -154,9 +162,9 @@ With Flex:
 composer update "symfony/*" --with-all-dependencies
 ```
 
-Note: Dependabot may ignore the `extra.symfony.require` setting. Use Renovate or manual updates for Symfony version bumps.
+Dependabot may ignore the `extra.symfony.require` setting. Use Renovate or manual updates for Symfony version bumps.
 
-### Updating Recipes After Package Updates
+### Updating recipes after package updates
 
 ```bash
 composer recipes           # check for recipe updates
@@ -165,9 +173,9 @@ composer recipes:update    # apply recipe patches
 
 ---
 
-## CI Integration
+## CI integration
 
-### Automated Security Checks
+### Automated security checks
 
 Add to your CI pipeline:
 
@@ -179,7 +187,7 @@ security-audit:
     - run: composer validate --strict
 ```
 
-### Outdated Dependency Reporting
+### Outdated dependency reporting
 
 ```yaml
 dependency-check:
@@ -192,9 +200,9 @@ dependency-check:
 
 ## Troubleshooting
 
-### Lock File Merge Conflicts
+### Lock file merge conflicts
 
-Composer 2.9+ can auto-recover from simple lock file conflicts. For complex ones:
+Composer 2.9+ can recover from simple lock file conflicts on its own. For complex ones:
 
 ```bash
 # Accept either side's composer.json (with your desired constraints)
@@ -211,7 +219,7 @@ composer update
 # Verify the result carefully
 ```
 
-### Dependency Hell
+### Dependency conflicts
 
 When multiple packages conflict:
 
@@ -226,9 +234,9 @@ composer why-not vendor/package-a 2.0
 composer update vendor/package-a vendor/package-b --with-all-dependencies
 ```
 
-### Platform Mismatches
+### Platform mismatches
 
-If dependencies install locally but fail in CI/production:
+If dependencies install locally but fail in CI or production, set the target platform:
 
 ```json
 {
@@ -241,4 +249,4 @@ If dependencies install locally but fail in CI/production:
 }
 ```
 
-This ensures Composer resolves for the target platform regardless of local PHP version.
+Composer then resolves for the target platform regardless of the local PHP version.
