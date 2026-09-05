@@ -1,12 +1,22 @@
 # Prioritization Frameworks
 
-Practical frameworks for deciding what to build first. Each framework suits different contexts - choose based on the decision being made.
+Frameworks for deciding what to build first. Each suits a different context, so choose by the decision you are making.
+
+## Contents
+
+- [Framework selection guide](#framework-selection-guide)
+- [MoSCoW Method](#moscow-method)
+- [RICE Scoring](#rice-scoring)
+- [Impact/Effort Matrix](#impacteffort-matrix)
+- [Kano Model](#kano-model)
+- [Weighted Scoring](#weighted-scoring)
+- [Combining frameworks](#combining-frameworks)
 
 ---
 
-## Framework Selection Guide
+## Framework selection guide
 
-| Framework | Best For | Speed | Rigor |
+| Framework | Best for | Speed | Rigor |
 |---|---|---|---|
 | MoSCoW | Initial scope classification | Fast | Low |
 | RICE | Comparing features quantitatively | Medium | High |
@@ -27,10 +37,10 @@ Classify each requirement into four categories. Use this for initial scope defin
 | **Could** | Desirable, minor value add. Include only if no extra effort or risk. | First to be cut. |
 | **Won't** | Explicitly excluded from this release. May be reconsidered later. | Document why it is out. |
 
-### How to Apply
+### How to apply
 
 1. List all requirements or user stories
-2. Start by identifying Musts - the absolute minimum for the release to deliver value
+2. Start by identifying Musts, the absolute minimum for the release to deliver value
 3. Challenge every Must: "Would we delay the release for this?" If no, demote to Should
 4. Classify remaining items as Should, Could, or Won't
 5. Validate: Musts should be roughly 60% of estimated effort, leaving room for Shoulds
@@ -49,7 +59,7 @@ Classify each requirement into four categories. Use this for initial scope defin
 
 ## RICE Scoring
 
-Quantitative framework for comparing features. Score each item on four dimensions and calculate a priority score.
+A quantitative framework for comparing features. Score each item on four dimensions and calculate a priority score.
 
 ### Dimensions
 
@@ -75,13 +85,13 @@ RICE Score = (Reach x Impact x Confidence) / Effort
 | API rate limiting | 500 | 3 | 100% | 1 | 1500 |
 | Email notifications | 3000 | 0.5 | 80% | 2 | 600 |
 
-**Decision**: API rate limiting scores highest - high confidence, low effort, strong impact on reliability.
+**Decision**: API rate limiting scores highest: high confidence, low effort, strong impact on reliability.
 
 ### Tips
 
 - Be honest about confidence. Low confidence should lower the score, not be ignored.
 - Compare scores relatively, not absolutely. The exact number matters less than the ranking.
-- Revisit scores when new data arrives - RICE is not a one-time exercise.
+- Revisit scores when new data arrives. RICE is not a one-time exercise.
 
 ---
 
@@ -101,38 +111,38 @@ A 2x2 matrix for quick visual sorting. Best used in workshops or when speed matt
                 +-----------------+-----------------+
 ```
 
-### How to Apply
+### How to apply
 
 1. Draw the matrix on a whiteboard or shared document
 2. Have the team place each feature/requirement on the matrix
-3. Discuss items where placement is disputed - the discussion is the value
+3. Discuss items where placement is disputed. The discussion is the value
 4. Prioritize: Quick Wins first, Big Bets next (with planning), Fill-ins if capacity allows, Avoid items get cut
 
-### Effort Estimation Guide
+### Effort estimation guide
 
-| Effort Level | Characteristics |
+| Effort level | Characteristics |
 |---|---|
 | Low | Single component, well-understood, no dependencies, < 1 week |
 | Medium | Multiple components, some unknowns, 1-3 weeks |
-| High | Cross-cutting, significant unknowns, dependencies, > 3 weeks |
+| High | Cross-cutting, large unknowns, dependencies, > 3 weeks |
 
 ---
 
 ## Kano Model
 
-Classifies features by how they affect user satisfaction. Useful for understanding which features delight users versus which are expected.
+Classifies features by how they affect user satisfaction. It shows which features delight users and which are simply expected.
 
 ### Categories
 
-| Category | If Present | If Absent | Strategy |
+| Category | If present | If absent | Strategy |
 |---|---|---|---|
-| **Basic (Must-be)** | No satisfaction increase | Strong dissatisfaction | Always include - these are table stakes |
+| **Basic (Must-be)** | No satisfaction increase | Strong dissatisfaction | Always include; these are table stakes |
 | **Performance (One-dimensional)** | Satisfaction increases proportionally | Dissatisfaction increases proportionally | Invest based on competitive positioning |
-| **Excitement (Attractive)** | Disproportionate satisfaction | No dissatisfaction | Include selectively - these differentiate |
+| **Excitement (Attractive)** | Disproportionate satisfaction | No dissatisfaction | Include selectively; these differentiate |
 | **Indifferent** | No effect | No effect | Do not build |
 | **Reverse** | Causes dissatisfaction | No effect | Actively avoid |
 
-### How to Identify Categories
+### How to identify categories
 
 For each feature, ask users two questions:
 
@@ -141,7 +151,7 @@ For each feature, ask users two questions:
 
 Response options for both: Like it / Expect it / Neutral / Can live with it / Dislike it
 
-### Evaluation Table
+### Evaluation table
 
 | | Like (Functional) | Expect | Neutral | Live with | Dislike |
 |---|---|---|---|---|---|
@@ -155,16 +165,16 @@ Response options for both: Like it / Expect it / Neutral / Can live with it / Di
 
 | Feature | Category | Action |
 |---|---|---|
-| User login works reliably | Basic | Must have - users expect it |
-| Search returns results in < 1s | Performance | Invest - directly impacts satisfaction |
-| Smart autocomplete suggestions | Excitement | Include - competitive differentiator |
-| Background color customization | Indifferent | Skip - no one cares |
+| User login works reliably | Basic | Must have, users expect it |
+| Search returns results in < 1s | Performance | Invest, it directly affects satisfaction |
+| Smart autocomplete suggestions | Excitement | Include, it differentiates |
+| Background color customization | Indifferent | Skip, no one cares |
 
 ---
 
 ## Weighted Scoring
 
-For complex decisions with multiple criteria. Assign weights to evaluation criteria, score each option, and calculate weighted totals.
+For complex decisions with several criteria. Assign weights to the criteria, score each option, and calculate weighted totals.
 
 ### Setup
 
@@ -183,7 +193,7 @@ Criteria weights:
 | Revenue impact | 4 | Business sustainability |
 | Technical feasibility | 3 | Execution risk |
 | Strategic alignment | 3 | Long-term direction |
-| Time to market | 2 | Speed matters but less than value |
+| Time to market | 2 | Speed matters, but less than value |
 
 Feature comparison:
 
@@ -193,13 +203,13 @@ Feature comparison:
 | Real-time sync | 5 (25) | 5 (20) | 2 (6) | 5 (15) | 1 (2) | **68** |
 | Admin dashboard | 3 (15) | 2 (8) | 4 (12) | 3 (9) | 5 (10) | **54** |
 
-**Decision**: Real-time sync and Bulk export score similarly. Real-time sync has higher value but lower feasibility - plan it carefully. Bulk export is the safer bet for immediate delivery.
+**Decision**: Real-time sync and Bulk export score similarly. Real-time sync has higher value but lower feasibility, so plan it carefully. Bulk export is the safer bet for immediate delivery.
 
 ---
 
-## Combining Frameworks
+## Combining frameworks
 
-No single framework handles every situation. A practical approach:
+No single framework fits every situation. A workable sequence:
 
 1. **Start with MoSCoW** to establish initial scope boundaries
 2. **Apply RICE** to rank the Must and Should items against each other
@@ -207,9 +217,9 @@ No single framework handles every situation. A practical approach:
 4. **Apply Kano** when user research data is available and you need to understand satisfaction drivers
 5. **Use Weighted Scoring** for high-stakes decisions with multiple stakeholders who disagree on priorities
 
-### Anti-Patterns
+### Anti-patterns
 
-| Anti-Pattern | Problem | Fix |
+| Anti-pattern | Problem | Fix |
 |---|---|---|
 | Everything is P0 | No actual prioritization happened | Force-rank: if everything is P0, nothing is |
 | Scoring without data | Numbers create false precision | Use confidence scores or qualify with "low confidence" |

@@ -1,14 +1,24 @@
 # Delivery Planning Guide
 
-A practical guide for planning project delivery using stage-gate principles. Covers work breakdown, dependency mapping, critical path identification, and stage planning.
+A guide to planning project delivery with stage-gate principles. Covers work breakdown, dependency mapping, critical path identification, stage planning, and estimation.
+
+## Contents
+
+- [Planning approach](#planning-approach)
+- [Work breakdown structure](#work-breakdown-structure)
+- [Dependency mapping](#dependency-mapping)
+- [Critical path](#critical-path)
+- [Stage planning](#stage-planning)
+- [Estimation guidelines](#estimation-guidelines)
+- [Planning checklist](#planning-checklist)
 
 ---
 
-## Planning Approach
+## Planning approach
 
-### Product-Based Planning
+### Product-based planning
 
-Plan what to deliver before planning how to deliver it. This approach from PRINCE2 ensures the team focuses on outcomes, not activities.
+Plan what to deliver before planning how to deliver it. This PRINCE2 approach keeps the team focused on outcomes instead of activities.
 
 | Step | Activity | Output |
 |---|---|---|
@@ -18,20 +28,20 @@ Plan what to deliver before planning how to deliver it. This approach from PRINC
 | 4 | Estimate effort for each product | Effort estimates |
 | 5 | Assign products to stages | Stage plan |
 
-### Product Description Template
+### Product description template
 
 | Field | Content |
 |---|---|
 | **Product** | [Name of the deliverable] |
 | **Purpose** | [Why this product is needed] |
-| **Composition** | [What this product consists of - its parts] |
+| **Composition** | [What this product consists of: its parts] |
 | **Quality criteria** | [How to determine if the product is acceptable] |
 | **Quality method** | [How quality will be checked - review, test, demo] |
 | **Dependencies** | [What must exist before this product can be created] |
 | **Produced by** | [Role responsible for creating it] |
 | **Approved by** | [Role responsible for accepting it] |
 
-### Example Product Descriptions
+### Example product descriptions
 
 **Product: Order API Endpoints**
 
@@ -47,16 +57,16 @@ Plan what to deliver before planning how to deliver it. This approach from PRINC
 
 ---
 
-## Work Breakdown Structure
+## Work breakdown structure
 
-### How to Break Down Work
+### How to break down work
 
 1. Start with the final deliverable
 2. Decompose into major components
 3. Decompose each component into work packages
 4. Stop when each work package can be estimated with reasonable confidence (typically 1-5 days of effort)
 
-### Work Breakdown Template
+### Work breakdown template
 
 ```
 1. [Project/Feature Name]
@@ -70,7 +80,7 @@ Plan what to deliver before planning how to deliver it. This approach from PRINC
        1.3.1 [Work package]
 ```
 
-### Example: E-Commerce Order Feature
+### Example: e-commerce order feature
 
 ```
 1. Order Management Feature
@@ -104,9 +114,9 @@ Plan what to deliver before planning how to deliver it. This approach from PRINC
 
 ---
 
-## Dependency Mapping
+## Dependency mapping
 
-### Dependency Types
+### Dependency types
 
 | Type | Description | Example |
 |---|---|---|
@@ -115,7 +125,7 @@ Plan what to deliver before planning how to deliver it. This approach from PRINC
 | **Finish-to-Finish (FF)** | B cannot finish until A finishes | Documentation cannot be finalized until implementation is complete |
 | **External** | Dependency on something outside the team's control | Third-party API must be available; infrastructure must be provisioned |
 
-### Dependency Matrix
+### Dependency matrix
 
 | Work Package | Depends On | Dependency Type | Risk if Delayed |
 |---|---|---|---|
@@ -124,21 +134,21 @@ Plan what to deliver before planning how to deliver it. This approach from PRINC
 | 1.4.1 Payment integration | External: Payment API sandbox | External | Blocks checkout flow testing |
 | 1.5.4 QA test execution | 1.2.x All API endpoints | Finish-to-Start | Delays quality sign-off |
 
-### Reducing Dependency Risk
+### Reducing dependency risk
 
-| Strategy | When to Use |
+| Strategy | When to use |
 |---|---|
 | **Parallelize** | Start items that have no dependency between them at the same time |
 | **Mock dependencies** | Frontend develops against mock API while backend builds the real one |
 | **Interface-first** | Agree on API contracts early so both sides can work independently |
 | **Decouple** | Design components so they can be built and tested independently |
-| **Early integration** | Integrate early and often rather than waiting until everything is done |
+| **Early integration** | Integrate early and often instead of waiting until everything is done |
 
 ---
 
-## Critical Path
+## Critical path
 
-### Identifying the Critical Path
+### Identifying the critical path
 
 The critical path is the longest sequence of dependent tasks. Any delay on the critical path delays the entire project.
 
@@ -157,32 +167,32 @@ Path C: Design (2d) -> Frontend Components (6d) -> Frontend Integration (4d) -> 
 Critical Path: A (19 days)
 ```
 
-### Managing the Critical Path
+### Managing the critical path
 
 | Action | Effect |
 |---|---|
 | Add resources to critical path tasks | May reduce duration (diminishing returns beyond a point) |
 | Overlap critical path tasks where possible | Reduces overall duration (increases risk) |
 | Reduce scope of critical path tasks | Directly reduces duration |
-| Move tasks off the critical path | Does not help - they are not the bottleneck |
+| Move tasks off the critical path | Does not help, because they are not the bottleneck |
 | Monitor critical path tasks closely | Early warning of delays |
 
 ---
 
-## Stage Planning
+## Stage planning
 
-### Stage Boundaries
+### Stage boundaries
 
 A stage is a natural breakpoint where the project board reviews progress and decides whether to proceed.
 
 | Guideline | Rationale |
 |---|---|
 | Each stage produces at least one deliverable | Stages must show progress |
-| Stage duration is 2-6 weeks | Short enough to maintain control, long enough to deliver value |
+| Stage duration is 2-6 weeks | Short enough to keep control, long enough to deliver value |
 | Stage boundary aligns with a decision point | Natural time to reassess business case and plan |
 | Each stage has clear entry and exit criteria | Objective basis for stage gate decisions |
 
-### Stage Plan Template
+### Stage plan template
 
 | Field | Content |
 |---|---|
@@ -197,7 +207,7 @@ A stage is a natural breakpoint where the project board reviews progress and dec
 | **Entry criteria** | [What must be true to start this stage] |
 | **Exit criteria** | [What must be true to end this stage] |
 
-### Example Stage Plan
+### Example stage plan
 
 **Stage 2: Backend Implementation**
 
@@ -215,18 +225,18 @@ A stage is a natural breakpoint where the project board reviews progress and dec
 
 ---
 
-## Estimation Guidelines
+## Estimation guidelines
 
-### Estimation Techniques
+### Estimation techniques
 
-| Technique | When to Use | Accuracy |
+| Technique | When to use | Accuracy |
 |---|---|---|
 | **Expert judgment** | Familiar work with experienced team | Medium-High |
 | **Analogous** | Similar to previous work | Medium |
 | **Three-point** | Uncertain work | Medium-High |
 | **T-shirt sizing** | Early planning, relative comparison | Low-Medium |
 
-### Three-Point Estimation
+### Three-point estimation
 
 For each work package, estimate three values:
 
@@ -234,7 +244,7 @@ For each work package, estimate three values:
 |---|---|
 | **Optimistic (O)** | Everything goes right, no surprises |
 | **Most Likely (M)** | Normal conditions, typical obstacles |
-| **Pessimistic (P)** | Significant problems arise (but the task is still feasible) |
+| **Pessimistic (P)** | Major problems arise (but the task is still feasible) |
 
 **Expected duration**:
 
@@ -242,7 +252,7 @@ For each work package, estimate three values:
 Expected = (O + 4M + P) / 6
 ```
 
-### Common Estimation Mistakes
+### Common estimation mistakes
 
 | Mistake | Fix |
 |---|---|
@@ -255,12 +265,12 @@ Expected = (O + 4M + P) / 6
 
 ---
 
-## Planning Checklist
+## Planning checklist
 
 Before presenting a stage plan:
 
 - [ ] All deliverables have product descriptions with quality criteria
-- [ ] Work breakdown is detailed enough for confident estimation (1-5 day packages)
+- [ ] Work breakdown is detailed enough for a confident estimate (1-5 day packages)
 - [ ] Dependencies are mapped and external dependencies have owners
 - [ ] Critical path is identified and the total duration is understood
 - [ ] Estimates include coding, testing, review, documentation, and deployment

@@ -1,10 +1,19 @@
 # Technology Evaluation Matrix
 
-A structured framework for evaluating technology choices. Use this when the team faces a decision between multiple technologies, libraries, or infrastructure options.
+A framework for evaluating technology choices. Use it when the team must choose between technologies, libraries, or infrastructure options.
+
+## Contents
+
+- [When to use](#when-to-use)
+- [Evaluation process](#evaluation-process)
+- [Evaluation template](#evaluation-template)
+- [Example: Choosing a Search Library](#example-choosing-a-search-library)
+- [Proof of concept checklist](#proof-of-concept-checklist)
+- [Common evaluation pitfalls](#common-evaluation-pitfalls)
 
 ---
 
-## When to Use
+## When to use
 
 - Choosing between competing libraries or frameworks for a specific purpose
 - Evaluating whether to adopt a new technology or stick with the current one
@@ -13,9 +22,9 @@ A structured framework for evaluating technology choices. Use this when the team
 
 ---
 
-## Evaluation Process
+## Evaluation process
 
-### Step 1: Define the Decision Context
+### Step 1: Define the decision context
 
 Before scoring anything, document what you are deciding and why.
 
@@ -27,18 +36,18 @@ Before scoring anything, document what you are deciding and why.
 | **Timeline** | [When must the decision be made] |
 | **Evaluators** | [Who is involved in the evaluation] |
 
-### Step 2: Define Evaluation Criteria
+### Step 2: Define evaluation criteria
 
 Select criteria relevant to the decision. Not all criteria apply to every evaluation.
 
-#### Standard Criteria Set
+#### Standard criteria set
 
-| Criterion | Description | Typical Weight (1-5) |
+| Criterion | Description | Typical weight (1-5) |
 |---|---|---|
 | **Functional fit** | Does it solve the actual problem? Does it cover all required use cases? | 5 |
 | **Team expertise** | Does the team know this technology? How steep is the learning curve? | 4 |
 | **Community and ecosystem** | Is there an active community? Are there plugins, extensions, and integrations? | 3 |
-| **Documentation quality** | Is the documentation comprehensive, accurate, and maintained? | 3 |
+| **Documentation quality** | Is the documentation complete, accurate, and maintained? | 3 |
 | **Performance** | Does it meet performance requirements under expected load? | 3-5 |
 | **Security** | Are there known vulnerabilities? Is there a responsible disclosure process? How often are security patches released? | 4 |
 | **Maintenance burden** | How much ongoing effort is required? Updates, patches, configuration management. | 4 |
@@ -49,11 +58,11 @@ Select criteria relevant to the decision. Not all criteria apply to every evalua
 | **Vendor lock-in risk** | How difficult would it be to switch away from this choice? | 3 |
 | **Scalability** | Does it support the expected growth trajectory? | 3 |
 
-### Step 3: Identify Candidates
+### Step 3: Identify candidates
 
 List all serious candidates. Include the "do nothing" or "current solution" option as a baseline.
 
-### Step 4: Score Each Candidate
+### Step 4: Score each candidate
 
 Score each candidate against each criterion using a 1-5 scale.
 
@@ -65,13 +74,13 @@ Score each candidate against each criterion using a 1-5 scale.
 | 2 | Poor - partially meets the criterion, significant gaps |
 | 1 | Unacceptable - does not meet the criterion |
 
-### Step 5: Calculate Weighted Scores
+### Step 5: Calculate weighted scores
 
 For each candidate: multiply each criterion score by its weight, sum all weighted scores.
 
 ---
 
-## Evaluation Template
+## Evaluation template
 
 ### Decision: [Title]
 
@@ -79,7 +88,7 @@ For each candidate: multiply each criterion score by its weight, sum all weighte
 
 **Constraints**: [List of non-negotiable requirements]
 
-#### Criteria and Weights
+#### Criteria and weights
 
 | Criterion | Weight | Rationale for Weight |
 |---|---|---|
@@ -89,7 +98,7 @@ For each candidate: multiply each criterion score by its weight, sum all weighte
 | Maintenance burden | 3 | Long-term cost matters |
 | Community/ecosystem | 3 | Need plugins and support |
 
-#### Candidate Scores
+#### Candidate scores
 
 | Criterion (Weight) | Candidate A | Candidate B | Candidate C (Current) |
 |---|---|---|---|
@@ -102,9 +111,9 @@ For each candidate: multiply each criterion score by its weight, sum all weighte
 
 #### Analysis
 
-[Interpret the scores. Raw numbers do not tell the whole story.]
+[Interpret the scores. The raw numbers do not tell the whole story.]
 
-- Candidate C (current solution) scores highest due to team expertise and integration - the cost of switching is real.
+- Candidate C (current solution) scores highest because of team expertise and integration. The cost of switching is real.
 - Candidate B has the best functional fit but lower community support.
 - If functional fit is the deciding factor and the team has time to learn, Candidate B is the best choice.
 - If stability and speed of delivery matter most, staying with Candidate C and working around its functional gaps is the pragmatic choice.
@@ -113,7 +122,7 @@ For each candidate: multiply each criterion score by its weight, sum all weighte
 
 [State the decision and primary rationale]
 
-#### Follow-up Actions
+#### Follow-up actions
 
 - [ ] [Action items resulting from the decision]
 
@@ -127,7 +136,7 @@ For each candidate: multiply each criterion score by its weight, sum all weighte
 
 **Constraints**: Must integrate with the existing backend framework, must support French and English, team of 3 backend developers.
 
-#### Criteria and Weights
+#### Criteria and weights
 
 | Criterion | Weight | Rationale |
 |---|---|---|
@@ -137,7 +146,7 @@ For each candidate: multiply each criterion score by its weight, sum all weighte
 | Team expertise | 3 | Willing to invest in learning |
 | Cost | 3 | Budget-conscious but not the primary driver |
 
-#### Candidate Scores
+#### Candidate scores
 
 | Criterion (Weight) | Elasticsearch | Meilisearch | PostgreSQL FTS |
 |---|---|---|---|
@@ -150,18 +159,18 @@ For each candidate: multiply each criterion score by its weight, sum all weighte
 
 #### Analysis
 
-- PostgreSQL FTS scores highest overall due to zero infrastructure overhead and team familiarity
-- However, it scores lowest on search quality - the reason we started this evaluation
-- Meilisearch offers a strong middle ground: good search quality, low operational burden, reasonable cost
+- PostgreSQL FTS scores highest overall because it adds no infrastructure and the team knows it
+- However, it scores lowest on search quality, which is the reason the evaluation started
+- Meilisearch is a middle ground: good search quality, low operational burden, reasonable cost
 - Elasticsearch is the most capable but the operational cost is high for a small team
 
 #### Decision
 
-Adopt Meilisearch. It provides sufficient search quality improvement over PostgreSQL FTS while keeping operational complexity manageable. The framework integration gap can be bridged with a thin adapter service. Document this in ADR-012.
+Adopt Meilisearch. It improves search quality enough over PostgreSQL FTS while keeping operational complexity manageable. The framework integration gap can be bridged with a thin adapter service. Document this in ADR-012.
 
 ---
 
-## Proof of Concept Checklist
+## Proof of concept checklist
 
 When scores are close or confidence is low, run a proof of concept before deciding.
 
@@ -173,9 +182,9 @@ When scores are close or confidence is low, run a proof of concept before decidi
 | Integration | Connect to the existing application | 1-2 days |
 | Evaluate | Score the candidate based on hands-on experience, update the matrix | 1 day |
 
-### PoC Success Criteria
+### PoC success criteria
 
-Define before starting - what must be true for the PoC to be considered successful:
+Define before starting what must be true for the PoC to count as a success:
 
 - [ ] Core use case works end-to-end
 - [ ] Performance meets the target under realistic data volume
@@ -185,13 +194,13 @@ Define before starting - what must be true for the PoC to be considered successf
 
 ---
 
-## Common Evaluation Pitfalls
+## Common evaluation pitfalls
 
 | Pitfall | Description | Mitigation |
 |---|---|---|
 | **Shiny object bias** | Favoring new technology because it is new | Always include the current solution as a candidate |
-| **Resume-driven development** | Choosing technology because the team wants to learn it | Weight "team wants to learn" at 0 - it is not a business criterion |
-| **Ignoring switching costs** | Underestimating the cost of adopting something new | Explicitly score migration effort and learning curve |
-| **Vendor demo bias** | Basing the decision on a polished demo, not real-world usage | Always run a PoC with your actual data and use cases |
+| **Resume-driven development** | Choosing technology because the team wants to learn it | Weight "team wants to learn" at 0. It is not a business criterion |
+| **Ignoring switching costs** | Underestimating the cost of adopting something new | Score migration effort and learning curve explicitly |
+| **Vendor demo bias** | Basing the decision on a polished demo instead of real-world usage | Always run a PoC with your actual data and use cases |
 | **Analysis paralysis** | Evaluating endlessly without deciding | Set a deadline. If scores are within 10%, pick the one with lower risk. |
-| **Survivor bias** | Only hearing success stories from other teams | Actively search for failure stories and limitations |
+| **Survivor bias** | Only hearing success stories from other teams | Search for failure stories and limitations |

@@ -2,11 +2,21 @@
 
 How to write acceptance criteria that are testable, unambiguous, and complete. Good criteria are the contract between the product manager and the rest of the team.
 
+## Contents
+
+- [What good acceptance criteria look like](#what-good-acceptance-criteria-look-like)
+- [Given/When/Then Format](#givenwhenthen-format)
+- [Checklist format](#checklist-format)
+- [Edge cases to always consider](#edge-cases-to-always-consider)
+- [Writing process](#writing-process)
+- [Acceptance criteria for API endpoints](#acceptance-criteria-for-api-endpoints)
+- [Review checklist](#review-checklist)
+
 ---
 
-## What Good Acceptance Criteria Look Like
+## What good acceptance criteria look like
 
-| Property | Meaning | Example of Violation |
+| Property | Meaning | Example of violation |
 |---|---|---|
 | **Testable** | A QA engineer can verify pass/fail without asking questions | "The system handles errors gracefully" |
 | **Specific** | No room for interpretation | "The form is user-friendly" |
@@ -83,11 +93,11 @@ And the response body contains an "error" object with code "access_denied"
 
 ---
 
-## Checklist Format
+## Checklist format
 
-Use the checklist format when Given/When/Then feels too verbose for simple criteria.
+Use the checklist format when Given/When/Then is too long for simple criteria.
 
-### When to Use Checklist Instead of Given/When/Then
+### When to use a checklist instead of Given/When/Then
 
 | Use Given/When/Then | Use Checklist |
 |---|---|
@@ -114,13 +124,13 @@ Use the checklist format when Given/When/Then feels too verbose for simple crite
 
 ---
 
-## Edge Cases to Always Consider
+## Edge cases to always consider
 
-Every set of acceptance criteria should address these categories. Not every category applies to every feature, but consider each one.
+Every set of acceptance criteria should address these categories. Not every category applies to every feature, but check each one.
 
-### Input Edge Cases
+### Input edge cases
 
-| Category | Questions to Ask |
+| Category | Questions to ask |
 |---|---|
 | Empty input | What happens when required fields are blank? |
 | Maximum length | What happens at the character/size limit? What happens beyond it? |
@@ -128,9 +138,9 @@ Every set of acceptance criteria should address these categories. Not every cate
 | Boundary values | What happens at 0, 1, max, max+1? |
 | Invalid format | What happens with wrong data types, malformed dates, negative numbers? |
 
-### State Edge Cases
+### State edge cases
 
-| Category | Questions to Ask |
+| Category | Questions to ask |
 |---|---|
 | First use | What does the user see when there is no data yet (empty state)? |
 | Concurrent access | What happens if two users modify the same resource simultaneously? |
@@ -138,18 +148,18 @@ Every set of acceptance criteria should address these categories. Not every cate
 | Partial failure | What happens if step 2 of 3 fails? Is step 1 rolled back? |
 | Duplicate action | What happens if the user submits the same form twice? |
 
-### Permission Edge Cases
+### Permission edge cases
 
-| Category | Questions to Ask |
+| Category | Questions to ask |
 |---|---|
 | Unauthenticated | What does an anonymous user see? |
 | Insufficient role | What does a user without the required role see? |
 | Resource ownership | Can users only access their own resources, or shared ones too? |
 | Disabled account | What happens when a disabled account tries to access the feature? |
 
-### Temporal Edge Cases
+### Temporal edge cases
 
-| Category | Questions to Ask |
+| Category | Questions to ask |
 |---|---|
 | Timeout | What happens when an API call takes longer than expected? |
 | Rate limiting | What happens when the user exceeds the rate limit? |
@@ -158,22 +168,22 @@ Every set of acceptance criteria should address these categories. Not every cate
 
 ---
 
-## Writing Process
+## Writing process
 
-### Step-by-Step
+### Step by step
 
-1. **Start with the happy path** - the main success scenario the user story describes
-2. **Add validation errors** - what happens when input is wrong?
-3. **Add authorization cases** - what happens when the user lacks permission?
-4. **Add edge cases** - use the tables above as a checklist
-5. **Add non-functional criteria** - performance, accessibility, security where relevant
-6. **Review for ambiguity** - read each criterion as a QA engineer would. Can you verify it without asking questions?
+1. **Start with the happy path**, the main success scenario the user story describes
+2. **Add validation errors**: what happens when input is wrong?
+3. **Add authorization cases**: what happens when the user lacks permission?
+4. **Add edge cases** using the tables above as a checklist
+5. **Add non-functional criteria**: performance, accessibility, and security where relevant
+6. **Review for ambiguity**: read each criterion as a QA engineer would. Can you verify it without asking questions?
 
-### Ambiguity Detection
+### Ambiguity detection
 
 Replace these words with specific, measurable alternatives:
 
-| Ambiguous Word | Problem | Better |
+| Ambiguous word | Problem | Better |
 |---|---|---|
 | "appropriate" | Appropriate to whom? | State the specific behavior |
 | "quickly" | How quick? | "Within 200ms at p95" |
@@ -186,13 +196,13 @@ Replace these words with specific, measurable alternatives:
 
 ---
 
-## Acceptance Criteria for API Endpoints
+## Acceptance criteria for API endpoints
 
-### Endpoint Criteria Pattern
+### Endpoint criteria pattern
 
 For each API endpoint, cover these scenarios:
 
-| Scenario | Expected Behavior |
+| Scenario | Expected behavior |
 |---|---|
 | Valid request with valid auth | Returns expected response code and body shape |
 | Valid request without auth | Returns 401 with error body |
@@ -201,7 +211,7 @@ For each API endpoint, cover these scenarios:
 | Resource not found | Returns 404 with error body |
 | Duplicate creation attempt | Returns 409 with conflict error |
 
-### Data Model Criteria Pattern
+### Data model criteria pattern
 
 For each entity/model change, cover:
 
@@ -211,7 +221,7 @@ For each entity/model change, cover:
 - [ ] Cascade operations (persist, remove) are specified
 - [ ] Migration is reversible (up and down)
 
-### Event/Message Criteria Pattern
+### Event/message criteria pattern
 
 For async operations using a message queue or event bus:
 
@@ -227,7 +237,7 @@ And after 3 failures, the message is sent to the dead-letter queue
 
 ---
 
-## Review Checklist
+## Review checklist
 
 Before handing acceptance criteria to the team:
 
@@ -237,5 +247,5 @@ Before handing acceptance criteria to the team:
 - [ ] At least one authorization failure scenario exists
 - [ ] Edge cases have been considered (use the tables above)
 - [ ] No ambiguous words remain (appropriate, quickly, user-friendly, etc.)
-- [ ] Non-functional requirements have specific measurable targets
-- [ ] Criteria are independent - no criterion depends on another passing first
+- [ ] Non-functional requirements have specific, measurable targets
+- [ ] Criteria are independent: no criterion depends on another passing first

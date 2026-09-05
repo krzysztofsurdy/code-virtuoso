@@ -1,10 +1,21 @@
 # Component Architecture Guide
 
-Principles and patterns for designing frontend component hierarchies. Covers decomposition strategies, composition patterns, state management decisions, and naming conventions.
+Principles and patterns for designing frontend component hierarchies. Covers decomposition, composition patterns, state management decisions, prop design, and naming conventions.
+
+## Contents
+
+- [Component types](#component-types)
+- [Decomposition strategy](#decomposition-strategy)
+- [Composition patterns](#composition-patterns)
+- [State management decisions](#state-management-decisions)
+- [Prop design](#prop-design)
+- [Naming conventions](#naming-conventions)
+- [Component checklist](#component-checklist)
+- [Anti-patterns](#anti-patterns)
 
 ---
 
-## Component Types
+## Component types
 
 | Type | Purpose | Characteristics |
 |---|---|---|
@@ -12,13 +23,13 @@ Principles and patterns for designing frontend component hierarchies. Covers dec
 | **Container** | Manage state and data fetching | Orchestrate presentational components, handle API calls |
 | **Layout** | Define page structure | Grid, sidebar, header, footer arrangements |
 | **Page** | Route-level entry points | Compose containers and layouts for a specific route |
-| **Shared/Library** | Reusable across features | Button, Modal, Table, Input - generic, highly configurable |
+| **Shared/Library** | Reusable across features | Button, Modal, Table, Input (generic and configurable) |
 
 ---
 
-## Decomposition Strategy
+## Decomposition strategy
 
-### When to Split a Component
+### When to split a component
 
 | Signal | Action |
 |---|---|
@@ -28,7 +39,7 @@ Principles and patterns for designing frontend component hierarchies. Covers dec
 | Component manages both data fetching and rendering | Split into container + presentational |
 | Testing requires mocking many dependencies | Component has too many responsibilities |
 
-### How to Decompose
+### How to decompose
 
 1. **Identify boundaries**: Each visual section or logical concern becomes a candidate component
 2. **Name the component**: If you struggle to name it, the boundary is wrong
@@ -36,7 +47,7 @@ Principles and patterns for designing frontend component hierarchies. Covers dec
 4. **Extract from the top down**: Start with the page, identify containers, then presentational components
 5. **Verify independence**: Can this component be tested without rendering its parent?
 
-### Component Tree Example
+### Component tree example
 
 ```
 ProductListPage (page)
@@ -55,11 +66,11 @@ ProductListPage (page)
 
 ---
 
-## Composition Patterns
+## Composition patterns
 
 ### Slot/Children Pattern
 
-Pass content to a component rather than configuring it with props. Prefer composition over configuration.
+Pass content to a component instead of configuring it with props. Prefer composition over configuration.
 
 **Instead of:**
 
@@ -126,7 +137,7 @@ Use when:
 
 ### Higher-Order Component Pattern
 
-Wrap a component to add behavior. Use sparingly - composition is usually clearer.
+Wrap a component to add behavior. Use it sparingly, because composition is usually clearer.
 
 ```
 const withAuth = (Component) => {
@@ -140,9 +151,9 @@ const withAuth = (Component) => {
 
 ---
 
-## State Management Decisions
+## State management decisions
 
-### State Location Matrix
+### State location matrix
 
 | State Type | Where to Keep It | Examples |
 |---|---|---|
@@ -152,7 +163,7 @@ const withAuth = (Component) => {
 | **URL state** | Router/URL parameters | Filters, pagination, selected tab, search query |
 | **Global app state** | State management store | Authenticated user, feature flags, theme preference |
 
-### Decision Flowchart
+### Decision flowchart
 
 ```
 Is this state used by only one component?
@@ -166,7 +177,7 @@ Is this state used by only one component?
         NO  -> Global state store
 ```
 
-### Rules for State
+### Rules for state
 
 | Rule | Rationale |
 |---|---|
@@ -174,23 +185,23 @@ Is this state used by only one component?
 | Derive values instead of storing them | If a value can be computed from other state, do not duplicate it |
 | Single source of truth | Each piece of state has exactly one owner |
 | URL is state | Anything the user should be able to bookmark or share belongs in the URL |
-| Minimize global state | Global state is shared mutable state - the less, the better |
+| Minimize global state | Global state is shared mutable state, so the less the better |
 
 ---
 
-## Prop Design
+## Prop design
 
-### Prop Guidelines
+### Prop guidelines
 
 | Guideline | Example |
 |---|---|
 | Use descriptive names | `isLoading` not `flag`, `onSubmit` not `handler` |
 | Prefer primitives over objects | `userName` not `user` when only the name is needed |
 | Use consistent naming for callbacks | `onSomething` pattern: `onClick`, `onChange`, `onSubmit` |
-| Provide sensible defaults | `limit = 25` not requiring the consumer to always specify |
+| Provide defaults | `limit = 25` instead of requiring every consumer to set it |
 | Avoid boolean props that invert meaning | `isVisible` not `isHidden` (double negatives are confusing) |
 
-### Prop Count Limits
+### Prop count limits
 
 | Prop Count | Assessment | Action |
 |---|---|---|
@@ -201,9 +212,9 @@ Is this state used by only one component?
 
 ---
 
-## Naming Conventions
+## Naming conventions
 
-### Component Names
+### Component names
 
 | Convention | Example |
 |---|---|
@@ -213,7 +224,7 @@ Is this state used by only one component?
 | Suffix containers with Container (if using the pattern) | `ProductListContainer` |
 | Be specific, not generic | `UserAvatarUploader` not `Uploader` |
 
-### File Structure
+### File structure
 
 ```
 src/
@@ -241,15 +252,15 @@ src/
 
 ---
 
-## Component Checklist
+## Component checklist
 
 Before considering a component done:
 
 | # | Check |
 |---|---|
 | 1 | Component has a single, clear responsibility |
-| 2 | Props interface is minimal and well-typed |
-| 3 | Component handles its error state (not just happy path) |
+| 2 | Props interface is minimal and typed |
+| 3 | Component handles its error state (not only the happy path) |
 | 4 | Component handles empty/loading states |
 | 5 | Component is keyboard accessible |
 | 6 | Component does not fetch data it does not directly need |
@@ -260,13 +271,13 @@ Before considering a component done:
 
 ---
 
-## Anti-Patterns
+## Anti-patterns
 
 | Anti-Pattern | Problem | Fix |
 |---|---|---|
 | Prop drilling through 4+ levels | Tight coupling, painful refactoring | Use composition, context, or state management |
 | God component (500+ lines) | Untestable, hard to understand | Decompose into focused sub-components |
-| Unnecessary abstraction | Wrapper components that add no value | Inline simple logic, extract only when reuse is proven |
+| Unnecessary abstraction | Wrapper components that add nothing | Inline simple logic, extract only when reuse is proven |
 | Premature optimization | Memoizing everything "just in case" | Measure first, optimize only proven bottlenecks |
 | Component knows about its parent | Child adjusts behavior based on parent context | Pass behavior via props, keep components independent |
 | Mixed concerns | Data fetching, business logic, and rendering in one component | Split into container and presentational |

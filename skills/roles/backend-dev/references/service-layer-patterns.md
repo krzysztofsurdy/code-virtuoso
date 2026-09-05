@@ -2,9 +2,19 @@
 
 Patterns for organizing business logic in backend applications. Covers service class design, command/query separation, transaction boundaries, and common structures.
 
+## Contents
+
+- [Service layer principles](#service-layer-principles)
+- [Service class structure](#service-class-structure)
+- [Command/query separation](#commandquery-separation)
+- [Transaction boundaries](#transaction-boundaries)
+- [Exception handling in services](#exception-handling-in-services)
+- [Common service patterns](#common-service-patterns)
+- [Anti-patterns](#anti-patterns)
+
 ---
 
-## Service Layer Principles
+## Service layer principles
 
 | Principle | Meaning |
 |---|---|
@@ -16,9 +26,9 @@ Patterns for organizing business logic in backend applications. Covers service c
 
 ---
 
-## Service Class Structure
+## Service class structure
 
-### Basic Service (Pseudocode)
+### Basic service (pseudocode)
 
 ```
 class ProductService:
@@ -42,7 +52,7 @@ class ProductService:
         return product
 ```
 
-### Service Design Checklist
+### Service design checklist
 
 | # | Check |
 |---|---|
@@ -56,11 +66,11 @@ class ProductService:
 
 ---
 
-## Command/Query Separation
+## Command/query separation
 
-Separate operations that change state (commands) from operations that read state (queries). This makes the codebase easier to reason about, test, and optimize.
+Separate operations that change state (commands) from operations that read state (queries). This makes the code easier to reason about, test, and optimize.
 
-### Commands (Write Operations)
+### Commands (write operations)
 
 Commands change state and typically return void or the created/updated entity.
 
@@ -84,7 +94,7 @@ class PlaceOrderHandler:
         return order
 ```
 
-### Queries (Read Operations)
+### Queries (read operations)
 
 Queries read state and return data. They never modify state.
 
@@ -105,7 +115,7 @@ class OrderQueryService:
         )
 ```
 
-### Directory Structure
+### Directory structure
 
 ```
 src/
@@ -119,9 +129,9 @@ src/
       ProductQueryService
 ```
 
-### When to Use Full Separation
+### When to use full separation
 
-| Project Size | Approach |
+| Project size | Approach |
 |---|---|
 | Small (< 20 entities) | Single service class per domain area is fine. Separate when it grows. |
 | Medium (20-50 entities) | Separate commands from queries in the directory structure. |
@@ -129,15 +139,15 @@ src/
 
 ---
 
-## Transaction Boundaries
+## Transaction boundaries
 
 ### Rules
 
 | Rule | Rationale |
 |---|---|
-| One transaction per use case | A single user action should be atomic - it either fully succeeds or fully fails |
+| One transaction per use case | A single user action should be atomic: it fully succeeds or fully fails |
 | Transactions wrap the service call, not individual repository calls | The service orchestrates the full operation |
-| Read-only operations do not need explicit transactions | Most ORMs handle this automatically |
+| Read-only operations do not need explicit transactions | Most ORMs handle this for you |
 | Keep transactions short | Long transactions hold locks and increase deadlock risk |
 
 ### Patterns
@@ -145,7 +155,7 @@ src/
 **Implicit (single commit):**
 
 ```
-# Simplest approach - single commit at the end of the service method
+# Simplest approach: single commit at the end of the service method
 this.unitOfWork.persist(entity)
 this.unitOfWork.commit()  # Commits in a single transaction
 ```
@@ -167,13 +177,13 @@ end
 - External side effects (API calls, file writes) must be coordinated with database changes
 - You need to catch and handle transaction failures specifically
 
-### Side Effects and Transactions
+### Side effects and transactions
 
-| Side Effect | Placement | Rationale |
+| Side effect | Placement | Rationale |
 |---|---|---|
 | Dispatching domain events | After transaction commits | Event consumers should not see uncommitted state |
 | Sending emails | After transaction commits | Do not send email if the save fails |
-| External API calls | Before transaction (if needed for data) or after (if notification) | Minimize time holding the transaction open |
+| External API calls | Before transaction (if needed for data) or after (if notification) | Keeps the transaction open for less time |
 | Logging | Outside transaction | Logging should never fail the business operation |
 
 ```
@@ -189,9 +199,9 @@ this.eventDispatcher.dispatch(new OrderShippedEvent(order.id))
 
 ---
 
-## Exception Handling in Services
+## Exception handling in services
 
-### Domain Exceptions
+### Domain exceptions
 
 Create specific exception classes for business rule violations.
 
@@ -201,7 +211,7 @@ class InsufficientStockException extends DomainException:
         super("Insufficient stock for SKU '{sku}': requested {requested}, available {available}")
 ```
 
-### Exception Mapping
+### Exception mapping
 
 Map domain exceptions to HTTP responses in the controller or via middleware.
 
@@ -214,7 +224,7 @@ Map domain exceptions to HTTP responses in the controller or via middleware.
 | `InvalidArgumentException` | 422 | `invalid_input` |
 | Unexpected exceptions | 500 | `internal_error` |
 
-### Exception-to-Response Middleware (Pseudocode)
+### Exception-to-response middleware (pseudocode)
 
 ```
 class ApiExceptionMiddleware:
@@ -238,9 +248,9 @@ class ApiExceptionMiddleware:
 
 ---
 
-## Common Service Patterns
+## Common service patterns
 
-### Finder/Resolver Pattern
+### Finder/resolver pattern
 
 When a service needs to load and validate an entity from an ID:
 
@@ -254,7 +264,7 @@ function resolveProduct(productId: UUID) -> Product:
     return product
 ```
 
-### Specification Pattern for Complex Queries
+### Specification pattern for complex queries
 
 When query conditions become complex, extract them into specification objects:
 
@@ -268,9 +278,9 @@ class ProductSearchCriteria:
     limit: integer        = 25
 ```
 
-### Decorator Pattern for Cross-Cutting Concerns
+### Decorator pattern for cross-cutting concerns
 
-Wrap services with decorators for logging, caching, or metrics without modifying the original service:
+Wrap services with decorators for logging, caching, or metrics without changing the original service:
 
 ```
 class CachedProductQueryService:
@@ -294,12 +304,12 @@ class CachedProductQueryService:
 
 ---
 
-## Anti-Patterns
+## Anti-patterns
 
 | Anti-Pattern | Problem | Fix |
 |---|---|---|
 | Fat controller | Business logic in controller makes it untestable and tightly coupled to HTTP | Move logic to a service class |
-| Anemic services | Services that just call repository methods without adding value | If the service adds no logic, let the controller call the repository directly |
+| Anemic services | Services that only call repository methods and add no logic | If the service adds no logic, let the controller call the repository directly |
 | Service locator | Getting services from the container at runtime instead of injecting | Use constructor injection |
 | Mixed read/write in one method | Hard to optimize and reason about | Separate query methods from command methods |
 | Catching all exceptions | Swallows errors, hides bugs | Catch specific exceptions, let unexpected ones propagate |

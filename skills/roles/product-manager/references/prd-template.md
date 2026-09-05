@@ -1,6 +1,11 @@
 # Product Requirements Document Template
 
-A structured template for defining what to build and why. Copy and adapt for each feature or initiative.
+A template for defining what to build and why. Copy it and adapt it for each feature or initiative.
+
+## Contents
+
+- [Template](#template)
+- [Writing tips](#writing-tips)
 
 ---
 
@@ -20,7 +25,7 @@ A structured template for defining what to build and why. Copy and adapt for eac
 
 ### 2. Problem Statement
 
-Describe the problem being solved. Be specific about who experiences it and what the impact is.
+Describe the problem being solved. Say who experiences it and what the impact is.
 
 **Template**:
 
@@ -34,7 +39,7 @@ Describe the problem being solved. Be specific about who experiences it and what
 
 ### 3. Success Metrics
 
-Define how you will measure whether this feature achieves its goal.
+Define how you will measure whether the feature meets its goal.
 
 | Metric | Current Baseline | Target | Measurement Method |
 |---|---|---|---|
@@ -99,7 +104,7 @@ And [additional outcome]
 
 ### 8. Out of Scope
 
-Explicitly list what this feature does NOT include. This prevents scope creep and aligns expectations.
+List what this feature does NOT include. This prevents scope creep and sets expectations.
 
 - [Feature or behavior explicitly excluded]
 - [Feature or behavior explicitly excluded]
@@ -127,31 +132,31 @@ Explicitly list what this feature does NOT include. This prevents scope creep an
 
 ---
 
-## Writing Tips
+## Writing tips
 
-### Language Precision
+### Language precision
 
-Avoid ambiguous words. Replace them with specific, testable statements.
+Replace ambiguous words with specific, testable statements.
 
-| Avoid | Replace With |
+| Avoid | Replace with |
 |---|---|
 | "The system should handle errors gracefully" | "The system displays error code and message to the user and logs the full stack trace" |
 | "Fast response time" | "API responds within 200ms at the 95th percentile under 1000 concurrent users" |
 | "User-friendly interface" | "User can complete the primary task in fewer than 3 clicks from the dashboard" |
 | "Secure" | "All API endpoints require JWT authentication; PII is encrypted with AES-256 at rest" |
 
-### Priority Definitions
+### Priority definitions
 
-| Priority | Meaning | Release Impact |
+| Priority | Meaning | Release impact |
 |---|---|---|
 | P0 (Must-have) | Feature does not ship without this | Blocks release |
 | P1 (Should-have) | Important but not critical for launch | Include if timeline allows |
 | P2 (Nice-to-have) | Enhances the feature but not essential | Defer to next iteration |
 
-### Common Mistakes
+### Common mistakes
 
 - Writing acceptance criteria that cannot be tested objectively
-- Omitting the "Out of Scope" section, leading to implicit scope creep
+- Omitting the "Out of Scope" section, which lets scope creep in unnoticed
 - Listing open questions in the body text instead of tracking them explicitly
 - Defining success metrics without a measurement method
 - Mixing implementation details into requirements (describe the "what", not the "how")

@@ -1,12 +1,18 @@
 # Project Status Report Template
 
-A structured template for regular progress reporting. Use this for highlight reports during stage execution and for stakeholder updates.
+A template for regular progress reporting. Use it for highlight reports during stage execution and for stakeholder updates.
+
+## Contents
+
+- [Highlight report template](#highlight-report-template)
+- [End stage report template](#end-stage-report-template)
+- [Status report writing guidelines](#status-report-writing-guidelines)
 
 ---
 
-## Highlight Report Template
+## Highlight report template
 
-Produce this report at the agreed frequency (typically weekly). It gives the project board and stakeholders a clear picture of progress, issues, and forecast.
+Produce this report at the agreed frequency (typically weekly). It tells the project board and stakeholders where progress, issues, and the forecast stand.
 
 ### [Project Name] - Status Report
 
@@ -40,7 +46,7 @@ Produce this report at the agreed frequency (typically weekly). It gives the pro
 
 ### Executive Summary
 
-[2-3 sentences summarizing the most important things the reader needs to know. Lead with the headline - do not bury bad news.]
+[2-3 sentences summarizing the most important things the reader needs to know. Lead with the headline and do not bury bad news.]
 
 ### Achievements This Period
 
@@ -90,7 +96,7 @@ Produce this report at the agreed frequency (typically weekly). It gives the pro
 
 ---
 
-## End Stage Report Template
+## End stage report template
 
 Produce this report at each stage boundary. It summarizes the completed stage and recommends whether to proceed.
 
@@ -148,9 +154,9 @@ Produce this report at each stage boundary. It summarizes the completed stage an
 
 ---
 
-## Status Report Writing Guidelines
+## Status report writing guidelines
 
-### Leading with Bad News
+### Leading with bad news
 
 | Do | Do Not |
 |---|---|
@@ -158,7 +164,7 @@ Produce this report at each stage boundary. It summarizes the completed stage an
 | "Risk X has materialized; mitigation plan below" | "There are some minor issues we are working through" |
 | State the impact, then the mitigation | Minimize or defer bad news to a later report |
 
-### RAG Status Guidelines
+### RAG status guidelines
 
 **Schedule**:
 - Green: Forecast completion is within the planned date +/- tolerance
@@ -173,19 +179,19 @@ Produce this report at each stage boundary. It summarizes the completed stage an
 **Quality**:
 - Green: Test pass rate meets target; no open P0/P1 bugs
 - Amber: Test pass rate below target or open P1 bugs pending
-- Red: Open P0 bugs or quality metrics significantly below target
+- Red: Open P0 bugs or quality metrics well below target
 
-### Report Frequency Guide
+### Report frequency guide
 
-| Project Size | Report Frequency | Report Depth |
+| Project size | Report frequency | Report depth |
 |---|---|---|
 | Small (1-2 weeks) | Daily standup summary | Bullet points |
 | Medium (2-8 weeks) | Weekly highlight report | Full template |
 | Large (2+ months) | Weekly highlights + monthly detailed report | Full template + trend analysis |
 
-### Audience Adaptation
+### Audience adaptation
 
-| Audience | Focus On | Avoid |
+| Audience | Focus on | Avoid |
 |---|---|---|
 | **Project board / executives** | Status, risks, decisions needed, milestones | Technical details, implementation specifics |
 | **Development team** | Blockers, priorities, scope clarification | Business justification, budget details |

@@ -1,12 +1,23 @@
 # Frontend Performance Checklist
 
-A practical checklist for frontend performance optimization. Organized by area of impact, with specific actions and measurement guidance.
+A checklist for frontend performance work, organized by area of impact, with specific actions and measurement guidance.
+
+## Contents
+
+- [Core Web Vitals targets](#core-web-vitals-targets)
+- [Loading performance](#loading-performance)
+- [Image optimization](#image-optimization)
+- [Rendering performance](#rendering-performance)
+- [Network optimization](#network-optimization)
+- [Measurement and monitoring](#measurement-and-monitoring)
+- [Quick wins checklist](#quick-wins-checklist)
+- [Anti-patterns](#anti-patterns)
 
 ---
 
-## Core Web Vitals Targets
+## Core Web Vitals targets
 
-| Metric | What It Measures | Good | Needs Improvement | Poor |
+| Metric | What it measures | Good | Needs improvement | Poor |
 |---|---|---|---|---|
 | **LCP** (Largest Contentful Paint) | Loading performance | < 2.5s | 2.5s - 4.0s | > 4.0s |
 | **INP** (Interaction to Next Paint) | Responsiveness | < 200ms | 200ms - 500ms | > 500ms |
@@ -14,9 +25,9 @@ A practical checklist for frontend performance optimization. Organized by area o
 
 ---
 
-## Loading Performance
+## Loading performance
 
-### Critical Rendering Path
+### Critical rendering path
 
 | # | Check | Impact |
 |---|---|---|
@@ -24,12 +35,12 @@ A practical checklist for frontend performance optimization. Organized by area o
 | 2 | Critical CSS is inlined for above-the-fold content | High |
 | 3 | Non-critical CSS is loaded asynchronously or deferred | Medium |
 | 4 | JavaScript is loaded with `defer` or `async` attribute | High |
-| 5 | Third-party scripts are loaded after first-party content | Medium |
+| 5 | Third-party scripts load after first-party content | Medium |
 | 6 | Web fonts use `font-display: swap` or `optional` | Medium |
 | 7 | Preload hints are used for critical resources (`<link rel="preload">`) | Medium |
 | 8 | DNS prefetch is used for known third-party domains (`<link rel="dns-prefetch">`) | Low |
 
-### Code Splitting
+### Code splitting
 
 | # | Check | Impact |
 |---|---|---|
@@ -39,7 +50,7 @@ A practical checklist for frontend performance optimization. Organized by area o
 | 4 | Below-the-fold components are lazy-loaded | Medium |
 | 5 | Vendor bundle is separated from application code for better caching | Medium |
 
-### Bundle Size
+### Bundle size
 
 | # | Check | Impact |
 |---|---|---|
@@ -52,7 +63,7 @@ A practical checklist for frontend performance optimization. Organized by area o
 
 ---
 
-## Image Optimization
+## Image optimization
 
 | # | Check | Impact |
 |---|---|---|
@@ -64,11 +75,11 @@ A practical checklist for frontend performance optimization. Organized by area o
 | 6 | Hero/LCP images are preloaded with `<link rel="preload" as="image">` | Medium |
 | 7 | Image dimensions are specified in HTML (width/height attributes) to prevent layout shift | High |
 | 8 | SVG icons are inlined or loaded as a sprite, not as individual image requests | Medium |
-| 9 | Background images in CSS use appropriate compression | Medium |
+| 9 | Background images in CSS are compressed | Medium |
 
-### Image Format Guide
+### Image format guide
 
-| Format | Best For | Browser Support |
+| Format | Best for | Browser support |
 |---|---|---|
 | WebP | Photos and complex images | All modern browsers |
 | AVIF | Photos (better compression than WebP) | Chrome, Firefox, Safari 16+ |
@@ -78,9 +89,9 @@ A practical checklist for frontend performance optimization. Organized by area o
 
 ---
 
-## Rendering Performance
+## Rendering performance
 
-### Layout Shift Prevention
+### Layout shift prevention
 
 | # | Check | Impact |
 |---|---|---|
@@ -90,7 +101,7 @@ A practical checklist for frontend performance optimization. Organized by area o
 | 4 | No content is injected above existing content after initial render | High |
 | 5 | Skeleton screens match the dimensions of actual content | Medium |
 
-### Rendering Efficiency
+### Rendering efficiency
 
 | # | Check | Impact |
 |---|---|---|
@@ -99,15 +110,15 @@ A practical checklist for frontend performance optimization. Organized by area o
 | 3 | Scroll and resize event handlers are debounced or throttled | Medium |
 | 4 | CSS animations use `transform` and `opacity` (GPU-accelerated properties) | Medium |
 | 5 | `will-change` is used sparingly and only for known animation targets | Low |
-| 6 | DOM size is reasonable (target: < 1500 elements on the page) | Medium |
+| 6 | DOM size is kept small (target: < 1500 elements on the page) | Medium |
 
 ---
 
-## Network Optimization
+## Network optimization
 
-### Caching Strategy
+### Caching strategy
 
-| Resource Type | Cache Strategy | Cache Duration |
+| Resource type | Cache strategy | Cache duration |
 |---|---|---|
 | HTML pages | `no-cache` or short TTL | Revalidate on each request |
 | CSS/JS bundles (hashed filenames) | `immutable`, long TTL | 1 year |
@@ -115,7 +126,7 @@ A practical checklist for frontend performance optimization. Organized by area o
 | API responses | `Cache-Control` based on data freshness needs | Varies (60s to 3600s) |
 | Fonts | Long TTL with `immutable` | 1 year |
 
-### Data Fetching
+### Data fetching
 
 | # | Check | Impact |
 |---|---|---|
@@ -136,30 +147,30 @@ A practical checklist for frontend performance optimization. Organized by area o
 
 ---
 
-## Measurement and Monitoring
+## Measurement and monitoring
 
-### Lab Tools (Development)
+### Lab tools (development)
 
-| Tool | What It Measures | When to Use |
+| Tool | What it measures | When to use |
 |---|---|---|
 | Lighthouse | Core Web Vitals, accessibility, best practices | Every PR, CI pipeline |
 | Chrome DevTools Performance tab | Rendering timeline, long tasks, layout shifts | Debugging specific issues |
 | WebPageTest | Multi-location testing, filmstrip view, waterfall analysis | Before and after major changes |
 | Bundle analyzer (webpack/vite plugin) | JavaScript bundle composition and size | When adding/updating dependencies |
 
-### Field Tools (Production)
+### Field tools (production)
 
-| Tool | What It Measures | When to Use |
+| Tool | What it measures | When to use |
 |---|---|---|
 | Chrome UX Report (CrUX) | Real-user Core Web Vitals | Monthly review of site-wide performance |
 | Web Vitals JS library | Real-user metrics in your analytics | Continuous monitoring |
 | Performance Observer API | Custom real-user performance data | When you need metrics not covered by standard tools |
 
-### Performance Budgets
+### Performance budgets
 
-Define and enforce budgets in CI:
+Define budgets and enforce them in CI:
 
-| Metric | Budget | How to Enforce |
+| Metric | Budget | How to enforce |
 |---|---|---|
 | Total JS (gzipped) | < 200KB | Bundle size check in CI |
 | Total CSS (gzipped) | < 50KB | Bundle size check in CI |
@@ -170,11 +181,11 @@ Define and enforce budgets in CI:
 
 ---
 
-## Quick Wins Checklist
+## Quick wins checklist
 
-If you only have time for the highest-impact items:
+If time is short, start with the highest-impact items:
 
-| Priority | Action | Expected Impact |
+| Priority | Action | Expected impact |
 |---|---|---|
 | 1 | Optimize the LCP image (size, format, preload, no lazy-load) | Large LCP improvement |
 | 2 | Enable code splitting per route | Large reduction in initial JS |
@@ -187,7 +198,7 @@ If you only have time for the highest-impact items:
 
 ---
 
-## Anti-Patterns
+## Anti-patterns
 
 | Anti-Pattern | Problem | Fix |
 |---|---|---|

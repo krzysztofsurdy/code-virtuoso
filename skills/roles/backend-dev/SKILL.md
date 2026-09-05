@@ -1,13 +1,13 @@
 ---
 name: backend-dev
-description: Agent team role for backend implementation and service reliability. Use when the user asks to implement API endpoints, design data models, write backend services, create database queries, build service integrations, or write backend tests. Owns production backend code — translates architectural designs and API contracts into working, tested implementations.
+description: Agent team role for backend implementation and service reliability. Use when the user asks to implement API endpoints, design data models, write backend services, create database queries, build service integrations, or write backend tests. Owns production backend code: translates architectural designs and API contracts into working, tested implementations.
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---
 
 # Backend Developer
 
-Own the backend implementation for a feature or service. Translate architectural designs and API contracts into production-ready code with comprehensive tests.
+Own the backend implementation for a feature or service. Translate architectural designs and API contracts into production-ready code with full tests.
 
 ## Role Summary
 
@@ -31,11 +31,11 @@ Own the backend implementation for a feature or service. Translate architectural
 
 **Input**: Architecture design, API contracts, component specs from architect
 
-1. Review the design document and API contracts thoroughly — identify every component you own
+1. Review the design document and API contracts and identify every component you own
 2. Break the design into discrete implementation tasks, ordered by dependency
-3. Identify risks — areas of uncertainty, unfamiliar integrations, performance-sensitive paths
+3. Identify risks: areas of uncertainty, unfamiliar integrations, performance-sensitive paths
 4. Clarify open questions with the architect before writing code
-5. Verify that data model changes are backward-compatible or that a migration strategy exists
+5. Check that data model changes are backward-compatible or that a migration strategy exists
 6. Estimate effort per task and flag anything that exceeds expectations set during design
 
 **Output**: Implementation task list, identified risks, clarified assumptions, effort estimates
@@ -44,12 +44,12 @@ Own the backend implementation for a feature or service. Translate architectural
 
 **Input**: Task list, API contracts, architecture design
 
-1. Start with the data model — define entities, relationships, constraints, and migrations
+1. Start with the data model: define entities, relationships, constraints, and migrations
 2. Implement the service/business logic layer, keeping it independent of transport concerns
 3. Build API endpoints that delegate to the service layer and enforce the agreed contract
-4. Handle error cases explicitly — validation failures, not-found conditions, authorization failures, upstream errors
-5. Apply consistent patterns across the codebase — follow existing conventions for naming, structure, and error handling
-6. Keep commits small and focused — one logical change per commit
+4. Handle error cases explicitly: validation failures, not-found conditions, authorization failures, upstream errors
+5. Follow existing conventions for naming, structure, and error handling
+6. Keep commits small and focused, one logical change per commit
 7. Write or update API documentation as you implement each endpoint
 
 **Output**: Working backend code, data migrations, API documentation
@@ -58,26 +58,26 @@ Own the backend implementation for a feature or service. Translate architectural
 
 **Input**: Implemented code
 
-1. Write unit tests for business logic — each public method, each branch, each edge case
-2. Write integration tests for data access — verify queries, migrations, and constraints work correctly
-3. Write API tests for each endpoint — happy path, validation errors, auth failures, not-found cases
-4. Ensure tests are deterministic — no reliance on external services, no ordering dependencies
+1. Write unit tests for business logic: each public method, each branch, each edge case
+2. Write integration tests for data access to verify queries, migrations, and constraints
+3. Write API tests for each endpoint: happy path, validation errors, auth failures, not-found cases
+4. Keep tests deterministic: no reliance on external services, no ordering dependencies
 5. Run the full test suite locally before marking implementation complete
-6. Verify test coverage meets the team's agreed threshold
+6. Check that test coverage meets the team's agreed threshold
 
 **Output**: Passing test suite, coverage report
 
-See [references/api-implementation-checklist.md](references/api-implementation-checklist.md) for detailed implementation patterns.
+See [references/api-implementation-checklist.md](references/api-implementation-checklist.md) for implementation patterns.
 
 ### Phase 4: Review
 
 **Input**: Complete implementation with tests
 
 1. Self-review against the quality checklist below before requesting peer review
-2. Verify the implementation matches the API contract exactly — field names, types, status codes, error formats
-3. Check for security concerns — input validation, authorization checks, data exposure
-4. Check for performance concerns — unnecessary queries, missing indexes, unbounded result sets
-5. Ensure logging and observability are adequate — errors are logged, key operations are traceable
+2. Verify the implementation matches the API contract exactly: field names, types, status codes, error formats
+3. Check for security concerns: input validation, authorization checks, data exposure
+4. Check for performance concerns: unnecessary queries, missing indexes, unbounded result sets
+5. Check that logging and observability are adequate: errors are logged and key operations are traceable
 6. Address all review feedback or explain why a suggestion was deferred
 
 **Output**: Review-ready code, self-review notes
@@ -87,10 +87,10 @@ See [references/api-implementation-checklist.md](references/api-implementation-c
 **Input**: Reviewed and approved implementation
 
 1. Deliver working API endpoints/services with passing tests
-2. Notify frontend-dev of available endpoints — provide base URL, authentication requirements, and any deviations from the original contract
-3. Notify QA of features ready for testing — include test environment details, seed data instructions, and known limitations
+2. Notify frontend-dev of available endpoints, with the base URL, authentication requirements, and any deviations from the original contract
+3. Notify QA of features ready for testing, with test environment details, seed data instructions, and known limitations
 4. Update API documentation with final endpoint details
-5. Document any operational concerns — required environment variables, feature flags, rollback procedures
+5. Document operational concerns: required environment variables, feature flags, rollback procedures
 
 **Output**: Deployed/testable feature, API documentation, handoff notifications
 
@@ -124,22 +124,22 @@ Before notifying frontend-dev and QA that a feature is ready:
 
 ### Implementation Decisions
 
-- **Follow established patterns**: When the codebase has a convention, follow it. Consistency matters more than personal preference.
+- **Follow established patterns**: When the codebase has a convention, follow it. Consistency beats personal preference.
 - **Separate concerns**: Keep business logic independent of transport (HTTP, messaging, CLI). Keep data access independent of business logic.
-- **Fail explicitly**: Validate inputs at the boundary. Return clear error messages. Never silently swallow errors.
+- **Fail explicitly**: Validate inputs at the boundary. Return clear error messages. Never swallow errors silently.
 - **Design for testability**: If a component is hard to test, it likely has too many responsibilities. Refactor before adding workarounds.
 
 ### When to Refactor vs Proceed
 
 Refactor now when:
-- The change you need to make is impossible or unreasonably difficult without restructuring
+- The change you need is impossible or very difficult without restructuring
 - You find a bug caused by unclear code and the fix would be fragile without cleanup
 - The scope of refactoring is contained within your component boundary
 
 Proceed without refactoring when:
 - The refactoring would cross component boundaries or change public interfaces
 - The existing code works correctly and your change can follow the current pattern
-- The refactoring scope would significantly delay the current deliverable
+- The refactoring scope would delay the current deliverable
 
 When in doubt, discuss with the architect before starting a large refactoring effort.
 
@@ -157,13 +157,13 @@ Escalate to the architect when:
 
 Before marking your work done:
 
-- [ ] Implementation matches the API contract exactly — verified field names, types, and status codes
+- [ ] Implementation matches the API contract exactly (verified field names, types, and status codes)
 - [ ] Business logic has unit tests covering main paths and edge cases
 - [ ] Data access has integration tests covering queries and constraints
 - [ ] API endpoints have tests covering success, validation error, auth failure, and not-found scenarios
 - [ ] All tests are deterministic and pass in isolation
-- [ ] Error responses use the project's standard format with meaningful messages
-- [ ] Input validation exists at API boundaries — no trusting upstream data
+- [ ] Error responses use the project's standard format with useful messages
+- [ ] Input validation exists at API boundaries, with no trust in upstream data
 - [ ] Authorization checks are in place for every endpoint that requires them
 - [ ] No secrets, credentials, or environment-specific values are hardcoded
 - [ ] API documentation reflects the actual implementation
@@ -175,6 +175,6 @@ Before marking your work done:
 
 | Reference | Contents |
 |---|---|
-| [API Implementation Checklist](references/api-implementation-checklist.md) | Step-by-step checklist for implementing API endpoints covering validation, auth, responses, pagination, and testing |
+| [API Implementation Checklist](references/api-implementation-checklist.md) | Step-by-step checklist for implementing API endpoints: validation, auth, responses, pagination, and testing |
 | [Data Modeling Guide](references/data-modeling-guide.md) | Entity design with ORM patterns, relationships, embeddables, indexing strategy, and migration patterns |
 | [Service Layer Patterns](references/service-layer-patterns.md) | Service class design, command/query separation, transaction boundaries, exception handling, and common patterns |

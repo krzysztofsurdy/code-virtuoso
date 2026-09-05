@@ -1,10 +1,26 @@
 # System Design Review Checklist
 
-A structured checklist for reviewing system designs before implementation begins. Use this during design reviews to ensure nothing critical is missed.
+A checklist for reviewing system designs before implementation begins. Use it during design reviews to catch gaps early.
+
+## Contents
+
+- [How to use this checklist](#how-to-use-this-checklist)
+- [1. Requirements coverage](#1-requirements-coverage)
+- [2. Component architecture](#2-component-architecture)
+- [3. API design](#3-api-design)
+- [4. Data model](#4-data-model)
+- [5. Scalability](#5-scalability)
+- [6. Reliability](#6-reliability)
+- [7. Security](#7-security)
+- [8. Observability](#8-observability)
+- [9. Deployment and operations](#9-deployment-and-operations)
+- [10. Testing strategy](#10-testing-strategy)
+- [Framework-specific checks](#framework-specific-checks)
+- [Review outcomes](#review-outcomes)
 
 ---
 
-## How to Use This Checklist
+## How to use this checklist
 
 1. The architect completes a self-review against this checklist before the design review meeting
 2. Reviewers use it as a guide during the review - not every item applies to every design
@@ -13,7 +29,7 @@ A structured checklist for reviewing system designs before implementation begins
 
 ---
 
-## 1. Requirements Coverage
+## 1. Requirements coverage
 
 | # | Check | Status |
 |---|---|---|
@@ -23,7 +39,7 @@ A structured checklist for reviewing system designs before implementation begins
 | 1.4 | Accessibility requirements are considered where applicable | |
 | 1.5 | Out-of-scope items from the PRD are not accidentally included in the design | |
 
-## 2. Component Architecture
+## 2. Component architecture
 
 | # | Check | Status |
 |---|---|---|
@@ -34,7 +50,7 @@ A structured checklist for reviewing system designs before implementation begins
 | 2.5 | Shared logic is extracted into a common module or service, not duplicated | |
 | 2.6 | Components communicate through well-defined interfaces, not internal implementation details | |
 
-## 3. API Design
+## 3. API design
 
 | # | Check | Status |
 |---|---|---|
@@ -47,7 +63,7 @@ A structured checklist for reviewing system designs before implementation begins
 | 3.7 | Rate limiting is specified for public-facing endpoints | |
 | 3.8 | Request validation rules are documented | |
 
-## 4. Data Model
+## 4. Data model
 
 | # | Check | Status |
 |---|---|---|
@@ -108,13 +124,13 @@ A structured checklist for reviewing system designs before implementation begins
 |---|---|---|
 | 8.1 | Structured logging is planned with correlation IDs for request tracing | |
 | 8.2 | Key business operations have log entries (not just errors) | |
-| 8.3 | Error logging includes sufficient context for debugging (but no sensitive data) | |
+| 8.3 | Error logging includes enough context for debugging (but no sensitive data) | |
 | 8.4 | Health check endpoints are defined for load balancers and monitoring | |
 | 8.5 | Metrics are planned for critical paths (response time, error rate, queue depth) | |
 | 8.6 | Alerting thresholds are defined for key metrics | |
 | 8.7 | Distributed tracing is configured for cross-service requests | |
 
-## 9. Deployment and Operations
+## 9. Deployment and operations
 
 | # | Check | Status |
 |---|---|---|
@@ -125,7 +141,7 @@ A structured checklist for reviewing system designs before implementation begins
 | 9.5 | Required infrastructure changes are documented | |
 | 9.6 | Runbook exists for common operational scenarios (restart, scale, rollback) | |
 
-## 10. Testing Strategy
+## 10. Testing strategy
 
 | # | Check | Status |
 |---|---|---|
@@ -137,15 +153,15 @@ A structured checklist for reviewing system designs before implementation begins
 
 ---
 
-## Framework-Specific Checks
+## Framework-specific checks
 
-Additional items for designs built on a web framework. Adapt these to your specific stack:
+Extra items for designs built on a web framework. Adapt them to your stack:
 
 | # | Check | Status |
 |---|---|---|
 | F.1 | Authorization logic beyond simple roles uses dedicated policy/guard objects | |
-| F.2 | ORM entity mappings use appropriate fetch modes (lazy vs eager loading) | |
-| F.3 | Async operations are configured with proper transport, retry, and dead-letter handling | |
+| F.2 | ORM entity mappings use suitable fetch modes (lazy vs eager loading) | |
+| F.3 | Async operations are configured with transport, retry, and dead-letter handling | |
 | F.4 | Cache invalidation strategy uses tags or versioned keys where appropriate | |
 | F.5 | Cross-cutting concerns (logging, auditing) use middleware or event hooks, not controller logic | |
 | F.6 | Validation rules are defined on DTOs/models, not scattered in controllers | |
@@ -154,9 +170,9 @@ Additional items for designs built on a web framework. Adapt these to your speci
 
 ---
 
-## Review Outcomes
+## Review outcomes
 
-| Outcome | Definition | Next Step |
+| Outcome | Definition | Next step |
 |---|---|---|
 | **Approved** | All applicable checks pass or have acceptable N/A justification | Proceed to implementation |
 | **Approved with conditions** | Minor issues found that can be fixed during implementation | Proceed, track conditions as tasks |

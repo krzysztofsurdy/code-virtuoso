@@ -1,10 +1,21 @@
 # API Implementation Checklist
 
-A step-by-step checklist for implementing API endpoints. Use this as a working reference during implementation, not just a final review.
+A step-by-step checklist for implementing API endpoints. Use it while you implement, not only as a final review.
+
+## Contents
+
+- [Pre-implementation](#pre-implementation)
+- [Request handling](#request-handling)
+- [Business logic](#business-logic)
+- [Response handling](#response-handling)
+- [Data access](#data-access)
+- [Testing](#testing)
+- [Logging and observability](#logging-and-observability)
+- [Final review](#final-review)
 
 ---
 
-## Pre-Implementation
+## Pre-implementation
 
 | # | Check | Notes |
 |---|---|---|
@@ -16,9 +27,9 @@ A step-by-step checklist for implementing API endpoints. Use this as a working r
 
 ---
 
-## Request Handling
+## Request handling
 
-### Route Definition
+### Route definition
 
 Define routes following your framework's conventions:
 
@@ -37,7 +48,7 @@ DELETE /api/v1/products/{id}    -> ProductController.destroy
 | 3 | Route name follows the project naming convention |
 | 4 | API version is included in the path or header as agreed |
 
-### Input Validation
+### Input validation
 
 | # | Check |
 |---|---|
@@ -64,7 +75,7 @@ class CreateProductRequest:
         - one_of: ["active", "draft", "archived"]
 ```
 
-### Authentication and Authorization
+### Authentication and authorization
 
 | # | Check |
 |---|---|
@@ -77,7 +88,7 @@ class CreateProductRequest:
 
 ---
 
-## Business Logic
+## Business logic
 
 | # | Check |
 |---|---|
@@ -86,12 +97,12 @@ class CreateProductRequest:
 | 3 | External dependencies are injected, not instantiated |
 | 4 | Domain exceptions are thrown for business rule violations |
 | 5 | Side effects (sending emails, dispatching events) are separated from core logic |
-| 6 | Transaction boundaries are explicit - use the ORM's transactional pattern or a unit-of-work |
+| 6 | Transaction boundaries are explicit: use the ORM's transactional pattern or a unit-of-work |
 
-### Transaction Boundaries
+### Transaction boundaries
 
 ```
-# Pseudocode - wrap related operations in a transaction
+# Pseudocode: wrap related operations in a transaction
 database.transaction do:
     repository.save(product)
     inventory.decrement_stock(product.sku, 1)
@@ -107,19 +118,19 @@ end
 
 ---
 
-## Response Handling
+## Response handling
 
-### Success Responses
+### Success responses
 
-| Status Code | When to Use | Response Body |
+| Status Code | When to use | Response Body |
 |---|---|---|
 | 200 OK | Successful read or update | Resource representation |
 | 201 Created | Successful resource creation | Created resource with Location header |
 | 204 No Content | Successful delete or action with no response body | Empty |
 
-### Error Responses
+### Error responses
 
-| Status Code | When to Use | Response Body |
+| Status Code | When to use | Response Body |
 |---|---|---|
 | 400 Bad Request | Malformed request (unparseable JSON, wrong content type) | Error message |
 | 401 Unauthorized | Missing or invalid authentication | Error with code |
@@ -161,10 +172,10 @@ end
 | # | Check |
 |---|---|
 | 1 | List endpoints are paginated by default |
-| 2 | Pagination parameters have sensible defaults (page=1, limit=25) |
+| 2 | Pagination parameters have defaults (page=1, limit=25) |
 | 3 | Maximum limit is enforced (e.g., limit cannot exceed 100) |
 | 4 | Response includes pagination metadata (total, page, limit, pages) |
-| 5 | Cursor-based pagination is used for large or frequently-changing datasets |
+| 5 | Cursor-based pagination is used for large or frequently changing datasets |
 
 **Pagination response structure:**
 
@@ -192,7 +203,7 @@ end
 
 ---
 
-## Data Access
+## Data access
 
 | # | Check |
 |---|---|
@@ -207,13 +218,13 @@ end
 
 ## Testing
 
-| Test Type | What to Cover |
+| Test Type | What to cover |
 |---|---|
 | **Unit tests** | Service class methods: business logic, edge cases, exception throwing |
 | **Integration tests** | Repository queries: correct results with test data, pagination, filtering |
 | **API tests** | Full request/response cycle: happy path, validation errors, auth failures, not-found |
 
-### API Test Coverage Matrix
+### API test coverage matrix
 
 For each endpoint, verify:
 
@@ -229,11 +240,11 @@ For each endpoint, verify:
 
 ---
 
-## Logging and Observability
+## Logging and observability
 
 | # | Check |
 |---|---|
-| 1 | Error conditions are logged with sufficient context (request ID, user ID, input summary) |
+| 1 | Error conditions are logged with enough context (request ID, user ID, input summary) |
 | 2 | Sensitive data is not logged (passwords, tokens, PII) |
 | 3 | Key business operations have info-level log entries |
 | 4 | External service calls are logged with duration and outcome |
@@ -241,7 +252,7 @@ For each endpoint, verify:
 
 ---
 
-## Final Review
+## Final review
 
 | # | Check |
 |---|---|

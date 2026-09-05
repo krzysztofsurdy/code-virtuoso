@@ -1,6 +1,18 @@
 # Accessibility Checklist for Frontend Developers
 
-A practical WCAG-aligned checklist for building accessible user interfaces. Organized by implementation area, not WCAG success criteria numbers, so you can use it during development.
+A WCAG-aligned checklist for building accessible user interfaces. It is organized by implementation area instead of WCAG success criterion number, so you can use it during development.
+
+## Contents
+
+- [Semantic HTML](#semantic-html)
+- [Keyboard navigation](#keyboard-navigation)
+- [Images and media](#images-and-media)
+- [Forms](#forms)
+- [Color and contrast](#color-and-contrast)
+- [ARIA usage](#aria-usage)
+- [Dynamic content](#dynamic-content)
+- [Responsive and touch](#responsive-and-touch)
+- [Testing process](#testing-process)
 
 ---
 
@@ -11,7 +23,7 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 | 1 | Page has exactly one `<h1>` and headings follow a logical hierarchy (h1 > h2 > h3, no skipping) | 1.3.1 |
 | 2 | Navigation uses `<nav>` element | 1.3.1 |
 | 3 | Main content is wrapped in `<main>` | 1.3.1 |
-| 4 | Lists use `<ul>`, `<ol>`, or `<dl>` - not divs with visual bullets | 1.3.1 |
+| 4 | Lists use `<ul>`, `<ol>`, or `<dl>`, not divs with visual bullets | 1.3.1 |
 | 5 | Tables use `<table>`, `<thead>`, `<th>` with `scope` attribute | 1.3.1 |
 | 6 | Buttons that perform actions use `<button>`, not `<div>` or `<a>` | 4.1.2 |
 | 7 | Links that navigate use `<a>` with `href`, not `<button>` or `<span>` | 4.1.2 |
@@ -19,7 +31,7 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 
 ---
 
-## Keyboard Navigation
+## Keyboard navigation
 
 | # | Check | WCAG |
 |---|---|---|
@@ -32,12 +44,12 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 | 7 | Dropdown menus support arrow key navigation | 2.1.1 |
 | 8 | Escape key closes modals, dropdowns, and popovers | 2.1.1 |
 | 9 | Skip-to-content link is the first focusable element on the page | 2.4.1 |
-| 10 | No keyboard traps - the user can always Tab away from any element | 2.1.2 |
+| 10 | No keyboard traps: the user can always Tab away from any element | 2.1.2 |
 | 11 | Custom components (tabs, accordions, sliders) follow WAI-ARIA authoring practices for keyboard interaction | 2.1.1 |
 
 ---
 
-## Images and Media
+## Images and media
 
 | # | Check | WCAG |
 |---|---|---|
@@ -56,7 +68,7 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 | # | Check | WCAG |
 |---|---|---|
 | 1 | Every input has a visible `<label>` associated via `for`/`id` | 1.3.1 |
-| 2 | Required fields are indicated in the label (not just by color) | 3.3.2 |
+| 2 | Required fields are indicated in the label (not by color alone) | 3.3.2 |
 | 3 | Error messages identify the field and describe the problem | 3.3.1 |
 | 4 | Error messages are programmatically associated with the field (`aria-describedby` or `aria-errormessage`) | 3.3.1 |
 | 5 | Form submission errors are announced to screen readers (via `role="alert"` or live region) | 4.1.3 |
@@ -68,7 +80,7 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 
 ---
 
-## Color and Contrast
+## Color and contrast
 
 | # | Check | WCAG |
 |---|---|---|
@@ -79,9 +91,9 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 | 5 | Information is not conveyed by color alone (use text, icons, or patterns in addition) | 1.4.1 |
 | 6 | Links are distinguishable from surrounding text (underline, or 3:1 contrast + non-color indicator on hover/focus) | 1.4.1 |
 
-### Contrast Checking Tools
+### Contrast checking tools
 
-| Tool | How to Use |
+| Tool | How to use |
 |---|---|
 | Chrome DevTools | Inspect element > Color picker shows contrast ratio |
 | Firefox Accessibility Inspector | Accessibility tab > Check for contrast issues |
@@ -90,7 +102,7 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 
 ---
 
-## ARIA Usage
+## ARIA usage
 
 ### Rules of ARIA
 
@@ -102,9 +114,9 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 | 4. Do not use `role="presentation"` or `aria-hidden="true"` on focusable elements | This hides them from assistive tech while leaving them in the tab order |
 | 5. All interactive elements must have an accessible name | Via label, `aria-label`, or `aria-labelledby` |
 
-### Common ARIA Patterns
+### Common ARIA patterns
 
-| Pattern | When to Use | Key Attributes |
+| Pattern | When to use | Key attributes |
 |---|---|---|
 | Live region | Dynamic content updates (notifications, search results count) | `aria-live="polite"` or `aria-live="assertive"` |
 | Expanded/collapsed | Accordions, dropdown menus | `aria-expanded="true/false"` |
@@ -115,7 +127,7 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 
 ---
 
-## Dynamic Content
+## Dynamic content
 
 | # | Check | WCAG |
 |---|---|---|
@@ -129,7 +141,7 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 
 ---
 
-## Responsive and Touch
+## Responsive and touch
 
 | # | Check | WCAG |
 |---|---|---|
@@ -140,22 +152,22 @@ A practical WCAG-aligned checklist for building accessible user interfaces. Orga
 
 ---
 
-## Testing Process
+## Testing process
 
-### Automated Testing
+### Automated testing
 
-Run these tools as part of CI or development workflow:
+Run these tools in CI and during development:
 
-| Tool | What It Catches |
+| Tool | What it catches |
 |---|---|
 | axe-core | ~40% of WCAG violations (contrast, missing labels, ARIA errors) |
 | Lighthouse accessibility audit | Similar coverage, integrated in Chrome DevTools |
 | eslint-plugin-jsx-a11y | Catches common JSX accessibility mistakes at lint time |
 | pa11y | CLI-based automated testing for CI pipelines |
 
-### Manual Testing
+### Manual testing
 
-Automated tools catch less than half of accessibility issues. Always do manual checks:
+Automated tools catch less than half of accessibility issues. Always do manual checks too:
 
 | Test | How |
 |---|---|
@@ -165,9 +177,9 @@ Automated tools catch less than half of accessibility issues. Always do manual c
 | Color blindness simulation | Use browser DevTools rendering emulation for color vision deficiencies |
 | Reduced motion | Enable "prefers-reduced-motion" in OS settings, verify animations respect it |
 
-### Testing Priority
+### Testing priority
 
-| Priority | What to Test First |
+| Priority | What to test first |
 |---|---|
 | 1 | Forms and interactive workflows (highest user impact) |
 | 2 | Navigation and page structure |

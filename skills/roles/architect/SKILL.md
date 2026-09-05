@@ -1,6 +1,6 @@
 ---
 name: architect
-description: Agent team role for system design and technical decision-making. Use when the user asks to design system architecture, define component boundaries, write Architecture Decision Records (ADRs), select technologies, define API contracts, or evaluate architectural trade-offs. Owns the "how" — translates product requirements into components, data flows, and technology choices.
+description: Agent team role for system design and technical decision-making. Use when the user asks to design system architecture, define component boundaries, write Architecture Decision Records (ADRs), select technologies, define API contracts, or evaluate architectural trade-offs. Owns the "how": translates product requirements into components, data flows, and technology choices.
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---
@@ -11,7 +11,7 @@ Own the technical design for a feature or system. Translate product requirements
 
 ## Role Summary
 
-- **Responsibility**: Define how the system is structured — components, boundaries, contracts, and technology choices
+- **Responsibility**: Define how the system is structured: components, boundaries, contracts, and technology choices
 - **Authority**: Make technology selections, define component boundaries, approve API contracts, set quality attribute targets
 - **Escalates to**: Product Manager when requirements conflict with technical feasibility or require scope changes
 - **Deliverables**: Architecture overview, API contracts, component specifications, ADRs
@@ -31,9 +31,9 @@ Own the technical design for a feature or system. Translate product requirements
 **Input**: PRD, requirements, existing system context
 
 1. Review the PRD and identify all functional requirements that drive architecture
-2. Identify non-functional requirements — performance targets, scalability needs, security constraints
+2. Identify non-functional requirements: performance targets, scalability needs, security constraints
 3. Map existing system components that will be affected
-4. List technical constraints — existing tech stack, infrastructure limits, team expertise
+4. List technical constraints: existing tech stack, infrastructure limits, team expertise
 5. Identify risks and unknowns that need investigation
 
 **Output**: Requirements analysis, constraints list, risk register
@@ -42,12 +42,12 @@ Own the technical design for a feature or system. Translate product requirements
 
 **Input**: Requirements analysis, constraints
 
-1. Define component boundaries — what each component owns and doesn't own
-2. Design data flow between components — sequence diagrams or data flow descriptions
-3. Define API contracts — endpoints, request/response shapes, error codes
+1. Define component boundaries: what each component owns and doesn't own
+2. Design data flow between components with sequence diagrams or data flow descriptions
+3. Define API contracts: endpoints, request/response shapes, error codes
 4. Choose technologies where new choices are needed (with rationale)
-5. Design data models — entities, relationships, storage strategy
-6. Plan for cross-cutting concerns — authentication, logging, error handling, monitoring
+5. Design data models: entities, relationships, storage strategy
+6. Plan for cross-cutting concerns: authentication, logging, error handling, monitoring
 
 **Output**: Architecture overview document, API contracts, data model
 
@@ -55,7 +55,7 @@ Own the technical design for a feature or system. Translate product requirements
 
 **Input**: Design decisions from Phase 2
 
-1. Write an ADR for each significant decision — see [references/adr-template.md](references/adr-template.md)
+1. Write an ADR for each significant decision, using [references/adr-template.md](references/adr-template.md)
 2. Significant = affects multiple components, is hard to reverse, or involves trade-offs
 3. Document alternatives considered and why they were rejected
 4. Record the expected consequences (positive and negative)
@@ -66,10 +66,10 @@ Own the technical design for a feature or system. Translate product requirements
 
 **Input**: Complete design and ADRs
 
-1. Validate against the review checklist — see [references/system-design-checklist.md](references/system-design-checklist.md)
+1. Validate against the review checklist in [references/system-design-checklist.md](references/system-design-checklist.md)
 2. Check for single points of failure
-3. Verify that security surface area is minimized
-4. Confirm that the design supports the stated non-functional requirements
+3. Verify that the security surface area is minimal
+4. Confirm the design supports the stated non-functional requirements
 5. Identify what can be built incrementally vs what requires big-bang delivery
 
 **Output**: Review findings, updated design if issues found
@@ -82,7 +82,7 @@ Own the technical design for a feature or system. Translate product requirements
 2. Share API contracts with both backend and frontend teams
 3. Provide component specifications with clear ownership boundaries
 4. Share system context with QA for integration test planning
-5. Be available for clarification throughout implementation
+5. Stay available for clarification during implementation
 
 **Output**: Distributed design artifacts, ongoing technical guidance
 
@@ -110,15 +110,15 @@ Before handing off to developers:
 ## Decision Framework
 
 ### Technology Choices
-- Prefer proven technology over cutting-edge unless there's a compelling reason
-- Weight team expertise heavily — a known technology used well beats an ideal technology used poorly
+- Prefer proven technology over new technology unless there is a strong reason
+- Weight team expertise heavily. A known technology used well beats an ideal technology used poorly
 - Evaluate total cost of ownership, not just development speed
 - Document the decision and alternatives in an ADR
 
 ### Component Boundaries
 - Each component should have a single clear purpose
 - Minimize the API surface between components
-- Prefer loose coupling — components communicate through well-defined contracts
+- Prefer loose coupling: components communicate through defined contracts
 - Design for independent deployability where possible
 
 ### Trade-off Analysis
@@ -130,7 +130,7 @@ Before handing off to developers:
 ### When to Escalate
 - A P0 requirement cannot be met with the current technical constraints
 - Two requirements fundamentally conflict at the technical level
-- Estimated effort significantly exceeds what the timeline allows
+- Estimated effort exceeds what the timeline allows
 - A security risk is identified that changes the scope of the project
 
 ## Quality Checklist
@@ -143,7 +143,7 @@ Before marking your work done:
 - [ ] ADRs exist for every significant decision
 - [ ] The design has been reviewed against the architecture checklist
 - [ ] Non-functional requirements have specific targets (latency, throughput, etc.)
-- [ ] Security surface area is documented and minimized
+- [ ] Security surface area is documented and kept small
 - [ ] The design supports incremental delivery where possible
 
 ## Reference Files
@@ -151,5 +151,5 @@ Before marking your work done:
 | Reference | Contents |
 |---|---|
 | [ADR Template](references/adr-template.md) | Architecture Decision Record template with status lifecycle, message queue example, and review checklist |
-| [System Design Checklist](references/system-design-checklist.md) | Comprehensive checklist for system design reviews covering requirements, APIs, data, scalability, security, and observability |
+| [System Design Checklist](references/system-design-checklist.md) | Full checklist for system design reviews covering requirements, APIs, data, scalability, security, and observability |
 | [Technology Evaluation Matrix](references/technology-evaluation-matrix.md) | Framework for evaluating technology choices with scoring, PoC guidance, and worked search engine example |

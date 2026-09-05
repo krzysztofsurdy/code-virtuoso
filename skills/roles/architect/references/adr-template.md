@@ -1,16 +1,25 @@
 # Architecture Decision Record Template
 
-A structured template for documenting significant architecture decisions. Each ADR captures the context, the decision, and its consequences so future teams understand why the system is built the way it is.
+A template for documenting significant architecture decisions. Each ADR records the context, the decision, and its consequences so future teams know why the system is built the way it is.
+
+## Contents
+
+- [When to write an ADR](#when-to-write-an-adr)
+- [Template](#template)
+- [Example: Message Queue for Async Processing](#example-message-queue-for-async-processing)
+- [File naming convention](#file-naming-convention)
+- [Status lifecycle](#status-lifecycle)
+- [Review checklist](#review-checklist)
 
 ---
 
-## When to Write an ADR
+## When to write an ADR
 
 Write an ADR when a decision:
 
 - Affects multiple components or services
 - Is difficult or expensive to reverse
-- Involves trade-offs between quality attributes (performance vs maintainability, etc.)
+- Involves trade-offs between quality attributes (performance vs maintainability, for example)
 - Introduces a new technology, library, or infrastructure component
 - Changes an established pattern or convention in the codebase
 - Will be questioned by future team members ("why did we do it this way?")
@@ -64,7 +73,7 @@ Follow with:
 - What patterns or technologies are involved
 - How this integrates with existing components
 
-#### Alternatives Considered
+#### Alternatives considered
 
 Document each alternative that was seriously evaluated. For each:
 
@@ -131,7 +140,7 @@ The implementation approach:
 - Use the framework's built-in retry mechanism with exponential backoff
 - Add middleware for logging and monitoring
 
-#### Alternatives Considered
+#### Alternatives considered
 
 | Alternative | Description | Pros | Cons | Reason Rejected |
 |---|---|---|---|---|
@@ -145,13 +154,13 @@ The implementation approach:
 - Invoice generation no longer blocks HTTP responses
 - Built-in retry with exponential backoff handles transient failures
 - Dead-letter queue captures permanently failed messages for investigation
-- Middleware pipeline provides consistent logging and monitoring
+- Middleware pipeline gives consistent logging and monitoring
 - Team stays within the framework ecosystem they know well
 
 **Negative**:
 - Adds infrastructure dependency on SQS
 - Async processing makes debugging harder than synchronous code
-- Message serialization requires careful handling of entity references
+- Message serialization needs care with entity references
 
 **Risks**:
 - SQS message size limit (256KB) may be exceeded for very large invoice payloads. Mitigation: store payload in S3, pass reference in message.
@@ -164,7 +173,7 @@ The implementation approach:
 
 ---
 
-## File Naming Convention
+## File naming convention
 
 Store ADRs in a dedicated directory with sequential numbering:
 
@@ -177,7 +186,7 @@ docs/
     007-message-queue-for-async.md
 ```
 
-## Status Lifecycle
+## Status lifecycle
 
 ```
 Proposed --> Accepted --> [Deprecated | Superseded by ADR-NNN]
@@ -188,11 +197,11 @@ Proposed --> Accepted --> [Deprecated | Superseded by ADR-NNN]
 - **Deprecated**: Decision is no longer relevant (system changed)
 - **Superseded**: A newer ADR replaces this one (link to the replacement)
 
-Never delete an ADR. Mark it as deprecated or superseded. The history of decisions is valuable.
+Never delete an ADR. Mark it as deprecated or superseded. The history of decisions is worth keeping.
 
 ---
 
-## Review Checklist
+## Review checklist
 
 Before finalizing an ADR:
 

@@ -1,10 +1,19 @@
 # Risk Register Template
 
-A structured approach to identifying, assessing, and managing project risks. The risk register is a living document updated throughout the project lifecycle.
+A template for identifying, assessing, and managing project risks. Keep the risk register current throughout the project.
+
+## Contents
+
+- [Risk register template](#risk-register-template)
+- [Probability/impact matrix](#probabilityimpact-matrix)
+- [Risk categories](#risk-categories)
+- [Risk response strategies](#risk-response-strategies)
+- [Common software project risks](#common-software-project-risks)
+- [Risk register maintenance](#risk-register-maintenance)
 
 ---
 
-## Risk Register Template
+## Risk register template
 
 ### [Project Name] - Risk Register
 
@@ -21,13 +30,13 @@ A structured approach to identifying, assessing, and managing project risks. The
 
 ---
 
-## Probability/Impact Matrix
+## Probability/impact matrix
 
-### Scoring Guide
+### Scoring guide
 
 | Level | Probability | Definition |
 |---|---|---|
-| **High (3)** | > 70% | Very likely to occur based on evidence or past experience |
+| **High (3)** | > 70% | Very likely to occur, based on evidence or past experience |
 | **Medium (2)** | 30-70% | Could occur; some indicators suggest it might |
 | **Low (1)** | < 30% | Unlikely but possible |
 
@@ -37,13 +46,13 @@ A structured approach to identifying, assessing, and managing project risks. The
 | **Medium (2)** | Noticeable impact, manageable within tolerances | Schedule slip 2-5 days, P1 items deferred, budget pressure |
 | **Low (1)** | Minor impact, absorbed within normal operations | Schedule slip < 2 days, cosmetic items deferred |
 
-### Risk Score
+### Risk score
 
 ```
 Risk Score = Probability x Impact
 ```
 
-| Score | Risk Level | Action Required |
+| Score | Risk level | Action required |
 |---|---|---|
 | **9 (H x H)** | Critical | Immediate mitigation action required. Escalate to project board. |
 | **6 (H x M or M x H)** | High | Active mitigation plan. Review weekly. |
@@ -52,7 +61,7 @@ Risk Score = Probability x Impact
 | **2 (M x L or L x M)** | Low | Monitor at regular intervals. |
 | **1 (L x L)** | Low | Accept. Review monthly. |
 
-### Visual Matrix
+### Visual matrix
 
 ```
               Low Impact (1)    Medium Impact (2)    High Impact (3)
@@ -67,7 +76,7 @@ Low (1)    |   1 - Low        |   2 - Low        |   3 - Medium     |
 
 ---
 
-## Risk Categories
+## Risk categories
 
 | Category | Description | Examples |
 |---|---|---|
@@ -81,11 +90,11 @@ Low (1)    |   1 - Low        |   2 - Low        |   3 - Medium     |
 
 ---
 
-## Risk Response Strategies
+## Risk response strategies
 
-| Strategy | When to Use | Example |
+| Strategy | When to use | Example |
 |---|---|---|
-| **Avoid** | Change the plan to eliminate the risk entirely | Use a proven library instead of building custom; remove the risky feature from scope |
+| **Avoid** | Change the plan to eliminate the risk | Use a proven library instead of building custom; remove the risky feature from scope |
 | **Mitigate** | Reduce probability or impact through proactive action | Add a proof of concept to reduce technical uncertainty; cross-train team members to reduce key-person risk |
 | **Transfer** | Shift the risk to a third party | Use a managed service instead of self-hosting; outsource a specialized component |
 | **Accept** | The risk is low enough or the cost of response exceeds the impact | Document the risk and monitor it; set aside contingency time |
@@ -93,11 +102,11 @@ Low (1)    |   1 - Low        |   2 - Low        |   3 - Medium     |
 
 ---
 
-## Common Software Project Risks
+## Common software project risks
 
-Pre-populated risks to consider at the start of any project. Evaluate each for applicability.
+Risks to consider at the start of any project. Check which ones apply.
 
-### Technical Risks
+### Technical risks
 
 | Risk | Typical Probability | Typical Impact | Default Response |
 |---|---|---|---|
@@ -107,7 +116,7 @@ Pre-populated risks to consider at the start of any project. Evaluate each for a
 | Third-party API changes during development | Low | Medium | Pin API version; build adapter layer |
 | Security vulnerability in dependency | Medium | Medium | Automated dependency scanning in CI; update policy |
 
-### Resource Risks
+### Resource risks
 
 | Risk | Typical Probability | Typical Impact | Default Response |
 |---|---|---|---|
@@ -115,7 +124,7 @@ Pre-populated risks to consider at the start of any project. Evaluate each for a
 | Team lacks expertise in required technology | Medium | Medium | Training or spike time budgeted; pair programming |
 | Team context-switching between projects | Medium | Medium | Dedicated allocation agreement; protect focus time |
 
-### Schedule Risks
+### Schedule risks
 
 | Risk | Typical Probability | Typical Impact | Default Response |
 |---|---|---|---|
@@ -124,7 +133,7 @@ Pre-populated risks to consider at the start of any project. Evaluate each for a
 | Scope creep during implementation | High | Medium | Change control process; explicit out-of-scope documentation |
 | Testing takes longer than planned | Medium | Medium | Start testing earlier; automate regression tests |
 
-### External Risks
+### External risks
 
 | Risk | Typical Probability | Typical Impact | Default Response |
 |---|---|---|---|
@@ -134,9 +143,9 @@ Pre-populated risks to consider at the start of any project. Evaluate each for a
 
 ---
 
-## Risk Register Maintenance
+## Risk register maintenance
 
-### Review Cadence
+### Review cadence
 
 | Activity | Frequency | Who |
 |---|---|---|
@@ -147,7 +156,7 @@ Pre-populated risks to consider at the start of any project. Evaluate each for a
 | Report top risks | Each highlight report | Project manager |
 | Full risk review | Stage boundaries | Project manager + project board |
 
-### Risk Register Hygiene
+### Risk register hygiene
 
 | Check | Frequency |
 |---|---|
@@ -158,7 +167,7 @@ Pre-populated risks to consider at the start of any project. Evaluate each for a
 | No stale risks (unchanged for 3+ reviews without justification) | Monthly |
 | Risk descriptions are specific enough to act on | Every review |
 
-### Bad Risk Descriptions vs Good
+### Bad and good risk descriptions
 
 | Bad | Good |
 |---|---|
