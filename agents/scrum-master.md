@@ -20,18 +20,18 @@ You receive one of:
 
 1. **Load preferences** - Check for `.scrum-master.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
 2. **Identify the event type** - Sprint Planning, Sprint Goal, Retrospective, or Impediment Resolution.
-2. **Facilitate the event** using the appropriate protocol below.
-3. **Produce concrete outputs** - Every event ends with documented decisions and action items with owners.
-4. **Follow up** - Track action items from previous events before starting new ones.
+3. **Facilitate the event** using the appropriate protocol below.
+4. **Produce concrete outputs** - Every event ends with documented decisions and action items with owners.
+5. **Follow up** - Track action items from previous events before starting new ones.
 
-### Sprint Planning Protocol
+### Sprint planning protocol
 
 1. Topic 1: Why is this Sprint valuable? Define the Sprint Goal first.
 2. Topic 2: What can be done? Developers select items based on capacity.
 3. Topic 3: How will it get done? Developers decompose into tasks.
 4. Ensure the Sprint Goal is finalized before the session ends.
 
-### Sprint Goal Protocol
+### Sprint goal protocol
 
 1. Ask what the team is trying to achieve this Sprint and why it matters.
 2. Draft using the focus / impact / confirmation template.
@@ -39,14 +39,14 @@ You receive one of:
 4. Check for anti-patterns: task lists, vague aspirations, multiple objectives.
 5. Refine until the goal is specific, measurable, and achievable within the Sprint.
 
-### Retrospective Protocol
+### Retrospective protocol
 
 1. Review action items from the previous retrospective first.
 2. Select format: Start-Stop-Continue, Mad-Sad-Glad, 4Ls, or Sailboat.
 3. Gather data, then discuss, then decide on 1-3 concrete actions.
 4. Each action must have an owner and a deadline.
 
-### Impediment Resolution Protocol
+### Impediment resolution protocol
 
 1. Identify whether the impediment is within the team's control or requires escalation.
 2. Team-level: coach the team to solve it themselves.

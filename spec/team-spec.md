@@ -2,7 +2,16 @@
 
 A team is a pre-composed recipe that bundles agents, skills, and a coordination protocol into a ready-to-use unit. Pick a team, invoke it, and the who-does-what is already defined.
 
-## File Location
+## Contents
+
+- [File location](#file-location)
+- [Frontmatter fields](#frontmatter-fields)
+- [Body sections](#body-sections)
+- [Body guidelines](#body-guidelines)
+- [Naming conventions](#naming-conventions)
+- [Validation checklist](#validation-checklist)
+
+## File location
 
 Team files can live in two locations:
 
@@ -23,9 +32,9 @@ teams/                                          # optional, user-authored
 
 The `dispatching-agent-teams` skill discovers teams from both locations. Project teams override bundled teams when names collide. Each team is a single Markdown file with YAML frontmatter and a Markdown body.
 
-Shipping teams alongside the skill that consumes them keeps the distribution self-contained: when a user installs `dispatching-agent-teams`, they get a working team library to dispatch immediately, without needing separate setup.
+Teams ship alongside the skill that uses them. Installing `dispatching-agent-teams` gives the user a working team library with no separate setup.
 
-## Frontmatter Fields
+## Frontmatter fields
 
 | Field | Required | Type | Purpose |
 |---|---|---|---|
@@ -36,7 +45,7 @@ Shipping teams alongside the skill that consumes them keeps the distribution sel
 | `skills` | No | list of strings | Skill `name` values the team should preload. Each must reference an existing skill |
 | `workflow` | Yes | enum | `sequential`, `parallel`, `hybrid`, or `war-room` |
 
-### Workflow Types
+### Workflow types
 
 | Type | When to use |
 |---|---|
@@ -45,7 +54,7 @@ Shipping teams alongside the skill that consumes them keeps the distribution sel
 | `hybrid` | Some phases are sequential (requirements before design), some are parallel (frontend and backend implement simultaneously). |
 | `war-room` | A decision forum. Agents take positions, challenge each other, and the user decides. Agents reason from knowledge only - no file modification or code execution. |
 
-### Field Rules
+### Field rules
 
 - `lead` must also appear in the `agents` list
 - Agent names reference the `name` field in agent frontmatter, not the filename
@@ -53,11 +62,11 @@ Shipping teams alongside the skill that consumes them keeps the distribution sel
 - Do not include provider-specific model names
 - Descriptions must not contain unquoted colons followed by spaces (wrap in double quotes)
 
-## Body Sections
+## Body sections
 
 The body is the team's operational protocol - the instructions a lead agent follows to coordinate the team.
 
-### Required Sections
+### Required sections
 
 | Section | Purpose |
 |---|---|
@@ -67,7 +76,7 @@ The body is the team's operational protocol - the instructions a lead agent foll
 | **Exit Criteria** | Conditions that must be true before the team is done |
 | **Coordination Rules** | Hard constraints: who blocks whom, isolation requirements, handoff protocols |
 
-### Optional Sections
+### Optional sections
 
 | Section | Purpose |
 |---|---|
@@ -76,9 +85,9 @@ The body is the team's operational protocol - the instructions a lead agent foll
 | **Escalation** | What to do when an agent is blocked or a phase fails |
 | **Variants** | Lighter or heavier configurations (e.g., skip frontend for backend-only work) |
 
-### Spawning Section
+### Spawning section
 
-Every team file should include a Spawning section that describes how to instantiate the team. Platform capabilities vary - the spawning section covers both modes:
+Every team file should include a Spawning section that describes how to instantiate the team. Platform capabilities vary, so the spawning section covers both modes:
 
 **Peer mode** (platforms with agent-to-agent messaging, e.g. experimental agent teams):
 1. Create a team with the agents listed in the frontmatter
@@ -90,11 +99,11 @@ Every team file should include a Spawning section that describes how to instanti
 1. Lead executes each workflow phase in order
 2. Spawn one sub-agent per phase with the phase-specific brief
 3. Collect the output and pass it as input to the next phase
-4. Lead synthesises the final result
+4. Lead synthesizes the final result
 
-The team file should describe both modes so it works everywhere but is better on platforms that support peer communication.
+Describe both modes in the team file. It then works on any platform and runs better where peer communication is available.
 
-## Body Guidelines
+## Body guidelines
 
 - Keep under 150 lines
 - Use imperative mood for workflow steps
@@ -106,13 +115,13 @@ The team file should describe both modes so it works everywhere but is better on
 - Include a Spawning section describing peer and sequential instantiation modes
 - If agents in a parallel phase need different context levels, specify the per-agent restrictions in Coordination Rules (e.g., "Cold Reviewer receives only the diff, no project docs")
 
-## Naming Conventions
+## Naming conventions
 
 - Lowercase letters, digits, and hyphens only
 - Must end with `-team` (e.g., `development-team`, `code-review-team`)
 - Describe the team's domain, not a specific task (`release-team`, not `release-v2-team`)
 
-## Validation Checklist
+## Validation checklist
 
 Before committing a team file:
 

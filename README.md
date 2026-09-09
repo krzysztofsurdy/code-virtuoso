@@ -5,7 +5,7 @@
 <h1 align="center">Code Virtuoso</h1>
 
 <p align="center">
-  Skills, sub-agents, and playbooks for Claude Code, Cursor, and any Agent Skills–compatible AI coding assistant.
+  Skills, sub-agents, and playbooks for Claude Code, Cursor, and any Agent Skills-compatible AI coding assistant.
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@
   <a href="https://github.com/krzysztofsurdy/code-virtuoso/actions/workflows/validate-markdown.yml"><img src="https://github.com/krzysztofsurdy/code-virtuoso/actions/workflows/validate-markdown.yml/badge.svg" alt="Validate Markdown"></a>
 </p>
 
-> **What you get:** 30+ curated skills, 19 sub-agents, 7 team role personas, and operational playbooks - all installable individually or as bundles, based on the open [Agent Skills](https://agentskills.io) standard. Turn your AI coding assistant from a generalist into a domain specialist.
+> **What you get:** 30+ curated skills, 19 sub-agents, 7 team role personas, and operational playbooks - all installable individually or as bundles, based on the open [Agent Skills](https://agentskills.io) standard.
 
 See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
@@ -30,20 +30,20 @@ See [CHANGELOG.md](CHANGELOG.md) for release notes.
 <summary><strong>Table of Contents</strong></summary>
 
 - [Quickstart](#quickstart)
-- [Why Use This](#why-use-this)
-- [What's Inside](#whats-inside)
-- [Knowledge Skills](#knowledge-skills)
-- [Tool Skills](#tool-skills)
-- [Framework Skills](#framework-skills)
-- [Playbook Skills](#playbook-skills)
-- [Role Skills](#role-skills)
+- [Why use this](#why-use-this)
+- [What's inside](#whats-inside)
+- [Knowledge skills](#knowledge-skills)
+- [Tool skills](#tool-skills)
+- [Framework skills](#framework-skills)
+- [Playbook skills](#playbook-skills)
+- [Role skills](#role-skills)
 - [Agents](#agents)
 - [Installation (detailed)](#installation-detailed)
-- [Works Well With](#works-well-with)
+- [Works well with](#works-well-with)
 - [FAQ](#faq)
 - [Contributing](#contributing)
 - [License](#license)
-- [Repository Structure](#repository-structure)
+- [Repository structure](#repository-structure)
 
 </details>
 
@@ -64,16 +64,16 @@ That is the whole tour. For fine-grained install modes (per-skill, global, offli
 
 ---
 
-## Why Use This
+## Why use this
 
-- **Battle-tested, not LLM-generated.** Every skill was researched against official docs and community best practices, then hand-curated. No hallucinated API references.
-- **Progressive disclosure keeps your context clean.** Skills load a short `SKILL.md` first and only pull in deeper references when the task calls for them. Less context rot, sharper answers.
-- **One installation, many tools.** Built on the open Agent Skills standard - works with Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini CLI, and more. No lock-in.
-- **Team-shaped, not pattern-shaped.** The library ships 7 role personas (Product Manager, Architect, Backend Dev, Frontend Dev, QA, PM, Scrum Master) and 15 sub-agents that delegate like a real team rather than a single over-prompted assistant.
+- **Researched, then hand-curated.** Every skill was checked against official docs and community best practices. No invented API references.
+- **Progressive disclosure saves context.** Skills load a short `SKILL.md` first and pull in deeper references only when the task calls for them.
+- **One installation, many tools.** Built on the open Agent Skills standard. Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini CLI, and more.
+- **Shaped like a team.** The library ships 7 role personas (Product Manager, Architect, Backend Dev, Frontend Dev, QA, PM, Scrum Master) and 15 sub-agents that delegate like a real team instead of one over-prompted assistant.
 
 ---
 
-## What's Inside
+## What's inside
 
 | Category | Count | Summary |
 |---|---|---|
@@ -87,11 +87,11 @@ That is the whole tour. For fine-grained install modes (per-skill, global, offli
 
 ---
 
-## Knowledge Skills
+## Knowledge skills
 
 Grouped by theme. Each skill is a self-contained reference with a short `SKILL.md` and deep-dive files under `references/`.
 
-### Principles & Design
+### Principles and design
 
 | Skill | Summary |
 |-------|---------|
@@ -100,7 +100,7 @@ Grouped by theme. Each skill is a self-contained reference with a short `SKILL.m
 | [Clean Architecture](skills/knowledge/clean-architecture/SKILL.md) | Clean/Hexagonal Architecture and DDD fundamentals |
 | [Refactoring](skills/knowledge/refactoring/SKILL.md) | 67 refactoring techniques and 22 code smells |
 
-### Craft & Code
+### Craft and code
 
 | Skill | Summary |
 |-------|---------|
@@ -112,7 +112,7 @@ Grouped by theme. Each skill is a self-contained reference with a short `SKILL.m
 | [Security](skills/knowledge/security/SKILL.md) | OWASP Top 10, auth patterns, secure coding practices |
 | [Accessibility](skills/knowledge/accessibility/SKILL.md) | WCAG compliance, ARIA patterns, keyboard navigation, a11y testing |
 
-### Process & Delivery
+### Process and delivery
 
 | Skill | Summary |
 |-------|---------|
@@ -121,7 +121,7 @@ Grouped by theme. Each skill is a self-contained reference with a short `SKILL.m
 | [CI/CD](skills/knowledge/cicd/SKILL.md) | Pipeline design, deployment strategies, environment promotion |
 | [Microservices](skills/knowledge/microservices/SKILL.md) | Saga, CQRS, event sourcing, circuit breakers, service mesh |
 
-### Agent Workflow
+### Agent workflow
 
 | Skill | Summary |
 |-------|---------|
@@ -131,7 +131,7 @@ Grouped by theme. Each skill is a self-contained reference with a short `SKILL.m
 
 ---
 
-## Tool Skills
+## Tool skills
 
 Interactive generators. Each is user-invocable via `/skill-name`.
 
@@ -151,7 +151,7 @@ Interactive generators. Each is user-invocable via `/skill-name`.
 
 ---
 
-## Framework Skills
+## Framework skills
 
 | Skill | Summary |
 |-------|---------|
@@ -162,7 +162,7 @@ Interactive generators. Each is user-invocable via `/skill-name`.
 
 ---
 
-## Playbook Skills
+## Playbook skills
 
 | Skill | Summary |
 |-------|---------|
@@ -174,7 +174,7 @@ Interactive generators. Each is user-invocable via `/skill-name`.
 
 ---
 
-## Role Skills
+## Role skills
 
 | Skill | Summary |
 |-------|---------|
@@ -285,23 +285,23 @@ chmod +x .git/hooks/post-merge
 
 ---
 
-## Works Well With
+## Works well with
 
-Companion tools that pair naturally with this library.
+Companion tools that fit alongside this library.
 
-### Beads - Task Memory for AI Agents
+### Beads - task memory for AI agents
 
 [github.com/steveyegge/beads](https://github.com/steveyegge/beads)
 
 Distributed, git-backed graph issue tracker that gives AI agents persistent, structured memory for long-horizon tasks. Replaces ad-hoc markdown planning files with a dependency-aware task graph.
 
-### GSD - Spec-Driven Development
+### GSD - spec-driven development
 
 [github.com/gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done)
 
 Meta-prompting and context engineering system for Claude Code, OpenCode, Gemini CLI, and Codex. Targets context rot with spec-driven development, subagent orchestration, and state management.
 
-### Grepika - Token-Efficient Code Search
+### Grepika - token-efficient code search
 
 [github.com/agentika-labs/grepika](https://github.com/agentika-labs/grepika)
 
@@ -326,8 +326,8 @@ Yes - install with `-g` for global availability. Local installs live in the curr
 **Can I contribute my own skills or agents?**
 Yes. See [CONTRIBUTING.md](CONTRIBUTING.md) for conventions, the research workflow, `marketplace.json` update rules, and version-bumping policy.
 
-**Why not just prompt-engineer one long CLAUDE.md file?**
-One long rule file consumes context on every request. Skills use progressive disclosure - metadata sits in context, bodies load only when triggered, deep references load only when explicitly needed. You get specialist knowledge without paying for it until it's relevant.
+**Why not use one long CLAUDE.md file?**
+One long rule file takes up context on every request. Skills use progressive disclosure: metadata sits in context, bodies load when triggered, and deep references load only when needed. Specialist knowledge costs nothing until it is relevant.
 
 ---
 
@@ -351,7 +351,7 @@ MIT - see [LICENSE](LICENSE).
 
 ---
 
-## Repository Structure
+## Repository structure
 
 <details>
 <summary>Click to expand</summary>

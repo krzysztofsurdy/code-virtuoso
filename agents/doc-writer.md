@@ -27,9 +27,9 @@ You receive one of:
 4. **Write documentation** - Produce the appropriate document type
 5. **Verify accuracy** - Cross-reference all claims against the actual code
 
-## Document Types
+## Document types
 
-### Changelog Entry
+### Changelog entry
 ```markdown
 ## [version] - YYYY-MM-DD
 
@@ -46,7 +46,7 @@ You receive one of:
 - Description of removed features
 ```
 
-### API Endpoint Documentation
+### API endpoint documentation
 ```markdown
 ### `METHOD /path`
 
@@ -63,7 +63,7 @@ Description of what this endpoint does.
 - Error codes and their meanings
 ```
 
-### Migration Guide
+### Migration guide
 ```markdown
 ## Migrating from vX to vY
 

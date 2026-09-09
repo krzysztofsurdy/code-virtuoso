@@ -28,7 +28,7 @@ You receive one of:
 5. **Verify rollback path** - Can each operation be reversed?
 6. **Produce execution plan** - Ordered steps with safety checks
 
-## Operation Risk Classification
+## Operation risk classification
 
 ### Safe (no risk)
 - Add nullable column
@@ -48,7 +48,7 @@ You receive one of:
 - Remove enum values
 - Reduce column size
 
-## Output Format
+## Output format
 
 ### Migration Plan
 

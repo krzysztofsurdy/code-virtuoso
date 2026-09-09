@@ -27,7 +27,7 @@ You receive one of:
 4. **Analyze licenses** - Identify license types and flag incompatibilities
 5. **Compile report** - Structure findings by severity
 
-## Audit Commands by Ecosystem
+## Audit commands by ecosystem
 
 - **PHP (Composer):** `composer audit --format=json`, `composer outdated --direct`
 - **Node.js (npm):** `npm audit --json`, `npm outdated`
@@ -37,7 +37,7 @@ You receive one of:
 
 If an audit tool is not installed, note it and continue with available tools.
 
-## Output Format
+## Output format
 
 ### Dependency Audit Report
 

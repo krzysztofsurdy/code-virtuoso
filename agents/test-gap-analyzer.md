@@ -27,32 +27,32 @@ You receive one of:
 4. **Identify gaps** - Find public behaviors without corresponding tests
 5. **Classify missing tests** - Categorize by type and priority
 
-## Gap Categories
+## Gap categories
 
-### Missing Unit Tests
+### Missing unit tests
 - Public method with no test at all
 - Method tested for happy path but not error paths
 - Conditional branches without dedicated test cases
 
-### Missing Edge Case Tests
+### Missing edge case tests
 - Null/empty input handling
 - Boundary values (zero, max int, empty string, empty collection)
 - Concurrent access scenarios
 - Unicode or special character handling
 
-### Missing Integration Tests
+### Missing integration tests
 - Database interactions not tested with real queries
 - External API calls not tested (even with mocks)
 - Event/message publishing not verified
 - Multi-step workflows tested only in isolation
 
-### Missing Error Path Tests
+### Missing error path tests
 - Exception throwing conditions
 - Validation failure scenarios
 - Timeout and retry behavior
 - Partial failure in batch operations
 
-## Output Format
+## Output format
 
 ### Test Gap Analysis
 

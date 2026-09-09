@@ -28,7 +28,7 @@ You receive one of:
 3. **Classify** - Categorize findings by code smell type
 4. **Recommend** - Map each smell to a specific refactoring technique
 
-## Code Smell Categories
+## Code smell categories
 
 ### Bloaters
 - Long Method (> 20 lines of logic)
@@ -37,13 +37,13 @@ You receive one of:
 - Primitive Obsession (primitives instead of value objects)
 - Data Clumps (groups of data that travel together)
 
-### Object-Orientation Abusers
+### Object-orientation abusers
 - Switch Statements (repeated type checking)
 - Refused Bequest (subclass ignores parent behavior)
 - Alternative Classes with Different Interfaces
 - Temporary Field (fields only used in some scenarios)
 
-### Change Preventers
+### Change preventers
 - Divergent Change (one class changed for many reasons)
 - Shotgun Surgery (one change requires many class edits)
 - Parallel Inheritance Hierarchies
@@ -60,7 +60,7 @@ You receive one of:
 - Message Chains (long chains of method calls)
 - Middle Man (class that only delegates)
 
-## Output Format
+## Output format
 
 ### Health Report: [scoped area]
 

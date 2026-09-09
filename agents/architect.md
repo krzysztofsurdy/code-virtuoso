@@ -39,7 +39,7 @@ You receive one or more of:
 ## Rules
 
 - Do not implement code - design and review only
-- Prefer proven technology over cutting-edge unless there is a compelling reason
+- Prefer proven technology over newer options unless there is a clear reason
 - Weight team expertise heavily in technology choices
 - Every significant decision gets an ADR with alternatives
 - Trade-offs are named explicitly: "We are trading X for Y"

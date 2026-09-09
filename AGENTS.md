@@ -2,9 +2,17 @@
 
 @CONTRIBUTING.md
 
-Agents are sub-agents - standalone markdown files that define a specialized role, its allowed tools, and its system prompt. Each agent file contains YAML frontmatter for configuration and a markdown body that serves as the agent's system prompt.
+Agents are sub-agents - standalone markdown files that define a specialized role, its allowed tools, and its system prompt. Each agent file contains YAML frontmatter for configuration and a markdown body that is the agent's system prompt.
 
 Where **skills** provide reference knowledge (patterns, checklists, component docs), **agents** are the actors that use that knowledge to perform work. A skill is a book on the shelf; an agent is the specialist who reads the book and applies it. Delegate to an agent when a task is well-scoped enough that a focused sub-agent will do it better than the orchestrating model switching context mid-conversation.
+
+## Contents
+
+- [Architecture](#architecture)
+- [Specialist agents](#specialist-agents)
+- [Role agents](#role-agents)
+- [Agent chaining patterns](#agent-chaining-patterns)
+- [Conventions](#conventions)
 
 ## Architecture
 
@@ -22,7 +30,7 @@ Agents follow a two-tier model:
 | File modification | Mostly read-only (except Doc Writer and Implementer) | Dev roles (Backend, Frontend) write code; others are read-only |
 | Isolation | Implementer uses worktree; others run in-place | Backend Dev and Frontend Dev use worktree; others run in-place |
 
-## Specialist Agents
+## Specialist agents
 
 | Agent | Tools | Isolation | Purpose |
 |-------|-------|-----------|---------|
@@ -63,7 +71,7 @@ Agents follow a two-tier model:
 
 **Course Corrector** - Delegate when requirements change mid-implementation, a blocker is discovered, or scope shifts after planning. It traces the impact across all planning artifacts, classifies the blast radius (minor/moderate/major), drafts specific change proposals with old-to-new diffs, and recommends who needs to act.
 
-## Role Agents
+## Role agents
 
 | Agent | Tools | Memory | Skills | Purpose |
 |-------|-------|--------|--------|---------|
@@ -89,11 +97,11 @@ Agents follow a two-tier model:
 
 **Scrum Master** - Facilitates Scrum events. Delegate for sprint planning, sprint goal crafting, retrospective facilitation, and impediment resolution. Coaches rather than directs. Uses the FOCUS criteria for sprint goals and tracks action items from retrospectives.
 
-## Agent Chaining Patterns
+## Agent chaining patterns
 
 Common multi-agent workflows where the output of one agent feeds the next:
 
-### Investigation Flow
+### Investigation flow
 
 ```
 Investigator -> Architect -> Implementer -> Reviewer
@@ -101,7 +109,7 @@ Investigator -> Architect -> Implementer -> Reviewer
 
 Start with the Investigator to map the relevant code area. Hand findings to the Architect for design decisions. Pass the design to the Implementer for TDD execution. Finish with the Reviewer for quality checks.
 
-### Feature Flow
+### Feature flow
 
 ```
 Product Manager -> Architect -> Backend Dev / Frontend Dev -> QA Engineer
@@ -109,7 +117,7 @@ Product Manager -> Architect -> Backend Dev / Frontend Dev -> QA Engineer
 
 The Product Manager defines requirements and acceptance criteria. The Architect translates them into component designs and API contracts. Dev agents implement in worktrees. The QA Engineer writes test plans against the original acceptance criteria and signs off.
 
-### Review Flow
+### Review flow
 
 ```
 Refactor Scout -> Reviewer -> Implementer
@@ -117,7 +125,7 @@ Refactor Scout -> Reviewer -> Implementer
 
 The Refactor Scout scans for code smells and structural issues. The Reviewer validates the scout's findings against the actual code context. The Implementer applies the recommended refactorings with TDD.
 
-### Pre-Migration Flow
+### Pre-migration flow
 
 ```
 Migration Planner -> Reviewer -> Implementer
@@ -125,15 +133,15 @@ Migration Planner -> Reviewer -> Implementer
 
 The Migration Planner analyzes migration files and produces a risk-assessed execution plan. The Reviewer checks that application code is compatible with both old and new schemas. The Implementer applies any required code changes.
 
-### Coverage Improvement Flow
+### Coverage improvement flow
 
 ```
 Test Gap Analyzer -> Implementer -> Reviewer
 ```
 
-The Test Gap Analyzer identifies missing test cases by priority. The Implementer writes the missing tests using TDD cycles. The Reviewer verifies the new tests are meaningful and correctly structured.
+The Test Gap Analyzer identifies missing test cases by priority. The Implementer writes the missing tests using TDD cycles. The Reviewer checks that the new tests assert real behavior and are structured correctly.
 
-### Multi-Perspective Review
+### Multi-perspective review
 
 ```
 Cold Reviewer + Acceptance Verifier (parallel) -> Reviewer (triage)
@@ -147,27 +155,27 @@ The Cold Reviewer and Acceptance Verifier examine changes simultaneously from in
 Architect (lead) + Product Manager + Backend Dev + QA Engineer -> User decides
 ```
 
-A structured debate for technical decisions. Each agent takes a position from their domain, challenges one other position, then the lead synthesizes the landscape. The user makes the final call. Unlike delivery chains, the war room produces a decision rather than code. Use the pre-composed [War Room](skills/tools/agent-teams/teams/war-room.md) team for this pattern.
+A structured debate for technical decisions. Each agent takes a position from their domain, challenges one other position, then the lead synthesizes the positions. The user makes the final call. Unlike delivery chains, the war room produces a decision rather than code. Use the pre-composed [War Room](skills/tools/agent-teams/teams/war-room.md) team for this pattern.
 
 ## Conventions
 
-### Tool Permission Philosophy
+### Tool permission philosophy
 
 Agents follow least privilege. Read-only agents get only file reading, code search, and shell tools. File editing permissions are granted only to agents that must modify files: the Implementer, Doc Writer, Backend Dev, and Frontend Dev. Shell access is universally available for running tests, audit commands, and git operations.
 
-### Worktree Isolation
+### Worktree isolation
 
 Agents that create or modify source code operate in isolated git worktrees. This prevents half-finished changes from polluting the main working tree and lets the orchestrator review changes before merging. Currently three agents use worktree isolation: Implementer, Backend Dev, and Frontend Dev.
 
-### Memory Usage
+### Memory usage
 
 Role agents that need cross-session context (Product Manager, Architect, QA Engineer, Project Manager) use persistent project-level memory. This allows them to accumulate project knowledge - requirements decisions, architectural context, risk registers - across multiple conversations. Specialist agents are stateless by design.
 
-### Handoff Contracts
+### Handoff contracts
 
-Agents declare what they expect as input (`expects`) and what they produce (`produces`) using artifact type names from [spec/artifacts.md](spec/artifacts.md). These declarations enable orchestrators and teams to verify that the output of one agent matches the input of the next. Contracts are documentation - not runtime enforcement. Agents handle missing artifacts gracefully.
+Agents declare what they expect as input (`expects`) and what they produce (`produces`) using artifact type names from [spec/artifacts.md](spec/artifacts.md). These declarations let orchestrators and teams verify that the output of one agent matches the input of the next. Contracts are documentation - not runtime enforcement. Agents handle missing artifacts gracefully.
 
-### Skill Preloading
+### Skill preloading
 
 Both role and specialist agents preload relevant skills. The skill name matches the `name` field in the skill's SKILL.md, not the directory path. Role agents preload their own role skill plus relevant knowledge skills (e.g., Backend Dev loads `backend-dev`, `design-patterns`, `clean-architecture`, `testing`, `api-design`). Specialist agents preload the 1-4 knowledge skills most relevant to their task (e.g., Reviewer loads `refactoring`, `solid`, `security`, `performance`).
 

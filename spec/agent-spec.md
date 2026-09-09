@@ -4,6 +4,18 @@ This document defines the conventions for agents in the Code Virtuoso marketplac
 
 For a guided, interactive design flow, use the `agent-creator` skill. This spec is the reference for reviewers and contributors.
 
+## Contents
+
+- [Location](#location)
+- [File format](#file-format)
+- [Archetypes](#archetypes)
+- [Handoff contracts](#handoff-contracts)
+- [Conventions](#conventions)
+- [Tuning (optional)](#tuning-optional)
+- [Naming conventions](#naming-conventions)
+- [Marketplace registration](#marketplace-registration)
+- [Validation](#validation)
+
 ## Location
 
 Agents live at the top level of the repository in the `agents/` directory:
@@ -20,7 +32,7 @@ One file per agent. The file name matches the `name` field in the frontmatter.
 
 Role skills that pair with a role agent live in `skills/roles/{name}/`, and the agent file references the role skill via `skills:` in its frontmatter. Agents are not nested inside skill directories.
 
-## File Format
+## File format
 
 Agent files use YAML frontmatter followed by a Markdown body. The body is the agent's system prompt.
 
@@ -69,7 +81,7 @@ skills:
 
 Only `name`, `description`, `skills`, `expects`, and `produces` are portable across agent platforms. Other fields are platform-specific extensions (see [platforms reference](../skills/tools/agent-creator/references/platforms.md)). When authoring an agent for cross-platform use, keep the body portable and adapt frontmatter when porting.
 
-### Body Content
+### Body content
 
 The body is the agent's system prompt. It follows a five-section contract:
 
@@ -111,7 +123,7 @@ Agents fall into three archetypes. The archetype determines tool permissions, is
 
 See [archetypes reference](../skills/tools/agent-creator/references/archetypes.md) for worked examples and anti-patterns.
 
-## Handoff Contracts
+## Handoff contracts
 
 Agents can declare what artifacts they expect as input and what artifacts they produce as output. These declarations help orchestrators and teams verify that workflows chain correctly.
 
@@ -134,9 +146,9 @@ Both fields are optional. When present, they reference artifact types defined in
 - Trim tool allowlists to the minimum that lets the workflow finish
 - Read-only by default - add write tools only when the agent legitimately modifies files
 
-## Tuning (Optional)
+## Tuning (optional)
 
-Agents whose behavior meaningfully varies by team preference can include a `## Tuning` section in their body. This follows the supplement pattern: on first activation, the agent asks the user a short questionnaire (3-5 questions) about their preferences, saves the answers alongside the agent file as a `.tune.md` supplement, and reuses them on subsequent activations.
+Agents whose behavior varies by team preference can include a `## Tuning` section in their body. This follows the supplement pattern: on first activation, the agent asks the user a short questionnaire (3-5 questions) about their preferences, saves the answers alongside the agent file as a `.tune.md` supplement, and reuses them on subsequent activations.
 
 ### When to include tuning
 
@@ -162,7 +174,7 @@ Do not add tuning for agents where behavior is fixed by design (e.g., investigat
 
 See the [tuning reference](../skills/tools/agent-creator/references/tuning.md) for the full pattern and examples.
 
-## Naming Conventions
+## Naming conventions
 
 - Lowercase letters, digits, and hyphens only
 - Starts with a letter
@@ -170,7 +182,7 @@ See the [tuning reference](../skills/tools/agent-creator/references/tuning.md) f
 - File name matches the `name` field (e.g. `migration-planner.md`)
 - Avoid generic names (`agent1`, `helper`, `assistant`)
 
-## Marketplace Registration
+## Marketplace registration
 
 Every agent is registered in `.claude-plugin/marketplace.json`:
 

@@ -39,7 +39,7 @@ You also receive context about what phase is about to start (e.g., "we're about 
 5. **Assess completeness** - Are acceptance criteria testable? Does the design address all NFRs? Are there orphan stories not linked to any requirement?
 6. **Produce verdict** - READY, NEEDS WORK, or NOT READY with specific gaps listed.
 
-## HALT Conditions
+## HALT conditions
 
 Stop and report immediately when:
 - **No requirements spec provided** - cannot assess readiness without requirements

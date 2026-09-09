@@ -27,7 +27,7 @@ You receive a question or area to investigate. Examples:
 4. **Map dependencies** - Identify what the code depends on and what depends on it
 5. **Document findings** - Structure your results clearly
 
-## Output Format
+## Output format
 
 Return your findings in this structure:
 

@@ -2,7 +2,22 @@
 
 Code Virtuoso is a collection of AI agent skills and sub-agent definitions built on the [Agent Skills](https://agentskills.io) open standard. Contributions include new skills, new agents, improvements to existing content, and structural fixes.
 
-## Getting Started
+## Contents
+
+- [Getting started](#getting-started)
+- [Project structure](#project-structure)
+- [Adding a new skill](#adding-a-new-skill)
+- [Updating existing skills](#updating-existing-skills)
+- [Adding a new agent](#adding-a-new-agent)
+- [Updating existing agents](#updating-existing-agents)
+- [Adding a new plugin](#adding-a-new-plugin)
+- [Updating existing plugins](#updating-existing-plugins)
+- [Marketplace configuration](#marketplace-configuration)
+- [Version bumping rules](#version-bumping-rules)
+- [Commit conventions](#commit-conventions)
+- [Quality standards](#quality-standards)
+
+## Getting started
 
 There is no build step, test suite, or runtime. "Development" means writing and editing markdown files that follow specific conventions. To contribute:
 
@@ -12,7 +27,7 @@ There is no build step, test suite, or runtime. "Development" means writing and 
 4. Check the `template/` directory for starter templates (`SKILL.md`, `agent.md`)
 5. Check the `spec/` directory for format specifications (`skill-spec.md`, `agent-spec.md`, `agent-skills-spec.md`, `plugin-spec.md`)
 
-## Project Structure
+## Project structure
 
 ```
 agents/              - Sub-agent definitions (specialist and role agents)
@@ -29,9 +44,9 @@ template/            - Starter templates
 
 See the [README](README.md) for the full directory tree and skill tables.
 
-## Adding a New Skill
+## Adding a new skill
 
-### 1. Choose the Right Category
+### 1. Choose the right category
 
 | Category | When to use | Example |
 |---|---|---|
@@ -41,7 +56,7 @@ See the [README](README.md) for the full directory tree and skill tables.
 | `skills/roles/` | Team role definitions with responsibilities and workflows | Product manager, QA engineer |
 | `skills/frameworks/{name}/` | Framework-specific component references or upgrade guides | Symfony components, Django components |
 
-### 2. Create the Directory Structure
+### 2. Create the directory structure
 
 ```
 skills/{category}/your-skill-name/
@@ -55,7 +70,7 @@ Every skill has a `SKILL.md` at the root and a `references/` directory for deep-
 
 ### 3. Write SKILL.md
 
-#### Frontmatter Fields
+#### Frontmatter fields
 
 ```yaml
 ---
@@ -70,7 +85,7 @@ The `description` field is the most important field for discoverability. It cont
 
 **Note on platform-specific frontmatter:** The `name`, `description`, and `user-invocable` fields are part of the [Agent Skills](https://agentskills.io) open standard and work across platforms. The `allowed-tools` field is a platform-specific extension (e.g., Claude Code uses tool names like `Read`, `Grep`, `Glob`, `Bash`; other platforms may use different names or not support tool restrictions). If your skill needs tool restrictions, document them and adapt to your platform.
 
-#### user-invocable Guidelines
+#### user-invocable guidelines
 
 The `user-invocable` field controls whether a skill appears as a runnable command (e.g., `/skill-name` or `@skill-name` depending on platform). Set it based on the skill category:
 
@@ -84,17 +99,17 @@ The `user-invocable` field controls whether a skill appears as a runnable comman
 
 Every SKILL.md **must** include this field. If omitted, behavior varies by platform.
 
-#### No Provider-Specific Models
+#### No provider-specific models
 
 Do not include a `model` field in skill or agent definitions. Model selection is a user/platform decision, not a content decision. Hardcoding provider-specific model names (e.g., `sonnet`, `gpt-4o`, `gemini-pro`) makes skills and agents non-portable. Users configure model preferences in their own platform settings.
 
-#### Description Guidelines
+#### Description guidelines
 
 Descriptions should be 1-3 sentences that pack in relevant keywords and trigger conditions. The pattern is: what it covers + when to use it.
 
 Good example (language-specific skill):
 
-> Comprehensive skill for all 26 Gang of Four design patterns with idiomatic implementations and real-world examples. Use when the user asks to apply a design pattern, refactor code using patterns, choose between competing patterns, or review existing pattern usage.
+> Reference skill for all 26 Gang of Four design patterns with idiomatic implementations and real-world examples. Use when the user asks to apply a design pattern, refactor code using patterns, choose between competing patterns, or review existing pattern usage.
 
 Good example (procedural skill):
 
@@ -104,7 +119,7 @@ Bad example:
 
 > A skill about design patterns.
 
-#### SKILL.md Structure
+#### SKILL.md structure
 
 Follow this order:
 
@@ -149,7 +164,7 @@ One paragraph summary.
 
 **Note on skill references:** In the Integration table, reference skills by name. How users invoke skills depends on their platform (e.g., `/skill-name` as a slash command in Claude Code, `@skill-name` in other tools, or automatic activation based on context).
 
-### 4. Add Reference Files
+### 4. Add reference files
 
 Reference files live in `references/` and contain the deep content: code examples, detailed workflows, comparison tables. SKILL.md provides the overview; references provide the depth. This is the **progressive disclosure** pattern - agents load SKILL.md first and only read reference files when they need detail on a specific topic.
 
@@ -175,19 +190,19 @@ If no existing plugin fits your skill, create a new plugin entry. See [Marketpla
 
 Add your skill to the appropriate table in `README.md` and update the Repository Structure tree if you created a new directory.
 
-## Updating Existing Skills
+## Updating existing skills
 
 - Make your content changes
 - Bump the version in `marketplace.json` (see [Version Bumping Rules](#version-bumping-rules))
 - Test that the skill activates correctly after your changes
 
-## Adding a New Agent
+## Adding a new agent
 
 Agents are sub-agent definitions usable by AI coding platforms that support delegation (e.g., Claude Code [sub-agents](https://code.claude.com/docs/en/sub-agents), Cursor agents, GitHub Copilot).
 
 For a guided, interactive design flow, run the `agent-creator` skill in `skills/tools/agent-creator/`. This guide is the reference for contributors and reviewers; the canonical specification lives in [`spec/agent-spec.md`](spec/agent-spec.md).
 
-### 1. Choose the Right Archetype
+### 1. Choose the right archetype
 
 Pick the archetype that matches the scope of responsibility, not the size of the task.
 
@@ -205,7 +220,7 @@ Decision tree:
 
 See [`agent-creator/references/archetypes.md`](skills/tools/agent-creator/references/archetypes.md) for worked examples and anti-patterns.
 
-### 2. Create the Agent Definition File
+### 2. Create the agent definition file
 
 Create a Markdown file at the top level of `agents/`:
 
@@ -220,7 +235,7 @@ Naming rules:
 - Describe the **role**, not the task (`reviewer`, not `review-pr-123`)
 - Avoid generic names (`agent1`, `helper`, `assistant`)
 
-### 3. Agent Frontmatter
+### 3. Agent frontmatter
 
 ```yaml
 ---
@@ -251,7 +266,7 @@ The same [no provider-specific models](#no-provider-specific-models) rule applie
 
 See [`agent-creator/references/frontmatter-fields.md`](skills/tools/agent-creator/references/frontmatter-fields.md) for the full reference, including portability notes and common combination mistakes.
 
-### 4. Agent Body (System Prompt)
+### 4. Agent body (system prompt)
 
 The body is the agent's system prompt. Follow the five-section contract:
 
@@ -281,7 +296,7 @@ Body guidelines:
 
 See [`agent-creator/references/system-prompts.md`](skills/tools/agent-creator/references/system-prompts.md) for worked examples per archetype and common rejection reasons.
 
-### 5. Choose Tool Permissions
+### 5. Choose tool permissions
 
 Start read-only and add write tools only when the workflow demands them.
 
@@ -339,7 +354,7 @@ Example for a role (skill + agent paired):
 - Add a row to the matching table in [AGENTS.md](AGENTS.md), including a short description of when to delegate
 - If the agent introduces a new category of work, update the top-level "Agents" bullet in README.md
 
-### 8. Validate Before Committing
+### 8. Validate before committing
 
 Run through the pre-publish checklist: [`agent-creator/references/validation.md`](skills/tools/agent-creator/references/validation.md).
 
@@ -352,14 +367,14 @@ The most common rejection reasons:
 - Body contains provider-specific or tool-specific phrasing
 - Agent does two things - should be split into two agents
 
-## Updating Existing Agents
+## Updating existing agents
 
 - Make your content changes
 - Re-run the validation checklist in [`agent-creator/references/validation.md`](skills/tools/agent-creator/references/validation.md)
 - Bump the version in `marketplace.json` (see [Version Bumping Rules](#version-bumping-rules))
 - If the change alters the agent's output contract or tool permissions, note it in the commit message so reviewers can spot callers that may need updating
 
-## Adding a New Plugin
+## Adding a new plugin
 
 There are two distinct uses of the word "plugin" in this repository. Know which one you are working on before you start.
 
@@ -370,7 +385,7 @@ There are two distinct uses of the word "plugin" in this repository. Know which 
 
 For a guided, interactive scaffold, run the `plugin-creator` skill in `skills/tools/plugin-creator/`. This guide is the reference for contributors and reviewers; the canonical specification lives in [`spec/plugin-spec.md`](spec/plugin-spec.md).
 
-### Adding a Marketplace Entry
+### Adding a marketplace entry
 
 Use this path when you want to expose existing skills or agents in this repo as an installable bundle.
 
@@ -395,7 +410,7 @@ Minimal example:
 
 See [Marketplace Configuration](#marketplace-configuration) below for the full rules.
 
-### Adding a Standalone Claude Code Plugin
+### Adding a standalone Claude Code plugin
 
 Use this path when the plugin should be its own repo or its own directory outside this marketplace - for example, when shipping hooks, MCP servers, or LSP servers that do not belong inside the code-virtuoso content library.
 
@@ -414,7 +429,7 @@ Use this path when the plugin should be its own repo or its own directory outsid
 5. **Add a marketplace entry** if you want this marketplace to distribute it - the entry's `source` can be a relative path (same repo), a `github` object, a `url` object, a `git-subdir` object, or an `npm` object. See `plugin-creator/references/marketplace-manifest.md` for all source types.
 6. **Seed a `CHANGELOG.md`** with the initial `1.0.0` release entry. Standalone plugins track their own version independently of the marketplace version.
 
-### Common Mistakes
+### Common mistakes
 
 | Mistake | Consequence | Fix |
 |---|---|---|
@@ -425,7 +440,7 @@ Use this path when the plugin should be its own repo or its own directory outsid
 | Reserved marketplace name (e.g. `claude-plugins-official`) | Installation rejected | See reserved names in `plugin-creator/references/marketplace-manifest.md` |
 | Content changed but version not bumped | Users never see the update due to caching | Always bump the version per [Version Bumping Rules](#version-bumping-rules) |
 
-## Updating Existing Plugins
+## Updating existing plugins
 
 - Make your content changes (plugin directory, `plugin.json`, or the marketplace entry as appropriate)
 - Re-run `claude plugin validate` if you touched a standalone plugin
@@ -436,7 +451,7 @@ Use this path when the plugin should be its own repo or its own directory outsid
 - Record the change in the plugin's `CHANGELOG.md` if it has one
 - If the change removes a skill, renames a skill, or changes a hook event, bump the **major** version - these are breaking for installed users
 
-## Marketplace Configuration
+## Marketplace configuration
 
 The file `.claude-plugin/marketplace.json` defines how skills and agents are packaged for installation. Each plugin groups related skills and/or agents that users can install together.
 
@@ -456,7 +471,7 @@ The file `.claude-plugin/marketplace.json` defines how skills and agents are pac
 - Add to an existing plugin when your skill fits its theme (e.g., a new knowledge skill goes into `knowledge-virtuoso`)
 - Create a new plugin only when adding an entirely new category that does not fit any existing bundle
 
-### Plugin Naming Convention
+### Plugin naming convention
 
 All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` subdirectory, plus one for agents.
 
@@ -482,7 +497,7 @@ When adding a new specialist agent:
 - Create the agent in `agents/{name}.md`
 - Add to `agents-virtuoso`
 
-## Version Bumping Rules
+## Version bumping rules
 
 The version field lives in `metadata.version` inside `marketplace.json`.
 
@@ -492,7 +507,7 @@ The version field lives in `metadata.version` inside `marketplace.json`.
 | New skills or agents added | Minor | 7.13.0 -> 7.14.0 |
 | Restructuring, renames, breaking changes | Major | 7.13.0 -> 8.0.0 |
 
-## Commit Conventions
+## Commit conventions
 
 - No AI co-author lines in commits
 - Descriptive commit messages summarizing what was added or changed
@@ -500,9 +515,9 @@ The version field lives in `metadata.version` inside `marketplace.json`.
 - Example: `Add Kubernetes deployment skill with 5 reference files`
 - Example: `Update design-patterns skill with Specification pattern`
 
-## Quality Standards
+## Quality standards
 
-Skills should be production-grade reference material, not tutorials. They are consumed by AI agents that need precise, actionable information.
+Skills are reference material for AI agents that need precise, actionable information. Write them as reference, not as tutorials.
 
 | Guideline | Target |
 |---|---|
@@ -514,7 +529,7 @@ Skills should be production-grade reference material, not tutorials. They are co
 | Principles table | Required in every SKILL.md - sets the mindset before details |
 | Frontmatter | Only in SKILL.md and agent files, never in reference files |
 
-### Language and Provider Agnosticism
+### Language and provider agnosticism
 
 All content must be **language-agnostic** and **LLM provider-agnostic** by default. Do not assume a specific programming language, framework, or AI provider unless the skill explicitly targets one.
 
@@ -528,13 +543,13 @@ All content must be **language-agnostic** and **LLM provider-agnostic** by defau
 
 **The only exceptions** are skills that explicitly exist for a specific language, framework, or LLM provider (e.g., `symfony-components`, `django-components`, `php-upgrade`). These should state their scope in the description.
 
-### Content Guidelines
+### Content guidelines
 
 - Show realistic, production-quality examples - not toy code
 - Include both the "happy path" and error handling where relevant
 - Keep instructions actionable - tell the agent what to do, not just what exists
 
-### Research Process for New Skills
+### Research process for new skills
 
 Before writing a new skill:
 

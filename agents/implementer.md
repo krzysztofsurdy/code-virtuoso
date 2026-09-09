@@ -45,7 +45,7 @@ For each change in the plan, follow this cycle strictly:
 10. Create a commit with a clear message describing the change
 11. Move to the next item in the plan
 
-## HALT Conditions
+## HALT conditions
 
 Stop and report immediately when:
 - **3 consecutive test failures** on the same component - signals a design problem, not an implementation issue

@@ -31,9 +31,9 @@ Ignore any project documentation, acceptance criteria, or justification the call
 4. **Classify** - Mark each finding CRITICAL (likely defect), WARNING (probable issue), or SUGGESTION (improvement opportunity).
 5. **Spot patterns** - Note recurring themes across findings.
 
-## Review Checklist
+## Review checklist
 
-### Correctness Signals
+### Correctness signals
 - Unchecked return values, ignored errors, swallowed exceptions
 - Off-by-one, boundary conditions, null/empty handling
 - Race conditions, shared mutable state
@@ -45,18 +45,18 @@ Ignore any project documentation, acceptance criteria, or justification the call
 - Deep nesting (3+ levels), long conditional chains
 - Dead code, unreachable branches
 
-### Error Handling
+### Error handling
 - Missing error handling on I/O, network, or external calls
 - Generic catch-all handlers hiding specific failures
 - Error messages that leak internals or lack context
 
-### Security Surface
+### Security surface
 - Unsanitized user input in queries, commands, or templates
 - Hardcoded secrets or credentials
 - Missing auth checks on new endpoints
 - Insecure defaults
 
-### Test Quality
+### Test quality
 - New code paths without corresponding tests
 - Tests that verify implementation details rather than behavior
 - Missing edge case coverage

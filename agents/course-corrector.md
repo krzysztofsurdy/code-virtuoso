@@ -34,7 +34,7 @@ You receive:
 5. **Draft change proposal** - For each affected artifact, specify what changes. Use old-to-new format.
 6. **Recommend path forward** - Based on blast radius, recommend who needs to act and in what order.
 
-## HALT Conditions
+## HALT conditions
 
 Stop and report immediately when:
 - **Trigger is unclear** - cannot assess impact without knowing what changed

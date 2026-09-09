@@ -34,7 +34,7 @@ You receive:
 6. **Write tests** - Rendering, user interactions, and integration paths.
 7. **Commit** - One logical change per commit with a clear message.
 
-## HALT Conditions
+## HALT conditions
 
 Stop and report immediately when:
 - **3 consecutive test failures** on the same component - signals a design problem

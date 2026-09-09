@@ -2,7 +2,20 @@
 
 This document defines the conventions for skills in the code-virtuoso marketplace. It extends the [Agent Skills Specification](https://agentskills.io/specification) with project-specific rules.
 
-## Directory Structure
+## Contents
+
+- [Directory structure](#directory-structure)
+- [SKILL.md format](#skillmd-format)
+- [Categories](#categories)
+- [References](#references)
+- [Agents](#agents)
+- [Progressive disclosure](#progressive-disclosure)
+- [Guided phases](#guided-phases)
+- [Platform-specific notes](#platform-specific-notes)
+- [Content guidelines](#content-guidelines)
+- [Naming conventions](#naming-conventions)
+
+## Directory structure
 
 ```
 skill-name/
@@ -13,7 +26,7 @@ skill-name/
   assets/                # Optional - static resources
 ```
 
-## SKILL.md Format
+## SKILL.md format
 
 ### Frontmatter
 
@@ -34,7 +47,7 @@ user-invocable: false
 | `license` | No | License name or reference to a bundled license file. |
 | `metadata` | No | Arbitrary key-value mapping for additional metadata. |
 
-### Body Content
+### Body content
 
 The markdown body after frontmatter contains skill instructions. Keep under 500 lines. Move detailed content to `references/`.
 
@@ -59,7 +72,7 @@ Skills are organized into three categories:
 
 Agents that belong to a skill live in the skill's `agents/` subdirectory. See [agent-spec.md](agent-spec.md) for the agent format.
 
-## Progressive Disclosure
+## Progressive disclosure
 
 Skills load in three levels:
 
@@ -67,9 +80,9 @@ Skills load in three levels:
 2. **Instructions** (<5000 tokens) - Full SKILL.md body loaded when skill is activated
 3. **Resources** (as needed) - Files in references/, scripts/, assets/ loaded only when required
 
-## Guided Phases
+## Guided phases
 
-Interactive skills with 3+ phases where LLMs tend to rush through steps can use a **guided phase** structure. This is an internal pattern - users experience better-paced interactions without knowing about the underlying file organization.
+Interactive skills with 3+ phases where LLMs tend to rush through steps can use a **guided phase** structure. This is an internal pattern. Users get a better-paced interaction without needing to know how the files are organized.
 
 ### When to use
 
@@ -77,7 +90,7 @@ Interactive skills with 3+ phases where LLMs tend to rush through steps can use 
 - LLMs tend to merge, skip, or rush through the phases when they are inline
 - Each phase has a natural checkpoint where the user should confirm before continuing
 
-Skills with phases that share heavy context or where inline flow works well should keep phases inline in SKILL.md. Guided phases add value when phase separation prevents rushing, not when it just reorganizes.
+Skills with phases that share heavy context, or where inline flow works well, should keep phases inline in SKILL.md. Guided phases help when separating the phases prevents rushing. They do not help when they only reorganize the file.
 
 ### Directory structure
 
@@ -104,11 +117,11 @@ Each phase file is lean (40-80 lines). It contains:
 3. **Steps** - numbered execution instructions
 4. **Gate** - conditions for advancing, and the question to ask the user
 
-The gate is the key mechanism. Every phase file ends with a gate that forces the agent to stop and wait for user confirmation before loading the next phase.
+The gate is what makes the structure work. Every phase file ends with a gate that forces the agent to stop and wait for user confirmation before loading the next phase.
 
 See `template/phase-template.md` for the starter template.
 
-## Platform-Specific Notes
+## Platform-specific notes
 
 The skill body must remain portable - it describes capabilities ("team creation tools", "interactive prompts", "file search") without naming any specific platform's tool, API, or runtime feature. Platform-specific guidance lives in a clearly marked optional section so it can be skipped on platforms it does not apply to.
 
@@ -148,7 +161,7 @@ Keep entries factual and short. If a platform's behavior is unknown, list it wit
 - Reference platform names as the user would recognize them (Claude Code, Cursor, Windsurf, Copilot)
 - Do not write platform-specific behavior into the Process or Rules sections of the skill body
 
-## Content Guidelines
+## Content guidelines
 
 - Write original content. External sources serve as inspiration only.
 - Do not mention authors, books, or specific sources by name.
@@ -156,7 +169,7 @@ Keep entries factual and short. If a platform's behavior is unknown, list it wit
 - Use generic template names (e.g. "Focus / Impact / Confirmation" not "Author's Template").
 - Keep language concise and actionable.
 
-## Naming Conventions
+## Naming conventions
 
 - Lowercase letters, numbers, and hyphens only
 - Must not start or end with a hyphen

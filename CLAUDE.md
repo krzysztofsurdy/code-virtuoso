@@ -4,7 +4,7 @@
 
 This file contains Claude Code specific optimizations. For general agent architecture and contribution guidelines, see the included files above.
 
-## Claude Code Tool Mapping
+## Claude Code tool mapping
 
 Map the generic tool categories used in agent definitions to Claude Code tools:
 
@@ -15,7 +15,7 @@ Map the generic tool categories used in agent definitions to Claude Code tools:
 | Shell | `Bash` |
 | File editing | `Edit`, `Write` |
 
-## Skill Research Process
+## Skill research process
 
 When creating a new skill in this project:
 
@@ -25,7 +25,7 @@ When creating a new skill in this project:
 4. **Use parallel research agents** to gather information on multiple subtopics simultaneously
 5. **Read existing skills** in this project to match the structure and depth
 
-## Marketplace Configuration
+## Marketplace configuration
 
 File: `.claude-plugin/marketplace.json`
 
@@ -36,7 +36,7 @@ File: `.claude-plugin/marketplace.json`
 - When renaming skills, reorganizing directories, or changing plugin structure: bump **major** version
 - Also update README.md skill tables and repository structure when adding/renaming/moving skills
 
-## Commit Conventions
+## Commit conventions
 
 - No AI co-author lines in commits
 - Descriptive commit messages summarizing what was added/changed

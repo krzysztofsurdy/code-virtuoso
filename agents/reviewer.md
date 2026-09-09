@@ -30,12 +30,12 @@ You receive one of:
 4. **Analyze** - Check each category in the review checklist below. If `$REVIEW_DEPTH` is `surface`, focus on correctness and security. If `deep`, include all categories plus cross-cutting concerns.
 5. **Prioritize** - Classify each finding by severity. Filter to `$SEVERITY_THRESHOLD`.
 
-## Review Checklist
+## Review checklist
 
 ### Correctness
 - Does the code do what it claims to do?
 - Are edge cases handled (null, empty, boundary values)?
-- Are error paths handled properly?
+- Are error paths handled?
 
 ### Design (SOLID)
 - Single Responsibility: does each class/function do one thing?
@@ -56,7 +56,7 @@ You receive one of:
 - Unnecessary database calls or missing indexes
 - Large memory allocations or unbounded collections
 
-### Code Smells
+### Code smells
 - Long methods, large classes, feature envy
 - Duplicate code, dead code, speculative generality
 - Primitive obsession, data clumps
@@ -66,7 +66,7 @@ You receive one of:
 - Do tests verify behavior, not implementation?
 - Are edge cases and error paths tested?
 
-## Output Format
+## Output format
 
 ### Review Summary
 

@@ -2,7 +2,18 @@
 
 This document defines the conventions for Claude Code plugins produced by the `plugin-creator` skill and other tools in this project. It extends the official [Plugins reference](https://code.claude.com/docs/en/plugins-reference) with project-specific rules.
 
-## Directory Structure
+## Contents
+
+- [Directory structure](#directory-structure)
+- [plugin.json format](#pluginjson-format)
+- [Component requirements](#component-requirements)
+- [Environment variables](#environment-variables)
+- [Versioning rules](#versioning-rules)
+- [Naming conventions](#naming-conventions)
+- [Distribution](#distribution)
+- [Marketplace registration](#marketplace-registration)
+
+## Directory structure
 
 ```
 plugin-name/
@@ -22,9 +33,9 @@ plugin-name/
   CHANGELOG.md           # Optional
 ```
 
-**Only `plugin.json` belongs inside `.claude-plugin/`.** Every other directory (`skills/`, `agents/`, `hooks/`, etc.) lives at the plugin root. This is the single most common structural mistake.
+**Only `plugin.json` belongs inside `.claude-plugin/`.** Every other directory (`skills/`, `agents/`, `hooks/`, etc.) lives at the plugin root. This is the most common structural mistake.
 
-## plugin.json Format
+## plugin.json format
 
 ### Frontmatter-less JSON
 
@@ -37,13 +48,13 @@ plugin-name/
 }
 ```
 
-### Required Fields (when a manifest is present)
+### Required fields (when a manifest is present)
 
 | Field  | Required | Description |
 |--------|----------|-------------|
 | `name` | Yes      | Kebab-case identifier. Becomes the skill namespace (`/plugin-name:skill-name`). |
 
-### Optional Fields
+### Optional fields
 
 | Field         | Description |
 |---------------|-------------|
@@ -64,14 +75,14 @@ plugin-name/
 | `userConfig`  | Values prompted at enable time. Substitutable as `${user_config.KEY}`. |
 | `channels`    | Message channels bound to an MCP server. |
 
-### Path Rules
+### Path rules
 
 - All paths must be relative and start with `./`.
 - Paths outside the plugin root (`../shared-utils`) will not work after installation - the cache does not copy external files.
 - Symlinks **are** preserved by the cache.
 - Setting a component path (e.g. `"skills": "./custom"`) **replaces** the default directory. To keep the default and add more, use an array: `["./skills/", "./custom/"]`.
 
-## Component Requirements
+## Component requirements
 
 ### Skills
 
@@ -112,11 +123,11 @@ Hook types: `command`, `http`, `prompt`, `agent`.
 
 Scripts must be executable (`chmod +x`) and reference `${CLAUDE_PLUGIN_ROOT}` for bundled paths.
 
-### MCP Servers
+### MCP servers
 
 `.mcp.json` format matches the standard MCP server config. Use `${CLAUDE_PLUGIN_ROOT}` for bundled binaries and `${CLAUDE_PLUGIN_DATA}` for persistent state.
 
-### LSP Servers
+### LSP servers
 
 `.lsp.json` format maps language names to server configs. Required fields: `command`, `extensionToLanguage`. Users must install the language server binary separately - LSP plugins only configure the connection.
 
@@ -124,7 +135,7 @@ Scripts must be executable (`chmod +x`) and reference `${CLAUDE_PLUGIN_ROOT}` fo
 
 Files in `bin/` are added to the Bash tool's `PATH` while the plugin is enabled. They must be executable and have a valid shebang.
 
-### Default Settings
+### Default settings
 
 `settings.json` at plugin root may set:
 
@@ -132,7 +143,7 @@ Files in `bin/` are added to the Bash tool's `PATH` while the plugin is enabled.
 |---------|---------|
 | `agent` | Activates a plugin-shipped agent as the main thread when the plugin is enabled. Unknown keys are silently ignored. |
 
-## Environment Variables
+## Environment variables
 
 Two variables are substituted inline in skill content, agent content, hook commands, and MCP/LSP configs. Both are also exported to hook processes and server subprocesses.
 
@@ -143,7 +154,7 @@ Two variables are substituted inline in skill content, agent content, hook comma
 
 The data directory resolves to `~/.claude/plugins/data/{id}/` where `{id}` is the plugin identifier with non-`[a-zA-Z0-9_-]` characters replaced by `-`.
 
-## Versioning Rules
+## Versioning rules
 
 - Follow semantic versioning: `MAJOR.MINOR.PATCH`.
 - Start at `1.0.0` for the first stable release.
@@ -151,7 +162,7 @@ The data directory resolves to `~/.claude/plugins/data/{id}/` where `{id}` is th
 - When both are set, `plugin.json` wins.
 - **Always bump the version when content changes.** The cache uses the version to decide whether to update.
 
-## Naming Conventions
+## Naming conventions
 
 - Lowercase letters, numbers, and hyphens only.
 - Must not start or end with a hyphen.
@@ -174,7 +185,7 @@ Plugins are distributed through a marketplace - a `marketplace.json` catalog tha
 
 Supported `source` types: relative path, `github`, `url`, `git-subdir`, `npm`. Full schema in the `plugin-creator` skill's [marketplace-manifest.md](../skills/tools/plugin-creator/references/marketplace-manifest.md).
 
-## Marketplace Registration
+## Marketplace registration
 
 Plugins produced by this project register in the project's `.claude-plugin/marketplace.json` under the appropriate plugin bundle:
 

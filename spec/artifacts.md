@@ -2,9 +2,9 @@
 
 Artifacts are the structured outputs that agents produce and the structured inputs they consume. This spec defines standard artifact types so agents can declare explicit handoff contracts via `expects` and `produces` frontmatter fields.
 
-Artifact types are **conventions, not file formats**. The agent producing an artifact writes it in its Output section. The consuming agent reads it as part of its Input. There is no runtime enforcement - these contracts exist so orchestrators and teams can validate that the output of one agent matches the expected input of the next.
+Artifact types are conventions, not file formats. The agent producing an artifact writes it in its Output section. The consuming agent reads it as part of its Input. There is no runtime enforcement - these contracts exist so orchestrators and teams can validate that the output of one agent matches the expected input of the next.
 
-## Artifact Catalog
+## Artifact catalog
 
 | Artifact | What it contains | Typical producer | Typical consumer |
 |---|---|---|---|
@@ -17,7 +17,7 @@ Artifact types are **conventions, not file formats**. The agent producing an art
 | `test-gap-report` | Missing tests by priority, source-to-test file map | test-gap-analyzer | implementer |
 | `migration-plan` | Risk classification per operation, execution steps, rollback paths | migration-planner | implementer, reviewer |
 
-## Using Contracts
+## Using contracts
 
 ### In agent frontmatter
 
@@ -44,7 +44,7 @@ Teams use contracts to validate their workflow: the `produces` of phase N should
 
 Agents should handle missing artifacts gracefully. If an agent expects an `investigation-report` but receives raw text or a verbal description instead, it proceeds with a note: "Expected structured investigation report. Proceeding with available context." The contract is a signal for orchestrators, not a hard gate.
 
-## Adding New Artifact Types
+## Adding new artifact types
 
 If an agent produces output that does not fit any existing type:
 
