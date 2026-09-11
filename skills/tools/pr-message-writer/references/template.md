@@ -1,6 +1,11 @@
-# PR Message Template
+# PR message template
 
-Use this template as the structure for all pull request descriptions. Include or omit sections as appropriate for the change type.
+Use this template as the structure for all pull request descriptions. Include or omit sections to fit the change type.
+
+## Contents
+
+- [Title](#title)
+- [Body](#body)
 
 ---
 
@@ -57,7 +62,7 @@ Describe changes grouped by logical area. Use sub-headings or bullet points for 
 
 ### Testing instructions
 
-**Audience: QA with zero codebase knowledge.** No code references allowed. No file names, class names, method names, or internal architecture terms.
+**Audience: QA with zero codebase knowledge.** No code references: no file names, class names, method names, or internal architecture terms.
 
 **Rules:**
 - One action per step, numbered sequentially
@@ -127,7 +132,7 @@ Expected response: HTTP 201 with a JSON body containing "id" and "status": "pend
 
 ### Test scenarios
 
-Each scenario is a self-contained, step-by-step walkthrough. No code references. Written for someone who has never seen the codebase. Each scenario has a checkbox and ends with a clear list of expected results.
+Each scenario is a self-contained, step-by-step walkthrough with no code references, written for someone who has never seen the codebase. Each one has a checkbox and ends with a list of expected results.
 
 - [ ] **Scenario 1: [Name - e.g., "Normal user submits a review"]**
   1. [Exact step]

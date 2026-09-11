@@ -2,19 +2,32 @@
 
 An initiative is a multi-quarter strategic push that groups several epics under one business or product objective. Where an epic answers "what capability are we delivering?", an initiative answers "what change in the business or user behaviour are we trying to cause?". Initiatives live closer to strategy than to execution.
 
-## Required Fields
+## Contents
+
+- [Required fields](#required-fields)
+- [Optional fields](#optional-fields)
+- [Objective and key results](#objective-and-key-results)
+- [Outcome over output](#outcome-over-output)
+- [Scope and horizon](#scope-and-horizon)
+- [Child epics](#child-epics)
+- [Questionnaire](#questionnaire)
+- [Output template](#output-template)
+- [Quality checks](#quality-checks)
+- [Common anti-patterns](#common-anti-patterns)
+
+## Required fields
 
 | Field | Purpose |
 |---|---|
 | Title | Names the outcome the business wants ("Become the default grocery app in the Nordics"). |
-| Objective | One crisp sentence describing the desired end state. Qualitative and ambitious. |
+| Objective | One sentence describing the desired end state. Qualitative and ambitious. |
 | Key results | Two to five measurable outcomes that, if all hit, prove the objective was achieved. |
 | Problem statement | Why this matters now: the strategic rationale, the evidence, and the risk of not doing it. |
 | Scope | The product areas, markets, or surfaces the initiative covers. |
 | Out of scope | Things that could be assumed but are not. |
 | Horizon | The quarters the initiative spans. |
 
-## Optional Fields
+## Optional fields
 
 | Field | When to include |
 |---|---|
@@ -28,7 +41,7 @@ An initiative is a multi-quarter strategic push that groups several epics under 
 | Budget and staffing | Headcount, capacity, external spend |
 | Check-in cadence | How often progress is reviewed |
 
-## Objective and Key Results
+## Objective and key results
 
 Initiatives are the right level to anchor OKRs. Keep them aligned but not identical.
 
@@ -36,7 +49,7 @@ Initiatives are the right level to anchor OKRs. Keep them aligned but not identi
 - One sentence.
 - Qualitative and memorable.
 - Describes the end state, not the work.
-- Avoid numbers - those live in the key results.
+- Avoid numbers; those live in the key results.
 
 **Key results**
 - Two to five per objective.
@@ -44,7 +57,7 @@ Initiatives are the right level to anchor OKRs. Keep them aligned but not identi
 - Each has a baseline, a target, and a measurement window.
 - At least one should be a guardrail or counter-metric (something that must not get worse while the others move).
 
-Examples of bad vs good key results:
+Bad vs good key results:
 
 | Bad | Good |
 |---|---|
@@ -52,9 +65,9 @@ Examples of bad vs good key results:
 | Improve reliability | p95 API latency stays under 250 ms while error rate drops from 1.2% to 0.3% |
 | Grow revenue | Monthly recurring revenue in the SMB segment grows from $400k to $600k by Q4 |
 
-## Outcome over Output
+## Outcome over output
 
-Initiatives live or die on this distinction. Outputs are things the team ships. Outcomes are things that change because of what the team ships. A dashboard shipped is an output; a support team resolving tickets twice as fast is an outcome.
+Everything in an initiative depends on this distinction. Outputs are things the team ships. Outcomes are things that change because of what the team ships. A dashboard shipped is an output; a support team resolving tickets twice as fast is an outcome.
 
 Heuristics:
 
@@ -62,7 +75,7 @@ Heuristics:
 - If a key result depends on real users doing something different, it is an outcome.
 - When the direct outcome is hard to measure, use a leading indicator and name it as such.
 
-## Scope and Horizon
+## Scope and horizon
 
 Initiatives usually span one to four quarters. Beyond that, you are looking at a strategic theme, not an initiative.
 
@@ -82,9 +95,9 @@ Out of scope:
 
 The out-of-scope list protects the initiative from absorbing adjacent work during planning reviews.
 
-## Child Epics
+## Child epics
 
-An initiative typically contains three to ten epics. A few guidelines:
+An initiative typically contains three to ten epics. Guidelines:
 
 - Start with three epic placeholders that represent the biggest bets. Their titles should read like the pillars of a plan.
 - Each child epic should contribute to at least one key result. If an epic does not, either add a key result it supports or drop the epic.
@@ -92,24 +105,24 @@ An initiative typically contains three to ten epics. A few guidelines:
 
 ## Questionnaire
 
-1. **Title** - outcome-oriented, free text
-2. **Objective** - one sentence, qualitative, free text
-3. **Key results** - two to five, each with metric, baseline, target, window
-4. **Problem statement** - strategic rationale, free text
-5. **Horizon** - quarters covered (e.g., Q3 2026 - Q2 2027)
-6. **In scope** - bullet list
-7. **Out of scope** - bullet list
-8. **Executive sponsor** - optional
-9. **Stakeholders** - optional, roles and names
-10. **Guiding principles** - optional
-11. **Initial child epics** - three to five placeholders
-12. **Dependencies** - optional
-13. **Assumptions** - optional
-14. **Risks** - optional, with mitigation
-15. **Budget and staffing** - optional
-16. **Check-in cadence** - optional
+1. **Title**: outcome-oriented, free text
+2. **Objective**: one sentence, qualitative, free text
+3. **Key results**: two to five, each with metric, baseline, target, window
+4. **Problem statement**: strategic rationale, free text
+5. **Horizon**: quarters covered (e.g., Q3 2026 - Q2 2027)
+6. **In scope**: bullet list
+7. **Out of scope**: bullet list
+8. **Executive sponsor**: optional
+9. **Stakeholders**: optional, roles and names
+10. **Guiding principles**: optional
+11. **Initial child epics**: three to five placeholders
+12. **Dependencies**: optional
+13. **Assumptions**: optional
+14. **Risks**: optional, with mitigation
+15. **Budget and staffing**: optional
+16. **Check-in cadence**: optional
 
-## Output Template
+## Output template
 
 ```markdown
 # <Outcome-oriented title>
@@ -165,24 +178,24 @@ An initiative typically contains three to ten epics. A few guidelines:
 <Cadence and forum - omit if standard>
 ```
 
-## Quality Checks
+## Quality checks
 
 - The objective is qualitative and forward-looking.
 - Every key result is a behaviour or business change, not a shipped feature.
 - Each key result has a baseline, a target, and a window.
 - At least one key result is a guardrail.
 - The child epics, taken together, plausibly move the key results.
-- The scope is not larger than four quarters - if it is, split it.
+- The scope is not larger than four quarters. If it is, split it.
 - An exec reading only the title and objective can guess what the team is going to build.
 
-## Common Anti-Patterns
+## Common anti-patterns
 
 | Anti-pattern | Why it's wrong | Fix |
 |---|---|---|
-| Key result = "launch feature X" | That is an output, the initiative could ship it and fail | Reframe as a behaviour change |
+| Key result = "launch feature X" | That is an output. The initiative could ship it and still fail | Reframe as a behaviour change |
 | Objective loaded with numbers | Makes the objective unmemorable and conflates it with a KR | Move numbers to key results |
-| No guardrails | The team might win the headline metric while hurting another | Add a counter-metric |
-| Ten child epics, all urgent | Real prioritisation has not happened | Cut to three to five; push the rest to later cycles |
+| No guardrails | The team can hit the headline metric while hurting another | Add a counter-metric |
+| Ten child epics, all urgent | Nobody has prioritised yet | Cut to three to five; push the rest to later cycles |
 | Initiative runs more than a year | Becomes a theme, not a plan | Split into sequenced initiatives |
 | No out-of-scope list | Planning reviews keep expanding scope | Add explicit exclusions |
 | Objective restates the team's charter | Not actionable | Name a specific change the initiative will cause |

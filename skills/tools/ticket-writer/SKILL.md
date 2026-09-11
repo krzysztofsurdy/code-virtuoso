@@ -1,28 +1,28 @@
 ---
 name: ticket-writer
-description: Interactive tool to write high-quality tickets of the right type - story, subtask, issue, bug, epic, or initiative - each with its own structure, required fields, and quality checks. Use when the user asks to write a ticket, draft a user story, file a bug report, scope an epic, define an initiative, break work into subtasks, or convert a rough idea into a well-formed backlog item. Runs an interactive type selection and field-by-field questionnaire, then outputs a clean Markdown ticket ready to paste into Jira, Linear, GitHub Issues, Azure DevOps, or any tracker.
+description: Interactive tool that writes tickets of the right type (story, subtask, issue, bug, epic, or initiative), each with its own structure, required fields, and quality checks. Use when the user asks to write a ticket, draft a user story, file a bug report, scope an epic, define an initiative, break work into subtasks, or convert a rough idea into a well-formed backlog item. Runs an interactive type selection and field-by-field questionnaire, then outputs a Markdown ticket ready to paste into Jira, Linear, GitHub Issues, Azure DevOps, or any tracker.
 user-invocable: true
 argument-hint: "[optional: type - story, subtask, issue, bug, epic, initiative]"
 ---
 
-# Ticket Writer
+# Ticket writer
 
-Pick the right ticket type, then fill in only the fields that type demands. A story is not a bug; an epic is not an initiative. Each type has a distinct audience, scope, and definition of done - mixing them produces vague, unactionable tickets that bloat backlogs.
+Pick the right ticket type, then fill in only the fields that type needs. A story is not a bug, and an epic is not an initiative. Each type has its own audience, scope, and definition of done. Mixing them produces vague tickets that nobody can act on and that bloat the backlog.
 
 ## Core Principles
 
 | Principle | Meaning |
 |---|---|
-| **Type drives structure** | The type decides the required fields - never use a single template for everything |
+| **Type drives structure** | The type decides the required fields. Never use a single template for everything |
 | **Outcomes over outputs** | Describe the change the work creates, not the activity performed |
 | **Small enough to finish** | Stories and subtasks fit a sprint; epics fit a quarter; initiatives span multiple quarters |
 | **Testable acceptance** | Every story, subtask, and bug has acceptance criteria that a reviewer can verify |
-| **Context, not prose** | Prefer tables, lists, and labelled sections over paragraphs - readers skim |
+| **Context, not prose** | Prefer tables, lists, and labelled sections over paragraphs, because readers skim |
 | **One ask per ticket** | If a ticket has two unrelated goals, split it |
 
 ---
 
-## Type Hierarchy and Selection
+## Type hierarchy and selection
 
 Tickets form a hierarchy. Pick the highest level where the work still has a single, coherent purpose.
 
@@ -35,9 +35,9 @@ Initiative  (multi-quarter strategic outcome)
     Issue   (anything else - chore, spike, question)
 ```
 
-### When to Use Each Type
+### When to use each type
 
-| Type | Audience | Scope | Typical Duration | Key Question |
+| Type | Audience | Scope | Typical duration | Key question |
 |---|---|---|---|---|
 | **Initiative** | Execs, product leadership | Cross-team strategic goal | 1-4 quarters | What outcome do we want for the business or users? |
 | **Epic** | Product, engineering, design | Single product area, multiple stories | 1 quarter | What capability or experience are we delivering? |
@@ -46,7 +46,7 @@ Initiative  (multi-quarter strategic outcome)
 | **Bug** | Dev team, QA | A deviation from intended behaviour | Fix-sized | What is broken, and how do I reproduce it? |
 | **Issue** | Dev team | Chore, spike, question, tech debt, docs | Variable | What needs attention that isn't user-facing work? |
 
-### Type Decision Tree
+### Type decision tree
 
 1. Is this a deviation from intended behaviour? -> **Bug**
 2. Is this a strategic goal spanning multiple teams or quarters? -> **Initiative**
@@ -59,13 +59,13 @@ Initiative  (multi-quarter strategic outcome)
 
 ## Workflow
 
-### Phase 1: Type Selection
+### Phase 1: Type selection
 
-If the user provided a type as an argument, use it. Otherwise present a selectable menu (use `AskUserQuestion` or the platform's equivalent interactive prompt) listing the six types with their one-line descriptions from the table above. Never dump the full table as plain text - keep the menu compact.
+If the user provided a type as an argument, use it. Otherwise present a selectable menu (use `AskUserQuestion` or the platform's equivalent interactive prompt) listing the six types with their one-line descriptions from the table above. Never dump the full table as plain text. Keep the menu compact.
 
 If the user's intent is clear from context (e.g., they said "write a bug report" or "create an epic for checkout redesign"), skip the menu and confirm the inferred type with a single yes/no prompt.
 
-### Phase 2: Load the Type-Specific Reference
+### Phase 2: Load the type-specific reference
 
 Read the matching reference file for the selected type:
 
@@ -87,25 +87,25 @@ Each reference contains:
 
 ### Phase 3: Run the Questionnaire
 
-Ask only the questions the reference lists for the selected type. Follow these rules:
+Ask only the questions the reference lists for the selected type. Rules:
 
-1. **Batch compatible questions** (3-4 per prompt) when using an interactive menu tool. Use free-text prompts only when the answer is genuinely free-form (title, description, reproduction steps).
-2. **Skip optional fields silently** if the user says "skip" or leaves them blank - do not add empty placeholders.
-3. **Follow-up on ambiguous answers** - if the user says "it's slow", ask "slow compared to what, and by how much?"
+1. **Batch compatible questions** (3-4 per prompt) when using an interactive menu tool. Use free-text prompts only when the answer is truly free-form (title, description, reproduction steps).
+2. **Skip optional fields silently** if the user says "skip" or leaves them blank. Do not add empty placeholders.
+3. **Follow up on ambiguous answers.** If the user says "it's slow", ask "slow compared to what, and by how much?"
 4. **Never invent facts.** If the user cannot provide environment info, reproduction steps, or metrics, leave those fields out and note the gap in a `## Open Questions` section rather than fabricating values.
 
-### Phase 4: Assemble the Ticket
+### Phase 4: Assemble the ticket
 
-Use the type's output template. Apply these universal formatting rules:
+Use the type's output template. Apply these formatting rules to every type:
 
 - **Title:** Imperative mood for stories/subtasks/issues ("Add password reset via email"), descriptive for bugs ("Payment confirmation email not sent after successful charge"), outcome-oriented for epics/initiatives ("Reduce checkout abandonment by 30%").
 - **Body:** Markdown with section headings. No emojis unless the user explicitly requests them.
 - **Labels:** Suggest labels based on type and content (e.g., `bug`, `severity:high`, `area:checkout`).
 - **Links:** Leave placeholders for parent epic / related tickets / PRs rather than inventing IDs.
 
-### Phase 5: Quality Check
+### Phase 5: Quality check
 
-Before showing the final output, run the checks listed in the type's reference file. Common failure modes to catch:
+Before showing the final output, run the checks listed in the type's reference file. Common failures to catch:
 
 | Symptom | Fix |
 |---|---|
@@ -126,7 +126,7 @@ Show the final ticket to the user in a code block so they can copy-paste it. The
 
 ---
 
-## Quick Reference: Field Matrix
+## Quick reference: field matrix
 
 Which fields are required (R), optional (O), or not used (-) per type.
 
@@ -156,7 +156,7 @@ Which fields are required (R), optional (O), or not used (-) per type.
 
 ---
 
-## Integration with Other Skills
+## Integration with other skills
 
 | Situation | Recommended Skill |
 |---|---|
@@ -170,13 +170,13 @@ Which fields are required (R), optional (O), or not used (-) per type.
 
 ---
 
-## Reference Files
+## Reference files
 
 | Reference | Contents |
 |---|---|
-| [story.md](references/story.md) | User story fields, INVEST checklist, Given/When/Then acceptance criteria, full template and example |
+| [story.md](references/story.md) | User story fields, INVEST checklist, Given/When/Then acceptance criteria, template and example |
 | [subtask.md](references/subtask.md) | Subtask fields, parent linkage rules, technical acceptance criteria, Definition of Done guidance |
 | [issue.md](references/issue.md) | Generic issue template for chores, spikes, tech debt, questions, and docs tasks |
-| [bug.md](references/bug.md) | Bug report fields, severity vs priority matrix, environment capture, reproduction rigor |
+| [bug.md](references/bug.md) | Bug report fields, severity vs priority matrix, environment capture, reproduction steps |
 | [epic.md](references/epic.md) | Epic fields, problem statement, success metrics, in/out of scope, milestones, child stories |
 | [initiative.md](references/initiative.md) | Initiative fields, OKR alignment, objective and key results, outcome vs output, epic roll-up |

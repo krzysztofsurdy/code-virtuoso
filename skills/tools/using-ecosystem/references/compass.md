@@ -1,12 +1,12 @@
-# Compass Mode
+# Compass mode
 
-When the user has just finished work with an agent, skill, or team and asks "what next?" or "where do I go from here?" - use compass mode to recommend the next step.
+When the user has just finished work with an agent, skill, or team and asks "what next?" or "where do I go from here?", use compass mode to recommend the next step.
 
-## How It Works
+## How it works
 
-Compass mode is conversational. Ask the user what they just completed, then match against known workflows to recommend the logical next step. Do not scan the filesystem for artifacts - ask the user.
+Compass mode is conversational. Ask the user what they just completed, then match against known workflows to recommend the logical next step. Do not scan the filesystem for artifacts. Ask the user instead.
 
-## Recommendation Map
+## Recommendation map
 
 | Just finished with | Likely next step | Why |
 |---|---|---|
@@ -26,7 +26,7 @@ Compass mode is conversational. Ask the user what they just completed, then matc
 | **Dependency Auditor** (audit report) | Implementer (for upgrades) or ticket-writer (for tracking) | Fix vulnerabilities or track them |
 | **Doc Writer** (docs written) | Reviewer or finishing-branch | Review docs, then ship |
 
-## Handling Ambiguity
+## Handling ambiguity
 
 When the next step is unclear (e.g., after an investigation, both Architect and Implementer could be appropriate):
 
@@ -34,7 +34,7 @@ When the next step is unclear (e.g., after an investigation, both Architect and 
 2. Let the user choose
 3. If the user is unsure, recommend the safer path (more analysis before more action)
 
-## Dead Ends
+## Dead ends
 
 Not every interaction needs a next step. If the user has:
 - Completed a standalone task (e.g., dependency audit with no issues found)
@@ -43,6 +43,6 @@ Not every interaction needs a next step. If the user has:
 
 Say so: "That looks complete. Nothing chains naturally from here unless you have a new task."
 
-## Teams Over Chains
+## Teams over chains
 
 If the compass would recommend 3+ agents in sequence, check whether a pre-composed team covers that workflow instead. Teams are easier to invoke and include coordination rules that ad-hoc chains lack.

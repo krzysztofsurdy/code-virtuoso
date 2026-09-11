@@ -365,7 +365,7 @@ function renderStats(rows) {
     else if (cfg.type === "percent") {
       const m = rows.filter(r => (r[cfg.field] || "") === cfg.match).length;
       n = rows.length ? Math.round(100 * m / rows.length) + "%" : "0%";
-    } else n = "—";
+    } else n = "-";
     const card = makeEl("div", { class: "stat" + (cfg.color ? " " + cfg.color : "") });
     card.appendChild(makeEl("div", { class: "label", text: cfg.label }));
     card.appendChild(makeEl("div", { class: "value", text: String(n) }));

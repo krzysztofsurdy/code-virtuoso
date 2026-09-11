@@ -1,23 +1,23 @@
 ---
 name: pr-message-writer
-description: Write comprehensive pull request messages with structured technical documentation, testing instructions, and verification queries. Framework-agnostic with customizable templates. Use when writing or generating a PR description, preparing a pull request for review, or documenting code changes for teammates.
+description: Writes pull request messages with structured technical documentation, testing instructions, and verification queries. Framework-agnostic with customizable templates. Use when writing or generating a PR description, preparing a pull request for review, or documenting code changes for teammates.
 user-invocable: true
 argument-hint: "[optional: branch-name or ticket-id]"
 ---
 
 # PR Message Writer
 
-Write comprehensive, well-structured pull request descriptions by analyzing code changes and following established best practices for technical documentation.
+Write structured pull request descriptions by analyzing the code changes and following the template in this skill.
 
 ## Workflow
 
-### Step 1: Gather Context
+### Step 1: Gather context
 
 1. Determine the main branch:
    ```bash
    git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
    ```
-   Falls back to `main` or `master` if not set.
+   Fall back to `main` or `master` if this is not set.
 
 2. Find the merge base:
    ```bash
@@ -34,9 +34,9 @@ Write comprehensive, well-structured pull request descriptions by analyzing code
 
 4. If a ticket ID or branch name is provided as an argument, include it in the PR title.
 
-5. **Gather ticket context.** The ticket content is essential for writing accurate testing instructions and understanding the business requirement. If the ticket content is available in context (e.g., from a previous conversation or your project tracker), use it. If it is NOT available or has fallen out of context, **ask the user to provide the ticket content** before proceeding. Do not guess or invent requirements.
+5. **Gather ticket context.** You need the ticket content to write accurate testing instructions and to understand the business requirement. If it is available in context (e.g., from a previous conversation or your project tracker), use it. If it is not available or has dropped out of context, **ask the user to provide it** before proceeding. Do not guess or invent requirements.
 
-### Step 2: Analyze Changes
+### Step 2: Analyze changes
 
 Read every changed file and understand:
 - **What** was changed (new files, modified logic, deleted code)
@@ -44,17 +44,17 @@ Read every changed file and understand:
 - **Impact** on existing functionality (breaking changes, migrations, cache invalidation)
 - **Dependencies** introduced or removed
 
-### Step 3: Follow the Template
+### Step 3: Follow the template
 
 Use the PR message template for structure: [template](references/template.md)
 
 Review real-world examples for tone and detail level: [examples](references/examples.md)
 
-### Step 4: Match Change Type to Categories
+### Step 4: Match change type to categories
 
 Apply the appropriate sections based on what the PR touches:
 
-| Category | When to Include |
+| Category | When to include |
 |----------|----------------|
 | Database and Entity/Model Changes | New tables, columns, migrations, schema changes |
 | API Changes (REST/GraphQL) | New or modified endpoints, query/mutation changes |
@@ -64,17 +64,17 @@ Apply the appropriate sections based on what the PR touches:
 | Event Handling | New events, handlers, message queue changes |
 | Testing | New or modified test cases, fixtures, test utilities |
 
-### Step 5: Write Testing Instructions (Optional)
+### Step 5: Write testing instructions (optional)
 
-**Before writing testing scenarios, ask the user whether they want testing scenarios included in this PR message.** Testing scenarios are optional. If the user declines, skip this step entirely and omit the "Test scenarios" section from the PR message. Still include the "Testing instructions" section with basic verification steps and database queries if applicable.
+**Before writing testing scenarios, ask the user whether they want testing scenarios included in this PR message.** Testing scenarios are optional. If the user declines, skip this step and omit the "Test scenarios" section from the PR message. Still include the "Testing instructions" section with basic verification steps and database queries if applicable.
 
 If the user wants testing scenarios included:
 
-**Target audience: QA testers with ZERO codebase knowledge.** They do not know about internal code structure, classes, services, or any implementation details. Write every instruction as if explaining to someone who has never seen the code and never will.
+**Target audience: QA testers with ZERO codebase knowledge.** They do not know about internal code structure, classes, services, or any implementation details. Write every instruction for someone who has never seen the code and never will.
 
 Rules for testing instructions:
-- **NEVER reference code** - no file paths, class names, method names, variable names, or internal architecture
-- **NEVER use technical implementation terms** - no internal framework concepts, no code-level abstractions
+- **Never reference code** - no file paths, class names, method names, variable names, or internal architecture
+- **Never use technical implementation terms** - no internal framework concepts, no code-level abstractions
 - **If UI exists**, provide exact click-by-click navigation: which URL to open, which button to click, which field to fill, what value to enter, what to expect on screen
 - **If no UI exists** (API-only or GraphQL-only), provide the exact request to execute - full query/mutation with example variables, which tool to use (GraphQL playground, Postman, curl), and the exact URL/endpoint
 - **Database queries are OK** - QA knows how to run SQL. Include queries when there is no other way to verify something through UI or API
@@ -96,7 +96,7 @@ When a feature is reachable through the UI, **lead with the UI navigation** - de
 
 #### Providing test data
 
-Always provide **concrete, realistic test data** that QA can copy-paste directly. Never say "enter a valid credit card" or "use test credentials" without giving the actual values.
+Provide **concrete, realistic test data** that QA can copy-paste. Never say "enter a valid credit card" or "use test credentials" without giving the actual values.
 
 Common test data to include when relevant:
 - **Credit cards (Stripe test mode)**: `4242 4242 4242 4242` (Visa, succeeds), `4000 0000 0000 3220` (3D Secure required), `4000 0000 0000 0002` (declined). Expiry: any future date (e.g., `12/34`). CVC: any 3 digits (e.g., `123`)
@@ -117,16 +117,16 @@ For every PR, include:
 - **Database verification** - SQL queries to confirm data integrity (QA can run these)
 - **Edge cases** - described as user actions and expected outcomes, not as code behavior
 
-### Step 6: Maintain Consistency
+### Step 6: Keep it consistent
 
 - Use the same section ordering as the template
 - Write in imperative mood for descriptions ("Add product review entity" not "Added" or "Adds")
 - Include code blocks with language hints for syntax highlighting
-- Keep line length reasonable for readability in PR tools
+- Keep lines short enough to read in PR tools
 
-## Quality Checklist
+## Quality checklist
 
-Before finalizing the PR message, verify:
+Before finalizing the PR message, check that:
 
 - [ ] Ticket content was referenced (or user was asked to provide it)
 - [ ] Title is concise and includes ticket ID if available
@@ -144,15 +144,15 @@ Before finalizing the PR message, verify:
 - [ ] Migration steps are documented if applicable
 - [ ] Breaking changes are highlighted prominently
 
-## Common Patterns by PR Type
+## Common patterns by PR type
 
-### New Feature
+### New feature
 - Describe the business requirement briefly
 - List new entities/models, endpoints, and admin pages
 - Provide full testing flow from setup to verification
 - Include database queries showing new data
 
-### Bug Fix
+### Bug fix
 - State the bug clearly: what happened vs. what should happen
 - Explain root cause
 - Describe the fix and why this approach was chosen
@@ -164,20 +164,20 @@ Before finalizing the PR message, verify:
 - List before/after comparisons if helpful
 - Note any config or dependency changes
 
-### Database Migration
+### Database migration
 - List all schema changes (new tables, columns, indexes)
 - Note if migration is reversible
 - Flag any data migrations that touch existing rows
 - Include rollback instructions if applicable
 
-## Reference Files
+## Reference files
 
 | Reference | Contents |
 |---|---|
 | [PR message template](references/template.md) | Structured template for PR descriptions with all optional sections |
 | [Example PR messages](references/examples.md) | Real-world examples for features, bug fixes, and admin changes |
 
-## Integration with Other Skills
+## Integration with other skills
 
 | Situation | Recommended Skill |
 |---|---|

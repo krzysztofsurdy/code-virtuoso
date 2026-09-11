@@ -1,4 +1,4 @@
-# Discovery Commands
+# Discovery commands
 
 Shell commands to scan installed skills, agents, and teams at runtime. Run these to build a live index before making recommendations.
 
@@ -52,16 +52,16 @@ find ~/.claude/plugins/cache -maxdepth 6 -path "*/teams/*.md" 2>/dev/null
 
 For each found team file, read the YAML frontmatter to extract `name`, `description`, `lead`, `agents`, `skills`, and `workflow`.
 
-## Building the Index
+## Building the index
 
-After scanning, build a mental index with three columns:
+After scanning, build an index with three columns:
 
 | Name | Type | When to use (from description) |
 |---|---|---|
 
 Sort by type (teams first, then agents, then skills) so that higher-coordination options surface first when matching.
 
-## Verifying Availability
+## Verifying availability
 
 Before recommending any skill, agent, or team:
 

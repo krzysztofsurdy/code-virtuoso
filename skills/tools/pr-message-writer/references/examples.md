@@ -1,10 +1,18 @@
-# Example PR Messages
+# Example PR messages
 
-Real-world examples demonstrating the PR template applied to different change types.
+Examples of the PR template applied to different change types.
+
+## Contents
+
+- [Example 1: Feature - Add product review system](#example-1-feature---add-product-review-system)
+- [Example 2: Bug fix - Cart quantity not preserved on validation error](#example-2-bug-fix---cart-quantity-not-preserved-on-validation-error)
+- [Example 3: Feature - Add quiz question pool with admin management](#example-3-feature---add-quiz-question-pool-with-admin-management)
+- [Example 4: Feature - Add user preference tracking field](#example-4-feature---add-user-preference-tracking-field)
+- [Example 5: Bug fix - Prevent double submit on checkout](#example-5-bug-fix---prevent-double-submit-on-checkout)
 
 ---
 
-## Example 1: Feature - Add Product Review System
+## Example 1: Feature - Add product review system
 
 ### Title
 ```
@@ -128,7 +136,7 @@ GROUP BY p.id HAVING COUNT(pr.id) > 0 LIMIT 10;
 
 ---
 
-## Example 2: Bug Fix - Cart Quantity Not Preserved on Validation Error
+## Example 2: Bug fix - Cart quantity not preserved on validation error
 
 ### Title
 ```
@@ -226,7 +234,7 @@ Expected: `errors` contains a stock validation message, and `cart.items` shows t
 
 ---
 
-## Example 3: Feature - Add Quiz Question Pool with Admin Management
+## Example 3: Feature - Add quiz question pool with admin management
 
 ### Title
 ```
@@ -328,7 +336,7 @@ GROUP BY quiz_pool_id, quiz_question_id HAVING COUNT(*) > 1;
 
 ---
 
-## Example 4: Feature - Add User Preference Tracking Field
+## Example 4: Feature - Add user preference tracking field
 
 ### Title
 ```
@@ -463,7 +471,7 @@ GROUP BY notification_preference ORDER BY COUNT(*) DESC;
 
 ---
 
-## Example 5: Bug Fix - Prevent Double Submit on Checkout
+## Example 5: Bug fix - Prevent double submit on checkout
 
 ### Title
 ```
@@ -474,7 +482,7 @@ EDU-3301 Add button cooldown to prevent double payment submission
 
 #### Root Cause
 
-Users clicking the pay button multiple times during slow network conditions caused duplicate payment attempts. The button remained active while the request was in flight.
+Users clicked the pay button several times on slow networks, which caused duplicate payment attempts. The button stayed active while the request was in flight.
 
 #### Fix
 

@@ -1,8 +1,22 @@
 # Epic
 
-An epic is a quarter-scale body of work that ties several stories together under one coherent goal. An epic is not "a big story" - it is a container with its own narrative, its own success measure, and its own scope boundaries. If you cannot name how you will know it worked, it is not ready to be an epic.
+An epic is a quarter-scale body of work that ties several stories together under one coherent goal. An epic is not "a big story". It is a container with its own narrative, its own success measure, and its own scope boundaries. If you cannot name how you will know it worked, it is not ready to be an epic.
 
-## Required Fields
+## Contents
+
+- [Required fields](#required-fields)
+- [Optional fields](#optional-fields)
+- [Writing the problem statement](#writing-the-problem-statement)
+- [Picking success metrics](#picking-success-metrics)
+- [Scope and out of scope](#scope-and-out-of-scope)
+- [Breaking an epic into stories](#breaking-an-epic-into-stories)
+- [Milestones](#milestones)
+- [Questionnaire](#questionnaire)
+- [Output template](#output-template)
+- [Quality checks](#quality-checks)
+- [Common anti-patterns](#common-anti-patterns)
+
+## Required fields
 
 | Field | Purpose |
 |---|---|
@@ -13,7 +27,7 @@ An epic is a quarter-scale body of work that ties several stories together under
 | Scope | The user journeys, surfaces, or capabilities included. |
 | Out of scope | Things people might assume are included but are not. Being explicit here prevents drift. |
 
-## Optional Fields
+## Optional fields
 
 | Field | When to include |
 |---|---|
@@ -27,7 +41,7 @@ An epic is a quarter-scale body of work that ties several stories together under
 | Rollout plan | Feature flagging, phased release, kill-switch |
 | Budget or capacity | If constrained |
 
-## Writing the Problem Statement
+## Writing the problem statement
 
 The problem statement sets up everything else. Keep it to one short paragraph structured around three questions:
 
@@ -37,7 +51,7 @@ The problem statement sets up everything else. Keep it to one short paragraph st
 
 A common failure mode is to write a goal statement dressed up as a problem ("We need to improve checkout"). Push past it by asking what is wrong now.
 
-## Picking Success Metrics
+## Picking success metrics
 
 Pick outcome metrics, not output metrics. A feature shipped is an output; a change in user behaviour is an outcome.
 
@@ -54,7 +68,7 @@ Guidelines:
 - State the measurement window ("measured over the 30 days after rollout").
 - If a metric cannot be measured with the current instrumentation, add a prerequisite story to add it.
 
-## Scope and Out of Scope
+## Scope and out of scope
 
 Both lists are required. The out-of-scope list is where most of the alignment value lives - it prevents scope creep during execution.
 
@@ -74,23 +88,23 @@ Out of scope:
 
 When a new request arrives mid-epic, the out-of-scope list is the first place to check. If the request is not on either list, the product owner makes an explicit scope call before it is accepted.
 
-## Breaking an Epic into Stories
+## Breaking an epic into stories
 
 An epic typically contains five to twenty stories. Use these slicing patterns:
 
 | Slice | Example |
 |---|---|
-| User journey step | Shipping, payment, confirmation - each its own story |
+| User journey step | Shipping, payment, confirmation: each its own story |
 | User segment | New customer vs returning customer flows |
 | Platform | Web, iOS, Android |
 | Capability layer | Data model, API, UI, analytics |
 | Happy path first | Ship the 80% path, then add edge cases as follow-up stories |
 
-Write the first two or three stories at epic creation time to sanity-check scope. Refine the rest lazily.
+Write the first two or three stories when you create the epic, to sanity-check scope. Refine the rest later.
 
 ## Milestones
 
-Milestones are optional but useful when the epic has internal phases or external dependencies. Use them for demoable checkpoints, not busywork gates.
+Milestones are optional but useful when the epic has internal phases or external dependencies. Use them for checkpoints that can be demoed, not for busywork gates.
 
 Examples:
 
@@ -100,23 +114,23 @@ Examples:
 
 ## Questionnaire
 
-1. **Title** - outcome-oriented, free text
-2. **Problem statement** - current state, cost, target state, free text
-3. **Goal** - one sentence, free text
-4. **Primary success metric** - name, baseline, target, window
-5. **Counter-metrics / guardrails** - optional, up to two
-6. **In scope** - bullet list
-7. **Out of scope** - bullet list
-8. **Parent initiative** - optional link
-9. **Stakeholders** - product, engineering, design, exec sponsor
-10. **Milestones** - optional, dated
-11. **Initial child stories** - rough list; leave room to refine
-12. **Assumptions** - optional
-13. **Risks** - optional, with mitigation
-14. **Dependencies** - optional
-15. **Rollout plan** - optional
+1. **Title**: outcome-oriented, free text
+2. **Problem statement**: current state, cost, target state, free text
+3. **Goal**: one sentence, free text
+4. **Primary success metric**: name, baseline, target, window
+5. **Counter-metrics / guardrails**: optional, up to two
+6. **In scope**: bullet list
+7. **Out of scope**: bullet list
+8. **Parent initiative**: optional link
+9. **Stakeholders**: product, engineering, design, exec sponsor
+10. **Milestones**: optional, dated
+11. **Initial child stories**: rough list; leave room to refine
+12. **Assumptions**: optional
+13. **Risks**: optional, with mitigation
+14. **Dependencies**: optional
+15. **Rollout plan**: optional
 
-## Output Template
+## Output template
 
 ```markdown
 # <Outcome-oriented title>
@@ -170,7 +184,7 @@ Examples:
 - Related epics: <list>
 ```
 
-## Quality Checks
+## Quality checks
 
 - The title names an outcome, not an activity.
 - The problem statement is grounded in current-state data where available.
@@ -179,13 +193,13 @@ Examples:
 - A tech lead could start breaking this into stories without another meeting.
 - The epic is sized for a quarter. Anything multi-quarter belongs in an initiative.
 
-## Common Anti-Patterns
+## Common anti-patterns
 
 | Anti-pattern | Why it's wrong | Fix |
 |---|---|---|
 | Title names a refactor or tech effort | Hides user or business value | Reframe around the outcome the effort enables |
 | "Launch X" as the only success metric | That is an output, not an outcome | Measure user or business impact, not delivery |
 | Missing out-of-scope list | Invites scope creep mid-quarter | Add explicit exclusions |
-| Twenty stories, none refined | Feels like planning but delivers nothing | Refine the first few stories to pressure-test scope |
+| Twenty stories, none refined | Looks like planning but delivers nothing | Refine the first few stories to pressure-test scope |
 | Epic lives for six months | Likely an initiative in disguise | Split into initiative + multiple epics |
 | Problem statement is the goal restated | No diagnosis | Describe current state with numbers |

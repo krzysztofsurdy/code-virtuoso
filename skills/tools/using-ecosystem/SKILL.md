@@ -1,20 +1,20 @@
 ---
 name: using-ecosystem
-description: "Ecosystem discovery advisor. Use when the user asks 'what skill should I use', 'what agent should I delegate to', 'which team fits this task', or when onboarding to available skills, agents, and teams. Scans ALL installed skills at runtime - not limited to any single plugin or vendor. Triggers: 'which skill', 'which agent', 'what do I use for', 'orient me', 'what tools do I have'."
+description: "Ecosystem discovery advisor. Use when the user asks 'what skill should I use', 'what agent should I delegate to', 'which team fits this task', or when onboarding to available skills, agents, and teams. Scans all installed skills at runtime, not limited to any single plugin or vendor. Triggers: 'which skill', 'which agent', 'what do I use for', 'orient me', 'what tools do I have'."
 user-invocable: true
 argument-hint: "[optional: situation or topic]"
 ---
 
-# Using Ecosystem
+# Using ecosystem
 
-Discover the right skill, agent, or team for the situation at hand. This skill teaches a discovery PROCESS - it does not maintain a hardcoded inventory. Every recommendation comes from scanning what is actually installed.
+Discover the right skill, agent, or team for the situation at hand. This skill teaches a discovery process. It does not maintain a hardcoded inventory, and every recommendation comes from scanning what is installed.
 
 ## Core Principles
 
 | Principle | Meaning |
 |---|---|
-| **Scan, don't guess** | Always scan installed skills/agents/teams before recommending. Never assume something is available. |
-| **Match situation, not topic** | Pick the skill whose description triggers match what the user is doing, not the skill whose title loosely matches. |
+| **Scan, don't guess** | Scan installed skills/agents/teams before every recommendation. Never assume something is available. |
+| **Match situation, not topic** | Pick the skill whose description triggers match what the user is doing, not the skill whose title only loosely matches. |
 | **Agents act, skills inform** | Skills are reference material. Agents are actors. Delegate work to an agent; consult a skill. |
 | **Teams for multi-role work** | If the work needs 3+ agents coordinating, check for a pre-composed team before assembling ad-hoc. |
 | **Narrower wins** | If two skills overlap, pick the one with the tighter trigger match. |
@@ -22,15 +22,15 @@ Discover the right skill, agent, or team for the situation at hand. This skill t
 
 ---
 
-## Step 1: Scan What Is Installed
+## Step 1: Scan what is installed
 
 Run the discovery commands from [discovery-commands](references/discovery-commands.md) to build a live index of installed skills, agents, and teams. Read each frontmatter `name` and `description` field.
 
-Do NOT skip this step. Do NOT recommend from memory. The installed set varies per user and per project.
+Do not skip this step and do not recommend from memory. The installed set varies per user and per project.
 
 ---
 
-## Step 2: Classify the User's Situation
+## Step 2: Classify the user's situation
 
 Determine what the user needs:
 
@@ -46,9 +46,9 @@ Determine what the user needs:
 
 ---
 
-## Step 3: Match and Recommend
+## Step 3: Match and recommend
 
-### Decision Tree
+### Decision tree
 
 ```
 User request
@@ -65,17 +65,17 @@ Does it need multiple agents coordinating?
                             Use the category signals from Step 2
 ```
 
-### Matching Rules
+### Matching rules
 
 1. **Read the `description` field** of each candidate. Match on trigger phrases, not the name.
 2. **Prefer the narrower skill.** `database-design` beats `clean-architecture` for a schema question.
-3. **Check `user-invocable`** - if the user wants to run something interactively, only recommend user-invocable skills.
+3. **Check `user-invocable`.** If the user wants to run something interactively, only recommend user-invocable skills.
 4. **Skills stack.** You can recommend multiple knowledge skills for one task (e.g., `security` + `solid` for a security review).
 5. **Never recommend what is not installed.** If a skill would fit but is not present, suggest installing it with `npx skills add`.
 
 ---
 
-## Step 4: Chain When Needed
+## Step 4: Chain when needed
 
 When a single skill or agent is not enough, chain them. Common patterns:
 
@@ -86,20 +86,20 @@ When a single skill or agent is not enough, chain them. Common patterns:
 | **Review flow** | Smell scanner --> Reviewer --> (optional) Implementer for fixes |
 | **Coverage flow** | Test gap analyzer --> Implementer --> Reviewer |
 
-These are guidelines, not rituals. Skip steps that do not apply. Add steps that do. If a pre-composed team matches the chain, use the team instead.
+These are guidelines. Skip steps that do not apply and add steps that do. If a pre-composed team matches the chain, use the team instead.
 
 ---
 
-## Step 5: Compass - What Next?
+## Step 5: Compass (what next?)
 
 When the user has just finished work with an agent, skill, or team and asks "what next?" or "where do I go from here?":
 
 1. Ask what they just completed (which agent/skill/team, what output they have)
 2. Consult [compass](references/compass.md) for the recommended next step
-3. Verify the recommended agent/skill/team is installed (scan first - do not recommend from memory)
+3. Verify the recommended agent/skill/team is installed (scan first, do not recommend from memory)
 4. Present the recommendation with one-line reasoning
 5. If multiple paths exist, present 2-3 options and let the user choose
-6. If nothing chains naturally, say so - not every task needs a follow-up
+6. If nothing chains naturally, say so. Not every task needs a follow-up
 
 Compass mode is conversational. Ask the user, do not scan the filesystem to infer what happened.
 
@@ -107,7 +107,7 @@ Compass mode is conversational. Ask the user, do not scan the filesystem to infe
 
 ## Ecosystem Structure
 
-The ecosystem has five layers. The structure is stable - it does not change when skills are added.
+The ecosystem has five layers. The structure stays the same when skills are added.
 
 | Layer | Location | Format | Purpose |
 |---|---|---|---|
@@ -117,7 +117,7 @@ The ecosystem has five layers. The structure is stable - it does not change when
 | **Specs** | `spec/*.md` | Markdown | Format specifications for skills, agents, teams, plugins |
 | **Plugins** | `.claude-plugin/marketplace.json` | JSON | Distribution bundles grouping skills and agents |
 
-### Skill Categories
+### Skill categories
 
 | Category | Path | Invocation |
 |---|---|---|
@@ -127,14 +127,14 @@ The ecosystem has five layers. The structure is stable - it does not change when
 | Roles | `skills/roles/` | Auto-loaded by matching role agents |
 | Frameworks | `skills/frameworks/{name}/` | Loaded when the framework is in play |
 
-### Agent Tiers
+### Agent tiers
 
 | Tier | Scope | Examples |
 |---|---|---|
 | Specialist | Single repeatable task (stateless) | investigator, reviewer, refactor-scout |
 | Role | Domain of responsibility (some carry memory) | architect, backend-dev, qa-engineer |
 
-### Team Spawning Modes
+### Team spawning modes
 
 | Mode | When | How |
 |---|---|---|
@@ -143,7 +143,7 @@ The ecosystem has five layers. The structure is stable - it does not change when
 
 ---
 
-## Quality Checklist
+## Quality checklist
 
 Before answering a "which skill/agent/team" question:
 
@@ -157,7 +157,7 @@ Before answering a "which skill/agent/team" question:
 
 ---
 
-## Critical Rules
+## Critical rules
 
 1. **Scan first.** Every recommendation starts with a live scan of what is installed. No hardcoded lists.
 2. **Situation over title.** Match what the user is doing, not what the skill is called.
@@ -169,7 +169,7 @@ Before answering a "which skill/agent/team" question:
 
 ---
 
-## Reference Files
+## Reference files
 
 | Reference | Contents |
 |---|---|

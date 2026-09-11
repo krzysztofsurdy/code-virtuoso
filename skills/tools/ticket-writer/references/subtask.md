@@ -2,7 +2,19 @@
 
 A subtask is a technical slice of a parent story. It exists so one developer can pick up a concrete, bounded piece of work and finish it in hours to a couple of days. If a subtask can stand on its own without a parent, it is probably a story or an issue in disguise.
 
-## Required Fields
+## Contents
+
+- [Required fields](#required-fields)
+- [Optional fields](#optional-fields)
+- [Parent linkage rules](#parent-linkage-rules)
+- [How to split a story into subtasks](#how-to-split-a-story-into-subtasks)
+- [Acceptance criteria for subtasks](#acceptance-criteria-for-subtasks)
+- [Questionnaire](#questionnaire)
+- [Output template](#output-template)
+- [Quality checks](#quality-checks)
+- [Common anti-patterns](#common-anti-patterns)
+
+## Required fields
 
 | Field | Purpose |
 |---|---|
@@ -11,7 +23,7 @@ A subtask is a technical slice of a parent story. It exists so one developer can
 | Acceptance criteria | Technical pass/fail conditions. May reference code paths, API responses, or measurable thresholds. |
 | Definition of Done | The subtask's own DoD, which is a subset of the parent story's DoD scoped to this slice. |
 
-## Optional Fields
+## Optional fields
 
 | Field | When to include |
 |---|---|
@@ -21,18 +33,18 @@ A subtask is a technical slice of a parent story. It exists so one developer can
 | Assignee | If known at creation time |
 | Test plan | When the tests are non-obvious (performance, concurrency, migration) |
 
-## Parent Linkage Rules
+## Parent linkage rules
 
 A subtask without a parent story is a warning sign. Enforce these rules:
 
 - Every subtask points to exactly one parent story.
 - The parent must be open; closed parents mean the subtask is stale or belongs elsewhere.
-- Subtasks do not chain - a subtask should not have its own subtasks. If the work is that deep, the parent is too big.
+- Subtasks do not chain. A subtask should not have its own subtasks; if the work is that deep, the parent is too big.
 - A subtask's scope fits inside its parent's scope. Anything outside belongs on a separate ticket.
 
-## How to Split a Story into Subtasks
+## How to split a story into subtasks
 
-Pick one axis and stick to it. Mixing axes creates overlapping tickets.
+Pick one axis and stick to it. Mixed axes create overlapping tickets.
 
 | Split axis | Example |
 |---|---|
@@ -43,7 +55,7 @@ Pick one axis and stick to it. Mixing axes creates overlapping tickets.
 
 Target: 2-5 subtasks per story. More than 5 usually means the story is too large; fewer than 2 means no split is warranted.
 
-## Acceptance Criteria for Subtasks
+## Acceptance criteria for subtasks
 
 Subtask criteria can describe code-level or system-level behaviour, which is the main difference from stories:
 
@@ -55,16 +67,16 @@ Still write them as observable outcomes, not as activity lists.
 
 ## Questionnaire
 
-1. **Parent story** - link or ID (required)
-2. **What this subtask covers** - free text, one sentence
-3. **Split axis** - layer / capability / platform / acceptance criterion / other
-4. **Technical acceptance** - what must be true when it's done? (free text, converted to checklist)
-5. **Approach notes** - libraries, services, or patterns to reuse (optional)
-6. **Test plan** - unit / integration / manual / none (optional)
-7. **Estimate** - hours, points, or skip
-8. **Dependencies** - other subtasks or blockers (optional)
+1. **Parent story**: link or ID (required)
+2. **What this subtask covers**: free text, one sentence
+3. **Split axis**: layer / capability / platform / acceptance criterion / other
+4. **Technical acceptance**: what must be true when it's done? (free text, converted to checklist)
+5. **Approach notes**: libraries, services, or patterns to reuse (optional)
+6. **Test plan**: unit / integration / manual / none (optional)
+7. **Estimate**: hours, points, or skip
+8. **Dependencies**: other subtasks or blockers (optional)
 
-## Output Template
+## Output template
 
 ```markdown
 # <Imperative technical title>
@@ -97,7 +109,7 @@ Story: <link to parent>
 - Depends on: <list or placeholder>
 ```
 
-## Quality Checks
+## Quality checks
 
 - The subtask has exactly one open parent story.
 - The scope is narrower than the parent story's scope.
@@ -105,12 +117,12 @@ Story: <link to parent>
 - The subtask is sized for one developer and one to two days at most.
 - No subtask duplicates another subtask under the same parent.
 
-## Common Anti-Patterns
+## Common anti-patterns
 
 | Anti-pattern | Why it's wrong | Fix |
 |---|---|---|
 | No parent link | Orphan subtasks drift out of sprint scope | Attach a parent or convert to an issue |
-| Subtask larger than the parent | Hierarchy is upside-down | Merge sub into parent, or split parent into stories |
-| Multiple subtasks with identical titles | Poor slicing - the split axis was wrong | Redo the split on a single axis |
+| Subtask larger than the parent | Hierarchy is upside-down | Merge the subtask into the parent, or split parent into stories |
+| Multiple subtasks with identical titles | Poor slicing: the split axis was wrong | Redo the split on a single axis |
 | Subtask body repeats the parent story verbatim | Wastes reviewer time | Summarise only the technical slice |
 | "Refactor the service" as a subtask | Too vague, no observable outcome | Name the specific change and why it is needed |
