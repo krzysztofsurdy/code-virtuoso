@@ -181,4 +181,4 @@ Both role and specialist agents preload relevant skills. The skill name matches 
 
 ### Punctuation Style
 
-Do not use the double-dash (`--`) as a pause or em-dash substitute in agent definitions, skills, specs, or any project documentation. Use a single hyphen (`-`) with surrounding spaces instead. CLI flags such as `--help` or `--no-edit` are unaffected because they have no surrounding spaces. This rule keeps prose consistent across the repo and avoids mixing Markdown-rendered dashes with command-line syntax.
+Do not use em dashes (`—`), en dashes (`–`), or the double-dash (`--`) as a pause in agent definitions, skills, specs, or any project documentation. Use a comma, colon, period, parentheses, or a single hyphen (`-`) with surrounding spaces instead. Number ranges use a plain hyphen (`1-5`). This rule applies to prose only: CLI flags (`--help`), argument separators (`git checkout -- .`, `cargo test -- --nocapture`), and SQL comments (`-- note`) keep their double dash.
