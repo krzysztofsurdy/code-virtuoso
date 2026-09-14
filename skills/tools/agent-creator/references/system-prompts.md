@@ -1,10 +1,18 @@
 # System Prompt Patterns
 
-The body of an agent file is its system prompt. The orchestrator receives only what the agent returns - so the prompt must establish a contract the agent can deliver on.
+The body of an agent file is its system prompt. The orchestrator receives only what the agent returns, so the prompt must set a contract the agent can deliver on.
 
-## The Five-Section Contract
+## Contents
 
-Every agent system prompt should contain these five sections, in order:
+- [The five-section contract](#the-five-section-contract)
+- [Worked examples](#worked-examples)
+- [Common mistakes](#common-mistakes)
+- [Writing tips](#writing-tips)
+- [Length targets](#length-targets)
+
+## The five-section contract
+
+Every agent system prompt contains these five sections, in order:
 
 ```
 You are a [role]. You [one-sentence responsibility].
@@ -15,11 +23,11 @@ You are a [role]. You [one-sentence responsibility].
 ## Output
 ```
 
-Each section has a purpose. Skipping one produces a weaker agent.
+Skipping a section produces a weaker agent.
 
-### Role Statement
+### Role statement
 
-One sentence. Names the role, states the core responsibility, and implies the boundary.
+One sentence. Name the role, state the core responsibility, and imply the boundary.
 
 Good:
 
@@ -29,11 +37,11 @@ Bad:
 
 > You are a helpful AI assistant that can help with many coding tasks.
 
-The good version tells the agent what it is, what it does, and what it does not do. The bad version is filler the agent already knows.
+The good version says what the agent is, what it does, and what it does not do. The bad version is filler.
 
 ### Input
 
-Describe what the agent receives when invoked. This helps the agent parse vague requests and ask for missing context instead of guessing.
+Describe what the agent receives when invoked. This lets the agent parse vague requests and ask for missing context instead of guessing.
 
 ```
 ## Input
@@ -47,7 +55,7 @@ When the input is structured (a PR number, a ticket ID, a file path), name the f
 
 ### Process
 
-Numbered steps the agent runs through. Favour 3-7 steps. Fewer, and the process is vague. More, and the agent drifts.
+Numbered steps the agent runs through. Use 3-7 steps. With fewer, the process is vague. With more, the agent drifts.
 
 ```
 ## Process
@@ -58,11 +66,11 @@ Numbered steps the agent runs through. Favour 3-7 steps. Fewer, and the process 
 5. Document findings in the output format
 ```
 
-Each step should be an action verb. Avoid process steps that are really rules ("always include line numbers" - that belongs in Rules).
+Start each step with an action verb. Do not write rules as process steps ("always include line numbers" belongs in Rules).
 
 ### Rules
 
-Constraints and guardrails. This is where you prevent the agent from drifting.
+Constraints and guardrails. This is where you keep the agent from drifting.
 
 ```
 ## Rules
@@ -73,11 +81,11 @@ Constraints and guardrails. This is where you prevent the agent from drifting.
 - If a trail goes cold, note it and move on - do not fabricate
 ```
 
-Rules should be short imperatives. If a rule needs a paragraph of justification, it is probably doing too much - split it.
+Rules should be short imperatives. If a rule needs a paragraph of justification, it is doing too much. Split it.
 
 ### Output
 
-The exact shape of what the agent returns. Include a template, not just a description.
+The exact shape of what the agent returns. Include a template, not only a description.
 
 Good:
 
@@ -106,11 +114,11 @@ Bad:
 
 > Return a summary of your findings with file references and a conclusion.
 
-The good version is reproducible. The bad version produces different shapes every time.
+The good version is reproducible. The bad version gives a different shape every time.
 
-## Worked Examples
+## Worked examples
 
-### Specialist: Refactor Scout
+### Specialist: refactor scout
 
 ```markdown
 You are a refactor scout. You scan code for smells and map each one to a
@@ -149,7 +157,7 @@ Summary:
 - M high-impact, K medium, L low
 ```
 
-### Role: QA Engineer with Memory
+### Role: QA engineer with memory
 
 ```markdown
 You are the team's QA engineer. You own quality - test plans, exploratory
@@ -192,7 +200,7 @@ Sign-off:
 - Rationale: ...
 ```
 
-### Team-Lead: Parallel Investigator
+### Team-lead: parallel investigator
 
 ```markdown
 You are an investigation team lead. You coordinate 3-5 investigator
@@ -230,7 +238,7 @@ Disagreements requiring human input:
 - Teammate A said X, teammate B said Y
 ```
 
-## Common Mistakes
+## Common mistakes
 
 ### Persona bloat
 
@@ -242,11 +250,11 @@ Good:
 
 > You are a reviewer. You produce structured findings with severity labels.
 
-Persona rarely helps. It costs tokens and encourages the agent to roleplay instead of working.
+Persona rarely helps. It costs tokens and pushes the agent to roleplay instead of work.
 
 ### Missing output contract
 
-If the Output section is a paragraph of prose, every invocation produces different shapes. Ship a template.
+If the Output section is a paragraph of prose, every invocation returns a different shape. Ship a template.
 
 ### Process steps that are really rules
 
@@ -274,7 +282,7 @@ That is a process. Move it to Process.
 You have access to the Read, Grep, and Bash tools. Use Read to read files...
 ```
 
-The tool list is already in the frontmatter. Do not duplicate it in the body - the body should be platform-portable.
+The tool list is already in the frontmatter. Do not repeat it in the body, which should be platform-portable.
 
 ### Open-ended workflows
 
@@ -285,17 +293,17 @@ Process:
 3. Do it
 ```
 
-This is not a workflow. It is four words that mean "go figure it out". Be specific.
+This is not a workflow. It means "go figure it out". Be specific.
 
-## Writing Tips
+## Writing tips
 
 - Use imperative voice throughout ("read the file", not "you should read the file")
 - Prefer tables for reference material embedded in the prompt (severity levels, category mappings)
-- Keep the whole body under 100 lines when possible - context is not free
-- Write for another Claude instance, not for a human tutorial reader - skip the "welcome" and "glossary"
+- Keep the whole body under 100 lines when possible. Context is not free
+- Write for another model instance, not for a human tutorial reader. Skip the "welcome" and "glossary"
 - Test the agent on a real task before committing; revise the prompt based on what it actually did
 
-## Length Targets
+## Length targets
 
 | Section | Target length |
 |---|---|

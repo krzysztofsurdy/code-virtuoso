@@ -2,18 +2,25 @@
 
 Three archetypes cover most sub-agents. Pick the one that matches the scope of responsibility, not the size of the task.
 
-## Specialist Agent
+## Contents
 
-A specialist handles one repeatable task type. It is stateless, usually read-only, and operates on whatever the caller hands it. Think of it as a focused tool with a voice.
+- [Specialist agent](#specialist-agent)
+- [Role agent](#role-agent)
+- [Team-lead agent](#team-lead-agent)
+- [How to choose](#how-to-choose)
+
+## Specialist agent
+
+A specialist handles one repeatable task type. It is stateless, usually read-only, and operates on whatever the caller hands it. Think of it as a focused tool.
 
 ### When to use
 
 - The same kind of delegation keeps happening ("can you investigate X", "can you review this PR")
 - The task has a clear start, end, and output shape
-- Cross-session memory is not needed - each invocation is independent
-- Giving the caller an inline reply would flood the main conversation with logs, file contents, or search results the caller will not reference again
+- Cross-session memory is not needed. Each invocation is independent
+- An inline reply would flood the main conversation with logs, file contents, or search results the caller will not reference again
 
-### Example: Investigator
+### Example: investigator
 
 ```markdown
 ---
@@ -77,15 +84,15 @@ Files examined:
 
 ### Anti-patterns for specialists
 
-- Adding "and also review the tests" to an investigator - that is a second agent
-- Giving write tools to an auditor - scope creep waiting to happen
-- Persistent memory "for efficiency" - if you need memory, it is probably a role agent
+- Adding "and also review the tests" to an investigator. That is a second agent.
+- Giving write tools to an auditor. Scope creep follows.
+- Persistent memory "for efficiency". If you need memory, it is probably a role agent.
 
 ---
 
-## Role Agent
+## Role agent
 
-A role agent embodies a team position. It owns a domain across many task types and often maintains project-level memory to carry context across sessions.
+A role agent holds a team position. It owns a domain across many task types and often maintains project-level memory to carry context across sessions.
 
 ### When to use
 
@@ -93,7 +100,7 @@ A role agent embodies a team position. It owns a domain across many task types a
 - Context from previous sessions matters (last sprint's risks, previous architecture decisions)
 - The agent is a stand-in for a human role rather than a tool
 
-### Example: Architect
+### Example: architect
 
 ```markdown
 ---
@@ -160,33 +167,33 @@ Consequences:
 ### Anti-patterns for roles
 
 - A role agent that also implements code (unless it is explicitly a Dev role)
-- Preloading ten skills "just in case" - load four at most
-- No memory for a role whose value comes from remembering decisions
+- Preloading ten skills "just in case". Load four at most.
+- No memory for a role whose value comes from remembering decisions.
 
 ---
 
-## Team-Lead Agent
+## Team-lead agent
 
-A team-lead coordinates multiple workers running in parallel. The lead assigns tasks, synthesises results, and communicates with humans. Teammates communicate with each other, not just with the lead.
+A team-lead coordinates multiple workers running in parallel. The lead assigns tasks, synthesises results, and communicates with humans. Teammates also communicate with each other.
 
 ### When to use
 
 - The work has 3 or more independent branches that can run in parallel
 - Research or review benefits from multiple perspectives running simultaneously
-- Coordination overhead is worth the token cost (team-leads are expensive)
+- The coordination overhead is worth the token cost (team-leads are expensive)
 
-### When NOT to use
+### When not to use
 
-- The work is sequential - each step depends on the last
+- The work is sequential and each step depends on the last
 - Teammates would edit the same files (file conflicts)
-- Two teammates would suffice - use direct delegation or a specialist instead
+- Two teammates would suffice. Use direct delegation or a specialist instead
 
-### Example: Parallel PR Reviewer
+### Example: parallel PR reviewer
 
 ```markdown
 ---
 name: pr-review-lead
-description: Coordinate a parallel review team over a pull request. Delegate when a PR is large enough that splitting review across security, performance, and test-coverage lenses gives faster and deeper feedback than a single reviewer.
+description: Coordinate a parallel review team over a pull request. Delegate when a PR is large enough that splitting review across security, performance, and test-coverage lenses gives faster and deeper feedback than a single reviewer does.
 tools: Read, Grep, Glob, Bash, Agent(reviewer, refactor-scout, test-gap-analyzer)
 ---
 
@@ -221,14 +228,14 @@ A pull request identifier and the diff context.
 
 ### Anti-patterns for team-leads
 
-- Spawning the same archetype three times with slightly different prompts - merge into one
-- Letting the lead do the work itself when teammates are slow - defeats the purpose
-- Having teammates edit the same file - the last write wins and earlier work is lost
-- Creating a team for a two-agent task - just delegate twice
+- Spawning the same archetype three times with slightly different prompts. Merge them into one.
+- Letting the lead do the work itself when teammates are slow. That defeats the purpose.
+- Having teammates edit the same file. The last write wins and earlier work is lost.
+- Creating a team for a two-agent task. Delegate twice instead.
 
 ---
 
-## How to Choose
+## How to choose
 
 Walk through these questions in order. The first "yes" wins.
 
@@ -236,4 +243,4 @@ Walk through these questions in order. The first "yes" wins.
 2. Is this a team role a human could hold? -> **Role**
 3. Is this coordinating parallel work by multiple other agents? -> **Team-Lead**
 
-If none match, the work probably does not need an agent at all - consider whether a skill or an in-conversation tool call suffices.
+If none match, the work probably does not need an agent. Consider whether a skill or an in-conversation tool call is enough.

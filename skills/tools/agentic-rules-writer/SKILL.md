@@ -7,16 +7,16 @@ argument-hint: "[optional: agent-name e.g. claude, cursor, windsurf, codex]"
 
 # Agentic Rules Writer
 
-Generate a tailored rules/instruction file for any AI coding agent. Runs an interactive questionnaire, pulls the installed-skill and agent inventory from the `using-ecosystem` meta-skill, and writes the output in the correct format and location for the chosen agent and scope.
+Generate a tailored rules or instruction file for any AI coding agent. The skill runs an interactive questionnaire, takes the installed-skill and agent inventory from the `using-ecosystem` meta-skill, and writes the output in the format and location the chosen agent and scope require.
 
-## When to Use
+## When to use
 
 - Setting up a new AI coding agent for the first time
-- Creating team-shared project rules for consistent behavior across developers
+- Creating team-shared project rules so developers get consistent behavior
 - Adding personal dev-specific rules to a project (gitignored)
 - After installing new skills to update the rules file with skill references
 
-## Quick Start
+## Quick start
 
 ```
 /agentic-rules-writer claude
@@ -27,13 +27,13 @@ Generate a tailored rules/instruction file for any AI coding agent. Runs an inte
 
 ---
 
-## Phase 1: Agent Selection
+## Phase 1: Agent selection
 
-If `$ARGUMENTS` is provided, map it to an agent from the table below (case-insensitive, partial match OK — e.g. "wind" matches Windsurf). If no argument or no match, present a selectable menu using `AskUserQuestion` (or the agent's equivalent interactive prompt tool).
+If `$ARGUMENTS` is provided, map it to an agent from the table below (case-insensitive, partial match OK, e.g. "wind" matches Windsurf). If no argument or no match, present a selectable menu using `AskUserQuestion` (or the agent's equivalent interactive prompt tool).
 
-### Tier 1 — Full support with dedicated format/paths
+### Tier 1: full support with dedicated format and paths
 
-| Agent | Format Notes |
+| Agent | Format notes |
 |---|---|
 | Claude Code | Plain Markdown, keep under 200 lines |
 | Cursor | Requires YAML frontmatter: `alwaysApply: true`, `.mdc` extension |
@@ -48,27 +48,27 @@ If `$ARGUMENTS` is provided, map it to an agent from the table below (case-insen
 | Continue | Plain Markdown |
 | Trae | Plain Markdown |
 
-### Tier 2 — Supported with generic Markdown format
+### Tier 2: supported with generic Markdown format
 
-| Agent | Format Notes |
+| Agent | Format notes |
 |---|---|
 | Goose | Plain Markdown |
 | Augment | Plain Markdown |
 | Kilo Code | Plain Markdown |
 
-### Other / Universal
+### Other / universal
 
 For any agent not listed: write plain Markdown to a user-specified path. Ask the user for the output path.
 
-See [references/agent-targets.md](references/agent-targets.md) for full details on each agent's format, paths, limits, and testing instructions.
+See [references/agent-targets.md](references/agent-targets.md) for each agent's format, paths, limits, and testing instructions.
 
 ---
 
-## Phase 2: Scope Selection
+## Phase 2: Scope selection
 
-Present a selectable menu (using `AskUserQuestion` or the agent's equivalent) to ask the user which scope to generate rules for:
+Ask the user which scope to generate rules for, using a selectable menu (`AskUserQuestion` or the agent's equivalent):
 
-| Scope | Description | Typical Path (Claude Code example) |
+| Scope | Description | Typical path (Claude Code example) |
 |---|---|---|
 | **Global** | User-level rules applied to every project. Personal workflow preferences. | `~/.claude/CLAUDE.md` |
 | **Project (team-shared)** | Committed to the repo. Shared conventions the whole team follows. | `.claude/rules/team-rules.md` |
@@ -77,53 +77,53 @@ Present a selectable menu (using `AskUserQuestion` or the agent's equivalent) to
 See [references/agent-targets.md](references/agent-targets.md) for the exact path for each agent + scope combination.
 
 **If the target file already exists**, present a selectable menu to ask the user:
-1. **Overwrite** — replace entirely with generated content
-2. **Merge** — append generated content below existing content (separated by `---`)
-3. **Abort** — cancel and leave the file untouched
+1. **Overwrite**: replace the file entirely with generated content
+2. **Merge**: append generated content below existing content (separated by `---`)
+3. **Abort**: cancel and leave the file untouched
 
 ---
 
-## Phase 3: Workflow Questionnaire
+## Phase 3: Workflow questionnaire
 
-**IMPORTANT: Always present questions using a structured interactive menu, never as plain text.** If `AskUserQuestion` is available, use it. Otherwise, use whatever equivalent interactive prompt tool the agent CLI provides. The goal is a selectable option list, not a wall of text the user has to parse and type answers to. Batch up to 4 independent questions per call when the tool supports it. If a question has more than 4 options, present the most common 4 and let the "Other" / free-text fallback cover the rest.
+Always present questions in a structured interactive menu, never as plain text. If `AskUserQuestion` is available, use it. Otherwise use the equivalent interactive prompt tool of the agent CLI. The user should pick from a list of options, not parse a wall of text and type answers. Batch up to 4 independent questions per call when the tool supports it. If a question has more than 4 options, present the 4 most common and let the "Other" or free-text fallback cover the rest.
 
 Wait for the user's answers before proceeding to the next batch.
 
-### Scope Matrix
+### Scope matrix
 
-Which questions to ask depends on the scope:
+The scope decides which questions to ask:
 
 | # | Question | Group | Global | Team-shared | Dev-specific |
 |---|---|---|---|---|---|
-| Q1 | Primary stack | A: Project Context | Yes | Yes | Skip |
-| Q2 | Directory structure | A: Project Context | Yes | Yes | Skip |
-| Q3 | Build/run commands | A: Project Context | Yes | Yes | Skip |
-| Q4 | Code quality bar | B: Code Standards | Yes | Yes | Skip |
-| Q5 | Testing philosophy | B: Code Standards | Yes | Yes | Skip |
-| Q6 | Error handling | B: Code Standards | Yes | Yes | Skip |
-| Q7 | Security & secrets | B: Code Standards | Yes | Yes | Skip |
-| Q8 | Dependency management | B: Code Standards | Yes | Yes | Skip |
-| Q9 | Branch conventions | C: Version Control | Yes | Yes | Skip |
-| Q10 | Commit conventions | C: Version Control | Yes | Yes | Skip |
-| Q11 | PR/MR creation | C: Version Control | Yes | Yes | Skip |
-| Q12 | Planning discipline | D: Agent Workflow | Yes | Skip | Yes |
-| Q13 | Autonomy level | D: Agent Workflow | Yes | Skip | Yes |
-| Q14 | Boundaries (never-do) | D: Agent Workflow | Yes | Skip | Yes |
-| Q15 | Agent parallelization | D: Agent Workflow | Yes | Skip | Yes |
-| Q16 | Task tracking | D: Agent Workflow | Yes | Skip | Yes |
-| Q17 | Self-improvement | D: Agent Workflow | Yes | Skip | Yes |
+| Q1 | Primary stack | A: Project context | Yes | Yes | Skip |
+| Q2 | Directory structure | A: Project context | Yes | Yes | Skip |
+| Q3 | Build/run commands | A: Project context | Yes | Yes | Skip |
+| Q4 | Code quality bar | B: Code standards | Yes | Yes | Skip |
+| Q5 | Testing philosophy | B: Code standards | Yes | Yes | Skip |
+| Q6 | Error handling | B: Code standards | Yes | Yes | Skip |
+| Q7 | Security & secrets | B: Code standards | Yes | Yes | Skip |
+| Q8 | Dependency management | B: Code standards | Yes | Yes | Skip |
+| Q9 | Branch conventions | C: Version control | Yes | Yes | Skip |
+| Q10 | Commit conventions | C: Version control | Yes | Yes | Skip |
+| Q11 | PR/MR creation | C: Version control | Yes | Yes | Skip |
+| Q12 | Planning discipline | D: Agent workflow | Yes | Skip | Yes |
+| Q13 | Autonomy level | D: Agent workflow | Yes | Skip | Yes |
+| Q14 | Boundaries (never-do) | D: Agent workflow | Yes | Skip | Yes |
+| Q15 | Agent parallelization | D: Agent workflow | Yes | Skip | Yes |
+| Q16 | Task tracking | D: Agent workflow | Yes | Skip | Yes |
+| Q17 | Self-improvement | D: Agent workflow | Yes | Skip | Yes |
 | Q18 | Communication style | E: Communication | Yes | Skip | Yes |
 | Q19 | Persona / roleplay | E: Communication | Yes | Skip | Yes |
 | Q20 | Additional comments | F: Freeform | Yes | Yes | Yes |
 
-**Rationale:** Team-shared rules cover technical standards the whole team agrees on (stack, directory structure, commands, quality, testing, error handling, security, dependencies, branching, commits, PRs). Dev-specific rules cover personal workflow preferences (planning style, autonomy, boundaries, parallelization, task tracking, self-improvement, communication style, persona). Global includes everything.
+Team-shared rules cover technical standards the whole team agrees on (stack, directory structure, commands, quality, testing, error handling, security, dependencies, branching, commits, PRs). Dev-specific rules cover personal workflow preferences (planning style, autonomy, boundaries, parallelization, task tracking, self-improvement, communication style, persona). Global includes everything.
 
-See [references/questionnaire.md](references/questionnaire.md) for the full question reference with descriptions, option mappings, and example outputs.
+See [references/questionnaire.md](references/questionnaire.md) for the question reference with descriptions, option mappings, and example outputs.
 
-### Suggested Batching
+### Suggested batching
 
-For **Global** scope (all 20 questions), batch as follows:
-- Batch 1 (Group A): Q1 (stack), Q2 (directory), Q3 (commands — free text)
+For global scope (all 20 questions), batch as follows:
+- Batch 1 (Group A): Q1 (stack), Q2 (directory), Q3 (commands, free text)
 - Batch 2 (Group B, part 1): Q4 (quality), Q5 (testing), Q6 (error handling), Q7 (security)
 - Batch 2a (follow-ups): Q4 documentation follow-up
 - Batch 3 (Group B+C): Q8 (dependencies), Q9 (branches), Q10 (commits), Q11 (PRs)
@@ -131,11 +131,11 @@ For **Global** scope (all 20 questions), batch as follows:
 - Batch 4 (Group D, part 1): Q12 (planning), Q13 (autonomy), Q14 (boundaries), Q15 (parallelization)
 - Batch 5 (Group D+E): Q16 (tracking), Q17 (self-improvement), Q18 (communication), Q19 (persona)
 - Batch 5a (follow-ups): Q16 external tool follow-up
-- Final: Q20 (additional comments — free text)
+- Final: Q20 (additional comments, free text)
 
-For other scopes, adjust batches to skip irrelevant questions per the scope matrix above.
+For other scopes, adjust the batches to skip questions the scope matrix marks as Skip.
 
-### Group A: Project Context
+### Group A: Project context
 
 **Q1. Primary stack**
 Options (pick 4 most relevant, "Other" is added automatically): PHP+Symfony / TypeScript+React / Python+Django / Go / Rust / Java+Spring
@@ -143,132 +143,132 @@ Options (pick 4 most relevant, "Other" is added automatically): PHP+Symfony / Ty
 
 **Q2. Directory structure**
 Options:
-- Follow existing — always match the project's current directory structure and conventions
-- Follow best practices — restructure toward industry conventions, suggest improvements
-- Pragmatic middle — follow existing structure but suggest improvements when patterns are clearly wrong
+- Follow existing: always match the project's current directory structure and conventions
+- Follow best practices: restructure toward industry conventions, suggest improvements
+- Pragmatic middle: follow existing structure but suggest improvements when patterns are clearly wrong
 
 **Q3. Build/run commands**
-Free-text. Ask: "What are the key commands the agent should know? (build, test, lint, dev server, deploy — leave blank to skip)"
+Free-text. Ask: "What are the key commands the agent should know? (build, test, lint, dev server, deploy; leave blank to skip)"
 - If provided, include verbatim in a `## Commands` section in the generated file
 - If blank, omit the section
 
-### Group B: Code Standards
+### Group B: Code standards
 
 **Q4. Code quality bar**
 Options:
-- Staff engineer rigor — exhaustive edge cases, defensive coding, thorough documentation
-- Senior pragmatic — solid quality with practical trade-offs
-- Ship fast — working code with minimal ceremony
+- Staff engineer rigor: exhaustive edge cases, defensive coding, thorough documentation
+- Senior pragmatic: solid quality with practical trade-offs
+- Ship fast: working code with minimal ceremony
 
-Follow-up: "Documentation level?" (Docblocks on public APIs / Inline comments for non-obvious logic only / Minimal — code should speak for itself)
+Follow-up: "Documentation level?" (Docblocks on public APIs / Inline comments for non-obvious logic only / Minimal, code should speak for itself)
 
 **Q5. Testing philosophy**
 Options:
-- Strict TDD — write tests before implementation, always
-- Test alongside — write tests and code together
-- Test after — implement first, add tests after
-- Minimal — only test critical paths
+- Strict TDD: write tests before implementation, always
+- Test alongside: write tests and code together
+- Test after: implement first, add tests after
+- Minimal: only test critical paths
 
 **Q6. Error handling**
 Options:
-- Fail fast — throw early, crash on unexpected state, surface errors immediately
-- Defensive — handle gracefully, never crash, always recover
-- Balanced — fail fast in development, handle gracefully in production
+- Fail fast: throw early, crash on unexpected state, surface errors immediately
+- Defensive: handle gracefully, never crash, always recover
+- Balanced: fail fast in development, handle gracefully in production
 
 **Q7. Security & secrets**
 Options:
-- Strict — never read/commit .env or credentials, flag potential vulnerabilities, OWASP-aware
-- Standard — don't commit secrets, basic input validation at boundaries
-- Minimal — just don't commit .env files
+- Strict: never read/commit .env or credentials, flag potential vulnerabilities, OWASP-aware
+- Standard: don't commit secrets, basic input validation at boundaries
+- Minimal: just don't commit .env files
 
 **Q8. Dependency management**
 Options:
-- Always ask — never add or remove dependencies without explicit approval
-- Ask for new only — can update existing versions, must ask before adding new packages
-- Autonomous — can add dependencies freely
+- Always ask: never add or remove dependencies without explicit approval
+- Ask for new only: can update existing versions, must ask before adding new packages
+- Autonomous: can add dependencies freely
 
-### Group C: Version Control & Collaboration
+### Group C: Version control and collaboration
 
 **Q9. Branch conventions**
 Options:
-- Type prefix — `feature/`, `fix/`, `chore/`, `hotfix/` + description
-- Ticket prefix — `PROJ-123/description` or `PROJ-123-description`
-- Flat descriptive — just a kebab-case name, no prefix
-- Other — ask them to specify
+- Type prefix: `feature/`, `fix/`, `chore/`, `hotfix/` + description
+- Ticket prefix: `PROJ-123/description` or `PROJ-123-description`
+- Flat descriptive: just a kebab-case name, no prefix
+- Other: ask them to specify
 
 **Q10. Commit conventions**
 Options:
-- Conventional commits — `feat:`, `fix:`, `chore:`, etc.
-- Ticket prefix — `PROJ-123: description`
-- Freeform — no enforced format
+- Conventional commits: `feat:`, `fix:`, `chore:`, etc.
+- Ticket prefix: `PROJ-123: description`
+- Freeform: no enforced format
 
 Follow-up: "Should the agent add itself as co-author on commits?" (Yes / No)
 
 **Q11. PR/MR creation**
 Options:
-- Structured template — ## Summary, ## Test Plan, linked issues
-- Minimal — title + short description
-- Don't create PRs — agent should never push or create PRs without asking
+- Structured template: ## Summary, ## Test Plan, linked issues
+- Minimal: title + short description
+- Don't create PRs: agent should never push or create PRs without asking
 
-### Group D: Agent Workflow
+### Group D: Agent workflow
 
 **Q12. Planning discipline**
 Options:
-- Always plan first — enter plan mode for every task
-- Plan for 3+ steps — plan mode only for multi-step tasks
-- Minimal planning — jump straight to implementation
+- Always plan first: enter plan mode for every task
+- Plan for 3+ steps: plan mode only for multi-step tasks
+- Minimal planning: jump straight to implementation
 
 **Q13. Autonomy level**
 Options:
-- Autonomous — fix bugs, failing CI, lint errors without asking
-- Semi-autonomous — ask before destructive or risky operations only
-- Conservative — confirm everything before acting
+- Autonomous: fix bugs, failing CI, lint errors without asking
+- Semi-autonomous: ask before destructive or risky operations only
+- Conservative: confirm everything before acting
 
 **Q14. Boundaries (never-do list)**
 Options:
-- Standard safety — never force push main, never delete branches without asking, never modify CI/CD
-- Strict boundaries — above + never run destructive commands, never access production, never modify lock files
-- Custom — ask the user to specify their never-do list
+- Standard safety: never force push main, never delete branches without asking, never modify CI/CD
+- Strict boundaries: above + never run destructive commands, never access production, never modify lock files
+- Custom: ask the user to specify their never-do list
 
 **Q15. Agent parallelization**
 Options:
-- Always parallelize — delegate to agent teams by default for any multi-part task
-- Parallel for large tasks — use agent teams when 3+ independent subtasks exist
-- Sequential only — work through tasks one at a time, no agent delegation
+- Always parallelize: delegate to agent teams by default for any multi-part task
+- Parallel for large tasks: use agent teams when 3+ independent subtasks exist
+- Sequential only: work through tasks one at a time, no agent delegation
 
 **Q16. Task tracking**
 Options:
-- Todo files — maintain a `TODO.md` or similar tracking file
-- Built-in tasks — use the agent's built-in task/todo system
-- No formal tracking — just work through tasks naturally
+- Todo files: maintain a `TODO.md` or similar tracking file
+- Built-in tasks: use the agent's built-in task/todo system
+- No formal tracking: just work through tasks naturally
 
 Follow-up: "Do you use an external tracking tool?" (Jira / Linear / GitHub Issues / None)
 - If a tool is selected, generate rules referencing it (e.g., "Use Jira MCP for work task tracking" or "Reference GitHub issue numbers in commits")
 
 **Q17. Self-improvement**
 Options:
-- Lessons file — maintain a lessons-learned file, update after corrections
-- No formal tracking — learn implicitly from context
+- Lessons file: maintain a lessons-learned file, update after corrections
+- No formal tracking: learn implicitly from context
 
-### Group E: Communication & Personality
+### Group E: Communication and personality
 
 **Q18. Communication style**
 Options:
-- Direct and minimal — no emojis, terse responses, just the facts
-- Structured explanations — sectioned with headings, clear and direct, no emojis
-- Conversational — casual tone, emojis OK, friendly and approachable
+- Direct and minimal: no emojis, terse responses, just the facts
+- Structured explanations: sectioned with headings, clear and direct, no emojis
+- Conversational: casual tone, emojis OK, friendly and approachable
 
 **Q19. Persona / roleplay**
 Options:
-- Yes — I want the agent to adopt a persona
-- No — just be a straightforward assistant
+- Yes: I want the agent to adopt a persona
+- No: just be a straightforward assistant
 
-If "Yes": ask the user to describe the persona (e.g. "a grumpy senior engineer", "Gandalf", "a pirate captain"). Accept any input — if the persona is obscure or fictional, use web search to gather details before generating rules.
+If "Yes": ask the user to describe the persona (e.g. "a grumpy senior engineer", "Gandalf", "a pirate captain"). Accept any input. If the persona is obscure or fictional, use web search to gather details before generating rules.
 
 Then generate:
 1. A one-paragraph persona description capturing the character's voice and attitude
 2. 5-8 catchphrases the agent can sprinkle into responses (drawn from the character or invented in their style)
-3. A hard constraint: **Precision always comes first. The persona is flavor, not substance.** Technical accuracy, correct code, and clear answers are never sacrificed for character. Use at most one catchphrase per response — do not overdo it or make them repetitive.
+3. A hard constraint: **Precision always comes first. The persona is flavor, not substance.** Technical accuracy, correct code, and clear answers are never sacrificed for character. Use at most one catchphrase per response and do not repeat them.
 
 ### Group F: Freeform
 
@@ -279,13 +279,13 @@ Free-text. Ask: "Any additional rules, preferences, or comments you'd like inclu
 
 ---
 
-## Phase 4: Ecosystem Discovery
+## Phase 4: Ecosystem discovery
 
 Scan installed skills, agents, and teams at runtime. Do not rely on hardcoded inventories.
 
-### Scanning Process
+### Scanning process
 
-Scan for installed skills, agents, and teams using the platform's standard locations. Each AI coding tool stores skills differently - check the user-level and project-level directories for the chosen agent from Phase 1.
+Scan for installed skills, agents, and teams using the platform's standard locations. Each AI coding tool stores skills in different places. Check the user-level and project-level directories for the agent chosen in Phase 1.
 
 Common locations to scan for `SKILL.md` files (skills), `*.md` agent definitions, and `*.md` team definitions:
 
@@ -293,16 +293,16 @@ Common locations to scan for `SKILL.md` files (skills), `*.md` agent definitions
 - Project-level `.{agent}/skills/`, `.{agent}/agents/`, `.{agent}/teams/`
 - Plugin cache directories (if the platform uses a plugin system)
 
-If the `using-ecosystem` skill is installed, invoke it - it provides platform-aware discovery commands.
+If the `using-ecosystem` skill is installed, invoke it. It provides platform-aware discovery commands.
 
 For each found file, read the YAML frontmatter (`name`, `description`) and build the rules sections:
 
-1. **Skills section** - one bullet per installed skill: `When [trigger from description] -> use /skill-name`
-2. **Custom Agents section** - agents with capability summary (read-only vs worktree, specialist vs role)
-3. **Agent Roles section** - role agents with their domain of responsibility
-4. **Teams section** - pre-composed teams with lead and use case
+1. **Skills section**: one bullet per installed skill: `When [trigger from description] -> use /skill-name`
+2. **Custom Agents section**: agents with capability summary (read-only vs worktree, specialist vs role)
+3. **Agent Roles section**: role agents with their domain of responsibility
+4. **Teams section**: pre-composed teams with lead and use case
 
-The AI coding agent itself is the primary discovery mechanism - it reads skill frontmatter (`name`, `description`) to decide when to activate each skill. The `using-ecosystem` skill is a supplementary advisor that helps when the agent is unsure which skill or agent fits a situation. If installed, it provides matching heuristics and chaining patterns.
+The AI coding agent itself is the primary discovery mechanism: it reads skill frontmatter (`name`, `description`) to decide when to activate each skill. The `using-ecosystem` skill is a secondary advisor for cases where the agent is unsure which skill or agent fits. If installed, it provides matching heuristics and chaining patterns.
 
 ### Parallelization add-on
 
@@ -314,17 +314,17 @@ When delegating to agent teams, prefer using custom agents over general-purpose 
 
 ---
 
-## Phase 5: Assemble and Write
+## Phase 5: Assemble and write
 
-Generate the rules file content from the questionnaire answers. Structure depends on scope.
+Generate the rules file content from the questionnaire answers. The structure depends on the scope.
 
-### Global Scope Structure
+### Global scope structure
 
 ```markdown
 # Global Rules
 
 ## Commands
-[Build/run commands from Q3 — only if provided, omit section if blank]
+[Build/run commands from Q3, only if provided; omit section if blank]
 
 ## Code Quality
 [Quality bar from Q4 + documentation follow-up]
@@ -360,28 +360,28 @@ Generate the rules file content from the questionnaire answers. Structure depend
 [Self-improvement from Q17]
 
 ## Core Principles
-- Simplicity first — make every change as simple as possible
-- Root causes only — no temporary fixes, find and fix the real problem
-- Minimal blast radius — touch only what's necessary
-- Prove it works — never mark done without verification
+- Simplicity first: make every change as simple as possible
+- Root causes only: no temporary fixes, find and fix the real problem
+- Minimal blast radius: touch only what's necessary
+- Prove it works: never mark done without verification
 
 ## Code Change Hygiene
-- Read before editing — always read and understand existing code before modifying it
-- Minimal diffs — make the smallest change that solves the problem, no drive-by cleanups
-- Follow existing patterns — match the codebase's style, naming, and structure
-- One task at a time — complete the requested task, don't fix unrelated issues or "improve" adjacent code
-- Prefer editing over creating — always prefer modifying an existing file over creating a new one
-- Search before creating — before creating a new file, search for an existing one that serves a similar purpose
+- Read before editing: always read and understand existing code before modifying it
+- Minimal diffs: make the smallest change that solves the problem, no drive-by cleanups
+- Follow existing patterns: match the codebase's style, naming, and structure
+- One task at a time: complete the requested task, don't fix unrelated issues or "improve" adjacent code
+- Prefer editing over creating: always prefer modifying an existing file over creating a new one
+- Search before creating: before creating a new file, search for an existing one that serves a similar purpose
 - Never create documentation files unless explicitly asked
-- No premature abstractions — don't introduce interfaces, base classes, or design patterns unless the current task demands them
-- No backwards-compatibility shims — when replacing code, remove the old version entirely
-- Remove dead code — don't leave commented-out code, unused imports, or orphaned functions
+- No premature abstractions: don't introduce interfaces, base classes, or design patterns unless the current task demands them
+- No backwards-compatibility shims: when replacing code, remove the old version entirely
+- Remove dead code: don't leave commented-out code, unused imports, or orphaned functions
 
 ## Don't Guess
-- Don't fabricate URLs, file paths, API endpoints, or names — search or ask if unsure
-- Don't assume unstated requirements — implement only what was requested
-- Don't assume project architecture — explore and verify before making decisions
-- Ask when stuck — a clarifying question is cheaper than a wrong implementation
+- Don't fabricate URLs, file paths, API endpoints, or names. Search or ask if unsure
+- Don't assume unstated requirements: implement only what was requested
+- Don't assume project architecture: explore and verify before making decisions
+- Ask when stuck: a clarifying question is cheaper than a wrong implementation
 - If an approach fails or hits unexpected complexity, stop and re-plan immediately
 
 ## Safety Baseline
@@ -391,15 +391,15 @@ Generate the rules file content from the questionnaire answers. Structure depend
 - Never modify CI/CD pipelines without explicit approval
 
 ## Knowledge Sources
-- When a topic is covered by an installed skill, use the skill first — it contains curated, verified content
+- When a topic is covered by an installed skill, use the skill first. It contains curated, verified content
 - When a topic is NOT covered by installed skills, search the web for the official documentation of the technology (e.g., symfony.com for Symfony, php.net for PHP, react.dev for React)
-- Prefer official docs over blog posts, Stack Overflow, or AI-generated summaries — official sources are the most accurate and up-to-date
+- Prefer official docs over blog posts, Stack Overflow, or AI-generated summaries. Official sources are the most accurate and current
 - When recommending MCPs, skills, or packages to install, always prefer official providers (e.g., Anthropic, Vercel, framework authors) over community alternatives
 - When no official option exists, prefer well-maintained community options with high adoption and recent activity
 
 ## Skills
 
-CRITICAL: Skills are your most valuable resource. When a situation matches an installed skill, you MUST use it — do not rely on general knowledge when a dedicated skill exists. Skills contain curated, battle-tested reference material that is more precise and reliable than generating answers from scratch. Skipping a relevant skill is like ignoring documentation you already have open.
+CRITICAL: When a situation matches an installed skill, you MUST use it. Do not rely on general knowledge when a dedicated skill exists. Skills contain curated reference material that is more precise than answers generated from scratch. Skipping a relevant skill is like ignoring documentation you already have open.
 
 [Auto-generated from Phase 4 runtime scan. One line per installed skill.]
 When [trigger from description] -> use /skill-name
@@ -412,19 +412,19 @@ When [trigger from description] -> use /skill-name
 [If role agents are installed (per Phase 4), list them here with the domain they own. If none, omit this section entirely.]
 
 ## Persona
-[If Q19 = Yes — persona description, catchphrases, and constraint. If No, omit this section entirely.]
+[If Q19 = Yes: persona description, catchphrases, and constraint. If No, omit this section entirely.]
 
 ## Recommended (not installed)
-- Install [skill] from krzysztofsurdy/code-virtuoso — [what it helps with]
+- Install [skill] from krzysztofsurdy/code-virtuoso: [what it helps with]
 ```
 
-### Project Team-Shared Structure
+### Project team-shared structure
 
 ```markdown
 # Project Rules
 
 ## Commands
-[Build/run commands from Q3 — only if provided]
+[Build/run commands from Q3, only if provided]
 
 ## Stack & Conventions
 [Stack conventions from Q1]
@@ -445,28 +445,28 @@ When [trigger from description] -> use /skill-name
 [PR creation from Q11]
 
 ## Core Principles
-- Simplicity first — make every change as simple as possible
-- Root causes only — no temporary fixes, find and fix the real problem
-- Minimal blast radius — touch only what's necessary
-- Prove it works — never mark done without verification
+- Simplicity first: make every change as simple as possible
+- Root causes only: no temporary fixes, find and fix the real problem
+- Minimal blast radius: touch only what's necessary
+- Prove it works: never mark done without verification
 
 ## Code Change Hygiene
-- Read before editing — always read and understand existing code before modifying it
-- Minimal diffs — make the smallest change that solves the problem, no drive-by cleanups
-- Follow existing patterns — match the codebase's style, naming, and structure
-- One task at a time — complete the requested task, don't fix unrelated issues or "improve" adjacent code
-- Prefer editing over creating — always prefer modifying an existing file over creating a new one
-- Search before creating — before creating a new file, search for an existing one that serves a similar purpose
+- Read before editing: always read and understand existing code before modifying it
+- Minimal diffs: make the smallest change that solves the problem, no drive-by cleanups
+- Follow existing patterns: match the codebase's style, naming, and structure
+- One task at a time: complete the requested task, don't fix unrelated issues or "improve" adjacent code
+- Prefer editing over creating: always prefer modifying an existing file over creating a new one
+- Search before creating: before creating a new file, search for an existing one that serves a similar purpose
 - Never create documentation files unless explicitly asked
-- No premature abstractions — don't introduce interfaces, base classes, or design patterns unless the current task demands them
-- No backwards-compatibility shims — when replacing code, remove the old version entirely
-- Remove dead code — don't leave commented-out code, unused imports, or orphaned functions
+- No premature abstractions: don't introduce interfaces, base classes, or design patterns unless the current task demands them
+- No backwards-compatibility shims: when replacing code, remove the old version entirely
+- Remove dead code: don't leave commented-out code, unused imports, or orphaned functions
 
 ## Don't Guess
-- Don't fabricate URLs, file paths, API endpoints, or names — search or ask if unsure
-- Don't assume unstated requirements — implement only what was requested
-- Don't assume project architecture — explore and verify before making decisions
-- Ask when stuck — a clarifying question is cheaper than a wrong implementation
+- Don't fabricate URLs, file paths, API endpoints, or names. Search or ask if unsure
+- Don't assume unstated requirements: implement only what was requested
+- Don't assume project architecture: explore and verify before making decisions
+- Ask when stuck: a clarifying question is cheaper than a wrong implementation
 
 ## Safety Baseline
 - Never commit secrets, .env files, API keys, or credentials to version control
@@ -475,14 +475,14 @@ When [trigger from description] -> use /skill-name
 - Never modify CI/CD pipelines without explicit approval
 
 ## Knowledge Sources
-- When a topic is covered by an installed skill, use the skill first — it contains curated, verified content
+- When a topic is covered by an installed skill, use the skill first. It contains curated, verified content
 - When a topic is NOT covered by installed skills, search the web for the official documentation of the technology
 - Prefer official docs over blog posts, Stack Overflow, or AI-generated summaries
 - When recommending MCPs, skills, or packages to install, always prefer official providers over community alternatives
 - When no official option exists, prefer well-maintained community options with high adoption and recent activity
 ```
 
-### Project Dev-Specific Structure
+### Project dev-specific structure
 
 ```markdown
 # Dev Rules
@@ -501,14 +501,14 @@ When [trigger from description] -> use /skill-name
 [Self-improvement from Q17]
 
 ## Persona
-[If Q19 = Yes — persona description, catchphrases, and constraint. If No, omit.]
+[If Q19 = Yes: persona description, catchphrases, and constraint. If No, omit.]
 ```
 
-### Agent-Specific Formatting
+### Agent-specific formatting
 
 Apply these transformations before writing:
 
-**Cursor** — Wrap entire content in YAML frontmatter:
+**Cursor**: wrap the entire content in YAML frontmatter:
 ```
 ---
 alwaysApply: true
@@ -517,15 +517,15 @@ alwaysApply: true
 [content here]
 ```
 
-**Windsurf** — Check character count. If over 12,000, condense sections (remove examples, shorten descriptions) until under limit. Add a comment at the top: `<!-- Windsurf rules — kept under 12,000 chars -->`.
+**Windsurf**: check the character count. If it is over 12,000, condense sections (remove examples, shorten descriptions) until it is under the limit. Add a comment at the top: `<!-- Windsurf rules: kept under 12,000 chars -->`.
 
-**Claude Code / Amp (global)** — Keep under 200 lines. Add a note at the end: `For project-specific rules, use .claude/rules/*.md files.`
+**Claude Code / Amp (global)**: keep it under 200 lines. Add a note at the end: `For project-specific rules, use .claude/rules/*.md files.`
 
-**Codex** — Use `AGENTS.md` filename convention at project root.
+**Codex**: use the `AGENTS.md` filename convention at the project root.
 
-**All others** — Write plain Markdown as-is.
+**All others**: write plain Markdown as-is.
 
-### Rule Generation Examples
+### Rule generation examples
 
 These examples show how questionnaire answers map to generated rules.
 
@@ -564,7 +564,7 @@ These examples show how questionnaire answers map to generated rules.
 
 **Q6 = "Fail fast"** generates:
 ```
-- Throw exceptions early on unexpected state — do not silently swallow errors
+- Throw exceptions early on unexpected state. Do not silently swallow errors
 - Validate inputs at system boundaries and fail immediately on invalid data
 - Prefer explicit error types over generic exceptions
 ```
@@ -591,7 +591,7 @@ These examples show how questionnaire answers map to generated rules.
 
 **Q8 = "Ask for new only"** generates:
 ```
-- Ask before adding new dependencies — explain why and list alternatives
+- Ask before adding new dependencies: explain why and list alternatives
 - Updating existing dependency versions is allowed without asking
 ```
 
@@ -703,14 +703,14 @@ Catchphrases (use at most one per response, do not repeat consecutively):
 - "Who's going to debug this at 3 AM? Not me."
 
 IMPORTANT: Precision and correctness always come first. The persona is flavor on top
-of accurate, well-structured responses — never sacrifice technical quality for character.
+of accurate, well-structured responses. Never sacrifice technical quality for character.
 ```
 
 ---
 
 ## Phase 6: Confirmation
 
-After writing the file:
+After writing the file, do the following:
 
 1. Display the **full generated content** to the user
 2. Show the **file path** where it was written
@@ -720,10 +720,10 @@ After writing the file:
 
 ---
 
-## Error Handling
+## Error handling
 
 - If a target directory doesn't exist, create it
-- If the user aborts during the questionnaire, discard all progress — don't write a partial file
+- If the user aborts during the questionnaire, discard all progress and do not write a partial file
 - If the user reports no installed code-virtuoso plugins in Phase 4, skip the Skills, Custom Agents, and Agent Roles sections entirely and include a short "Recommended (not installed)" list pointing to `tool-using-ecosystem` and `agents-virtuoso` as starting installs
-- If `using-ecosystem` is not installed, do not attempt to fabricate the ecosystem inventory — ask the user what they have
+- If `using-ecosystem` is not installed, do not fabricate the ecosystem inventory. Ask the user what they have
 - For project scopes, verify you are inside a git repository before writing

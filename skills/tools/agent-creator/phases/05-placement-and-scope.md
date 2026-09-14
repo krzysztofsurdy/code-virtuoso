@@ -1,4 +1,4 @@
-# Phase 5: Placement and Scope
+# Phase 5: Placement and scope
 
 **Progress: Phase 5 of 6**
 
@@ -25,9 +25,9 @@ Decide where the agent file lives and what scope it has.
 
 ## Gate
 
-**Advances when:** The user has chosen a scope and confirmed the target location.
-**Returns to this phase when:** The user is unsure about scope and needs guidance.
+**Advances when:** the user has chosen a scope and confirmed the target location.
+**Returns to this phase when:** the user is unsure about scope and needs guidance.
 
 Ask the user: "Agent will be placed at [path] with [scope] scope. Confirm?"
 
-Do NOT proceed to Phase 6 until the user confirms placement.
+Do not proceed to Phase 6 until the user confirms placement.

@@ -1,10 +1,19 @@
 # Tool Selection
 
-Sub-agents inherit every tool the caller has unless you say otherwise. That is almost never what you want. Start from the minimum set and add tools only when the workflow cannot complete without them.
+Sub-agents inherit every tool the caller has unless you say otherwise. That is almost never what you want. Start from the minimum set and add tools only when the workflow cannot finish without them.
 
-## The Decision Tree
+## Contents
 
-Walk through these questions in order. Add a tool only when the answer is yes.
+- [The decision tree](#the-decision-tree)
+- [Per-archetype defaults](#per-archetype-defaults)
+- [Denylist pattern](#denylist-pattern)
+- [MCP tool scoping](#mcp-tool-scoping)
+- [Common mistakes](#common-mistakes)
+- [Tool name portability](#tool-name-portability)
+
+## The decision tree
+
+Work through these questions in order. Add a tool only when the answer is yes.
 
 1. **Does the agent need to read files?** -> `Read`
 2. **Does the agent need to search text?** -> `Grep`
@@ -14,11 +23,11 @@ Walk through these questions in order. Add a tool only when the answer is yes.
 6. **Does the agent need to create new files?** -> `Write` (and set `isolation: worktree`)
 7. **Does the agent need to fetch external documentation?** -> `WebFetch`, `WebSearch`
 8. **Does the agent need to spawn other agents?** -> `Agent(...)` with an allowlist of agent types
-9. **Does the agent need MCP tools?** -> Scope them via `mcpServers`, do not silently inherit
+9. **Does the agent need MCP tools?** -> Scope them via `mcpServers` instead of inheriting them
 
-Stop at the lowest level that lets the agent finish.
+Stop at the lowest level that lets the agent finish its job.
 
-## Per-Archetype Defaults
+## Per-archetype defaults
 
 ### Investigator / Explorer
 
@@ -51,7 +60,7 @@ tools: Read, Grep, Glob, Bash, Edit, Write
 isolation: worktree
 ```
 
-Write permissions scoped via system prompt rules: "only modify files under `docs/` or files matching `*.md`, `CHANGELOG*`, `README*`".
+Limit write permissions with system prompt rules: "only modify files under `docs/` or files matching `*.md`, `CHANGELOG*`, `README*`".
 
 ### Implementer / Dev Role
 
@@ -68,7 +77,7 @@ Isolation is non-negotiable. The orchestrator reviews and merges.
 tools: Read, Grep, Glob, Bash
 ```
 
-Planners do not implement. If they need to produce an ADR file, they can write that through a doc-writer specialist instead.
+Planners do not implement. If they need to produce an ADR file, have a doc-writer specialist write it.
 
 ### Team-Lead / Coordinator
 
@@ -76,11 +85,11 @@ Planners do not implement. If they need to produce an ADR file, they can write t
 tools: Read, Grep, Glob, Bash, Agent(worker-a, worker-b)
 ```
 
-The `Agent(...)` allowlist restricts which sub-agent types the lead can spawn. Without it, the lead can spawn anything the platform exposes, which is rarely intended.
+The `Agent(...)` allowlist restricts which sub-agent types the lead can spawn. Without it, the lead can spawn anything the platform exposes, which is rarely what you want.
 
-## Denylist Pattern
+## Denylist pattern
 
-Sometimes it is easier to say "everything except writes":
+Sometimes it is simpler to say "everything except writes":
 
 ```yaml
 disallowedTools: Write, Edit
@@ -93,11 +102,11 @@ Use this when:
 
 Avoid this when:
 
-- You can express the intent with a short allowlist instead - allowlists are clearer to audit
+- A short allowlist can express the intent. Allowlists are clearer to audit
 
-## MCP Tool Scoping
+## MCP tool scoping
 
-If the agent needs an MCP server the main conversation does not need, define it inline in `mcpServers`. This keeps tool descriptions out of the parent context.
+If the agent needs an MCP server the main conversation does not need, define it inline in `mcpServers`. That keeps tool descriptions out of the parent context.
 
 ```yaml
 mcpServers:
@@ -109,18 +118,18 @@ mcpServers:
 
 The parent conversation does not pay for `playwright`'s tool descriptions, and the agent gets exclusive access.
 
-## Common Mistakes
+## Common mistakes
 
 | Mistake | Consequence |
 |---|---|
-| Inheriting all tools by omitting `tools` | Agent can do anything the caller can - no principle of least privilege |
+| Inheriting all tools by omitting `tools` | Agent can do anything the caller can, which breaks least privilege |
 | Giving an investigator `Write` "just in case" | Scope creep; reviewers start editing |
-| Allowing `Bash` without considering what commands get run | A Bash-enabled agent can do anything a shell can, including `rm -rf` |
+| Allowing `Bash` without thinking about which commands will run | A Bash-enabled agent can do anything a shell can, including `rm -rf` |
 | Missing `isolation: worktree` on an Edit-capable agent | Changes land in the main tree before review |
-| Letting a team-lead spawn anything via bare `Agent` | Unexpected sub-agent types may be spawned - pin with `Agent(a, b)` |
+| Letting a team-lead spawn anything via bare `Agent` | Unexpected sub-agent types may be spawned. Pin with `Agent(a, b)` |
 | Hardcoding MCP tools in the parent when only one agent needs them | Parent pays for tool descriptions it never uses |
 
-## Tool Name Portability
+## Tool name portability
 
 Tool names are not standardised across agent platforms. The examples in this skill use Claude Code tool names. When moving an agent to another platform, map them:
 
@@ -135,4 +144,4 @@ Tool names are not standardised across agent platforms. The examples in this ski
 | Web fetch | `WebFetch` | May be `fetch_url`, `browse`, `http_get` |
 | Spawn sub-agent | `Agent(...)` | May be `delegate`, `spawn_agent` |
 
-Keep the intent in the agent's system prompt portable; adapt the frontmatter tool names when porting.
+Keep the intent in the agent's system prompt portable and adapt the frontmatter tool names when porting.

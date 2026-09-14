@@ -15,13 +15,13 @@ workflow: parallel
 
 ## Purpose
 
-Examine code changes from three independent angles simultaneously, then merge findings into a single triaged report. Each reviewer operates at a different context level: zero (cold reviewer), spec-only (acceptance verifier), and full project context (lead reviewer). The contrast between these perspectives catches issues that any single reviewer misses.
+Examine code changes from three independent angles simultaneously, then merge findings into a single triaged report. Each reviewer operates at a different context level: zero (cold reviewer), spec-only (acceptance verifier), and full project context (lead reviewer). Comparing the three perspectives catches issues that a single reviewer misses.
 
 ## Workflow
 
-1. **Cold Reviewer** - Receives only the diff. No spec, no docs, no history. Returns findings based purely on what the code shows. Runs in parallel with phase 2.
-2. **Acceptance Verifier** - Receives the diff plus acceptance criteria. Returns a per-criterion PASS/FAIL/PARTIAL/UNTESTED matrix. Runs in parallel with phase 1.
-3. **Reviewer (lead)** - Reads both reports, performs a full structured review (correctness, SOLID, security, performance, smells, testing), then produces the unified report. Deduplicates across all three sources.
+1. **Cold Reviewer**: receives only the diff. No spec, no docs, no history. Returns findings based purely on what the code shows. Runs in parallel with phase 2.
+2. **Acceptance Verifier**: receives the diff plus acceptance criteria. Returns a per-criterion PASS/FAIL/PARTIAL/UNTESTED matrix. Runs in parallel with phase 1.
+3. **Reviewer (lead)**: reads both reports, performs a full structured review (correctness, SOLID, security, performance, smells, testing), then produces the unified report. Deduplicates across all three sources.
 
 ## Entry Criteria
 
@@ -36,7 +36,7 @@ Examine code changes from three independent angles simultaneously, then merge fi
 
 ## Coordination Rules
 
-- Cold Reviewer must NOT receive acceptance criteria, docs, or prior conversation. Only the diff.
+- Cold Reviewer must not receive acceptance criteria, docs, or prior conversation. Only the diff.
 - Acceptance Verifier must receive both the diff and the acceptance criteria. No project docs.
 - Reviewer (lead) has full codebase access and reads all prior reports.
 - Duplicate findings from multiple reviewers merge into one, noting which reviewers caught it.
@@ -58,5 +58,5 @@ Examine code changes from three independent angles simultaneously, then merge fi
 
 ## Variants
 
-- **Two-reviewer** - Drop Acceptance Verifier when no criteria exist. Cold Reviewer + Reviewer still provides zero-context vs full-context contrast.
-- **Deep mode** - Add Refactor Scout before the review to scan for structural smells. Its smell report feeds into the Reviewer's analysis alongside the other two reports.
+- **Two-reviewer**: drop Acceptance Verifier when no criteria exist. Cold Reviewer + Reviewer still provides zero-context vs full-context contrast.
+- **Deep mode**: add Refactor Scout before the review to scan for structural smells. Its smell report feeds into the Reviewer's analysis alongside the other two reports.

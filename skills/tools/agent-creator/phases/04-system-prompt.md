@@ -1,4 +1,4 @@
-# Phase 4: System Prompt
+# Phase 4: System prompt
 
 **Progress: Phase 4 of 6**
 
@@ -37,9 +37,9 @@ Draft the agent's system prompt following the five-section contract.
 
 ## Gate
 
-**Advances when:** The user approves the system prompt or has incorporated all requested changes.
-**Returns to this phase when:** The user wants revisions to the prompt.
+**Advances when:** the user approves the system prompt or has incorporated all requested changes.
+**Returns to this phase when:** the user wants revisions to the prompt.
 
 Ask the user: "Here is the system prompt draft. Review it and confirm, or tell me what to change."
 
-Do NOT proceed to Phase 5 until the user approves the system prompt.
+Do not proceed to Phase 5 until the user approves the system prompt.

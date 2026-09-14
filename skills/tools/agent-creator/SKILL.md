@@ -7,7 +7,7 @@ argument-hint: "[optional: archetype - specialist, role, team-lead]"
 
 # Agent Creator
 
-Create a sub-agent that earns its context window. Most agents fail not because the model is weak but because the definition is vague - unclear trigger, sprawling tool list, a body that mixes persona and procedure, and no output contract. This skill walks you through a six-phase design so the resulting agent is focused, least-privileged, and predictable.
+Create a sub-agent that earns its context window. Most agents fail because the definition is vague, not because the model is weak: the trigger is unclear, the tool list sprawls, the body mixes persona and procedure, and there is no output contract. This skill walks through a six-phase design that produces a focused, least-privileged agent with predictable output.
 
 ## Core Principles
 
@@ -15,16 +15,16 @@ Create a sub-agent that earns its context window. Most agents fail not because t
 |---|---|
 | **One job, one agent** | An agent that does two things does neither well. Split the responsibility before writing. |
 | **Least privilege** | Grant the smallest tool set that lets the agent finish its job. Read-only by default. |
-| **Trigger-first description** | The `description` field is the only thing read before delegation. Pack it with keywords and "when to use". |
+| **Trigger-first description** | The `description` field is the only thing read before delegation. Include keywords and "when to use". |
 | **Contract over conversation** | Define explicit input, process, and output. Agents are not chat sessions. |
 | **Isolation when writing** | If the agent edits files, run it in a worktree so the orchestrator can review before merging. |
 | **Portable body, platform frontmatter** | Keep the system prompt agent-agnostic. Adapt frontmatter fields per target platform. |
 
 ---
 
-## Agent vs Skill - Quick Disambiguation
+## Agent vs skill
 
-Before creating an agent, confirm it is the right primitive.
+Confirm an agent is the right primitive before creating one.
 
 | Use a Skill | Use an Agent |
 |---|---|
@@ -37,7 +37,7 @@ If the answer is reference material, stop and use the `skill-creator` skill inst
 
 ---
 
-## Archetype Selection
+## Archetype selection
 
 Agents fall into three archetypes. Pick one before designing.
 
@@ -61,18 +61,18 @@ See [references/archetypes.md](references/archetypes.md) for worked examples of 
 
 ## Workflow
 
-This skill uses **guided phases** - each phase is a separate file loaded one at a time. Every phase ends with a gate where you must wait for user confirmation before proceeding. Do not skip phases or merge them.
+This skill uses guided phases. Each phase is a separate file, loaded one at a time. Every phase ends with a gate: wait for user confirmation before proceeding. Do not skip or merge phases.
 
 | Phase | File | What it covers |
 |---|---|---|
-| 1 | [Purpose and Trigger](phases/01-purpose-and-trigger.md) | What the agent does, when to delegate, out-of-scope, output shape, archetype |
-| 2 | [Name and Identity](phases/02-name-and-identity.md) | Kebab-case name, collision check, user confirmation |
+| 1 | [Purpose and trigger](phases/01-purpose-and-trigger.md) | What the agent does, when to delegate, out-of-scope, output shape, archetype |
+| 2 | [Name and identity](phases/02-name-and-identity.md) | Kebab-case name, collision check, user confirmation |
 | 3 | [Capabilities](phases/03-capabilities.md) | Tool permissions, isolation, memory, preloaded skills |
-| 4 | [System Prompt](phases/04-system-prompt.md) | Five-section contract: Input, Process, Rules, Output |
-| 5 | [Placement and Scope](phases/05-placement-and-scope.md) | Where the file lives: project, personal, plugin, session |
-| 6 | [Validate and Write](phases/06-validate-and-write.md) | Checklist, file creation, marketplace registration |
+| 4 | [System prompt](phases/04-system-prompt.md) | Five-section contract: Input, Process, Rules, Output |
+| 5 | [Placement and scope](phases/05-placement-and-scope.md) | Where the file lives: project, personal, plugin, session |
+| 6 | [Validate and write](phases/06-validate-and-write.md) | Checklist, file creation, marketplace registration |
 
-**Start by loading Phase 1.** After the user confirms each phase, load the next. Never load multiple phases at once. Never skip a phase.
+Start by loading Phase 1. After the user confirms each phase, load the next. Never load multiple phases at once and never skip one.
 
 ---
 

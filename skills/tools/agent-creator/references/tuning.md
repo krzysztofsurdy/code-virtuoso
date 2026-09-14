@@ -2,7 +2,7 @@
 
 Tuning lets agents adapt to team preferences without modifying the agent definition itself. It follows the supplement pattern from `ticket-delivery`: on first activation, the agent asks a short questionnaire, saves the answers, and reuses them on subsequent runs.
 
-## When to Add Tuning
+## When to add tuning
 
 Add tuning when an agent has 3+ behavioral knobs that different teams would reasonably set differently. Examples:
 
@@ -10,12 +10,12 @@ Add tuning when an agent has 3+ behavioral knobs that different teams would reas
 - An architect that some teams want ADRs from and others want lightweight notes
 - A product manager that some teams run with MoSCoW and others with RICE
 
-Do NOT add tuning when:
+Do not add tuning when:
 - The agent's behavior is fixed by design (investigator, cold-reviewer)
-- The "knobs" are really just the agent doing its job differently per input
+- The "knobs" only reflect the agent handling each input differently
 - There are fewer than 3 meaningful settings
 
-## How to Implement
+## How to implement
 
 ### 1. Add a Tuning section to the agent body
 
@@ -38,7 +38,7 @@ On first activation, this agent checks for a `.reviewer.tune.md` file alongside 
 ```markdown
 ## Process
 
-1. **Load preferences** - Check for `.reviewer.tune.md` alongside this file.
+1. **Load preferences**: check for `.reviewer.tune.md` alongside this file.
    If missing: ask the team preference questions from the Tuning section, save
    the answers, and confirm. If present: load silently and proceed.
 2. [rest of process...]
@@ -49,12 +49,12 @@ On first activation, this agent checks for a `.reviewer.tune.md` file alongside 
 Use `$VARIABLE_NAME` placeholders in the process and rules:
 
 ```markdown
-3. **Analyze** - Check each category in the review checklist. If `$REVIEW_DEPTH`
+3. **Analyze**: check each category in the review checklist. If `$REVIEW_DEPTH`
    is `surface`, focus on correctness and security only. If `deep`, include all
    categories plus cross-cutting concerns.
 ```
 
-## Tune File Format
+## Tune file format
 
 The tune file follows the ticket-delivery supplement format:
 
@@ -72,6 +72,6 @@ FRAMEWORK_CONTEXT: symfony
 ## Rules
 
 - The tune file is dot-prefixed (`.reviewer.tune.md`) to stay out of agent discovery
-- Never force tuning - if the user declines to answer, use defaults
-- Keep questions to 3-5 maximum. More than that is a configuration burden.
-- Settings should be stable across sessions. Anything that changes per-task is not a tuning knob - it is an input parameter.
+- Never force tuning. If the user declines to answer, use defaults
+- Ask 3-5 questions at most. More is a configuration burden.
+- Settings should be stable across sessions. Anything that changes per task is an input parameter, not a tuning knob.

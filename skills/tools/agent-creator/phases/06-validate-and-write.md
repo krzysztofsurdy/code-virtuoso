@@ -1,4 +1,4 @@
-# Phase 6: Validate and Write
+# Phase 6: Validate and write
 
 **Progress: Phase 6 of 6**
 
@@ -31,7 +31,7 @@ Run the validation checklist, write the agent file, and register it.
 
 ## Gate
 
-**Advances when:** The file is written, registered, and the user is satisfied.
-**Returns to a previous phase when:** Validation fails and the user wants to fix the issue at its source.
+**Advances when:** the file is written, registered, and the user is satisfied.
+**Returns to a previous phase when:** validation fails and the user wants to fix the issue at its source.
 
 This is the final phase. After writing, confirm: "Agent `[name]` created at `[path]` ([line count] lines). Want to test-invoke it?"

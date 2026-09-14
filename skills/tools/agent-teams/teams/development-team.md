@@ -21,14 +21,14 @@ workflow: hybrid
 
 ## Purpose
 
-Deliver a feature from a rough requirement through implementation to a quality-verified, merged pull request. The team follows a requirements-first, design-second, TDD-implementation-third flow. Backend and frontend work in parallel once the API contract is agreed.
+Deliver a feature from a rough requirement through implementation to a verified, merged pull request. The team works requirements first, design second, TDD implementation third. Backend and frontend work in parallel once the API contract is agreed.
 
 ## Workflow
 
-1. **Product Manager** - Analyse the requirement. Write acceptance criteria in Given/When/Then form. Clarify scope, non-goals, and edge cases. Output: refined ticket with acceptance criteria.
-2. **Architect** - Design the solution. Define API contracts, data model changes, and component boundaries. Write an ADR if the design introduces a new pattern. Output: design document or ADR.
-3. **Backend Dev + Frontend Dev** (parallel) - Implement in isolated worktrees using TDD. Backend builds the API and data layer. Frontend builds the UI against the agreed contract. Each commits after every green test. Output: working code with tests.
-4. **QA Engineer** - Write a test plan against the acceptance criteria. Execute tests. Report bugs with severity. Sign off when all criteria pass. Output: test report and sign-off.
+1. **Product Manager**: analyse the requirement. Write acceptance criteria in Given/When/Then form. Clarify scope, non-goals, and edge cases. Output: refined ticket with acceptance criteria.
+2. **Architect**: design the solution. Define API contracts, data model changes, and component boundaries. Write an ADR if the design introduces a new pattern. Output: design document or ADR.
+3. **Backend Dev + Frontend Dev** (parallel): implement in isolated worktrees using TDD. Backend builds the API and data layer. Frontend builds the UI against the agreed contract. Each commits after every green test. Output: working code with tests.
+4. **QA Engineer**: write a test plan against the acceptance criteria. Execute tests. Report bugs with severity. Sign off when all criteria pass. Output: test report and sign-off.
 
 ## Entry Criteria
 
@@ -48,7 +48,7 @@ Deliver a feature from a rough requirement through implementation to a quality-v
 
 - Product Manager owns the task list and resolves scope questions
 - Architect must approve the design before implementation starts
-- Backend Dev and Frontend Dev work in separate worktrees - no shared file edits
+- Backend Dev and Frontend Dev work in separate worktrees, with no shared file edits
 - QA blocks merge until sign-off is granted
 - If the API contract changes during implementation, Architect must re-approve before work continues
 - Use `subagent-driven-development` for the implementation phase: one task per agent, two-stage review gates

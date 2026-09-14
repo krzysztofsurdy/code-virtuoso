@@ -22,26 +22,26 @@ Make a high-stakes technical decision by hearing structured arguments from multi
 
 ## Workflow
 
-1. **Frame** - Lead (Architect) states the decision question, lists known constraints and trade-offs, and identifies 2-4 options under consideration. If the user has not framed the question clearly, the lead asks clarifying questions until the decision is crisp.
+1. **Frame**: lead (Architect) states the decision question, lists known constraints and trade-offs, and identifies 2-4 options under consideration. If the user has not framed the question clearly, the lead asks clarifying questions until the decision is crisp.
 
-2. **Position** - Each agent takes a stance on their preferred option:
+2. **Position**: each agent takes a stance on their preferred option:
    - **Architect** argues from system design, maintainability, and technical debt
    - **Product Manager** argues from user impact, business value, and time-to-market
    - **Backend Dev** argues from implementation complexity, developer experience, and operational burden
    - **QA Engineer** argues from testability, risk surface, and failure modes
    Each agent states their preferred option and why. No hedging. No "it depends."
 
-3. **Challenge** - Each agent identifies the weakest point in ONE other agent's position. One round only - no back-and-forth debates.
+3. **Challenge**: each agent identifies the weakest point in one other agent's position. One round only, with no back-and-forth debates.
 
-4. **Synthesize** - Lead (Architect) summarizes: areas of agreement, areas of disagreement, key trade-offs, and risks per option. Does not recommend - presents the landscape.
+4. **Synthesize**: lead (Architect) summarizes: areas of agreement, areas of disagreement, key trade-offs, and risks per option. Does not recommend. Presents the options and trade-offs.
 
-5. **Decide** - Present the synthesis to the user. The user chooses an option. No agent decides. If the user wants more input, run another challenge round with a specific question.
+5. **Decide**: present the synthesis to the user. The user chooses an option. No agent decides. If the user wants more input, run another challenge round with a specific question.
 
 ## Entry Criteria
 
 - A decision question is framed (or can be framed) with at least 2 viable options
 - The user is available to make the final call
-- The decision has meaningful trade-offs - trivial choices do not need a war room
+- The decision has meaningful trade-offs. Trivial choices do not need a war room
 
 ## Exit Criteria
 
@@ -73,6 +73,6 @@ Make a high-stakes technical decision by hearing structured arguments from multi
 
 ## Variants
 
-- **Lightweight** - Architect + one other agent for binary yes/no decisions. Faster, less overhead.
-- **Extended** - Add Frontend Dev and Scrum Master for decisions affecting UI or delivery cadence.
-- **Focused** - Replace agent roster with domain-specific agents for specialized decisions (e.g., security-focused war room with security skills preloaded).
+- **Lightweight**: Architect + one other agent for binary yes/no decisions. Faster, less overhead.
+- **Extended**: add Frontend Dev and Scrum Master for decisions affecting UI or delivery cadence.
+- **Focused**: replace agent roster with domain-specific agents for specialized decisions (e.g., security-focused war room with security skills preloaded).

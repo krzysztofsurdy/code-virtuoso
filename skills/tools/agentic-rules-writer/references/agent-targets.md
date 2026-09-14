@@ -2,9 +2,15 @@
 
 Output file paths, format requirements, limits, and testing instructions for each supported AI coding agent. Covers all three scopes: global, project team-shared, and project dev-specific.
 
+## Contents
+
+- [Tier 1: full support](#tier-1-full-support)
+- [Tier 2: generic Markdown support](#tier-2-generic-markdown-support)
+- [Other / universal](#other--universal)
+
 ---
 
-## Tier 1 — Full Support
+## Tier 1: full support
 
 ### Claude Code
 
@@ -21,12 +27,12 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 **Format notes:**
 - Plain Markdown, no frontmatter required
-- Keep global file concise — Claude Code loads this into every conversation context
+- Keep the global file concise. Claude Code loads it into every conversation context
 - Project rules in `.claude/rules/` are loaded automatically alongside CLAUDE.md
 - For dev-specific rules, advise the user to add the file path to `.gitignore`
 - Add a footer note on global: `For project-specific rules, use .claude/rules/*.md files.`
 
-**Testing:** Start a new Claude Code session and ask "What are your rules?" — it should reference the content.
+**Testing:** Start a new Claude Code session and ask "What are your rules?" It should reference the content.
 
 ---
 
@@ -52,7 +58,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
   ---
   ```
 - File extension is `.mdc` (Markdown Cursor)
-- The `alwaysApply: true` flag ensures rules are loaded in every conversation
+- The `alwaysApply: true` flag loads the rules in every conversation
 
 **Testing:** Open Cursor, start a new chat, and ask about the rules.
 
@@ -72,7 +78,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
 | Character limit | **12,000 characters maximum** |
 
 **Format notes:**
-- Strict 12,000 character limit — content beyond this is truncated
+- Strict 12,000 character limit. Content beyond this is truncated
 - If generated content exceeds the limit, condense by removing examples and shortening descriptions
 - Add a comment at the top: `<!-- Windsurf rules -->`
 
@@ -272,7 +278,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-## Tier 2 — Generic Markdown Support
+## Tier 2: generic Markdown support
 
 These agents use plain Markdown with no special formatting. Paths follow vercel-labs/skills conventions.
 
@@ -302,9 +308,9 @@ These agents use plain Markdown with no special formatting. Paths follow vercel-
 
 ---
 
-## Other / Universal
+## Other / universal
 
-For agents not listed above, ask the user for the output path and write plain Markdown. No special formatting is applied.
+For agents not listed above, ask the user for the output path and write plain Markdown. The file gets no special formatting.
 
 Common conventions that may apply:
 - Most agents look for rules in a dotfile directory (`.agent-name/rules/`)

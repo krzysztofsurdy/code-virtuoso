@@ -7,9 +7,9 @@ argument-hint: "[optional: team name to describe]"
 
 # Agent Teams Library
 
-A catalog of pre-composed agent teams. Each team bundles a roster of agents, a coordination workflow, and entry/exit criteria into a ready-to-use unit. Pick a team and dispatch it via the `dispatching-agent-teams` skill.
+A catalog of pre-composed agent teams. Each team has a roster of agents, a coordination workflow, and entry and exit criteria. Pick a team and dispatch it with the `dispatching-agent-teams` skill.
 
-## Available Teams
+## Available teams
 
 | Team | Workflow | Lead | Use when |
 |---|---|---|---|
@@ -17,7 +17,7 @@ A catalog of pre-composed agent teams. Each team bundles a roster of agents, a c
 | [review-squad](teams/review-squad.md) | parallel | Reviewer | Multi-perspective code review before merging significant changes |
 | [war-room](teams/war-room.md) | war-room | Architect | Structured technical debate that ends in a decision (architecture choice, tech selection, design trade-off) |
 
-## How to Pick a Team
+## How to pick a team
 
 | Situation | Recommended Team |
 |---|---|
@@ -29,18 +29,18 @@ A catalog of pre-composed agent teams. Each team bundles a roster of agents, a c
 
 If no team fits the work, skip the team and chain individual agents (see the `using-ecosystem` skill's chaining patterns).
 
-## Team File Format
+## Team file format
 
 Every team file follows the team specification (`spec/team-spec.md`):
 
-- **Frontmatter**: `name`, `description`, `lead`, `agents`, `skills`, `workflow`
-- **Body**: Purpose, Workflow, Entry/Exit Criteria, Coordination Rules, Spawning
+- Frontmatter: `name`, `description`, `lead`, `agents`, `skills`, `workflow`
+- Body: Purpose, Workflow, Entry/Exit Criteria, Coordination Rules, Spawning
 
-The dispatcher reads these fields to resolve the team, verify entry criteria, and execute the workflow in the appropriate spawning mode.
+The dispatcher reads these fields to resolve the team, check entry criteria, and run the workflow in the right spawning mode.
 
-## Authoring Your Own Team
+## Authoring your own team
 
-User-authored teams live at the project root in `teams/{name}.md`. The dispatcher discovers project teams before falling back to the bundled library here, so project teams can override bundled ones by name.
+User-authored teams live at the project root in `teams/{name}.md`. The dispatcher discovers project teams before falling back to the bundled library here, so a project team can override a bundled one with the same name.
 
 See `spec/team-spec.md` for the full team format and `template/team-template.md` for a starter.
 

@@ -1,16 +1,25 @@
 # Questionnaire Reference
 
-Detailed reference for each question in the agentic-rules-writer workflow. Covers question text, purpose, available options, answer-to-rule mappings, and example generated output. Questions are organized by group.
+Reference for each question in the agentic-rules-writer workflow: question text, purpose, available options, answer-to-rule mappings, and example generated output. Questions are organized by group.
+
+## Contents
+
+- [Group A: Project context](#group-a-project-context)
+- [Group B: Code standards](#group-b-code-standards)
+- [Group C: Version control & collaboration](#group-c-version-control--collaboration)
+- [Group D: Agent workflow](#group-d-agent-workflow)
+- [Group E: Communication & personality](#group-e-communication--personality)
+- [Group F: Freeform](#group-f-freeform)
 
 ---
 
-## Group A: Project Context
+## Group A: Project context
 
-### Q1. Primary Stack
+### Q1. Primary stack
 
 **Question:** What is your primary tech stack?
 
-**Purpose:** Generates stack-specific conventions (coding standards, type systems, common patterns) that apply globally across all projects using this stack.
+**Purpose:** Generates stack-specific conventions (coding standards, type systems, common patterns) that apply to all projects using this stack.
 
 | Option | Description |
 |---|---|
@@ -24,17 +33,17 @@ Detailed reference for each question in the agentic-rules-writer workflow. Cover
 
 **Generated rules by answer:**
 
-- **PHP+Symfony** — "Use strict types in every file. Follow PSR-12 coding standard. Use PHP 8.3+ features (readonly, enums, named arguments). Prefer constructor injection."
-- **TypeScript+React** — "Use strict TypeScript — no `any` types. Prefer functional components with hooks. Use named exports."
-- **Python+Django** — "Follow PEP 8. Use type hints. Prefer class-based views for complex logic, function-based for simple endpoints."
-- **Go** — "Follow Go conventions: short variable names, error returns, `gofmt`. Handle every error explicitly."
-- **Rust** — "Prefer `Result` over `unwrap`. Use `clippy` lints. Follow Rust API guidelines."
-- **Java+Spring** — "Follow Java naming conventions. Use constructor injection. Prefer records for DTOs."
-- **Other** — "Follow the project's established coding standards and conventions."
+- **PHP+Symfony**: "Use strict types in every file. Follow PSR-12 coding standard. Use PHP 8.3+ features (readonly, enums, named arguments). Prefer constructor injection."
+- **TypeScript+React**: "Use strict TypeScript, no `any` types. Prefer functional components with hooks. Use named exports."
+- **Python+Django**: "Follow PEP 8. Use type hints. Prefer class-based views for complex logic, function-based for simple endpoints."
+- **Go**: "Follow Go conventions: short variable names, error returns, `gofmt`. Handle every error explicitly."
+- **Rust**: "Prefer `Result` over `unwrap`. Use `clippy` lints. Follow Rust API guidelines."
+- **Java+Spring**: "Follow Java naming conventions. Use constructor injection. Prefer records for DTOs."
+- **Other**: "Follow the project's established coding standards and conventions."
 
 ---
 
-### Q2. Directory Structure
+### Q2. Directory structure
 
 **Question:** How should the agent handle directory structure decisions?
 
@@ -72,11 +81,11 @@ Detailed reference for each question in the agentic-rules-writer workflow. Cover
 
 ---
 
-### Q3. Build/Run Commands
+### Q3. Build/run commands
 
-**Question:** What are the key commands the agent should know? (build, test, lint, dev server, deploy — leave blank to skip)
+**Question:** What are the key commands the agent should know? (build, test, lint, dev server, deploy; leave blank to skip)
 
-**Purpose:** Agents need project-specific commands they can't infer from code alone. GitHub's analysis of 2,500+ repos identified executable commands as the #1 most impactful section in agent instruction files.
+**Purpose:** Agents need project-specific commands they cannot infer from code alone. GitHub's analysis of 2,500+ repos identified executable commands as the #1 most impactful section in agent instruction files.
 
 **Input:** Free-text. User provides their common commands.
 
@@ -94,9 +103,9 @@ If blank, omit the section entirely.
 
 ---
 
-## Group B: Code Standards
+## Group B: Code standards
 
-### Q4. Code Quality Bar
+### Q4. Code quality bar
 
 **Question:** What level of code quality do you target?
 
@@ -105,8 +114,8 @@ If blank, omit the section entirely.
 | Option | Description |
 |---|---|
 | Staff engineer rigor | Exhaustive edge cases, defensive coding, thorough documentation, consider concurrency |
-| Senior pragmatic | Solid quality with practical trade-offs — handle likely edge cases, document non-obvious decisions |
-| Ship fast | Working code with minimal ceremony — get it done, iterate later |
+| Senior pragmatic | Solid quality with practical trade-offs: handle likely edge cases, document non-obvious decisions |
+| Ship fast | Working code with minimal ceremony: get it done, iterate later |
 
 **Generated rules by answer:**
 
@@ -131,11 +140,11 @@ If blank, omit the section entirely.
   ```
   - Focus on working code that solves the immediate problem
   - Handle obvious error cases, skip unlikely edge cases
-  - Minimal comments — code should be self-explanatory
+  - Minimal comments, code should be self-explanatory
   - Verify the happy path works before moving on
   ```
 
-#### Follow-up: Documentation Level
+#### Follow-up: Documentation level
 
 **Question:** What level of code documentation do you expect?
 
@@ -143,7 +152,7 @@ If blank, omit the section entirely.
 |---|---|
 | Docblocks on public APIs | Full docblocks on public methods, classes, and interfaces |
 | Inline comments for non-obvious logic only | Comments only where the logic is not self-evident |
-| Minimal — code should speak for itself | Almost no comments; clean naming is the documentation |
+| Minimal, code should speak for itself | Almost no comments; clean naming is the documentation |
 
 **Generated rules by answer:**
 
@@ -151,7 +160,7 @@ If blank, omit the section entirely.
   ```
   - Add docblocks to all public methods, classes, and interfaces
   - Include @param, @return, and @throws annotations
-  - Keep descriptions concise — one sentence per element
+  - Keep descriptions concise, one sentence per element
   ```
 
 - **Inline comments for non-obvious logic only:**
@@ -170,7 +179,7 @@ If blank, omit the section entirely.
 
 ---
 
-### Q5. Testing Philosophy
+### Q5. Testing philosophy
 
 **Question:** What is your testing approach?
 
@@ -190,12 +199,12 @@ If blank, omit the section entirely.
   - Write failing tests before any implementation code
   - Red-green-refactor cycle for every change
   - Never skip the refactor step
-  - Aim for high coverage — unit, integration, and edge cases
+  - Aim for high coverage: unit, integration, and edge cases
   ```
 
 - **Test alongside:**
   ```
-  - Write tests alongside implementation — alternate between code and tests
+  - Write tests alongside implementation, alternating between code and tests
   - Every new feature or fix should include corresponding tests
   - Cover happy paths, error cases, and boundary conditions
   ```
@@ -216,7 +225,7 @@ If blank, omit the section entirely.
 
 ---
 
-### Q6. Error Handling
+### Q6. Error handling
 
 **Question:** What error handling philosophy should the agent follow?
 
@@ -232,7 +241,7 @@ If blank, omit the section entirely.
 
 - **Fail fast:**
   ```
-  - Throw exceptions early on unexpected state — do not silently swallow errors
+  - Throw exceptions early on unexpected state. Do not silently swallow errors
   - Validate inputs at system boundaries and fail immediately on invalid data
   - Prefer explicit error types over generic exceptions
   - Let unrecoverable errors bubble up rather than catching and hiding them
@@ -240,7 +249,7 @@ If blank, omit the section entirely.
 
 - **Defensive:**
   ```
-  - Handle errors gracefully — never let the application crash on user-facing paths
+  - Handle errors gracefully. Never let the application crash on user-facing paths
   - Provide meaningful fallbacks for recoverable errors
   - Log unexpected states for debugging but continue operation where safe
   - Validate inputs defensively at every layer
@@ -248,19 +257,19 @@ If blank, omit the section entirely.
 
 - **Balanced:**
   ```
-  - Fail fast during development — strict assertions, no silent failures
-  - Handle gracefully in production — catch at boundaries, log, and recover where possible
+  - Fail fast during development: strict assertions, no silent failures
+  - Handle gracefully in production: catch at boundaries, log, and recover where possible
   - Use environment-aware error handling (strict in dev/test, tolerant in prod)
   - Always log the root cause regardless of environment
   ```
 
 ---
 
-### Q7. Security & Secrets
+### Q7. Security & secrets
 
 **Question:** What security practices should the agent follow?
 
-**Purpose:** Prevents agents from introducing security vulnerabilities or exposing secrets. Identified as a critical guardrail by security-focused configurations (Trail of Bits, agentrulegen.com).
+**Purpose:** Prevents agents from introducing security vulnerabilities or exposing secrets. Security-focused configurations (Trail of Bits, agentrulegen.com) treat it as a core guardrail.
 
 | Option | Description |
 |---|---|
@@ -283,7 +292,7 @@ If blank, omit the section entirely.
   ```
   - Never commit secrets, credentials, or API keys to version control
   - Validate and sanitize user inputs at system boundaries
-  - Use parameterized queries — never concatenate user input into SQL or commands
+  - Use parameterized queries. Never concatenate user input into SQL or commands
   ```
 
 - **Minimal:**
@@ -294,11 +303,11 @@ If blank, omit the section entirely.
 
 ---
 
-### Q8. Dependency Management
+### Q8. Dependency management
 
 **Question:** What's your policy for adding dependencies?
 
-**Purpose:** Prevents agents from installing random packages. Universally cited as a critical rule in agent instruction files.
+**Purpose:** Prevents agents from installing random packages. Agent instruction files commonly include this rule.
 
 | Option | Description |
 |---|---|
@@ -317,7 +326,7 @@ If blank, omit the section entirely.
 
 - **Ask for new only:**
   ```
-  - Ask before adding new dependencies — explain why and list alternatives
+  - Ask before adding new dependencies. Explain why and list alternatives
   - Updating existing dependency versions is allowed without asking
   - Prefer using existing dependencies over adding new ones
   ```
@@ -331,9 +340,9 @@ If blank, omit the section entirely.
 
 ---
 
-## Group C: Version Control & Collaboration
+## Group C: Version control & collaboration
 
-### Q9. Branch Conventions
+### Q9. Branch conventions
 
 **Question:** What branch naming convention do you follow?
 
@@ -369,21 +378,21 @@ If blank, omit the section entirely.
   - Example: add-user-auth, fix-payment-timeout
   ```
 
-- **Other** — User's specified convention is included as-is.
+- **Other**: the user's specified convention is included as-is.
 
 ---
 
-### Q10. Commit Conventions
+### Q10. Commit conventions
 
 **Question:** What commit message format do you use?
 
-**Purpose:** Ensures generated commit rules match the user's conventions.
+**Purpose:** Makes the generated commit rules match the user's conventions.
 
 | Option | Description |
 |---|---|
 | Conventional commits | Structured format: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:` |
 | Ticket prefix | Ticket ID prefix: `PROJ-123: description` |
-| Freeform | No enforced format — use clear, descriptive messages |
+| Freeform | No enforced format. Use clear, descriptive messages |
 
 **Generated rules by answer:**
 
@@ -419,7 +428,7 @@ If blank, omit the section entirely.
 
 **Generated rules by answer:**
 
-- **Yes:** (No rule needed — this is the default behavior for most agents)
+- **Yes:** (No rule needed. This is the default behavior for most agents.)
 
 - **No:**
   ```
@@ -428,11 +437,11 @@ If blank, omit the section entirely.
 
 ---
 
-### Q11. PR/MR Creation
+### Q11. PR/MR creation
 
 **Question:** How should the agent create pull requests?
 
-**Purpose:** Controls PR workflow — format, detail level, and whether the agent is allowed to create PRs at all.
+**Purpose:** Controls the PR workflow: format, detail level, and whether the agent may create PRs at all.
 
 | Option | Description |
 |---|---|
@@ -453,7 +462,7 @@ If blank, omit the section entirely.
 - **Minimal:**
   ```
   - Create PRs with a clear title and brief description
-  - Keep it concise — no template required
+  - Keep it concise, no template required
   ```
 
 - **Don't create PRs:**
@@ -464,9 +473,9 @@ If blank, omit the section entirely.
 
 ---
 
-## Group D: Agent Workflow
+## Group D: Agent workflow
 
-### Q12. Planning Discipline
+### Q12. Planning discipline
 
 **Question:** How much planning before implementation?
 
@@ -491,7 +500,7 @@ If blank, omit the section entirely.
   ```
   - Enter plan mode for any task that requires 3 or more steps
   - For simple changes (single file, obvious fix), proceed directly
-  - When in doubt, plan — it's cheaper than rework
+  - When in doubt, plan. It is cheaper than rework
   ```
 
 - **Minimal planning:**
@@ -502,7 +511,7 @@ If blank, omit the section entirely.
 
 ---
 
-### Q13. Autonomy Level
+### Q13. Autonomy level
 
 **Question:** How much should the agent do without asking?
 
@@ -512,7 +521,7 @@ If blank, omit the section entirely.
 |---|---|
 | Autonomous | Fix bugs, lint errors, failing CI, and minor issues without asking |
 | Semi-autonomous | Act freely for safe operations, ask before destructive or risky actions |
-| Conservative | Confirm everything — every file change, every command, every decision |
+| Conservative | Confirm everything: every file change, every command, every decision |
 
 **Generated rules by answer:**
 
@@ -539,11 +548,11 @@ If blank, omit the section entirely.
 
 ---
 
-### Q14. Boundaries (Never-Do List)
+### Q14. Boundaries (never-do list)
 
 **Question:** Are there any actions the agent should NEVER take?
 
-**Purpose:** Explicit prohibited actions. Distinct from autonomy (Q13 controls what to ask about) — this is what to NEVER do under any circumstances. GitHub's analysis of 2,500+ repos identified "Boundaries" as one of the top 6 most impactful sections.
+**Purpose:** Explicit prohibited actions. This differs from autonomy (Q13 controls what to ask about): these are actions to NEVER take under any circumstances. GitHub's analysis of 2,500+ repos identified "Boundaries" as one of the top 6 most impactful sections.
 
 | Option | Description |
 |---|---|
@@ -572,11 +581,11 @@ If blank, omit the section entirely.
   - NEVER modify lock files (package-lock.json, composer.lock) manually
   ```
 
-- **Custom** — User's specified boundaries are included as-is, prefixed with "NEVER".
+- **Custom**: the user's specified boundaries are included as-is, prefixed with "NEVER".
 
 ---
 
-### Q15. Agent Parallelization
+### Q15. Agent parallelization
 
 **Question:** How should the agent handle multi-part tasks?
 
@@ -612,7 +621,7 @@ If blank, omit the section entirely.
 
 ---
 
-### Q16. Task Tracking
+### Q16. Task tracking
 
 **Question:** How do you want to track tasks during a session?
 
@@ -646,7 +655,7 @@ If blank, omit the section entirely.
   - Summarize completed work at the end of each session
   ```
 
-#### Follow-up: External Tool Integration
+#### Follow-up: External tool integration
 
 **Question:** Do you use an external tracking tool?
 
@@ -680,7 +689,7 @@ If blank, omit the section entirely.
 
 ---
 
-### Q17. Self-Improvement
+### Q17. Self-improvement
 
 **Question:** Should the agent maintain a lessons-learned file?
 
@@ -705,9 +714,9 @@ If blank, omit the section entirely.
 
 ---
 
-## Group E: Communication & Personality
+## Group E: Communication & personality
 
-### Q18. Communication Style
+### Q18. Communication style
 
 **Question:** How should the agent communicate with you?
 
@@ -725,7 +734,7 @@ If blank, omit the section entirely.
   ```
   - Keep responses short and to the point
   - No emojis, no filler phrases
-  - State what was done, what changed, and what to verify — nothing more
+  - State what was done, what changed, and what to verify, nothing more
   ```
 
 - **Structured explanations:**
@@ -744,7 +753,7 @@ If blank, omit the section entirely.
 
 ---
 
-### Q19. Persona / Roleplay
+### Q19. Persona / roleplay
 
 **Question:** Would you like the agent to adopt a persona or character?
 
@@ -752,28 +761,28 @@ If blank, omit the section entirely.
 
 | Option | Description |
 |---|---|
-| Yes | Agent adopts a persona — user describes who |
+| Yes | Agent adopts a persona; the user describes who |
 | No | Straightforward assistant, no roleplay |
 
-**If "Yes":** Ask the user to describe the persona. Accept any input — real people, fictional characters, archetypes, or invented personalities. If the persona is obscure or unfamiliar, use web search to gather details before generating rules.
+**If "Yes":** Ask the user to describe the persona. Accept any input: real people, fictional characters, archetypes, or invented personalities. If the persona is obscure or unfamiliar, use web search to gather details before generating rules.
 
 **Generated rules when Yes:**
 
 Generate three parts:
 
-1. **Persona description** — A one-paragraph description capturing the character's voice, attitude, and communication style. Grounded enough for the agent to consistently roleplay without ambiguity.
+1. **Persona description**: a one-paragraph description of the character's voice, attitude, and communication style. It should be specific enough for the agent to roleplay consistently.
 
-2. **Catchphrases** — 5-8 catchphrases drawn from the character (if well-known) or invented in their style. These should feel natural, not forced.
+2. **Catchphrases**: 5-8 catchphrases drawn from the character (if well-known) or invented in their style. They should feel natural.
 
-3. **Hard constraint** — Always include this verbatim:
+3. **Hard constraint**: always include this verbatim:
   ```
   IMPORTANT: Precision and correctness always come first. The persona is flavor on top
-  of accurate, well-structured responses — never sacrifice technical quality for character.
+  of accurate, well-structured responses. Never sacrifice technical quality for character.
   Use at most one catchphrase per response. Do not repeat the same catchphrase consecutively.
   Do not force the persona when it would reduce clarity.
   ```
 
-**Example — persona "a pirate captain":**
+**Example, persona "a pirate captain":**
 ```
 ## Persona
 You are a weathered pirate captain who has sailed the seven seas of legacy codebases.
@@ -783,25 +792,25 @@ no patience for landlubber code that'll sink under the first storm of production
 Catchphrases (use at most one per response, do not repeat consecutively):
 - "That code'll make ye walk the plank in production."
 - "Aye, now that's a seaworthy solution."
-- "Batten down the hatches — this refactor's gonna be rough."
+- "Batten down the hatches, this refactor's gonna be rough."
 - "Dead code is dead weight. Throw it overboard."
 - "A ship is only as strong as its weakest bulkhead."
 - "Chart your course before ye set sail, mate."
 
 IMPORTANT: Precision and correctness always come first. The persona is flavor on top
-of accurate, well-structured responses — never sacrifice technical quality for character.
+of accurate, well-structured responses. Never sacrifice technical quality for character.
 Use at most one catchphrase per response. Do not repeat the same catchphrase consecutively.
 Do not force the persona when it would reduce clarity.
 ```
 
 **Generated rules when No:**
-(No rules generated — omit the Persona section entirely.)
+(No rules generated. Omit the Persona section entirely.)
 
 ---
 
 ## Group F: Freeform
 
-### Q20. Additional Comments
+### Q20. Additional comments
 
 **Question:** Any additional rules, preferences, or comments you'd like included?
 

@@ -1,6 +1,6 @@
 # Validation Checklist
 
-Run this checklist before writing the agent file. Most agent problems come from one of the items below.
+Run this checklist before writing the agent file. Most agent problems trace back to one of these items.
 
 ## Identity
 
@@ -14,19 +14,19 @@ Run this checklist before writing the agent file. Most agent problems come from 
 - [ ] Contains both "what it does" and "when to delegate"
 - [ ] Includes trigger phrases an orchestrator can match
 - [ ] Mentions any defining constraints ("read-only", "runs in a worktree")
-- [ ] No marketing adjectives ("powerful", "comprehensive")
+- [ ] No marketing adjectives ("powerful", "full")
 - [ ] No self-reference ("this agent is an agent that...")
 - [ ] Under 300 characters if targeting platforms with strict description limits
 
 ## Tools
 
-- [ ] `tools` is set explicitly - never inherits by omission
+- [ ] `tools` is set explicitly and never inherited by omission
 - [ ] Allowlist is the minimum that lets the workflow finish
 - [ ] No `Edit` or `Write` unless the agent legitimately modifies files
 - [ ] `Agent(...)` is scoped to specific sub-agent types, not bare `Agent`
 - [ ] No hardcoded MCP tools the agent will not actually call
 
-## Isolation and Memory
+## Isolation and memory
 
 - [ ] `isolation: worktree` is set if and only if the agent writes or edits files
 - [ ] `memory: project` is set only when the agent genuinely benefits from cross-session context
@@ -47,10 +47,10 @@ Run this checklist before writing the agent file. Most agent problems come from 
 - [ ] Output contains a concrete template, not vague prose
 - [ ] No persona bloat ("elite senior engineer with 20 years...")
 - [ ] No duplicated tool instructions (tools are in frontmatter)
-- [ ] Portable - no "As Claude..." or platform-specific references
+- [ ] Portable, with no "As Claude..." or platform-specific references
 - [ ] Under 100 lines for most agents; under 200 for complex role agents
 
-## Scope and Registration
+## Scope and registration
 
 - [ ] File placed in the correct scope (project / user / plugin / managed)
 - [ ] If marketplace / plugin: registered in the plugin manifest
@@ -63,14 +63,14 @@ Run this checklist before writing the agent file. Most agent problems come from 
 - [ ] No provider-specific phrasing in the body
 - [ ] Tool names match the target platform's conventions
 
-## Operational Sanity
+## Operational sanity
 
 - [ ] Delegating to the agent with a minimal prompt produces the documented output shape
 - [ ] The agent refuses or flags out-of-scope work instead of drifting
 - [ ] The agent respects its tool allowlist (no surprise shell calls)
 - [ ] The agent does not "helpfully" do the task itself when asked to delegate or plan
 
-## Common Rejection Reasons
+## Common rejection reasons
 
 | Problem | Fix |
 |---|---|
@@ -80,7 +80,7 @@ Run this checklist before writing the agent file. Most agent problems come from 
 | Isolation missing on a writer | Add `isolation: worktree` |
 | Output is "a summary" | Replace with a template |
 | Role statement is missing | Add one sentence naming the role |
-| Body contains provider name or tool names | Remove - body stays portable |
+| Body contains provider name or tool names | Remove them so the body stays portable |
 | `skills` list has ten entries | Trim to the essentials |
 
-If any item is unchecked, stop and fix it before writing. A weak agent costs more in re-runs than the time saved by shipping early.
+If any item is unchecked, stop and fix it before writing. A weak agent costs more in re-runs than shipping early saves.

@@ -2,6 +2,13 @@
 
 Frontmatter is the only metadata read before the agent is invoked. Treat it as a contract with the orchestrator: `name` identifies the agent, `description` triggers delegation, and the rest shapes what happens once the agent runs.
 
+## Contents
+
+- [Portability](#portability)
+- [Field reference](#field-reference)
+- [Field combinations to validate](#field-combinations-to-validate)
+- [Example templates](#example-templates)
+
 ## Portability
 
 Only three fields are portable across agent platforms:
@@ -15,7 +22,7 @@ Only three fields are portable across agent platforms:
 
 Write the body to be portable. Adapt platform-specific frontmatter when moving the agent between platforms.
 
-## Field Reference
+## Field reference
 
 ### `name` (required)
 
@@ -34,7 +41,7 @@ Rules:
 
 ### `description` (required)
 
-The only field read during delegation decisions. Make every word earn its place.
+The only field read during delegation decisions. Every word should earn its place.
 
 Format: `{what it does}. {when to delegate}.`
 
@@ -58,13 +65,13 @@ Patterns that work:
 
 Avoid:
 
-- Marketing adjectives ("powerful", "comprehensive", "advanced")
+- Marketing adjectives ("powerful", "full", "advanced")
 - Redundant self-reference ("this agent is an agent that...")
 - Anything the orchestrator cannot verify from the description alone
 
 ### `tools` (platform-specific, strongly recommended)
 
-An allowlist of tools the agent can use. Omitting it inherits everything from the caller - rarely what you want.
+An allowlist of tools the agent can use. Omitting it inherits everything from the caller, which is rarely what you want.
 
 ```yaml
 tools: Read, Grep, Glob, Bash
@@ -74,7 +81,7 @@ See [tool-selection.md](tool-selection.md) for per-archetype defaults and the de
 
 ### `disallowedTools` (platform-specific, optional)
 
-A denylist applied before the allowlist resolves. Useful when you want "everything except writes":
+A denylist applied before the allowlist resolves. Use it when you want "everything except writes":
 
 ```yaml
 disallowedTools: Write, Edit
@@ -84,7 +91,7 @@ If both `tools` and `disallowedTools` are set, the denylist wins for overlapping
 
 ### `skills` (portable, optional)
 
-Skills whose content is injected into the agent's context at startup. Sub-agents do not inherit skills from the caller - you must list them explicitly.
+Skills whose content is injected into the agent's context at startup. Sub-agents do not inherit skills from the caller, so list them explicitly.
 
 ```yaml
 skills:
@@ -96,7 +103,7 @@ skills:
 Rules:
 
 - Reference skills by `name`, not path
-- Include one to four skills; more is usually wasted context
+- Include one to four skills. More is usually wasted context
 - Only include skills the agent actively needs for its workflow
 
 ### `model` (platform-specific, optional, discouraged)
@@ -141,7 +148,7 @@ Scopes:
 
 ### `mcpServers` (platform-specific, optional)
 
-Gives the agent access to MCP servers the main conversation does not have. Useful for tools that should stay scoped to this one agent (e.g. a Playwright server for a browser-testing agent).
+Gives the agent access to MCP servers the main conversation does not have. Use it for tools that should stay scoped to this one agent (e.g. a Playwright server for a browser-testing agent).
 
 ```yaml
 mcpServers:
@@ -154,39 +161,39 @@ mcpServers:
 
 ### `permissionMode` (platform-specific, optional)
 
-Overrides how the agent handles permission prompts. Use sparingly - a permissive mode inside a sub-agent undermines the caller's safety posture.
+Overrides how the agent handles permission prompts. Use sparingly. A permissive mode inside a sub-agent undermines the caller's safety posture.
 
 | Mode | Behaviour |
 |---|---|
 | `default` | Standard permission prompts |
 | `acceptEdits` | Auto-accept file edits in the working directory |
 | `plan` | Read-only plan mode |
-| `bypassPermissions` | Skip prompts - use with great care |
+| `bypassPermissions` | Skip prompts. Use with great care |
 
 ### `hooks` (platform-specific, optional)
 
-Lifecycle hooks scoped to this agent. Common uses: enforce tests pass before the agent goes idle, block certain tool calls pre-execution.
+Lifecycle hooks scoped to this agent. Common uses: require passing tests before the agent goes idle, and block certain tool calls before they run.
 
 ### `maxTurns` (platform-specific, optional)
 
-Cap on the number of agentic turns before the agent stops. Useful for agents that can loop - a reviewer that keeps finding "one more thing".
+Cap on the number of agentic turns before the agent stops. Use it for agents that can loop, such as a reviewer that keeps finding "one more thing".
 
 ### `color`, `effort`, `background`, `initialPrompt` (platform-specific, optional)
 
 UX and runtime conveniences. Omit unless you have a specific need.
 
-## Field Combinations to Validate
+## Field combinations to validate
 
 | Combination | Why it matters |
 |---|---|
-| `isolation: worktree` without any write tools | Agent cannot actually modify anything - remove the isolation |
-| `Write`/`Edit` in `tools` without `isolation: worktree` | Agent edits the main tree - risky for team-shared agents |
-| `memory: project` on a stateless specialist | Wasted complexity - remove the memory field |
-| `skills` list longer than four entries | Context bloat - trim to the essentials |
-| `model` hardcoded in a distributable agent | Non-portable - remove it |
-| `permissionMode: bypassPermissions` on anything shared | Safety risk - justify or remove |
+| `isolation: worktree` without any write tools | Agent cannot modify anything, so remove the isolation |
+| `Write`/`Edit` in `tools` without `isolation: worktree` | Agent edits the main tree, which is risky for team-shared agents |
+| `memory: project` on a stateless specialist | Wasted complexity, so remove the memory field |
+| `skills` list longer than four entries | Context bloat, so trim to the essentials |
+| `model` hardcoded in a distributable agent | Non-portable, so remove it |
+| `permissionMode: bypassPermissions` on anything shared | Safety risk, so justify or remove |
 
-## Example Templates
+## Example templates
 
 ### Stateless specialist (read-only)
 
