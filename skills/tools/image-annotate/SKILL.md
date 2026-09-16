@@ -7,23 +7,23 @@ argument-hint: "<input-image> [<output-image>] [--name PURPOSE] [--rect ...] [--
 
 # Image Annotate
 
-Mark up an existing image with shapes, text, numbered steps, blur, or solid-color redaction. Single CLI, one-off flags for simple marks, JSON spec file for compositions. Output is a flat raster image with every mark burned in - the original is never modified in place. **The output filename always reflects what was done** - pass `--name PURPOSE` to label the artifact by intent, or omit the output path entirely and let the script derive a descriptive name from the operations applied.
+Mark up an existing image with shapes, text, numbered steps, blur, or solid-color redaction. It is a single CLI: one-off flags for simple marks, a JSON spec file for compositions. The output is a flat raster image with every mark burned in, and the original is never modified in place. The output filename always reflects what was done. Pass `--name PURPOSE` to label the artifact by intent, or omit the output path and let the script derive a descriptive name from the operations applied.
 
 ## Core Principles
 
 | Principle | Meaning |
 |---|---|
-| **Never modify in place** | Always write to a new output file. Annotation is destructive - the user must keep the original to redo or refine later. |
-| **Output names describe intent** | Either pass `--name some-purpose` to label the artifact, or omit the output argument and the script derives a name from the ops applied (e.g. `screenshot-rect-arrow-text.png`). Collisions get a `-2`, `-3` suffix so repeated runs never silently overwrite an earlier result. |
-| **Blur is not redaction** | Pixelation and blur can be reversed for text content. For passwords, API keys, SSNs, payment numbers, and other security-critical strings, use solid-color redaction. Blur is acceptable only for casual privacy (faces in marketing shots, peripheral background detail). See `references/redaction-safety.md`. |
-| **Marks should read on any background** | Use stroke + fill colors that contrast with the surrounding pixels, or add a contrasting outline to text. Yellow on a yellow page is invisible. The default style stacks a thick coloured stroke over the underlying pixels, never relies on transparency alone. |
-| **Coordinate origin is top-left** | All `(x, y)` coordinates start from the top-left corner of the image. Y increases downward. Match the convention to whatever the source tool reports - browser DevTools and most screenshot tools agree on this. |
-| **One operation, one purpose** | A single annotation does one thing. To layer marks, repeat flags or use a JSON spec - do not try to overload one operation. |
-| **Burn into a flat image** | The output is a single-layer PNG or JPEG. No editable layers, no SVG re-edit path. If the user needs to iterate, they re-run the script with a new spec. |
+| **Never modify in place** | Always write to a new output file. Annotation is destructive, so the user must keep the original to redo or refine later. |
+| **Output names describe intent** | Either pass `--name some-purpose` to label the artifact, or omit the output argument and the script derives a name from the ops applied (e.g. `screenshot-rect-arrow-text.png`). Collisions get a `-2`, `-3` suffix, so a repeated run never overwrites an earlier result. |
+| **Blur is not redaction** | Pixelation and blur can be reversed for text. For passwords, API keys, SSNs, payment numbers, and other security-critical strings, use solid-color redaction. Blur is acceptable only for casual privacy (faces in marketing shots, peripheral background detail). See `references/redaction-safety.md`. |
+| **Marks must read on any background** | Use stroke and fill colors that contrast with the surrounding pixels, or add a contrasting outline to text. Yellow on a yellow page is invisible. The default style stacks a thick colored stroke over the underlying pixels and does not rely on transparency alone. |
+| **Coordinate origin is top-left** | All `(x, y)` coordinates start from the top-left corner of the image. Y increases downward. Browser DevTools and most screenshot tools use the same convention. |
+| **One operation, one purpose** | A single annotation does one thing. To layer marks, repeat flags or use a JSON spec. Do not overload one operation. |
+| **Burn into a flat image** | The output is a single-layer PNG or JPEG. There are no editable layers and no SVG path for re-editing. To iterate, re-run the script with a new spec. |
 
 ---
 
-## Quick Start
+## Quick start
 
 ### Install (one-time, ask user first)
 
@@ -31,7 +31,7 @@ Mark up an existing image with shapes, text, numbered steps, blur, or solid-colo
 pip install --user Pillow
 ```
 
-Pillow is the imaging library. Cross-platform, pure-Python install. Check first:
+Pillow is the imaging library, installed with pip on any platform. Check first:
 
 ```bash
 python -c "import PIL; print(PIL.__version__)"
@@ -46,11 +46,11 @@ python scripts/annotate.py input.png output.png \
   --text 600,260 "Click this button" --text-color white --text-bg black
 ```
 
-That produces `output.png` with a red box around the region, a yellow arrow pointing into it, and a labelled callout next to the arrow.
+This produces `output.png` with a red box around the region, a yellow arrow pointing into it, and a labeled callout next to the arrow.
 
 ### Composition via JSON spec
 
-For three or more marks, prefer a spec file:
+For three or more marks, use a spec file:
 
 ```json
 [
@@ -71,9 +71,9 @@ Operations apply in order - later marks overlay earlier ones.
 
 ---
 
-## Operations Reference
+## Operations reference
 
-### Rectangle - `rect`
+### Rectangle: `rect`
 
 Bounding box around an area. Outline only by default (no fill).
 
@@ -84,9 +84,9 @@ Bounding box around an area. Outline only by default (no fill).
 | `--rect-width N` | `"width": 5` | 4 |
 | `--rect-fill NAME` | `"fill": null` | none (outline only) |
 
-### Arrow - `arrow`
+### Arrow: `arrow`
 
-Line with a triangular arrowhead at the end point. Points from `(x1,y1)` to `(x2,y2)` - the head is at `(x2,y2)`.
+Line with a triangular arrowhead at the end point. It points from `(x1,y1)` to `(x2,y2)`, and the head is at `(x2,y2)`.
 
 | CLI flag | JSON key | Default |
 |---|---|---|
@@ -95,9 +95,9 @@ Line with a triangular arrowhead at the end point. Points from `(x1,y1)` to `(x2
 | `--arrow-width N` | `"width": 6` | 6 |
 | `--arrow-head N` | `"head": 20` | 20 (pixels, half-width of the head triangle) |
 
-### Text label - `text`
+### Text label: `text`
 
-Text with an optional filled background box for legibility on any underlying image. The position is the top-left of the text.
+Text with an optional filled background box so it stays legible on any image. The position is the top-left of the text.
 
 | CLI flag | JSON key | Default |
 |---|---|---|
@@ -107,9 +107,9 @@ Text with an optional filled background box for legibility on any underlying ima
 | `--text-size N` | `"size": 24` | 24 |
 | `--text-padding N` | `"padding": 8` | 8 |
 
-### Circle / ellipse - `circle`
+### Circle / ellipse: `circle`
 
-Outline around a centre point. Useful for highlighting a single UI element.
+Outline around a center point. Use it to highlight a single UI element.
 
 | CLI flag | JSON key | Default |
 |---|---|---|
@@ -117,9 +117,9 @@ Outline around a centre point. Useful for highlighting a single UI element.
 | `--circle-color NAME` | `"color": "red"` | red |
 | `--circle-width N` | `"width": 4` | 4 |
 
-### Numbered step marker - `step`
+### Numbered step marker: `step`
 
-A filled coloured circle with a number inside, drawn in the order the user reads the image. Use for sequential tutorials ("first click here, then here, then here").
+A filled colored circle with a number inside, drawn in the order the reader follows. Use it for sequential tutorials ("first click here, then here, then here").
 
 | CLI flag | JSON key | Default |
 |---|---|---|
@@ -130,9 +130,9 @@ A filled coloured circle with a number inside, drawn in the order the user reads
 
 Stack multiple `--step` flags or list multiple `step` ops to enumerate a workflow.
 
-### Highlight - `highlight`
+### Highlight: `highlight`
 
-Semi-transparent coloured overlay over a rectangular region. Use to call attention to an area without obscuring its content. Defaults to a translucent yellow, like a marker pen.
+Semi-transparent colored overlay over a rectangular region. Use it to draw attention to an area without hiding its content. It defaults to a translucent yellow, like a marker pen.
 
 | CLI flag | JSON key | Default |
 |---|---|---|
@@ -140,25 +140,25 @@ Semi-transparent coloured overlay over a rectangular region. Use to call attenti
 | `--highlight-color NAME` | `"color": "yellow"` | yellow |
 | `--highlight-alpha N` | `"alpha": 80` | 80 (0-255, lower is more transparent) |
 
-### Blur - `blur`
+### Blur: `blur`
 
-Gaussian blur over a rectangular region. **Not safe for security-critical content.** Use only for casual privacy (faces, peripheral background detail, non-secret personal info).
+Gaussian blur over a rectangular region. **Not safe for security-critical content.** Use it only for casual privacy (faces, peripheral background detail, non-secret personal info).
 
 | CLI flag | JSON key | Default |
 |---|---|---|
 | `--blur x1,y1,x2,y2` | `{"op": "blur", "xy": [...]}` | required |
 | `--blur-radius N` | `"radius": 16` | 16 |
 
-### Redact - `redact`
+### Redact: `redact`
 
-Solid-color block over a rectangular region. Use this - not blur - for passwords, API keys, tokens, SSNs, payment numbers, or anything an attacker would reuse.
+Solid-color block over a rectangular region. Use this, not blur, for passwords, API keys, tokens, SSNs, payment numbers, or anything an attacker would reuse.
 
 | CLI flag | JSON key | Default |
 |---|---|---|
 | `--redact x1,y1,x2,y2` | `{"op": "redact", "xy": [...]}` | required |
 | `--redact-color NAME` | `"color": "black"` | black |
 
-### Crop - `crop`
+### Crop: `crop`
 
 Cut the image to a rectangular region. Applied first if present in the spec.
 
@@ -168,7 +168,7 @@ Cut the image to a rectangular region. Applied first if present in the spec.
 
 ---
 
-## Common Recipes
+## Common recipes
 
 ### Bug-report screenshot: box the broken part, label it
 
@@ -204,14 +204,14 @@ python scripts/annotate.py dashboard.png --name shareable \
 
 Output: `dashboard-shareable.png`.
 
-### Privacy-light: blur a face in a marketing-shot
+### Light privacy: blur a face in a marketing shot
 
 ```bash
 python scripts/annotate.py team.png --name anon-face \
   --blur 120,80,260,240 --blur-radius 24
 ```
 
-Output: `team-anon-face.png`. (Use redact instead if the face must be unrecognisable in any forensic recovery.)
+Output: `team-anon-face.png`. (Use redact instead if the face must stay unrecognizable under forensic recovery.)
 
 ### Highlight a paragraph in a documentation shot
 
@@ -224,54 +224,54 @@ Output: `docs-section-callout.png`.
 
 ---
 
-## Picking Coordinates
+## Picking coordinates
 
-The three reliable ways to find an `(x, y)` for a mark:
+Three reliable ways to find an `(x, y)` for a mark:
 
-1. **Browser DevTools elements panel** - hover the element; the highlight shows pixel offsets in the page. Multiply by device-pixel-ratio if the screenshot was retina.
-2. **macOS Preview / Linux image-viewer / Windows Paint** - open the screenshot, hover the target; most viewers show coordinates in the status bar.
-3. **A first dry run with a colour mark** - drop a `--rect 0,0,100,100` and binary-search outward until the box lands where you want. Wasteful but always works.
+1. **Browser DevTools elements panel**: hover the element. The highlight shows pixel offsets in the page. Multiply by the device-pixel ratio if the screenshot was retina.
+2. **macOS Preview, a Linux image viewer, or Windows Paint**: open the screenshot and hover the target. Most viewers show coordinates in the status bar.
+3. **A first dry run with a color mark**: draw `--rect 0,0,100,100` and binary-search outward until the box lands where you want. It is slow but always works.
 
-The coordinate origin is the **top-left** corner: `x` increases right, `y` increases down. Pillow, browsers, and OS screen-capture tools all agree on this.
+The coordinate origin is the top-left corner: `x` increases right and `y` increases down. Pillow, browsers, and OS screen-capture tools all use this.
 
 See `references/coordinate-cheatsheet.md` for common picks and offsets.
 
 ---
 
-## Quick Reference: Checklist
+## Quick reference: checklist
 
 - [ ] Pillow is installed (`python -c "import PIL"`)
 - [ ] Input image exists and is readable
-- [ ] Output path is **different** from the input - never overwrite the source
-- [ ] Coordinates are within the image bounds (Pillow will silently clip otherwise)
-- [ ] Colours are CSS-style names (`red`, `yellow`, `#ff8800`) - Pillow accepts both
+- [ ] Output path is different from the input (never overwrite the source)
+- [ ] Coordinates are within the image bounds (Pillow clips silently otherwise)
+- [ ] Colors are CSS-style names (`red`, `yellow`, `#ff8800`); Pillow accepts both
 - [ ] For sensitive data: `redact` not `blur`
-- [ ] Final output viewed at full resolution to confirm marks land where intended
+- [ ] Final output viewed at full resolution to confirm the marks land where intended
 
 ---
 
-## Reference Files
+## Reference files
 
 | Reference | Contents |
 |---|---|
-| [redaction-safety](references/redaction-safety.md) | What is safe to blur vs requires solid redaction; recoverability research; common mistakes |
-| [coordinate-cheatsheet](references/coordinate-cheatsheet.md) | Coordinate-picking tactics for typical screenshot dimensions; retina/DPR multipliers; offset patterns for arrows and labels |
+| [redaction-safety](references/redaction-safety.md) | What is safe to blur and what needs solid redaction; why blur is recoverable; common mistakes |
+| [coordinate-cheatsheet](references/coordinate-cheatsheet.md) | Coordinate-picking tactics for typical screenshot dimensions; retina and DPR multipliers; offset patterns for arrows and labels |
 
 ---
 
-## Integration with Other Skills
+## Integration with other skills
 
-| Situation | Recommended Skill |
+| Situation | Recommended skill |
 |---|---|
-| Need to capture the source image first | `web-screenshot` - capture, copy to host, then run this skill on the host file |
+| Need to capture the source image first | `web-screenshot`: capture, copy to host, then run this skill on the host file |
 | Generating a step-by-step tutorial | This skill's `step` operation plus the web-screenshot multi-viewport script for paired shots |
-| Producing a PR or status report with annotated screenshots | `report-writer` - embed the annotated PNGs into the HTML report |
+| Producing a PR or status report with annotated screenshots | `report-writer`: embed the annotated PNGs into the HTML report |
 
-## Critical Rules
+## Critical rules
 
-1. **Never overwrite the source image.** The output path must differ from the input path. Re-runs need the original. The script refuses to write to the input path; auto-derived names always land at a separate file next to the source.
-2. **Always produce a file with a meaningful name.** Either pass `--name PURPOSE` to label the artifact by intent or omit the output positional so the script derives a suffix from the ops applied. Never accept an opaque `out.png` as a deliverable when the agent could name what it produced.
-3. **Use `redact` for secrets, not `blur`.** Blur is reversible for text content. Passwords, API keys, payment numbers, SSNs, JWT tokens, and anything an attacker could replay must be covered with a solid block.
-4. **Coordinates are top-left origin and pixel-based.** Match the resolution of the image, not CSS pixels - if the screenshot is retina (2x), the coordinates are 2x what DevTools shows.
-5. **Operations apply in order.** Later marks paint over earlier marks. Put redactions LAST in the spec so nothing in the source leaks through a partially-transparent overlay.
-6. **Output format follows the file extension.** `.png` for lossless, `.jpg` for size-constrained. Annotations on a JPEG re-saved as JPEG will accumulate compression artifacts - prefer PNG when iterating.
+1. **Never overwrite the source image.** The output path must differ from the input path. Re-runs need the original. The script refuses to write to the input path, and auto-derived names always land in a separate file next to the source.
+2. **Always produce a file with a meaningful name.** Either pass `--name PURPOSE` to label the artifact by intent or omit the output positional so the script derives a suffix from the ops applied. Do not deliver an opaque `out.png` when the file could be named for what it shows.
+3. **Use `redact` for secrets, not `blur`.** Blur is reversible for text. Cover passwords, API keys, payment numbers, SSNs, JWT tokens, and anything an attacker could replay with a solid block.
+4. **Coordinates are top-left origin and pixel-based.** Match the resolution of the image, not CSS pixels. If the screenshot is retina (2x), the coordinates are 2x what DevTools shows.
+5. **Operations apply in order.** Later marks paint over earlier marks. Put redactions last in the spec so nothing in the source leaks through a partially transparent overlay.
+6. **Output format follows the file extension.** `.png` for lossless, `.jpg` for size-constrained. Annotations on a JPEG re-saved as JPEG accumulate compression artifacts, so prefer PNG when iterating.

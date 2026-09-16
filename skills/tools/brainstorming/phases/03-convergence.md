@@ -16,9 +16,9 @@ Narrow from the expanded problem space to a concrete, bounded scope.
 
 ## Rules
 
-- Do NOT proceed to Phase 4 with unresolved contradictions
-- Do NOT add scope the user did not request
-- If the user introduces new scope during convergence, acknowledge it and loop back to the relevant divergence category in Phase 2
+- Do not proceed to Phase 4 with unresolved contradictions
+- Do not add scope the user did not request
+- If the user introduces new scope during convergence, say so and loop back to the relevant divergence category in Phase 2
 
 ## Gate
 
@@ -28,4 +28,4 @@ Narrow from the expanded problem space to a concrete, bounded scope.
 
 Ask the user: "Scope locked - must-haves: [list], non-goals: [list]. Ready to write the spec?"
 
-Do NOT proceed to Phase 4 until the user confirms.
+Do not proceed to Phase 4 until the user confirms.

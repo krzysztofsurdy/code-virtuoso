@@ -1,16 +1,25 @@
-# When to Exit
+# When to exit
 
-Criteria for determining whether brainstorming is complete or needs more rounds. The goal is to stop at the point of diminishing returns - thorough enough that the spec is reliable, not so thorough that the session becomes an end in itself.
+Criteria for determining whether brainstorming is complete or needs more rounds. Stop at the point of diminishing returns: thorough enough that the spec is reliable, not so thorough that the session becomes an end in itself.
+
+## Contents
+
+- [Brainstorming is done when](#brainstorming-is-done-when)
+- [Brainstorming needs more rounds when](#brainstorming-needs-more-rounds-when)
+- [Diminishing returns](#diminishing-returns)
+- [Premature exit](#premature-exit)
+- [Edge cases](#edge-cases)
+- [Decision tree](#decision-tree)
 
 ---
 
-## Brainstorming Is Done When
+## Brainstorming is done when
 
 All of the following must be true:
 
 1. **The spec is written.** All mandatory sections of the spec template are filled in. Empty sections are marked "N/A - [reason]" with a genuine reason.
 
-2. **The user has explicitly approved.** "Looks good," "approve," "yes," or equivalent affirmative. Silence, "sure," or proceeding without comment does NOT count as approval - ask directly.
+2. **The user has explicitly approved.** "Looks good," "approve," "yes," or equivalent affirmative. Silence, "sure," or proceeding without comment does not count as approval - ask directly.
 
 3. **No unresolved contradictions.** If the spec says both "real-time updates" and "works offline," those have been reconciled into a coherent design direction (e.g., "offline-first with sync-on-reconnect").
 
@@ -18,27 +27,27 @@ All of the following must be true:
 
 5. **The scope boundary is explicit.** Goals and non-goals together draw a clear line around what is in and what is out. A reader who was not in the session can tell what the project includes and excludes.
 
-6. **The first-cut approach is coherent with the scope.** The described approach sounds like it could plausibly satisfy the acceptance criteria. If the approach sounds wildly insufficient or over-engineered for the stated scope, something is misaligned.
+6. **The first-cut approach is coherent with the scope.** The described approach could plausibly satisfy the acceptance criteria. If the approach looks far too small or too large for the stated scope, something is misaligned.
 
 ---
 
-## Brainstorming Needs More Rounds When
+## Brainstorming needs more rounds when
 
 Any of the following indicate the session is not yet complete:
 
-### Signals from the Spec
+### Signals from the spec
 
-| Signal | What It Means | Action |
+| Signal | What it means | Action |
 |---|---|---|
 | A section says "TBD" or "to be determined" | Genuine unknowns remain | Move to open questions if non-blocking, or resolve if blocking |
 | Acceptance criteria use vague language ("fast," "reliable," "user-friendly") | Criteria are not testable | Rewrite with specific, measurable thresholds |
-| Non-goals section is empty | Scope boundaries are undefined | Ask: "What might someone expect to be in scope that is NOT?" |
+| Non-goals section is empty | Scope boundaries are undefined | Ask: "What might someone expect to be in scope that is not?" |
 | Risks section has only generic risks | Risk analysis was superficial | Ask about specific technical, operational, and adoption risks |
 | First-cut approach contradicts constraints | Coherence failure | Revisit constraints and approach together |
 
-### Signals from the Conversation
+### Signals from the conversation
 
-| Signal | What It Means | Action |
+| Signal | What it means | Action |
 |---|---|---|
 | User has not disagreed with or refined anything | Possible fake consensus | Probe engagement - see anti-patterns reference |
 | User introduced new scope after convergence | Scope is not locked | Return to divergence for the new item, then re-converge |
@@ -46,9 +55,9 @@ Any of the following indicate the session is not yet complete:
 | User deferred a decision ("let's figure that out later") | An open question may be blocking | Assess: is this genuinely non-blocking, or is it avoidance? |
 | Two stated requirements contradict each other | Unresolved contradiction | Surface the conflict explicitly and ask the user to choose |
 
-### Signals from Question Coverage
+### Signals from question coverage
 
-| Signal | What It Means | Action |
+| Signal | What it means | Action |
 |---|---|---|
 | No constraint-surfacing questions were asked | Solution space may be unbounded | Ask at least two constraint questions before closing |
 | No risk-surfacing questions were asked | Risks are hidden, not absent | Ask at least one risk question before closing |
@@ -57,7 +66,7 @@ Any of the following indicate the session is not yet complete:
 
 ---
 
-## Diminishing Returns
+## Diminishing returns
 
 Brainstorming has reached diminishing returns when:
 
@@ -71,7 +80,7 @@ At this point, write the spec and move to the approval gate. Do not continue exp
 
 ---
 
-## Premature Exit
+## Premature exit
 
 Brainstorming is being exited too early when:
 
@@ -81,31 +90,31 @@ Brainstorming is being exited too early when:
 - No closed questions were asked during convergence (scope was never locked)
 - The acceptance criteria describe features, not testable outcomes
 
-If the user pushes to skip ahead, acknowledge the pressure and demonstrate value: "I understand you want to move fast. Let me ask one more question that will save us rework later."
+If the user pushes to skip ahead, acknowledge the pressure and show the value: "I understand you want to move fast. Let me ask one more question that will save us rework later."
 
 ---
 
-## Edge Cases
+## Edge cases
 
-### The User Approves Too Quickly
+### The user approves too quickly
 
-If the user approves the spec within seconds of seeing it, they probably did not read it. Ask a specific question about one acceptance criterion: "Just to confirm - criterion #3 says [specific detail]. Is that accurate?" This forces engagement without being confrontational.
+If the user approves the spec within seconds of seeing it, they probably did not read it. Ask a specific question about one acceptance criterion: "Just to confirm - criterion #3 says [specific detail]. Is that accurate?" This prompts engagement without confrontation.
 
-### The User Wants to Iterate Forever
+### The user wants to iterate forever
 
-If convergence has restarted more than twice, the user may be uncomfortable committing. Name it: "We have explored this thoroughly. Is there a specific concern that is preventing you from approving, or are we ready?" Sometimes the blocker is not a spec issue but an organizational or political one.
+If convergence has restarted more than twice, the user may be uncomfortable committing. Name it: "We have explored this at length. Is there a specific concern that is preventing you from approving, or are we ready?" Sometimes the blocker is not a spec issue but an organizational or political one.
 
-### The Scope Changed Dramatically
+### The scope changed dramatically
 
-If Phase 2 (divergence) revealed that the project is fundamentally different from what the user initially described, do not try to fit the new understanding into the old spec. Start a fresh spec with the new problem statement. Attempting to patch a spec whose foundation has shifted produces an incoherent document.
+If Phase 2 (divergence) revealed that the project is fundamentally different from what the user initially described, do not try to fit the new understanding into the old spec. Start a fresh spec with the new problem statement. Patching a spec whose foundation has shifted produces an incoherent document.
 
-### Multiple Specs Needed
+### Multiple specs needed
 
-If brainstorming reveals that the project naturally splits into independent workstreams, produce separate specs for each. A spec that tries to cover two unrelated features is harder to approve, harder to implement, and harder to verify.
+If brainstorming reveals that the project naturally splits into independent workstreams, produce separate specs for each. A spec that covers two unrelated features is harder to approve, implement, and verify.
 
 ---
 
-## Decision Tree
+## Decision tree
 
 ```
 Is the spec fully written?

@@ -1,4 +1,4 @@
-# Phase 4: Spec Writing
+# Phase 4: Spec writing
 
 **Progress: Phase 4 of 5**
 
@@ -14,7 +14,7 @@ Produce a written spec from everything gathered in Phases 1-3.
    |---|---|
    | Problem | What is broken, missing, or needed - stated as a problem, not a solution |
    | Goal | The desired outcome in one or two sentences |
-   | Non-goals | What this spec explicitly does NOT cover |
+   | Non-goals | What this spec explicitly does not cover |
    | Constraints | Technical, time, team, budget, or regulatory limits |
    | Users & stakeholders | Who benefits, who is affected, who decides |
    | Acceptance criteria | Testable conditions that define "done" |
@@ -37,7 +37,7 @@ Produce a written spec from everything gathered in Phases 1-3.
 ## Rules
 
 - The spec must be understandable by someone who was not in the conversation
-- No implementation details - the spec describes WHAT, not HOW
+- No implementation details - the spec describes what, not how
 - No technology choices unless they are genuine constraints
 - Acceptance criteria must be testable
 - Scale depth to complexity
@@ -49,4 +49,4 @@ Produce a written spec from everything gathered in Phases 1-3.
 
 Present the full spec and ask: "Does this spec accurately capture what you want to build? Reply **approve** to proceed, or tell me what needs to change."
 
-Do NOT proceed to Phase 5 until this question is asked.
+Do not proceed to Phase 5 until this question is asked.

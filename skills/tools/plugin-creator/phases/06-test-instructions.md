@@ -1,4 +1,4 @@
-# Phase 6: Test and Install Instructions
+# Phase 6: Test and install instructions
 
 **Progress: Phase 6 of 6**
 
@@ -27,6 +27,6 @@ Print test commands, reload instructions, and next steps so the user can verify 
 
 ## Gate
 
-This is the final phase. No gate needed.
+This is the final phase. There is no gate.
 
 Confirm: "Plugin `[name]` scaffolded successfully. Run the test command above to verify."

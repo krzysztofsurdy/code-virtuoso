@@ -1,16 +1,28 @@
-# marketplace.json Reference
+# marketplace.json reference
 
 The marketplace catalog lives at `.claude-plugin/marketplace.json` in a dedicated marketplace repository (or the same repo as a single plugin). It lists the plugins available through this marketplace and where to fetch each one.
 
-## Required Fields
+## Contents
+
+- [Required fields](#required-fields)
+- [Optional metadata](#optional-metadata)
+- [Reserved marketplace names](#reserved-marketplace-names)
+- [Plugin entry fields](#plugin-entry-fields)
+- [Plugin sources](#plugin-sources)
+- [Strict mode](#strict-mode)
+- [Minimal valid marketplace](#minimal-valid-marketplace)
+- [Multi-plugin example](#multi-plugin-example)
+- [Common mistakes](#common-mistakes)
+
+## Required fields
 
 | Field     | Type   | Description                                                                                                                                                              |
 |-----------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `name`    | string | Marketplace identifier (kebab-case, no spaces). Public-facing - users see it when installing: `/plugin install my-tool@your-marketplace`.                               |
+| `name`    | string | Marketplace identifier (kebab-case, no spaces). It is public: users see it when installing: `/plugin install my-tool@your-marketplace`.                               |
 | `owner`   | object | `{ "name": "...", "email": "..." }`. `name` required, `email` optional.                                                                                                  |
 | `plugins` | array  | List of plugin entries.                                                                                                                                                  |
 
-## Optional Metadata
+## Optional metadata
 
 | Field                   | Type   | Description                                                                                                                           |
 |-------------------------|--------|---------------------------------------------------------------------------------------------------------------------------------------|
@@ -18,7 +30,7 @@ The marketplace catalog lives at `.claude-plugin/marketplace.json` in a dedicate
 | `metadata.version`      | string | Marketplace version.                                                                                                                  |
 | `metadata.pluginRoot`   | string | Base directory prepended to relative plugin source paths. E.g. `"./plugins"` lets entries use `"source": "formatter"` instead of `"./plugins/formatter"`. |
 
-## Reserved Marketplace Names
+## Reserved marketplace names
 
 The following names are reserved for official Anthropic use. Any marketplace that uses them (or impersonates them with variants like `official-claude-plugins`) is blocked:
 
@@ -31,18 +43,18 @@ The following names are reserved for official Anthropic use. Any marketplace tha
 - `knowledge-work-plugins`
 - `life-sciences`
 
-## Plugin Entry Fields
+## Plugin entry fields
 
-Each entry in the `plugins` array can include any field from the [plugin manifest schema](plugin-manifest.md) (description, version, author, commands, hooks, etc.) **plus** these marketplace-specific fields.
+Each entry in the `plugins` array can include any field from the [plugin manifest schema](plugin-manifest.md) (description, version, author, commands, hooks, etc.) plus these marketplace-specific fields.
 
 ### Required
 
 | Field    | Type             | Description                                                                 |
 |----------|------------------|-----------------------------------------------------------------------------|
 | `name`   | string           | Plugin identifier (kebab-case, no spaces). Used as `plugin-name@marketplace-name` when installing. |
-| `source` | string \| object | Where to fetch the plugin from (see [Plugin Sources](#plugin-sources)).     |
+| `source` | string \| object | Where to fetch the plugin from (see [Plugin sources](#plugin-sources)).     |
 
-### Optional Standard Metadata
+### Optional standard metadata
 
 | Field         | Type    | Description                                                                                    |
 |---------------|---------|------------------------------------------------------------------------------------------------|
@@ -55,9 +67,9 @@ Each entry in the `plugins` array can include any field from the [plugin manifes
 | `keywords`    | array   | Tags for discovery.                                                                            |
 | `category`    | string  | Plugin category for organization.                                                              |
 | `tags`        | array   | Tags for searchability.                                                                        |
-| `strict`      | boolean | Default `true`. See [Strict Mode](#strict-mode).                                               |
+| `strict`      | boolean | Default `true`. See [Strict mode](#strict-mode).                                               |
 
-### Optional Component Configuration
+### Optional component configuration
 
 These override or supplement the plugin's own `plugin.json`:
 
@@ -70,9 +82,9 @@ These override or supplement the plugin's own `plugin.json`:
 | `mcpServers` | string \| obj   | MCP config path or inline `mcpServers` object.                 |
 | `lspServers` | string \| obj   | LSP config path or inline `lspServers` object.                 |
 
-## Plugin Sources
+## Plugin sources
 
-`source` tells Claude Code where to fetch each individual plugin. Not to be confused with the **marketplace source** (where `marketplace.json` itself lives).
+`source` tells Claude Code where to fetch each individual plugin. It is separate from the marketplace source, which is where `marketplace.json` itself lives.
 
 | Source type    | Shape                              | Required fields                    | Optional fields | Notes                                                                                  |
 |----------------|------------------------------------|------------------------------------|-----------------|----------------------------------------------------------------------------------------|
@@ -82,7 +94,7 @@ These override or supplement the plugin's own `plugin.json`:
 | `git-subdir`   | object                             | `url`, `path`                      | `ref`, `sha`    | Plugin lives in a subdirectory of a git repo. Uses sparse clone to minimize bandwidth. |
 | `npm`          | object                             | `package`                          | `version`, `registry` | Installed via `npm install`. Supports private registries.                       |
 
-### Relative Path
+### Relative path
 
 ```json
 {
@@ -91,7 +103,7 @@ These override or supplement the plugin's own `plugin.json`:
 }
 ```
 
-**Warning**: relative paths only work when the marketplace is added via Git (GitHub, GitLab, or git URL). If users add your marketplace via a direct URL to `marketplace.json`, relative paths will not resolve. For URL-distributed marketplaces, use `github`, `url`, or `npm` sources instead.
+**Warning**: relative paths work only when the marketplace is added via Git (GitHub, GitLab, or git URL). If users add your marketplace via a direct URL to `marketplace.json`, relative paths will not resolve. For URL-distributed marketplaces, use `github`, `url`, or `npm` sources instead.
 
 ### GitHub
 
@@ -107,7 +119,7 @@ These override or supplement the plugin's own `plugin.json`:
 }
 ```
 
-### Generic Git URL
+### Generic git URL
 
 ```json
 {
@@ -120,9 +132,9 @@ These override or supplement the plugin's own `plugin.json`:
 }
 ```
 
-### Git Subdirectory
+### Git subdirectory
 
-For monorepos, avoids cloning the full repo:
+For monorepos, this avoids cloning the full repo:
 
 ```json
 {
@@ -136,7 +148,7 @@ For monorepos, avoids cloning the full repo:
 }
 ```
 
-`url` accepts full URL, GitHub shorthand (`owner/repo`), or SSH URL.
+`url` accepts a full URL, GitHub shorthand (`owner/repo`), or an SSH URL.
 
 ### npm
 
@@ -152,19 +164,19 @@ For monorepos, avoids cloning the full repo:
 }
 ```
 
-## Strict Mode
+## Strict mode
 
 `strict` (default `true`) controls whether `plugin.json` is the authoritative source for component definitions.
 
-- **`strict: true`** (default) - `plugin.json` owns component paths. Marketplace entry cannot override `commands`, `agents`, `hooks`, `mcpServers`, `lspServers`. Safer for plugins you do not control.
-- **`strict: false`** - Marketplace entry may override/augment component paths. Useful when:
+- **`strict: true`** (default): `plugin.json` owns component paths. The marketplace entry cannot override `commands`, `agents`, `hooks`, `mcpServers`, `lspServers`. Safer for plugins you do not control.
+- **`strict: false`**: the marketplace entry may override or add to component paths. Useful when:
   - The plugin has no `plugin.json` (single-plugin repo with everything at the root)
   - You want to add extra hooks or MCP servers at the marketplace layer
   - You are building a single-plugin marketplace where plugin and marketplace share the same root
 
-If `strict: false` is set but the plugin also has a `plugin.json` defining components, you will see the error: `Plugin <name> has conflicting manifests: both plugin.json and marketplace entry specify components.` - remove the duplicate definitions or flip `strict` back to `true`.
+If `strict: false` is set but the plugin also has a `plugin.json` defining components, you will see the error `Plugin <name> has conflicting manifests: both plugin.json and marketplace entry specify components.` Remove the duplicate definitions or set `strict` back to `true`.
 
-## Minimal Valid Marketplace
+## Minimal valid marketplace
 
 ```json
 {
@@ -180,7 +192,7 @@ If `strict: false` is set but the plugin also has a `plugin.json` defining compo
 }
 ```
 
-## Multi-Plugin Example
+## Multi-plugin example
 
 ```json
 {
@@ -220,7 +232,7 @@ If `strict: false` is set but the plugin also has a `plugin.json` defining compo
 
 With `metadata.pluginRoot: "./plugins"`, the `code-formatter` entry's relative `"source": "formatter"` resolves to `./plugins/formatter`.
 
-## Common Mistakes
+## Common mistakes
 
 | Mistake                                                    | Fix                                                                             |
 |------------------------------------------------------------|---------------------------------------------------------------------------------|

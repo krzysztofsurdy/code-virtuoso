@@ -1,8 +1,21 @@
-# plugin.json Reference
+# plugin.json reference
 
-The plugin manifest lives at `.claude-plugin/plugin.json` inside the plugin directory. It is **optional** - if omitted, Claude Code auto-discovers components in default locations and derives the plugin name from the directory name. Provide a manifest when you need metadata, custom component paths, `userConfig`, or `channels`.
+The plugin manifest lives at `.claude-plugin/plugin.json` inside the plugin directory. It is optional. If omitted, Claude Code discovers components in the default locations and takes the plugin name from the directory name. Provide a manifest when you need metadata, custom component paths, `userConfig`, or `channels`.
 
-## Complete Schema
+## Contents
+
+- [Full schema](#full-schema)
+- [Required fields](#required-fields)
+- [Metadata fields](#metadata-fields)
+- [Component path fields](#component-path-fields)
+- [Hooks field semantics](#hooks-field-semantics)
+- [User configuration](#user-configuration)
+- [Channels](#channels)
+- [Environment variables for plugin authors](#environment-variables-for-plugin-authors)
+- [Version management rules](#version-management-rules)
+- [Common mistakes](#common-mistakes)
+
+## Full schema
 
 ```json
 {
@@ -30,7 +43,7 @@ The plugin manifest lives at `.claude-plugin/plugin.json` inside the plugin dire
 }
 ```
 
-## Required Fields
+## Required fields
 
 If a manifest is present, only `name` is required.
 
@@ -38,9 +51,9 @@ If a manifest is present, only `name` is required.
 |--------|--------|-----------------------------------------------------------|----------------------|
 | `name` | string | Unique identifier (kebab-case, no spaces). Used as the skill namespace (`/plugin-name:skill-name`). | `"deployment-tools"` |
 
-## Metadata Fields
+## Metadata fields
 
-All optional. Populate whatever is useful for discovery and attribution.
+All optional. Fill in whatever helps discovery and attribution.
 
 | Field         | Type   | Description                                                                                                            |
 |---------------|--------|------------------------------------------------------------------------------------------------------------------------|
@@ -52,9 +65,9 @@ All optional. Populate whatever is useful for discovery and attribution.
 | `license`     | string | SPDX identifier (`MIT`, `Apache-2.0`, `GPL-3.0`, `BSD-3-Clause`, etc.).                                                |
 | `keywords`    | array  | Tags for discovery. Keep them short and topical.                                                                       |
 
-## Component Path Fields
+## Component path fields
 
-All optional. **Custom paths replace the default directory.** If you set `skills`, the default `skills/` directory is no longer scanned. To keep the default *and* add more paths, include the default in an array: `"skills": ["./skills/", "./extras/"]`.
+All optional. **Custom paths replace the default directory.** If you set `skills`, the default `skills/` directory is no longer scanned. To keep the default and add more paths, include the default in an array: `"skills": ["./skills/", "./extras/"]`.
 
 | Field          | Type                    | Replaces default         | Purpose                                                      |
 |----------------|-------------------------|--------------------------|--------------------------------------------------------------|
@@ -66,14 +79,14 @@ All optional. **Custom paths replace the default directory.** If you set `skills
 | `outputStyles` | string \| array         | `output-styles/`         | Custom output style files or directories.                    |
 | `lspServers`   | string \| array \| obj  | `.lsp.json`              | Path(s) to LSP config or inline `lspServers` object.         |
 
-### Path Rules
+### Path rules
 
 - All paths must be relative to the plugin root and start with `./`.
-- Paths that traverse outside the plugin root (`../shared-utils`) will not work after installation because the cache does not copy external files.
-- Symlinks **are** preserved by the cache. Use them to share files across plugins.
+- Paths that go outside the plugin root (`../shared-utils`) do not work after installation, because the cache does not copy external files.
+- The cache preserves symlinks. Use them to share files across plugins.
 - When a skill path points to a directory containing `SKILL.md` directly (e.g. `"skills": ["./"]`), the `name` field in the SKILL.md frontmatter determines the invocation name. Otherwise the directory basename is used.
 
-## Hooks Field Semantics
+## Hooks field semantics
 
 Plugin hooks can come from multiple sources and are merged, not replaced. Valid shapes:
 
@@ -105,9 +118,9 @@ Plugin hooks can come from multiple sources and are merged, not replaced. Valid 
 
 The default `hooks/hooks.json` is loaded in addition to any declared `hooks`. Same for `mcpServers` (default `.mcp.json`) and `lspServers` (default `.lsp.json`).
 
-## User Configuration
+## User configuration
 
-The `userConfig` field declares values that Claude Code prompts the user for when the plugin is enabled. This replaces hand-editing `settings.json`.
+The `userConfig` field declares values that Claude Code prompts the user for when the plugin is enabled. This replaces editing `settings.json` by hand.
 
 ```json
 {
@@ -128,7 +141,7 @@ The `userConfig` field declares values that Claude Code prompts the user for whe
 - Values are substitutable as `${user_config.KEY}` in MCP/LSP configs, hook commands, and (for non-sensitive values only) skill and agent content.
 - Values are exposed to plugin subprocesses as `CLAUDE_PLUGIN_OPTION_<KEY>` environment variables.
 - Non-sensitive values land in `settings.json` under `pluginConfigs[<plugin-id>].options`.
-- Sensitive values go to the system keychain (or `~/.claude/.credentials.json` fallback). Keychain storage has ~2 KB total limit shared with OAuth tokens - keep sensitive values small.
+- Sensitive values go to the system keychain (or `~/.claude/.credentials.json` fallback). Keychain storage has a total limit of about 2 KB, shared with OAuth tokens, so keep sensitive values small.
 
 ## Channels
 
@@ -151,7 +164,7 @@ The `channels` field lets a plugin declare message channels that inject content 
 - `server` is required and must match a key in the plugin's `mcpServers`.
 - Per-channel `userConfig` uses the same schema as top-level `userConfig` and is prompted at enable time.
 
-## Environment Variables for Plugin Authors
+## Environment variables for plugin authors
 
 Two variables are substituted inline anywhere they appear in skill content, agent content, hook commands, and MCP/LSP server configs. Both are also exported to hook processes and server subprocesses.
 
@@ -164,7 +177,7 @@ The data directory resolves to `~/.claude/plugins/data/{id}/` where `{id}` is th
 
 ### Dependency-install pattern
 
-Because the data directory outlives any single plugin version, detecting "does the manifest differ from what is installed?" requires comparing files, not checking directory existence:
+The data directory outlives any single plugin version, so detecting whether the manifest differs from what is installed means comparing files, not checking that the directory exists:
 
 ```json
 {
@@ -183,19 +196,19 @@ Because the data directory outlives any single plugin version, detecting "does t
 }
 ```
 
-The `diff` exits nonzero when the stored copy is missing or differs, covering first run and dependency-changing updates. The trailing `rm` clears the copied manifest on `npm install` failure so the next session retries.
+The `diff` exits nonzero when the stored copy is missing or differs, which covers the first run and updates that change dependencies. The trailing `rm` clears the copied manifest on `npm install` failure so the next session retries.
 
-## Version Management Rules
+## Version management rules
 
 - Follow semantic versioning: `MAJOR.MINOR.PATCH`.
-  - MAJOR - breaking changes
-  - MINOR - backward-compatible additions
-  - PATCH - backward-compatible fixes
+  - MAJOR: breaking changes
+  - MINOR: backward-compatible additions
+  - PATCH: backward-compatible fixes
 - Start new plugins at `1.0.0`. Use `0.x.y` only if breaking changes are actively expected.
-- **Claude Code uses the version to decide whether to update plugins.** If the plugin content changes but the version does not, users will not see updates due to caching.
-- If the plugin lives inside a marketplace directory, versioning can be managed in `marketplace.json` instead - in that case, omit `version` from `plugin.json`.
+- **Claude Code uses the version to decide whether to update plugins.** If the plugin content changes but the version does not, users do not see updates because of caching.
+- If the plugin lives inside a marketplace directory, versioning can be managed in `marketplace.json` instead. In that case, omit `version` from `plugin.json`.
 
-## Common Mistakes
+## Common mistakes
 
 | Mistake                                                   | Fix                                                                          |
 |-----------------------------------------------------------|------------------------------------------------------------------------------|

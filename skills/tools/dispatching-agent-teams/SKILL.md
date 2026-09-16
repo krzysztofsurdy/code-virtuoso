@@ -7,23 +7,23 @@ argument-hint: "<team-name>"
 
 # Dispatching Agent Teams
 
-Read a team definition file, resolve its agents and skills, and execute the coordination protocol. The team file is the recipe - this skill is the cook.
+Read a team definition file, resolve its agents and skills, and execute the coordination protocol. The team file is the recipe and this skill is the cook.
 
 ## Core Principles
 
 | Principle | Meaning |
 |---|---|
 | **Team file is the contract** | Follow the workflow, entry/exit criteria, and coordination rules defined in the team file. Do not improvise the process. |
-| **Detect capabilities first** | Check what spawning mode the platform supports before dispatching. Peer mode if available, sequential fallback otherwise. |
+| **Detect capabilities first** | Check which spawning mode the platform supports before dispatching. Use peer mode if available, sequential mode otherwise. |
 | **Skills before agents** | Preload the team's bundled skills before spawning any agent. Agents need their reference material from the start. |
-| **Respect coordination rules** | If the team file says "Architect must approve before implementation starts", enforce it. Do not skip gates. |
-| **Fail early, not late** | If a required agent is not installed, stop before dispatching. Do not discover missing agents mid-workflow. |
+| **Respect coordination rules** | If the team file says "Architect must approve before implementation starts", enforce it. Never skip a gate. |
+| **Fail early** | If a required agent is not installed, stop before dispatching. Do not discover missing agents mid-workflow. |
 
 ---
 
 ## Workflow
 
-### Phase 1: Resolve the Team
+### Phase 1: Resolve the team
 
 Teams are discovered from two locations in this order:
 
@@ -39,24 +39,24 @@ Resolution:
 5. Verify every skill in the `skills` list exists as an installed skill.
 6. If any agent or skill is missing, report what is missing and stop. Do not proceed with a partial team.
 
-### Team Library
+### Team library
 
-The `agent-teams` skill catalogs the available pre-composed teams (development-team, review-squad, war-room) with their purpose and use cases. To browse what is available before dispatching, consult that skill first.
+The `agent-teams` skill lists the pre-composed teams (development-team, review-squad, war-room) with their purpose and use cases. Consult it before dispatching to see what is available.
 
 To author your own team, see [spec/team-spec.md](../../../spec/team-spec.md) and place the file at the project root's `teams/{name}.md`.
 
-### Phase 2: Verify Entry Criteria
+### Phase 2: Verify entry criteria
 
 1. Read the team file's "Entry Criteria" section.
 2. Check each criterion against the current state (e.g., "ticket exists", "CI is green", "stakeholder available").
 3. If a criterion cannot be verified automatically, ask the user to confirm it.
 4. Do not proceed until all entry criteria are met or explicitly waived by the user.
 
-### Phase 3: Preload Skills
+### Phase 3: Preload skills
 
 Load the skills listed in the team's `skills` frontmatter. These provide reference material that agents will need during their work (e.g., testing patterns, API design principles, verification checklists).
 
-### Phase 4: Detect Spawning Mode and Workflow Variants
+### Phase 4: Detect spawning mode and workflow variants
 
 Check what the current platform supports:
 
@@ -71,12 +71,12 @@ Then check the team's `workflow` type for special handling:
 | Workflow | Special protocol |
 |---|---|
 | `parallel` | Check Coordination Rules for per-agent context restrictions. If present, build differential briefs per agent (see [spawning-protocol](references/spawning-protocol.md)). |
-| `war-room` | Use multi-pass rounds: position round, then challenge round, then synthesis. Agents respond with perspective only - no tool use during the debate (see [spawning-protocol](references/spawning-protocol.md)). |
+| `war-room` | Use multi-pass rounds: position round, then challenge round, then synthesis. Agents respond with perspective only and use no tools during the debate (see [spawning-protocol](references/spawning-protocol.md)). |
 | `sequential`, `hybrid` | Standard protocol. |
 
 ### Phase 5: Dispatch
 
-#### Peer Mode
+#### Peer mode
 
 1. Create a team with the lead agent as coordinator.
 2. Add all other agents as teammates.
@@ -85,7 +85,7 @@ Then check the team's `workflow` type for special handling:
 5. The lead assigns the first unblocked task. Teammates claim tasks as they unblock.
 6. Teammates message each other for clarifications as described in the coordination rules.
 
-#### Sequential Mode
+#### Sequential mode
 
 1. The lead agent runs in the current session.
 2. For each workflow phase in order:
@@ -95,13 +95,13 @@ Then check the team's `workflow` type for special handling:
    d. If the team file defines a gate between this phase and the next, verify the gate condition before proceeding.
 3. Pass each phase's output as input to the next phase.
 
-#### Inline Mode
+#### Inline mode
 
 1. Execute each workflow phase sequentially in the current session.
 2. For each phase, adopt the role described in the team file and consult the relevant skills.
 3. Produce the expected output before moving to the next phase.
 
-### Phase 6: Verify Exit Criteria
+### Phase 6: Verify exit criteria
 
 1. Read the team file's "Exit Criteria" section.
 2. Check each criterion against the current state.
@@ -110,7 +110,7 @@ Then check the team's `workflow` type for special handling:
 
 ---
 
-## Handling Failures
+## Handling failures
 
 | Failure | Action |
 |---|---|
@@ -123,7 +123,7 @@ Then check the team's `workflow` type for special handling:
 
 ---
 
-## Quality Checklist
+## Quality checklist
 
 Before claiming the team run is complete:
 
@@ -135,9 +135,9 @@ Before claiming the team run is complete:
 
 ---
 
-## Platform Notes
+## Platform notes
 
-Platform-specific tool names and conventions for executing this skill. The instructions above stay portable; the table below maps abstract capabilities to concrete tools per platform.
+Platform-specific tool names and conventions for running this skill. The instructions above stay portable, and the table below maps each capability to concrete tools per platform.
 
 | Platform | Convention |
 |---|---|
@@ -146,15 +146,15 @@ Platform-specific tool names and conventions for executing this skill. The instr
 | Windsurf | (TBD) Use the platform's multi-agent coordination feature if available; otherwise fall back to sequential sub-agent dispatch. |
 | Other | Use the platform's equivalent for instantiating a multi-agent team with a shared task list. If no such mechanism exists, run in sequential mode. |
 
-## Reference Files
+## Reference files
 
 | Reference | Contents |
 |---|---|
-| [spawning-protocol](references/spawning-protocol.md) | Detailed spawning steps for peer, sequential, and inline modes |
+| [spawning-protocol](references/spawning-protocol.md) | Spawning steps for peer, sequential, and inline modes |
 
-## Integration with Other Skills
+## Integration with other skills
 
-| Situation | Recommended Skill |
+| Situation | Recommended skill |
 |---|---|
 | Need to discover which teams are available | `using-ecosystem` |
 | Need to create a new team definition | Use `template/team-template.md` and `spec/team-spec.md` |

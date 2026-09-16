@@ -7,11 +7,11 @@ argument-hint: "[optional: one-line topic]"
 
 # Brainstorming
 
-Structured pre-implementation design exploration. Transforms a vague idea into a written spec through focused, one-at-a-time questioning before any code is written, any plan is created, or any architecture is decided. The spec is the deliverable - everything else follows from it.
+Structured pre-implementation design exploration. It turns a vague idea into a written spec through focused, one-at-a-time questions, before any code is written, any plan is made, or any architecture is chosen. The spec is the deliverable, and everything else follows from it.
 
 **No code until the spec is written and approved.**
 
-## When to Use
+## When to use
 
 - The user says "I want to build X" but has no written requirements
 - A feature request exists as a sentence or two with no detail
@@ -19,7 +19,7 @@ Structured pre-implementation design exploration. Transforms a vague idea into a
 - Someone says "let's brainstorm" or "help me figure this out"
 - A problem statement exists but the solution space is unexplored
 
-## Quick Start
+## Quick start
 
 ```
 /brainstorming user authentication for a SaaS app
@@ -33,23 +33,23 @@ If `$ARGUMENTS` is provided, use it as the initial topic and skip straight to Ph
 
 ## Workflow
 
-This skill uses **guided phases** - each phase is a separate file loaded one at a time. Every phase ends with a gate where you must wait for user confirmation before proceeding. Do not skip phases or merge them.
+This skill runs in guided phases. Each phase is a separate file, loaded one at a time. Every phase ends with a gate: wait for user confirmation before you proceed. Do not skip phases or merge them.
 
 | Phase | File | What it covers |
 |---|---|---|
 | 1 | [Intake](phases/01-intake.md) | Read context, classify maturity, summarize understanding |
 | 2 | [Divergence](phases/02-divergence.md) | Expand problem space with one-at-a-time questions across 7 categories |
 | 3 | [Convergence](phases/03-convergence.md) | Narrow to concrete scope, lock must-haves and non-goals |
-| 4 | [Spec Writing](phases/04-spec-writing.md) | Write full spec from gathered material, run quality checklist |
+| 4 | [Spec writing](phases/04-spec-writing.md) | Write the full spec from the gathered material, run the quality checklist |
 | 5 | [Approval](phases/05-approval.md) | Get explicit user approval, hard-gate implementation |
 
-**Start by loading Phase 1.** After the user confirms each phase, load the next. Never load multiple phases at once. Never skip a phase.
+Start by loading Phase 1. After the user confirms each phase, load the next. Never load more than one phase at a time, and never skip one.
 
 ---
 
-## Critical Rules
+## Critical rules
 
-1. **No code until the spec is approved.** Not pseudocode, not scaffolding, not "just a quick example."
+1. **No code until the spec is approved.** That includes pseudocode, scaffolding, and "just a quick example."
 2. **One question per message.** Compound questions produce shallow answers.
 3. **Open questions before closed questions.** Explore before narrowing.
 4. **Challenge assumptions, not people.** "Is X a hard requirement, or an assumption we should test?"
@@ -62,7 +62,7 @@ This skill uses **guided phases** - each phase is a separate file loaded one at 
 
 ---
 
-## Question Technique
+## Question technique
 
 | Principle | Meaning |
 |---|---|
@@ -77,9 +77,9 @@ See [question-playbook](references/question-playbook.md) for the full catalog.
 
 ---
 
-## Anti-Patterns
+## Anti-patterns
 
-| Anti-Pattern | Fix |
+| Anti-pattern | Fix |
 |---|---|
 | Solution jumping | Stay in divergence until goals and constraints are clear |
 | Compound questions | One question per message |
@@ -92,18 +92,18 @@ See [anti-patterns](references/anti-patterns.md) for the full guide.
 
 ---
 
-## Reference Files
+## Reference files
 
 | Reference | Contents |
 |---|---|
 | [question-playbook](references/question-playbook.md) | Full catalog of question types with example phrasings |
 | [spec-template](references/spec-template.md) | Output template the spec must follow |
 | [anti-patterns](references/anti-patterns.md) | Failure modes that derail brainstorming |
-| [when-to-exit](references/when-to-exit.md) | Criteria for "done" vs. "needs more rounds" |
+| [when-to-exit](references/when-to-exit.md) | Criteria for "done" versus "needs more rounds" |
 
-## Integration with Other Skills
+## Integration with other skills
 
-| Situation | Recommended Skill |
+| Situation | Recommended skill |
 |---|---|
 | Spec approved, ready for planning | `writing-plans` |
 | Complex requirements, need stakeholder analysis | `product-manager` role |

@@ -1,4 +1,4 @@
-# Phase 4: Distribution Decision
+# Phase 4: Distribution decision
 
 **Progress: Phase 4 of 6**
 
@@ -9,11 +9,11 @@ Determine how the plugin will be distributed: standalone, new marketplace, or ad
 ## Steps
 
 1. Ask: **"How will this plugin be distributed?"** (single-select)
-   - **Standalone** - just the plugin directory, tested locally
-   - **New marketplace** - create a sibling marketplace.json listing this plugin
-   - **Add to existing marketplace** - append to an existing marketplace.json
+   - **Standalone**: just the plugin directory, tested locally
+   - **New marketplace**: create a sibling marketplace.json listing this plugin
+   - **Add to existing marketplace**: append to an existing marketplace.json
 
-2. **If Standalone:** No further questions. Proceed to gate.
+2. **If Standalone:** No further questions. Go to the gate.
 
 3. **If New marketplace:**
    - Marketplace name (kebab-case; reject reserved names - see [references/marketplace-manifest.md](../references/marketplace-manifest.md))
@@ -25,7 +25,7 @@ Determine how the plugin will be distributed: standalone, new marketplace, or ad
    - Path to existing marketplace.json
    - Read it, preserve existing fields, append new plugin entry, bump minor version
 
-See [references/marketplace-manifest.md](../references/marketplace-manifest.md) for the complete schema.
+See [references/marketplace-manifest.md](../references/marketplace-manifest.md) for the full schema.
 
 ## Gate
 
@@ -34,4 +34,4 @@ See [references/marketplace-manifest.md](../references/marketplace-manifest.md) 
 
 Ask the user: "Distribution: [choice]. [details if marketplace]. Confirm?"
 
-Do NOT proceed to Phase 5 until the user confirms.
+Do not proceed to Phase 5 until the user confirms.

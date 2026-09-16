@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Annotate an image with shapes, arrows, text, numbered steps, blur, or redaction.
 
-Two ways to drive it:
+There are two ways to use it:
 
     1. CLI flags (best for one or two marks):
         python annotate.py in.png out.png \\
@@ -13,7 +13,7 @@ Two ways to drive it:
         python annotate.py in.png out.png --spec marks.json
 
 Operations apply in the order they appear (CLI flags first by category, then
-spec entries in array order). For overlapping marks, later operations win.
+spec entries in array order). When marks overlap, the later one is on top.
 
 Requires Pillow. Install with `pip install --user Pillow`.
 """
@@ -96,7 +96,7 @@ def op_arrow(image: Image.Image, params: dict[str, Any]) -> Image.Image:
 
     draw = ImageDraw.Draw(image)
 
-    # Shorten the line so it does not overshoot the arrowhead triangle.
+    # Shorten the line so it stops at the arrowhead triangle.
     angle = atan2(y2 - y1, x2 - x1)
     line_end = (x2 - head * 0.6 * cos(angle), y2 - head * 0.6 * sin(angle))
     draw.line([(x1, y1), line_end], fill=color, width=width)
@@ -123,7 +123,7 @@ def op_text(image: Image.Image, params: dict[str, Any]) -> Image.Image:
     padding = int(params.get("padding", 8))
     font = _resolve_font(size)
 
-    # Measure the text so the background box wraps tightly.
+    # Measure the text so the background box fits it closely.
     draw = ImageDraw.Draw(image)
     bbox = draw.textbbox((x, y), value, font=font)
     if bg:
@@ -347,10 +347,10 @@ def _derive_output_path(
 
     Priority:
       1. If --name was given, use it as the descriptive slug.
-      2. Otherwise, summarise the distinct operations applied.
+      2. Otherwise, summarize the distinct operations applied.
 
     A "-N" counter is appended when the derived path already exists, so a
-    second run of the same request produces a new file rather than silently
+    second run of the same request produces a new file instead of
     overwriting the first.
     """
     stem = input_path.stem

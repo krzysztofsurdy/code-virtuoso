@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Establish what the user is bringing to the table and what state it is in.
+Establish what the user is bringing and what state it is in.
 
 ## Steps
 
@@ -14,14 +14,14 @@ Establish what the user is bringing to the table and what state it is in.
    - **Raw idea** - a sentence or feeling, no structure yet
    - **Rough concept** - some goals stated, many unknowns remain
    - **Partial spec** - some sections already defined, gaps need filling
-4. Acknowledge what you understood and state what is still unknown.
+4. Say what you understood and what is still unknown.
 5. Ask the first question to begin divergence.
 
 ## Rules
 
-- Do NOT propose solutions during intake
-- Do NOT ask more than one question at a time
-- Do NOT assume anything the user has not stated
+- Do not propose solutions during intake
+- Do not ask more than one question at a time
+- Do not assume anything the user has not stated
 
 ## Gate
 
@@ -30,4 +30,4 @@ Establish what the user is bringing to the table and what state it is in.
 
 Ask the user: "Here is what I understand so far: [summary]. Is this accurate, or should I adjust?"
 
-Do NOT proceed to Phase 2 until the user confirms.
+Do not proceed to Phase 2 until the user confirms.

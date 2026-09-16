@@ -1,16 +1,16 @@
-# Phase 2: Component Selection
+# Phase 2: Component selection
 
 **Progress: Phase 2 of 6**
 
 ## Purpose
 
-Determine which component types this plugin includes. At least one must be selected.
+Decide which component types this plugin includes. Select at least one.
 
 ## Steps
 
-1. Present a **multi-select** menu of available component types:
+1. Present a multi-select menu of available component types:
 
-   | Component | Default Location | Purpose |
+   | Component | Default location | Purpose |
    |---|---|---|
    | Skills | `skills/<name>/SKILL.md` | User- or model-invokable capabilities |
    | Agents | `agents/<name>.md` | Specialized subagents with tool allow-lists |
@@ -32,4 +32,4 @@ Determine which component types this plugin includes. At least one must be selec
 
 Ask the user: "Selected components: [list]. Confirm, or add/remove?"
 
-Do NOT proceed to Phase 3 until the user confirms.
+Do not proceed to Phase 3 until the user confirms.

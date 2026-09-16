@@ -1,6 +1,24 @@
-# Component Templates
+# Component templates
 
-Ready-to-use file templates for every plugin component. Replace the `<placeholder>` values when scaffolding.
+File templates for every plugin component. Replace the `<placeholder>` values when scaffolding.
+
+## Contents
+
+- [plugin.json (minimal)](#pluginjson-minimal)
+- [plugin.json (with metadata)](#pluginjson-with-metadata)
+- [plugin.json (with user config and channels)](#pluginjson-with-user-config-and-channels)
+- [SKILL.md (model-invoked)](#skillmd-model-invoked)
+- [SKILL.md (user-invoked only)](#skillmd-user-invoked-only)
+- [Agent file (read-only specialist)](#agent-file-read-only-specialist)
+- [Agent file (full access, worktree-isolated)](#agent-file-full-access-worktree-isolated)
+- [hooks/hooks.json](#hookshooksjson)
+- [.mcp.json](#mcpjson)
+- [.lsp.json](#lspjson)
+- [settings.json](#settingsjson)
+- [bin/ executable stubs](#bin-executable-stubs)
+- [Output style file](#output-style-file)
+- [Script helpers](#script-helpers)
+- [CHANGELOG.md seed](#changelogmd-seed)
 
 ## plugin.json (minimal)
 
@@ -96,7 +114,7 @@ argument-hint: "[optional: <arg-description>]"
 If `$ARGUMENTS` is provided, <what to do with it>. Otherwise ask the user.
 ```
 
-## Agent File (read-only specialist)
+## Agent file (read-only specialist)
 
 ```markdown
 ---
@@ -127,7 +145,7 @@ You are a <role>. You <core responsibility>.
 <What the agent returns when finished.>
 ```
 
-## Agent File (full access, worktree-isolated)
+## Agent file (full access, worktree-isolated)
 
 ```markdown
 ---
@@ -280,7 +298,7 @@ You are a <role>. Work in an isolated worktree. Commit after each logical change
 | `restartOnCrash`        | Auto-restart on crash.                                          |
 | `maxRestarts`           | Max restart attempts before giving up.                          |
 
-Users must install the language server binary separately. LSP plugins only configure the connection.
+Users must install the language server binary separately. An LSP plugin only configures the connection.
 
 ## settings.json
 
@@ -294,7 +312,7 @@ Only the `agent` key is currently supported. Activates a plugin-shipped agent as
 
 The referenced agent name must match a file in the plugin's `agents/` directory (without the `.md` extension).
 
-## bin/ Executable Stubs
+## bin/ executable stubs
 
 ### Bash
 
@@ -333,7 +351,7 @@ print(f"Running from {plugin_root}")
 
 After writing, remind the user to `chmod +x bin/<name>`.
 
-## Output Style File
+## Output style file
 
 `output-styles/<style-name>.md`:
 
@@ -356,7 +374,7 @@ description: <When to use this output style.>
 <how this style would respond>
 ```
 
-## Script Helpers
+## Script helpers
 
 Hook scripts usually go in `scripts/` at the plugin root:
 
@@ -379,7 +397,7 @@ cd "$(dirname "$file_path")" && npm run format:file - "$file_path"
 
 Make executable: `chmod +x scripts/format-code.sh`.
 
-## CHANGELOG.md Seed
+## CHANGELOG.md seed
 
 ```markdown
 # Changelog

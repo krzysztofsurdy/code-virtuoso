@@ -1,10 +1,10 @@
-# Phase 3: Component Details
+# Phase 3: Component details
 
 **Progress: Phase 3 of 6**
 
 ## Purpose
 
-For each selected component type, run a sub-questionnaire to gather the details needed to scaffold it. Loop through each type until all are configured.
+For each selected component type, run a sub-questionnaire to gather the details needed to scaffold it. Repeat for each type until all are configured.
 
 ## Steps
 
@@ -31,28 +31,28 @@ Plugin agents cannot set `hooks`, `mcpServers`, or `permissionMode`.
 1. Which lifecycle events? (multi-select: SessionStart, PreToolUse, PostToolUse, UserPromptSubmit, Stop, FileChanged, CwdChanged)
 2. For each event: matcher pattern (optional regex), hook type (command/http/prompt/agent), command/body
 
-### MCP Servers (for each)
+### MCP servers (for each)
 1. Server key (kebab-case)
 2. Command (e.g., `npx`, `${CLAUDE_PLUGIN_ROOT}/servers/db-server`)
 3. Args (comma-separated, optional)
 4. Environment variables (KEY=VALUE, optional)
 
-### LSP Servers (for each)
+### LSP servers (for each)
 1. Language identifier (e.g., `go`, `typescript`)
 2. Binary (must be on `$PATH`)
 3. Args (optional)
 4. File extensions (comma-separated)
 
-### Bin Executables (for each)
+### Bin executables (for each)
 1. Executable name
 2. Language: bash/node/python/other
 3. Short description
 
-### Output Styles (for each)
+### Output styles (for each)
 1. Style name (kebab-case)
 2. Style description
 
-### Default Settings
+### Default settings
 1. Which plugin agent should be the main thread default? (single-select from agents, or None)
 
 ## Gate
@@ -62,4 +62,4 @@ Plugin agents cannot set `hooks`, `mcpServers`, or `permissionMode`.
 
 Ask the user: "All components configured: [summary]. Confirm, or edit a component?"
 
-Do NOT proceed to Phase 4 until the user confirms.
+Do not proceed to Phase 4 until the user confirms.

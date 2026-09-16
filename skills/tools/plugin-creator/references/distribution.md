@@ -1,8 +1,21 @@
-# Plugin Distribution
+# Plugin distribution
 
 How to get a plugin into users' hands: hosting options, versioning rules, update mechanics, and team marketplace configuration.
 
-## Distribution Options
+## Contents
+
+- [Distribution options](#distribution-options)
+- [Hosting a marketplace on GitHub](#hosting-a-marketplace-on-github)
+- [Single-plugin repos (flat layout)](#single-plugin-repos-flat-layout)
+- [Semantic versioning](#semantic-versioning)
+- [Release workflow](#release-workflow)
+- [Auto-updates](#auto-updates)
+- [Team marketplace configuration](#team-marketplace-configuration)
+- [Plugin caching and file resolution](#plugin-caching-and-file-resolution)
+- [Validation before release](#validation-before-release)
+- [Common distribution mistakes](#common-distribution-mistakes)
+
+## Distribution options
 
 | Option                          | How users add it                                    | Best for                                                  |
 |---------------------------------|-----------------------------------------------------|-----------------------------------------------------------|
@@ -10,10 +23,10 @@ How to get a plugin into users' hands: hosting options, versioning rules, update
 | GitHub marketplace              | `/plugin marketplace add owner/repo`                | Open-source distribution. Most common.                    |
 | Generic Git marketplace         | `/plugin marketplace add https://gitlab.com/.../x.git` | GitLab, Bitbucket, self-hosted git.                    |
 | Local marketplace               | `/plugin marketplace add ./path/to/marketplace`     | Teams with shared network drives or monorepo plugins.     |
-| URL-hosted `marketplace.json`   | `/plugin marketplace add https://example.com/x.json` | Custom hosting. Relative plugin sources do NOT resolve.   |
+| URL-hosted `marketplace.json`   | `/plugin marketplace add https://example.com/x.json` | Custom hosting. Relative plugin sources do not resolve.   |
 | Official Anthropic marketplace  | Already installed. `/plugin install <name>@claude-plugins-official` | Submission via [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit). |
 
-## Hosting a Marketplace on GitHub
+## Hosting a marketplace on GitHub
 
 Minimum repo structure:
 
@@ -44,9 +57,9 @@ Push to GitHub. Users add with:
 /plugin marketplace add https://github.com/owner/repo.git#v1.0.0
 ```
 
-## Single-Plugin Repos (Flat Layout)
+## Single-plugin repos (flat layout)
 
-If the repo contains only one plugin, it is common to put everything at the root. The marketplace entry uses `"source": "./"` and `strict: false`:
+If the repo contains only one plugin, put everything at the root. The marketplace entry uses `"source": "./"` and `strict: false`:
 
 ```
 my-plugin-repo/
@@ -73,9 +86,9 @@ my-plugin-repo/
 }
 ```
 
-With `strict: false`, the marketplace entry is the authority for component paths. This is necessary when `plugin.json` and the plugin content share the repo root.
+With `strict: false`, the marketplace entry is the authority for component paths. This is needed when `plugin.json` and the plugin content share the repo root.
 
-## Semantic Versioning
+## Semantic versioning
 
 Follow `MAJOR.MINOR.PATCH`:
 
@@ -85,15 +98,15 @@ Follow `MAJOR.MINOR.PATCH`:
 | MINOR | New skill, new agent, new hook, new configuration option. Backward-compatible. | 2.1.0 -> 2.2.0 |
 | MAJOR | Removing a skill, renaming a skill, changing frontmatter schema, changing a hook event. Breaking. | 2.1.0 -> 3.0.0 |
 
-**Key rule**: Claude Code decides whether to update based on the version field. If you change plugin content but do not bump the version, users do not see the changes due to caching.
+**Key rule**: Claude Code decides whether to update based on the version field. If you change plugin content but do not bump the version, users do not see the changes because of caching.
 
 ### Where to set the version
 
-- **In `plugin.json`** - the manifest is authoritative. If the plugin lives outside a marketplace, set it here.
-- **In the marketplace entry** - if the plugin lives inside a marketplace directory, omit `version` from `plugin.json` and manage it in `marketplace.json` instead.
-- **Never both** - when both are set, `plugin.json` wins, but the inconsistency is a maintenance trap.
+- **In `plugin.json`**: the manifest is authoritative. If the plugin lives outside a marketplace, set it here.
+- **In the marketplace entry**: if the plugin lives inside a marketplace directory, omit `version` from `plugin.json` and manage it in `marketplace.json` instead.
+- **Never both**: when both are set, `plugin.json` wins, but the inconsistency is a maintenance trap.
 
-## Release Workflow
+## Release workflow
 
 1. Make changes to plugin content.
 2. Bump the version in the authoritative location.
@@ -103,12 +116,12 @@ Follow `MAJOR.MINOR.PATCH`:
 6. Push with tags (`git push && git push --tags`).
 7. Users pick up the update via auto-update or `/plugin marketplace update <marketplace-name>` followed by `/reload-plugins`.
 
-## Auto-Updates
+## Auto-updates
 
 Claude Code can auto-update marketplaces and installed plugins at startup.
 
-- Official Anthropic marketplaces have auto-update **enabled by default**.
-- Third-party and local development marketplaces have auto-update **disabled by default**.
+- Official Anthropic marketplaces have auto-update enabled by default.
+- Third-party and local development marketplaces have auto-update disabled by default.
 - Toggle per-marketplace via `/plugin` -> Marketplaces tab -> select marketplace -> Enable/Disable auto-update.
 
 ### Environment overrides
@@ -118,7 +131,7 @@ Claude Code can auto-update marketplaces and installed plugins at startup.
 | `DISABLE_AUTOUPDATER=1`   | Disables all Claude Code and plugin auto-updates.                                        |
 | `FORCE_AUTOUPDATE_PLUGINS=1` | With `DISABLE_AUTOUPDATER=1`, keeps plugin auto-updates but disables Claude Code updates. |
 
-## Team Marketplace Configuration
+## Team marketplace configuration
 
 Teams can preconfigure a marketplace for everyone in a project by adding it to `.claude/settings.json`. When team members trust the folder, Claude Code prompts them to install the listed marketplaces and plugins.
 
@@ -137,15 +150,15 @@ Teams can preconfigure a marketplace for everyone in a project by adding it to `
 
 To also force-install specific plugins, pair `extraKnownMarketplaces` with an `enabledPlugins` entry (see the [settings docs](https://code.claude.com/docs/en/settings#plugin-settings)).
 
-## Plugin Caching and File Resolution
+## Plugin caching and file resolution
 
 - Marketplace plugins are copied to `~/.claude/plugins/cache` on install. Each version is a separate directory.
-- Old versions are marked orphaned on update and removed after 7 days, letting concurrent sessions finish cleanly.
-- **Paths outside the plugin directory (`../shared-utils`) do not work** - the cache does not copy them.
-- **Symlinks are preserved** by the cache, so use `ln -s /path/to/external ./link-name` if you truly need cross-plugin sharing. Resolved at runtime on the user's machine.
+- Old versions are marked orphaned on update and removed after 7 days, so concurrent sessions can finish cleanly.
+- **Paths outside the plugin directory (`../shared-utils`) do not work**, because the cache does not copy them.
+- **Symlinks are preserved** by the cache, so use `ln -s /path/to/external ./link-name` if you need to share files across plugins. They are resolved at runtime on the user's machine.
 - `${CLAUDE_PLUGIN_DATA}` survives updates; `${CLAUDE_PLUGIN_ROOT}` changes on each update.
 
-## Validation Before Release
+## Validation before release
 
 Run before pushing:
 
@@ -160,17 +173,17 @@ This checks:
 - Relative path safety
 - Reserved name violations
 
-Also run `claude --plugin-dir ./my-plugin` with `--debug` to surface runtime errors not caught by static validation:
+Also run `claude --plugin-dir ./my-plugin` with `--debug` to surface runtime errors that static validation misses:
 
 ```
 claude --plugin-dir ./my-plugin --debug
 ```
 
-## Common Distribution Mistakes
+## Common distribution mistakes
 
 | Mistake                                                           | Consequence                                                          |
 |-------------------------------------------------------------------|----------------------------------------------------------------------|
-| Forgetting to bump the version                                    | Users never see your changes due to caching.                         |
+| Forgetting to bump the version                                    | Users never see your changes because of caching.                     |
 | Relative plugin sources + URL-distributed marketplace             | "Path not found" errors on install. Switch to `github`/`url`/`npm` source. |
 | Hard-coded absolute paths in hooks or MCP configs                 | Works locally, breaks for everyone else. Use `${CLAUDE_PLUGIN_ROOT}`.|
 | Reserved marketplace name                                         | Installation rejected. Pick a different name.                        |

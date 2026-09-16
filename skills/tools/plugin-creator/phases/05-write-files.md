@@ -1,4 +1,4 @@
-# Phase 5: Write Files
+# Phase 5: Write files
 
 **Progress: Phase 5 of 6**
 
@@ -13,7 +13,7 @@ Write all generated files in a single pass after final validation and user appro
    - Generated JSON (plugin.json, marketplace.json) parses cleanly
    - All paths use `./` or `${CLAUDE_PLUGIN_ROOT}`, no absolute paths
 
-2. **Show the target directory and full file tree** to the user for final approval.
+2. **Show the target directory and the full file tree** to the user for final approval.
 
 3. **Write all files.** Directory structure:
    ```
@@ -43,4 +43,4 @@ Write all generated files in a single pass after final validation and user appro
 
 Ask the user: "All files written to `[path]`. Proceed to test instructions?"
 
-Do NOT proceed to Phase 6 until the user confirms.
+Do not proceed to Phase 6 until the user confirms.

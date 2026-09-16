@@ -1,10 +1,10 @@
-# Phase 5: Approval Gate
+# Phase 5: Approval gate
 
 **Progress: Phase 5 of 5**
 
 ## Purpose
 
-Get explicit user approval before anything proceeds. This is the hardest rule in the skill. No exceptions.
+Get explicit user approval before anything proceeds. This is the strictest rule in the skill. There are no exceptions.
 
 ## Steps
 
@@ -29,23 +29,23 @@ Get explicit user approval before anything proceeds. This is the hardest rule in
 
 ## Rules
 
-**Before approval, you must NOT:**
+**Before approval, you must not:**
 - Write any code (not even pseudocode presented as "just an example")
 - Create project files or directories
 - Choose specific technologies, libraries, or frameworks
 - Produce architecture diagrams or system designs
 - Invoke any implementation, planning, or code-generation skill
 
-## Exit Criteria
+## Exit criteria
 
-Brainstorming is complete when ALL of the following are true:
+Brainstorming is complete when all of the following are true:
 - The spec is written and covers all mandatory sections
 - The user has explicitly approved the spec
 - No unresolved contradictions exist
 - All must-have acceptance criteria are present and testable
 - The scope boundary (goals + non-goals) is clear
 
-See [when-to-exit](../references/when-to-exit.md) for detailed guidance on "done" vs. "needs more rounds."
+See [when-to-exit](../references/when-to-exit.md) for detailed guidance on "done" versus "needs more rounds."
 
 ## Gate
 

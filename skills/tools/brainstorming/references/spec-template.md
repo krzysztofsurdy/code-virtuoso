@@ -1,8 +1,13 @@
-# Spec Template
+# Spec template
 
 This is the output template that every brainstorming session produces. Each section is mandatory unless explicitly inapplicable, in which case state "N/A - [reason]."
 
-Scale the depth of each section to the complexity of the project. A small feature gets a sentence or two per section. A system redesign gets paragraphs.
+Scale the depth of each section to the project's complexity. A small feature gets a sentence or two per section. A system redesign gets paragraphs.
+
+## Contents
+
+- [Template](#template)
+- [Section-by-section guidance](#section-by-section-guidance)
 
 ---
 
@@ -41,7 +46,7 @@ Good: "Product pages load in under 500ms at p95 under normal traffic."]
 
 ## Non-Goals
 
-[What this spec explicitly does NOT cover. Every spec must have at least one non-goal.
+[What this spec explicitly does not cover. Every spec must have at least one non-goal.
 Non-goals prevent scope creep and set expectations for stakeholders.
 
 Examples:
@@ -92,8 +97,8 @@ or an automated test. Use Given/When/Then format or equivalent structured format
 
 Rules:
 - Every criterion must be testable
-- "It should feel fast" is NOT a criterion
-- "Page loads in under 500ms at p95" IS a criterion
+- "It should feel fast" is not a criterion
+- "Page loads in under 500ms at p95" is a criterion
 - Include both happy-path and key error-path criteria
 - Number each criterion for traceability]
 
@@ -122,9 +127,9 @@ Every spec must include at least one non-obvious risk. If the only risks listed 
 genuine unknowns that will be resolved during implementation or by further investigation.
 
 Rules:
-- Do NOT list things here that you could resolve by asking the user right now
+- Do not list things here that you could resolve by asking the user right now
 - Each question should note who is responsible for answering it and by when
-- If an open question DOES block the spec, it must be resolved before approval]
+- If an open question does block the spec, it must be resolved before approval]
 
 - [ ] [Question] - Owner: [who], Due: [when]
 - [ ] [Question] - Owner: [who], Due: [when]
@@ -133,8 +138,8 @@ Rules:
 
 ## First-Cut Approach
 
-[A high-level description of the likely direction. This is NOT architecture, NOT a
-design doc, and NOT an implementation plan. It describes the shape of the solution
+[A high-level description of the likely direction. This is not architecture, not a
+design doc, and not an implementation plan. It describes the shape of the solution
 in enough detail that a reader can tell whether you are talking about a small script
 or a distributed system.
 
@@ -150,7 +155,7 @@ that the spec's scope is achievable and coherent, not to lock in a design.]
 
 ---
 
-## Section-by-Section Guidance
+## Section-by-section guidance
 
 ### Problem
 
@@ -198,7 +203,7 @@ Include error paths, not just happy paths. What happens when the network is down
 
 ### Risks
 
-Good risk identification separates experienced engineers from junior ones. Go beyond the obvious.
+Go beyond the obvious risks.
 
 **Non-obvious risk categories**:
 - Data migration risks
@@ -211,7 +216,7 @@ Good risk identification separates experienced engineers from junior ones. Go be
 
 ### Open Questions
 
-Open questions are a sign of intellectual honesty, not incompleteness. A spec with no open questions is likely hiding its unknowns, not resolving them.
+Open questions show honesty, not incompleteness. A spec with no open questions is likely hiding its unknowns.
 
 ### First-Cut Approach
 

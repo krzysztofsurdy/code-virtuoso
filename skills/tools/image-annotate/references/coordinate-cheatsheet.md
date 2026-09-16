@@ -1,8 +1,8 @@
-# Coordinate Cheatsheet
+# Coordinate cheatsheet
 
-Quick reference for picking pixel coordinates when annotating screenshots. All values are in image pixels with the origin at the top-left.
+Reference for picking pixel coordinates when annotating screenshots. All values are in image pixels with the origin at the top-left.
 
-## Resolution Multipliers (Retina / High-DPI)
+## Resolution multipliers (retina and high-DPI)
 
 Most browsers and screenshot tools report positions in CSS pixels. The image saved to disk is usually larger by the device-pixel-ratio (DPR). Multiply the CSS value by DPR before passing to the annotator.
 
@@ -13,9 +13,9 @@ Most browsers and screenshot tools report positions in CSS pixels. The image sav
 | iPhone Plus / Pro Max | 3 | * 3 |
 | Some Android flagships | 2.5 - 3 | * DPR |
 
-Quick check from the image itself: take the image width in pixels, divide by the expected CSS viewport width (1280 for desktop, 393 for iPhone 14 Pro). The result is the DPR you need to apply.
+To check from the image itself, divide the image width in pixels by the expected CSS viewport width (1280 for desktop, 393 for iPhone 14 Pro). The result is the DPR to apply.
 
-## Common Viewport-Width Anchors
+## Common viewport-width anchors
 
 | Viewport CSS width | Image pixel width (DPR=1) | Image pixel width (DPR=2) |
 |---|---|---|
@@ -26,9 +26,9 @@ Quick check from the image itself: take the image width in pixels, divide by the
 | 1280 (laptop default) | 1280 | 2560 |
 | 1920 (full HD) | 1920 | 3840 |
 
-## Typical Element Heights (Desktop)
+## Typical element heights (desktop)
 
-A useful sanity check when guessing where a UI element falls vertically on a desktop screenshot:
+Use these to sanity-check where a UI element falls vertically on a desktop screenshot:
 
 | Element | Approximate height (px) |
 |---|---|
@@ -40,9 +40,9 @@ A useful sanity check when guessing where a UI element falls vertically on a des
 | Standard text input | 36 - 44 |
 | Footer | 220 - 380 |
 
-## Offset Patterns for Arrows and Labels
+## Offset patterns for arrows and labels
 
-When marking a target, leave breathing room - putting a label directly on top of the target obscures the thing the reader is supposed to see.
+When marking a target, leave space around it. A label placed directly on the target hides the thing the reader should see.
 
 | Mark | Offset from target |
 |---|---|
@@ -52,31 +52,31 @@ When marking a target, leave breathing room - putting a label directly on top of
 | Numbered step circle | Centered on the target, or 30 - 50 pixels above and to the left |
 | Rectangle outline | 8 - 16 pixels of padding outside the target's bounding box |
 
-## Picking Coordinates Without Guessing
+## Picking coordinates without guessing
 
-Three ways to get coordinates that work the first time:
+Ways to get coordinates that work the first time:
 
 1. **Browser DevTools - Elements panel**: hover the target in the elements tree. The overlay shows `top` and `left` in CSS pixels. Multiply by DPR for image-pixel coordinates.
 2. **macOS Preview**: open the screenshot, hover over the target, watch the bottom status bar for the cursor position in pixels.
-3. **Linux + ImageMagick `display`** or **GIMP**: same idea - hover and read the status bar.
+3. **Linux with ImageMagick `display`, or GIMP**: hover and read the status bar.
 4. **Windows + Paint**: hover and read the bottom-left status bar.
-5. **A throwaway dry-run mark**: drop a `--rect 0,0,100,100 --rect-color magenta` and binary-search outward until the box lands where you want. Works always, useful when no DevTools is at hand.
+5. **A throwaway dry-run mark**: draw `--rect 0,0,100,100 --rect-color magenta` and binary-search outward until the box lands where you want. It always works and helps when no DevTools is at hand.
 
-## Aligning a Series of Step Markers
+## Aligning a series of step markers
 
 For a numbered tutorial with multiple steps on the same screenshot:
 
 - Pick a baseline (a horizontal or vertical line) along which all markers will sit.
-- Place each marker the same distance from the target's centre - usually 30 px above and to the left of the click target.
-- Increase numbers in reading order (English: left-to-right, top-to-bottom).
+- Place each marker the same distance from the target's center, usually 30 px above and to the left of the click target.
+- Increase numbers in reading order (English: left to right, top to bottom).
 - Place the text describing each step near the marker, on the side that does not occlude other targets.
 
-## Coordinate Pitfalls
+## Coordinate pitfalls
 
 | Pitfall | Symptom | Fix |
 |---|---|---|
-| Forgetting the DPR multiplier | Marks land at half their intended position | Multiply CSS pixels by image-pixel-ratio |
+| Forgetting the DPR multiplier | Marks land at half their intended position | Multiply CSS pixels by the DPR |
 | Using float coordinates | Pillow rounds silently; marks drift by 1 px between similar ops | Pass integers |
-| Passing negative coordinates | Pillow clips silently | Verify bounds before the call |
+| Passing negative coordinates | Pillow clips silently | Check bounds before the call |
 | Confusing `(x, y)` with `(y, x)` | Marks land in the wrong axis | First number is horizontal, second is vertical |
 | Coordinates referring to the cropped region after `crop` | All subsequent marks shift | If the spec includes `crop`, all later coordinates are relative to the cropped image |
