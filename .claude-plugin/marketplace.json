@@ -4,13 +4,13 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "45 skills and 19 agents for software engineering — knowledge, tools, frameworks, playbooks, roles, and agents",
-    "version": "9.7.1"
+    "description": "45 skills and 19 agents for software engineering: knowledge, tools, frameworks, playbooks, roles, and agents",
+    "version": "9.7.2"
   },
   "plugins": [
     {
       "name": "knowledge-virtuoso",
-      "description": "15 knowledge skills — design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, scrum, performance, microservices, git workflow, CI/CD, accessibility, and database design",
+      "description": "15 knowledge skills: design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, scrum, performance, microservices, git workflow, CI/CD, accessibility, and database design",
       "source": "./",
       "strict": false,
       "skills": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "tools-virtuoso",
-      "description": "11 tool skills — rules writer, ticket writer, agent creator, plugin creator, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, web screenshot, and image annotate",
+      "description": "11 tool skills: rules writer, ticket writer, agent creator, plugin creator, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, web screenshot, and image annotate",
       "source": "./",
       "strict": false,
       "skills": [
@@ -52,7 +52,7 @@
     },
     {
       "name": "frameworks-virtuoso",
-      "description": "4 framework skills — Symfony components, Symfony upgrade, Django components, and LangChain components",
+      "description": "4 framework skills: Symfony components, Symfony upgrade, Django components, and LangChain components",
       "source": "./",
       "strict": false,
       "skills": [
@@ -64,7 +64,7 @@
     },
     {
       "name": "playbooks-virtuoso",
-      "description": "5 playbook skills — PHP upgrade, Composer dependencies, branch finishing, ticket delivery, and worktree ops",
+      "description": "5 playbook skills: PHP upgrade, Composer dependencies, branch finishing, ticket delivery, and worktree ops",
       "source": "./",
       "strict": false,
       "skills": [
@@ -77,7 +77,7 @@
     },
     {
       "name": "agents-virtuoso",
-      "description": "19 agents, 3 pre-composed teams, 7 role skills, and agent workflow skills — delegation patterns, team library, team dispatcher, subagent-driven development, verification discipline, plus all specialist and role agents",
+      "description": "19 agents, 3 pre-composed teams, 7 role skills, and agent workflow skills: delegation patterns, team library, team dispatcher, subagent-driven development, verification discipline, plus all specialist and role agents",
       "source": "./",
       "strict": false,
       "skills": [

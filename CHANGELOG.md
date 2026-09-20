@@ -31,6 +31,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - CONTRIBUTING.md updated to reflect simplified plugin distribution model
 - Normalized prose punctuation across 253 markdown/JSON/YAML files: replaced ` -- ` (double hyphen as pause/em-dash) with ` - ` (single hyphen); 1851 occurrences updated
 - Added "Punctuation Style" convention to AGENTS.md prohibiting use of `--` as a pause in project documentation
+- Rewrote prose across all skills, agents, specs, templates, and root docs in a plain human voice: removed every em and en dash (about 1,000), AI vocabulary, filler adverbs, and puffery; switched headings to sentence case
+- Added a Contents section to every reference file over 100 lines, following skill authoring best practice
+- Tightened SKILL.md descriptions to third-person "what + when" form, all under 1,024 characters
+- Restored `--` separators in CLI commands and SQL comments that the earlier punctuation pass had broken (`git checkout -- .`, `cargo test -- --nocapture`, `dbshell -- -c`, SQL `-- comment`)
+- Extended the Punctuation Style convention to ban em and en dashes in prose
 
 ## [8.2.0] - 2026-04-13
 
