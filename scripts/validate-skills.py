@@ -5,7 +5,7 @@ Checks:
 - Skill frontmatter validation (required fields, description length, no model, user-invocable)
 - Skill name consistency (name matches directory)
 - SKILL.md size check (warn > 500, error > 1000)
-- Reference file size check (warn > 250 lines per spec)
+- Reference file size check (warn > 700 lines per spec)
 
 Requires Python 3.9+ stdlib only.
 Run from the repository root: python3 scripts/validate-skills.py
@@ -147,17 +147,17 @@ def check_reference_file_sizes() -> None:
         except Exception:
             continue
 
-        if count > 500:
-            warn(f"{rp}: {count} lines (2x over 250-line spec limit)")
+        if count > 1400:
+            warn(f"{rp}: {count} lines (2x over 700-line spec limit)")
             over_limit += 1
-        elif count > 250:
+        elif count > 700:
             # Only warn for the worst offenders to avoid noise
             over_limit += 1
 
     if over_limit > 0:
-        warn(f"{over_limit} of {total} reference files exceed 250-line spec limit")
+        warn(f"{over_limit} of {total} reference files exceed 700-line spec limit")
     else:
-        ok(f"All {total} reference files within 250-line spec limit")
+        ok(f"All {total} reference files within 700-line spec limit")
 
 
 # ---------------------------------------------------------------------------

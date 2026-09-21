@@ -69,7 +69,7 @@ That is the whole tour. For fine-grained install modes (per-skill, global, offli
 - **Researched, then hand-curated.** Every skill was checked against official docs and community best practices. No invented API references.
 - **Progressive disclosure saves context.** Skills load a short `SKILL.md` first and pull in deeper references only when the task calls for them.
 - **One installation, many tools.** Built on the open Agent Skills standard. Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini CLI, and more.
-- **Shaped like a team.** The library ships 7 role personas (Product Manager, Architect, Backend Dev, Frontend Dev, QA, PM, Scrum Master) and 15 sub-agents that delegate like a real team instead of one over-prompted assistant.
+- **Shaped like a team.** The library ships 7 role personas (Product Manager, Architect, Backend Dev, Frontend Dev, QA, PM, Scrum Master) and 19 sub-agents that delegate like a real team instead of one over-prompted assistant.
 
 ---
 

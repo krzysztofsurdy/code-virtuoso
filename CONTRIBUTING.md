@@ -390,7 +390,7 @@ For a guided, interactive scaffold, run the `plugin-creator` skill in `skills/to
 Use this path when you want to expose existing skills or agents in this repo as an installable bundle.
 
 1. Open `.claude-plugin/marketplace.json`
-2. Add a new object to the `plugins` array following the [Plugin Naming Convention](#plugin-naming-convention) and [Distribution Tiers](#plugin-distribution-tiers)
+2. Add a new object to the `plugins` array following the [Plugin Naming Convention](#plugin-naming-convention)
 3. Use `"source": "./"` and `"strict": false` - the whole repo is the plugin source
 4. Reference existing skill directories in `skills` and existing agent files in `agents`
 5. Bump `metadata.version` per [Version Bumping Rules](#version-bumping-rules) (minor bump for a new plugin)
@@ -481,7 +481,7 @@ All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` s
 | `tools-virtuoso` | `skills/tools/` | All interactive tool skills |
 | `frameworks-virtuoso` | `skills/frameworks/` | All framework-specific skills (Symfony, Django, LangChain) |
 | `playbooks-virtuoso` | `skills/playbooks/` | All operational playbook skills |
-| `agents-virtuoso` | `skills/roles/` + `agents/` | All 15 agents + all 7 role skills |
+| `agents-virtuoso` | `skills/roles/` + `agents/` | All 19 agents + all 7 role skills |
 
 When adding a new skill:
 - Identify which `skills/` subdirectory it belongs to
@@ -521,7 +521,7 @@ Skills are reference material for AI agents that need precise, actionable inform
 
 | Guideline | Target |
 |---|---|
-| Reference files | 100-700 lines each |
+| Reference files | 100-700 lines each, with a `## Contents` list of H2 links once a file passes 100 lines |
 | SKILL.md | Under 500 lines (use progressive disclosure) |
 | Tables | Use for all structured data (comparisons, commands, options) |
 | Cross-references | Include an Integration section linking to related skills |

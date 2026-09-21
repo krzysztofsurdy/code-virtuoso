@@ -57,7 +57,7 @@ Agents follow a two-tier model:
 
 **Dependency Auditor** - Delegate for dependency health checks. It runs `composer audit`, `npm audit`, or equivalent commands, checks for outdated packages, and flags license incompatibilities.
 
-**Doc Writer** - Delegate after completing features or changes that need documentation. It reads code changes and produces changelogs, API endpoint docs, or migration guides. The only specialist with file editing permissions, but it only touches documentation files.
+**Doc Writer** - Delegate after completing features or changes that need documentation. It reads code changes and produces changelogs, API endpoint docs, or migration guides. Apart from the Implementer, it is the only specialist with file editing permissions, and it only touches documentation files.
 
 **Migration Planner** - Delegate before running database migrations. It classifies operations by risk (safe, caution, dangerous), evaluates zero-downtime compatibility, verifies rollback paths, and produces a step-by-step execution plan with pre-checks.
 

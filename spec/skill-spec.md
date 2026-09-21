@@ -64,7 +64,8 @@ Skills are organized into three categories:
 ## References
 
 - Place in `references/` subdirectory
-- Keep each file under 250 lines and focused on a single topic
+- Keep each file focused on a single topic, between 100 and 700 lines
+- Start any file over 100 lines with a `## Contents` list linking its H2 sections
 - Use relative markdown links from SKILL.md: `[Topic](references/topic.md)`
 - Agents load these on demand, so smaller files mean less context usage
 
@@ -130,7 +131,7 @@ The skill body must remain portable - it describes capabilities ("team creation 
 Use a Platform Notes section when:
 
 - The skill describes a capability that platforms implement under different names (e.g., team creation, agent dispatching, interactive prompts)
-- One platform has a strong convention or required tool that, if not used, leads to poor behavior on that platform (e.g., a user-configured rule says "always use TeamCreate")
+- One platform has a strong convention or required tool that, if not used, leads to poor behavior on that platform (e.g., a platform has no team-creation tool, so teammates must be spawned as named agents)
 - Skipping the platform-specific behavior would cause the skill to misbehave on that platform
 
 Do NOT use Platform Notes to make the skill platform-specific. The body must still work on any agent CLI. Platform Notes are appendix-style hints, not the primary instructions.
@@ -146,8 +147,8 @@ Platform-specific tool names and conventions for executing this skill. The instr
 
 | Platform | Convention |
 |---|---|
-| Claude Code | Use `TeamCreate` to instantiate the team before dispatching tasks |
-| Cursor | (TBD) |
+| Claude Code | Agent teams are experimental and need `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. There is no `TeamCreate` tool. Spawn each teammate with the `Agent` tool and a `name`, and message teammates with `SendMessage` |
+| Cursor | No peer-messaging team feature is documented. Subagents run in parallel and return results to the parent, so use sequential mode |
 | Other | Use the platform's equivalent for creating a multi-agent team |
 ```
 
