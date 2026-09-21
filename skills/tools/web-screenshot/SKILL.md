@@ -226,10 +226,11 @@ A captured block page is a real result, not a tool failure. After any escalation
 
 | Mode | Command | When to use |
 |---|---|---|
-| **Viewport** | `shot-scraper URL -o out.png` | Hero shots, above-the-fold, social cards |
-| **Full page** | `shot-scraper URL -o out.png --width 1280 --height 800` then add `--full-page` style via JS, **or** use `shotscraper URL -o out.png -h 0` to capture from y=0 to bottom | Long landing pages, articles, full-doc captures |
+| **Viewport** | `shot-scraper URL -o out.png --width 1280 --height 800` | Hero shots, above-the-fold, social cards |
+| **Full page** | `shot-scraper URL -o out.png` (omit `--height`; a full-page shot is the default) | Long landing pages, articles, full-doc captures |
 | **Element** | `shot-scraper URL -o out.png --selector "main .hero"` | Specific component, isolated UI, design-system docs |
-| **Multiple selectors** | `--selector "header" --selector "footer"` (one per shot, via batch) | Multi-region capture in one run |
+| **Multiple selectors** | `--selector "header" --selector "footer"` (one shot covering the smallest area that contains every match) | Multi-region capture in one run |
+| **Every matching element** | `--selector-all ".card"` | Rectangle around all elements that match a selector |
 | **JPEG (smaller)** | `-o out.jpg --quality 80` | Documentation, social previews, anywhere PNG is overkill |
 | **Retina (2x)** | `--retina` | High-DPI displays, marketing assets |
 
@@ -246,7 +247,7 @@ Playwright and shot-scraper wait for the `load` event by default, which is enoug
 | **Wait for selector** | `--wait-for "document.querySelector('.loaded')"` | Wait until a DOM marker appears |
 | **Wait fixed time** | `--wait 2000` (ms) | Last resort for "just give it 2 seconds" cases |
 | **Custom JS readiness** | `--wait-for "window.__myAppReady === true"` | App sets a global when ready |
-| **Skip JavaScript** | `--javascript false` | Static HTML only, fastest, no JS runs |
+| **Run custom JavaScript** | `--javascript "JS"` or `--js-file FILE` | Remove banners or scroll before the shot (runs after `load`) |
 
 **Do not use `networkidle`.** The Playwright team [discourages it](https://playwright.dev/docs/api/class-page#page-wait-for-load-state): pages with analytics pings or long-poll connections never settle. Wait for something deterministic instead.
 
@@ -268,7 +269,7 @@ shot-scraper https://example.com -o out.png \
 |---|---|
 | `--reduced-motion` | Sets `prefers-reduced-motion: reduce`, freezes most CSS animations |
 | `document.fonts.ready` | Waits for web fonts to finish loading, which prevents text-shift artifacts |
-| `--javascript-disable` | Mask cookie banners or chat widgets with custom JS that hides them before the shot |
+| `--javascript "JS"` | Run custom JS that removes cookie banners or chat widgets before the shot |
 
 Hide a cookie banner before capturing:
 
@@ -296,7 +297,7 @@ shot-scraper https://example.com -o dark.png \
   --javascript "document.documentElement.style.colorScheme = 'dark';"
 ```
 
-For sites that respect `prefers-color-scheme`, the cleanest path is shot-scraper's `--media` option or a CDP override. See `references/options.md`.
+For sites that respect `prefers-color-scheme`, shot-scraper has no color-scheme option. Emulate the media query with Playwright's `color_scheme="dark"` context option. See `references/options.md`.
 
 ### Mobile + desktop pair (for a comparison page)
 

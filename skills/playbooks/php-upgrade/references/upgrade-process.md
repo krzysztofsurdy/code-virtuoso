@@ -118,8 +118,11 @@ composer require --dev php-parallel-lint/php-parallel-lint
 # Lint all PHP files
 vendor/bin/parallel-lint src/ tests/
 
-# Lint with specific PHP binary (useful for testing against a different version)
+# Show git blame for each error
 vendor/bin/parallel-lint --blame src/ tests/
+
+# Lint with a specific PHP binary (useful for testing against a different version)
+vendor/bin/parallel-lint -p /usr/bin/php8.4 src/ tests/
 
 # Exclude directories
 vendor/bin/parallel-lint --exclude vendor --exclude var src/ tests/ config/

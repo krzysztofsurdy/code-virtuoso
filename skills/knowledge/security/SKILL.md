@@ -26,10 +26,10 @@ Consult this skill when:
 
 ## OWASP Top 10
 
-The OWASP Top 10 (2021 edition) lists the most serious security risks to web applications. Use it as a starting checklist, not a full list.
+The OWASP Top 10 lists the most serious security risks to web applications. Use it as a starting checklist, not a full list. The table below follows the 2021 edition. The 2025 edition reorders the list, adds Software Supply Chain Failures and Mishandling of Exceptional Conditions, and no longer lists SSRF as its own entry.
 
-| # | Vulnerability | What it is | Primary defense |
-|---|---|---|---|
+| # | Vulnerability | What it is | Primary defense | Reference |
+|---|---|---|---|---|
 | A01 | Broken Access Control | Users act outside intended permissions | Deny by default, enforce server-side | [reference](references/owasp-top-10.md) |
 | A02 | Cryptographic Failures | Sensitive data exposed due to weak/missing crypto | Use strong algorithms, encrypt in transit and at rest | [reference](references/owasp-top-10.md) |
 | A03 | Injection | Untrusted data sent to interpreter as part of a command/query | Parameterized queries, input validation | [reference](references/owasp-top-10.md) |

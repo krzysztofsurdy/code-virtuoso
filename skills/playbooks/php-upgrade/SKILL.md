@@ -107,7 +107,7 @@ See [Upgrade Process Reference](references/upgrade-process.md) for tool configur
 | **8.0 -> 8.1** | Fibers introduced, enums added, readonly properties, intersection types, `never` return type |
 | **8.1 -> 8.2** | Dynamic properties deprecated (use `#[AllowDynamicProperties]` temporarily), `$GLOBALS` access restrictions, readonly classes, disjunctive normal form types |
 | **8.2 -> 8.3** | Typed class constants, `json_validate()` added, `#[Override]` attribute, `Randomizer` additions, date/time exception changes |
-| **8.3 -> 8.4** | Implicit nullable types deprecated (`function foo(string $bar = null)` must become `?string $bar = null`), property hooks, asymmetric visibility, `new` without parentheses deprecated for no-arg constructors, DOM extension namespace changes |
+| **8.3 -> 8.4** | Implicit nullable types deprecated (`function foo(string $bar = null)` must become `?string $bar = null`), property hooks, asymmetric visibility, `new Foo()->method()` allowed without wrapping parentheses, new `Dom` namespace classes (the old DOM classes remain), `E_STRICT` and `trigger_error()` with `E_USER_ERROR` deprecated, session ini and `session_set_save_handler()` deprecations |
 
 See [Version Changes Reference](references/version-changes.md) for per-version details with code examples.
 

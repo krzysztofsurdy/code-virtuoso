@@ -88,7 +88,7 @@ For pages with above-the-fold imagery:
 This is verbose. Consider wrapping it in a script file:
 
 ```bash
---javascript-file scripts/wait-for-images.js
+--js-file scripts/wait-for-images.js
 ```
 
 ### Pattern 5: SPA route change
@@ -124,10 +124,10 @@ shot-scraper https://example.com -o out.png \
 
 If a capture times out:
 
-1. **Run with `--silent false`** to see all log output
+1. **Run without `--silent`** and add `--log-console` to see the page's console output
 2. **Open the URL in a real browser** with DevTools and check what loads when
 3. **Check for analytics or chat widgets** that may hold persistent connections (remove them with `--javascript "document.querySelector('#intercom').remove();"`)
-4. **Try `--javascript-disable`** to see whether JS is the problem. If the static HTML captures fine, the cause is JS-driven
+4. **Log requests** with `--log-requests requests.log` to see which requests are slow or never finish
 5. **Reduce the wait condition** to something simpler. Start with `document.fonts.ready` and add specificity from there.
 
 ## Timeout handling
@@ -146,5 +146,5 @@ If you find yourself raising the timeout, the real fix is usually a better wait 
 |---|---|
 | `--wait 10000` "to be safe" | Wastes 10 seconds on every shot, still flakes on slow days |
 | Polling with `setInterval` inside `--wait-for` | shot-scraper re-evaluates the expression; the polling does nothing |
-| Combining `--javascript-disable` with `--wait-for` JS expressions | The JS expression never evaluates because JS is disabled |
+| A `--wait-for` expression that never becomes true | The shot fails after the 30-second timeout. Test the expression in DevTools first |
 | Capturing right after `page.goto` with no wait | First paint is rarely the final paint |

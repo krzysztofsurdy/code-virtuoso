@@ -127,4 +127,4 @@ The five principles reinforce one another:
 - Treat SOLID as a diagnostic tool: when code resists change, check which principle is being violated
 - Pair with design patterns: Strategy (OCP), Adapter (DIP), and Decorator (OCP) are direct implementations of SOLID ideas
 - Write tests first. TDD steers designs toward SOLID compliance
-- Target PHP 8.3+ with strict typing, readonly classes, and enums
+- Use your language's strict typing and immutability features (readonly or final fields, immutable value types, enums or sealed types) so the design is enforced by the compiler

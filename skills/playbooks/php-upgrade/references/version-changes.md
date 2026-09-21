@@ -217,6 +217,7 @@ $val = $GLOBALS['key'];
 ```
 
 - `utf8_encode()` and `utf8_decode()` deprecated. Use `mb_convert_encoding()` instead
+- `strtolower()`, `strtoupper()`, `ucfirst()`, and related functions no longer depend on the locale
 - `${var}` string interpolation deprecated. Use `{$var}` instead
 
 ---
@@ -322,9 +323,13 @@ echo $account->balance;      // OK - public read
 $account->balance = 200.0;   // ERROR - private set
 ```
 
-**`new` without parentheses in expressions:**
+**`new` without wrapping parentheses in chained expressions:**
 ```php
-$length = new String('hello')->length();
+// Before 8.4: the new expression had to be wrapped
+$slug = (new Slugger('Hello World'))->slug();
+
+// 8.4: method calls and property access can follow new directly
+$slug = new Slugger('Hello World')->slug();
 $result = new Collection([1, 2, 3])->map(fn($x) => $x * 2);
 ```
 
@@ -351,12 +356,13 @@ function save(?string $name = null): void { }
 This is one of the most widespread changes. Rector handles it.
 
 **Other deprecations:**
-- GET/POST session tracking deprecated (non-cookie session handling)
-- `session_set_save_handler()` with individual callbacks deprecated. Use `SessionHandlerInterface`
-- DOM extension: `DOMDocument`, `DOMElement` etc. old methods deprecated in favor of `\Dom\` namespace classes
+- Session: changing `session.use_only_cookies`, `session.use_trans_sid`, `session.trans_sid_tags`, `session.trans_sid_hosts`, `session.referer_check`, `session.sid_length`, or `session.sid_bits_per_character` is deprecated, and so is the `SID` constant
+- `session_set_save_handler()` with more than two arguments is deprecated. Use the two-argument form with a `SessionHandlerInterface` object
 - `E_STRICT` constant deprecated
-- `strtolower()`/`strtoupper()` no longer locale-sensitive
-- Calling `new` without parentheses on no-argument constructors deprecated: `new Foo;` should be `new Foo()`
+- `trigger_error()` with `E_USER_ERROR` deprecated. Throw an exception or call `exit()` instead
+- Using `_` as a class name deprecated
+- `lcg_value()` deprecated. Use `Random\Randomizer::getFloat()`
+- DOM: the new `Dom` namespace classes (HTML5-compliant) are added, and the old `DOMDocument` and `DOMNode` classes remain. Only a few properties such as `DOMDocument::$actualEncoding` and the `DOM_PHP_ERR` constant are deprecated
 
 ### Rector configuration for 8.4
 
@@ -370,4 +376,3 @@ return RectorConfig::configure()
 
 Key Rector rules for 8.4:
 - `ExplicitNullableParamTypeRector` - fixes implicit nullable parameters
-- `NullToStrictStringFuncCallArgRector` - fixes null arguments to string functions

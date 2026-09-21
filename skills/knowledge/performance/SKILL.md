@@ -193,4 +193,4 @@ Replace individual operations with batch alternatives where possible:
 | Performance issues caused by poor architecture | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for clean architecture guidance |
 | Need to refactor slow code paths | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for refactoring techniques |
 | API response time optimization | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for API design principles |
-| Database schema and query design | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for testing strategies to verify optimizations |
+| Database schema and query design | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for database design and indexing guidance |

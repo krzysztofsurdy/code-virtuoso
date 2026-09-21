@@ -62,7 +62,7 @@ Check what the current platform supports:
 
 | Capability | Detection | Mode |
 |---|---|---|
-| Platform supports agent teams with peer messaging and shared task lists | Team creation tools are available | **Peer mode** |
+| Platform supports agent teams with peer messaging and shared task lists | Teammates can be spawned by name and message each other (see Platform notes) | **Peer mode** |
 | Platform supports sub-agent spawning but no peer messaging | Agent delegation tools are available | **Sequential mode** |
 | Neither | No delegation support | **Inline mode** - lead executes all phases in the current session |
 
@@ -141,9 +141,9 @@ Platform-specific tool names and conventions for running this skill. The instruc
 
 | Platform | Convention |
 |---|---|
-| Claude Code | Always create the team with the `TeamCreate` tool before dispatching any work. Never spawn multiple `Agent` tool calls directly when a team workflow is available. After `TeamCreate`, dispatch tasks through the team. |
-| Cursor | (TBD) Use the platform's multi-agent coordination feature if available; otherwise fall back to sequential sub-agent dispatch. |
-| Windsurf | (TBD) Use the platform's multi-agent coordination feature if available; otherwise fall back to sequential sub-agent dispatch. |
+| Claude Code | Agent teams are experimental and need `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. There is no `TeamCreate` tool. Spawn each teammate with the `Agent` tool and a `name`, and name a subagent definition as its type to reuse a role. Teammates message each other by name with `SendMessage`, and share a task list when the Task tools are available. A session has one team and its lead is the main session. Without the variable, named `Agent` calls run as ordinary subagents, so use sequential mode. |
+| Cursor | No peer-messaging team feature is documented. Subagents (`.cursor/agents/`) run in parallel, each in its own context, and return results to the parent. A subagent can get its own Git worktree or cloud VM. A Project lets a coordinator agent delegate to other agents. Use sequential mode, or parallel dispatch for independent phases. |
+| Windsurf | No team feature is documented. Windsurf supports several Cascade sessions at once, kept apart with worktrees when they edit similar files, and todo lists are per conversation. The docs describe no subagent dispatch, shared task list, or agent-to-agent messaging, so use inline mode. |
 | Other | Use the platform's equivalent for instantiating a multi-agent team with a shared task list. If no such mechanism exists, run in sequential mode. |
 
 ## Reference files
