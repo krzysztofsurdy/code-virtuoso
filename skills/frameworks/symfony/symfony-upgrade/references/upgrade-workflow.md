@@ -72,17 +72,24 @@ SYMFONY_DEPRECATIONS_HELPER="generateBaseline=true&baselineFile=./tests/deprecat
 **Service configuration (YAML to PHP):**
 
 ```yaml
-# Before (deprecated in some versions)
+# Before (config/services.yaml)
 services:
     App\Service\MyService:
         arguments: ['@doctrine.orm.entity_manager']
 ```
 
-```yaml
-# After
-services:
-    App\Service\MyService:
-        arguments: ['@doctrine.orm.default_entity_manager']
+```php
+// After (config/services.php)
+use App\Service\MyService;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
+
+return static function (ContainerConfigurator $container): void {
+    $container->services()
+        ->set(MyService::class)
+        ->args([service('doctrine.orm.entity_manager')]);
+};
 ```
 
 **Annotations to attributes:**
@@ -222,7 +229,7 @@ Key areas:
 
 Key areas:
 
-- PHP 8.4 minimum requirement expected
+- PHP 8.4 minimum requirement
 - TypeInfo component is no longer experimental
 - Remaining annotation support removed
 - Check `UPGRADE-8.0.md` for the complete list

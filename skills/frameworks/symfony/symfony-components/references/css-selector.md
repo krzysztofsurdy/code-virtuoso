@@ -175,11 +175,11 @@ $crawler = new Crawler($html);
 
 // Extract all articles
 $articles = $crawler->filter('article.post');
-foreach ($articles as $article) {
-    $title = $article->querySelector('h2')->textContent;
-    $excerpt = $article->querySelector('.excerpt')->textContent;
+$articles->each(function (Crawler $article): void {
+    $title = $article->filter('h2')->text();
+    $excerpt = $article->filter('.excerpt')->text();
     echo "$title: $excerpt\n";
-}
+});
 ```
 
 ### Form testing
@@ -212,9 +212,7 @@ $headers = $container->filter('h1, h2, h3');
 $links = $container->filter('a');
 
 // Extract data
-foreach ($links as $link) {
-    echo $link->getAttribute('href');
-}
+$hrefs = $links->each(fn (Crawler $link): string => $link->attr('href'));
 ```
 
 ### API response parsing
@@ -228,13 +226,10 @@ $crawler = new Crawler($response->getContent());
 
 // Extract specific data using CSS selectors
 $results = $crawler->filter('.result-item');
-$data = [];
-foreach ($results as $item) {
-    $data[] = [
-        'title' => $item->querySelector('.title')->textContent,
-        'price' => $item->querySelector('.price')->textContent,
-    ];
-}
+$data = $results->each(fn (Crawler $item): array => [
+    'title' => $item->filter('.title')->text(),
+    'price' => $item->filter('.price')->text(),
+]);
 ```
 
 ## Error handling
@@ -259,7 +254,6 @@ try {
 
 - Reuse a single converter instance instead of creating a new one per call
 - Simpler selectors generally perform better than deeply nested ones
-- The generated XPath expressions are optimized for common patterns
 
 ```php
 // Good: Reuse converter instance

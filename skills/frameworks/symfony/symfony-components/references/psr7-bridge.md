@@ -265,6 +265,7 @@ Use the PSR-7 Bridge when:
 
 ## Version compatibility
 
-- Works with Symfony 4.0+
-- Supports PHP 7.1 or higher
+- Version 8.x (current) requires PHP 8.4 or higher and HttpFoundation 7.4 or 8.0+
+- Version 7.4 requires PHP 8.2 or higher and works with HttpFoundation 6.4, 7.x, and 8.0
+- The bridge follows Symfony's version numbers, so use the release that matches your HttpFoundation version
 - Compatible with all PSR-7 and PSR-17 implementations

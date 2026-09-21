@@ -146,11 +146,12 @@ Form events let you modify the form and its data at each stage of the lifecycle:
 
 ```php
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\Event\PostSetDataEvent;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Event\PostSubmitEvent;
 
-// PRE_SET_DATA: Before form is populated with model data
+// PRE_SET_DATA: Start of setData(), before any data transformation
 $builder->addEventListener(FormEvents::PRE_SET_DATA, function (PreSetDataEvent $event): void {
     $data = $event->getData();
     $form = $event->getForm();
@@ -160,20 +161,20 @@ $builder->addEventListener(FormEvents::PRE_SET_DATA, function (PreSetDataEvent $
     }
 });
 
-// POST_SET_DATA: After form is populated
-$builder->addEventListener(FormEvents::POST_SET_DATA, function (PreSetDataEvent $event): void {
+// POST_SET_DATA: After setData() and all data transformations finish
+$builder->addEventListener(FormEvents::POST_SET_DATA, function (PostSetDataEvent $event): void {
     // Modify form after data is set
 });
 
-// PRE_SUBMIT: Before form processes submitted data
+// PRE_SUBMIT: Start of submit(), with the raw request data
 $builder->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
     $data = $event->getData();
-    // Modify raw submitted data
+    // Modify raw submitted data, or add and remove fields
 });
 
-// POST_SUBMIT: After form denormalization
+// POST_SUBMIT: After all data transformations; validation runs on this event
 $builder->addEventListener(FormEvents::POST_SUBMIT, function (PostSubmitEvent $event): void {
-    // Access final normalized data
+    // $event->getData() is the view data, $event->getForm()->getData() is the model data
 });
 ```
 

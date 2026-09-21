@@ -445,7 +445,7 @@ class CacheRouter:
 ### Public/Private cache based on user
 
 ```python
-from django.views.decorators.cache import patch_cache_control
+from django.utils.cache import patch_cache_control
 from django.views.decorators.vary import vary_on_cookie
 
 @vary_on_cookie

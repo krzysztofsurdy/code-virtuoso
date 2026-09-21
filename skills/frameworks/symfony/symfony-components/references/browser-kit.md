@@ -275,6 +275,6 @@ protected function getHeaders(Request $request): array
 
 ## Related components
 
-- [DomCrawler](dom_crawler.html) - HTML traversal and element manipulation
-- [HttpClient](../http_client.html) - HTTP client for external requests
-- [CssSelector](css_selector.html) - CSS selector support in Crawler
+- [DomCrawler](dom-crawler.md) - HTML traversal and element manipulation
+- [HttpClient](https://symfony.com/doc/current/http_client.html) - HTTP client for external requests
+- [CssSelector](css-selector.md) - CSS selector support in Crawler

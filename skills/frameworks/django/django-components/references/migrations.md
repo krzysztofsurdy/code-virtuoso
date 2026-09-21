@@ -145,7 +145,7 @@ migrations.RemoveIndex(model_name="Article", name="idx_title")
 migrations.AddConstraint(
     model_name="Article",
     constraint=models.CheckConstraint(
-        check=models.Q(rating__gte=1),
+        condition=models.Q(rating__gte=1),
         name="rating_gte_1",
     ),
 )

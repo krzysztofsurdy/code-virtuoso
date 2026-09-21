@@ -145,8 +145,8 @@ $texts = $crawler->filter('p')->each(function (Crawler $node, $i): string {
 $class = $crawler->filter('p')->attr('class');
 $class = $crawler->filter('p')->attr('class', 'default-class');
 
-// Get all attributes
-$id = $crawler->filter('p')->id();
+// Get the id attribute
+$id = $crawler->filter('p')->attr('id');
 
 // Get node name (HTML tag)
 $tag = $crawler->filter('body/*')->nodeName();
@@ -170,8 +170,13 @@ Extract several values at once:
 $data = $crawler->filterXPath('//p')->extract(['_name', '_text', 'class', 'id']);
 // Returns: [['p', 'Content', 'class-name', 'id-value'], ...]
 
-// Custom field mapping
-$data = $crawler->filter('article')->extract(['_text' => 'content', 'class' => 'className']);
+// Custom field names: use each() and return an associative array
+$data = $crawler->filter('article')->each(
+    fn (Crawler $node): array => [
+        'content' => $node->text(),
+        'className' => $node->attr('class'),
+    ]
+);
 ```
 
 ## Working with links

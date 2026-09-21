@@ -512,4 +512,4 @@ exists = await Entry.objects.filter(pk=1).aexists()
 - Use `iterator()` for large querysets to avoid caching all results in memory
 - Use `bulk_create()` and `bulk_update()` for batch operations
 - Use `F()` expressions to avoid race conditions in updates
-- `update()` and `delete()` bypass `save()` and signals
+- `update()` bypasses `save()` and the `pre_save`/`post_save` signals; `delete()` does not call model `delete()` methods but still sends `pre_delete`/`post_delete`

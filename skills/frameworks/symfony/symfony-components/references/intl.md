@@ -347,6 +347,6 @@ This compresses the binary data files with zlib and does not change behavior.
 
 ## Related components
 
-- [Form Component](../form.html) - form field integration
-- [Validator Component](../validator.html) - constraint validation
-- [Translation Component](../translation.html) - message translation
+- [Form Component](form.md) - form field integration
+- [Validator Component](validator.md) - constraint validation
+- [Translation Component](https://symfony.com/doc/current/translation.html) - message translation

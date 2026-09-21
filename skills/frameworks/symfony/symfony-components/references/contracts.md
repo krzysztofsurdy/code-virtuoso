@@ -326,7 +326,7 @@ class EventProcessorTest extends TestCase {
         $dispatcher = new EventDispatcher();
         $eventFired = false;
 
-        $dispatcher->addListener('order.processed', function() {
+        $dispatcher->addListener('order.processed', function () use (&$eventFired): void {
             $eventFired = true;
         });
 
