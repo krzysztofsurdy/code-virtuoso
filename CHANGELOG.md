@@ -36,6 +36,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Tightened SKILL.md descriptions to third-person "what + when" form, all under 1,024 characters
 - Restored `--` separators in CLI commands and SQL comments that the earlier punctuation pass had broken (`git checkout -- .`, `cargo test -- --nocapture`, `dbshell -- -c`, SQL `-- comment`)
 - Extended the Punctuation Style convention to ban em and en dashes in prose
+- Moved detail out of the agentic-rules-writer and report-writer SKILL.md files (now 436 and 377 lines) into reference files, including a new `report-writer/references/components.md`
+- Reference file size limit is now 700 lines in `spec/skill-spec.md` and `scripts/validate-skills.py`, matching CONTRIBUTING.md
+
+### Fixed
+- Django and Symfony references: wrong imports and API calls, form event types, DomCrawler examples, dead `.html` links, outdated psr7-bridge requirements
+- LangChain references: unsafe `eval()` calculator, wrong middleware, backend, `create_agent`, and `ToolRuntime` APIs, retired model IDs
+- Design-patterns, refactoring, and SOLID examples: `readonly` classes that mutate state, invalid PHP, Python, and TypeScript syntax, logic bugs, wrong technique names
+- web-screenshot flags, PHP 8.4 change notes, OWASP table columns, Windsurf rules limits, agent teams platform notes
+- Stale agent counts and a dead anchor in the root docs
 
 ## [8.2.0] - 2026-04-13
 

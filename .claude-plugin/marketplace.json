@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "45 skills and 19 agents for software engineering: knowledge, tools, frameworks, playbooks, roles, and agents",
-    "version": "9.7.2"
+    "version": "9.7.3"
   },
   "plugins": [
     {
