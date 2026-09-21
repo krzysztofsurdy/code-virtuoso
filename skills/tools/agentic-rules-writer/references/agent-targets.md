@@ -68,17 +68,18 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 | Scope | Output File |
 |---|---|
-| Global | `~/.windsurf/rules/global-rules.md` |
+| Global | `~/.codeium/windsurf/memories/global_rules.md` |
 | Project (team-shared) | `.windsurf/rules/team-rules.md` |
 | Project (dev-specific) | `.windsurf/rules/dev-rules.md` (add to `.gitignore`) |
 
 | Property | Value |
 |---|---|
 | Format | Plain Markdown |
-| Character limit | **12,000 characters maximum** |
+| Character limit | **6,000 characters** for the global file, **12,000 characters** per workspace rule file |
 
 **Format notes:**
-- Strict 12,000 character limit. Content beyond this is truncated
+- Windsurf documents the limits as 6,000 characters for the global file and 12,000 per workspace rule file
+- Windsurf's docs now prefer `.devin/rules/*.md` for workspace rules and still read `.windsurf/rules/*.md` as a fallback
 - If generated content exceeds the limit, condense by removing examples and shortening descriptions
 - Add a comment at the top: `<!-- Windsurf rules -->`
 

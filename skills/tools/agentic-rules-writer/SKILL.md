@@ -37,7 +37,7 @@ If `$ARGUMENTS` is provided, map it to an agent from the table below (case-insen
 |---|---|
 | Claude Code | Plain Markdown, keep under 200 lines |
 | Cursor | Requires YAML frontmatter: `alwaysApply: true`, `.mdc` extension |
-| Windsurf | Plain Markdown, enforce under 12,000 characters |
+| Windsurf | Plain Markdown, under 6,000 characters for the global file and 12,000 per workspace rule file |
 | GitHub Copilot | Plain Markdown, `.github/copilot-instructions.md` |
 | Gemini CLI | Plain Markdown |
 | Roo Code | Plain Markdown |
@@ -135,147 +135,22 @@ For global scope (all 20 questions), batch as follows:
 
 For other scopes, adjust the batches to skip questions the scope matrix marks as Skip.
 
-### Group A: Project context
+### Question reference
 
-**Q1. Primary stack**
-Options (pick 4 most relevant, "Other" is added automatically): PHP+Symfony / TypeScript+React / Python+Django / Go / Rust / Java+Spring
-(If "Other", ask them to specify.)
+Read [references/questionnaire.md](references/questionnaire.md) before asking. For each question it holds the exact question text, its purpose, the option table, and the rules each answer generates. Build each menu from those option tables.
 
-**Q2. Directory structure**
-Options:
-- Follow existing: always match the project's current directory structure and conventions
-- Follow best practices: restructure toward industry conventions, suggest improvements
-- Pragmatic middle: follow existing structure but suggest improvements when patterns are clearly wrong
+Questions that need more than a single menu pick:
 
-**Q3. Build/run commands**
-Free-text. Ask: "What are the key commands the agent should know? (build, test, lint, dev server, deploy; leave blank to skip)"
-- If provided, include verbatim in a `## Commands` section in the generated file
-- If blank, omit the section
-
-### Group B: Code standards
-
-**Q4. Code quality bar**
-Options:
-- Staff engineer rigor: exhaustive edge cases, defensive coding, thorough documentation
-- Senior pragmatic: solid quality with practical trade-offs
-- Ship fast: working code with minimal ceremony
-
-Follow-up: "Documentation level?" (Docblocks on public APIs / Inline comments for non-obvious logic only / Minimal, code should speak for itself)
-
-**Q5. Testing philosophy**
-Options:
-- Strict TDD: write tests before implementation, always
-- Test alongside: write tests and code together
-- Test after: implement first, add tests after
-- Minimal: only test critical paths
-
-**Q6. Error handling**
-Options:
-- Fail fast: throw early, crash on unexpected state, surface errors immediately
-- Defensive: handle gracefully, never crash, always recover
-- Balanced: fail fast in development, handle gracefully in production
-
-**Q7. Security & secrets**
-Options:
-- Strict: never read/commit .env or credentials, flag potential vulnerabilities, OWASP-aware
-- Standard: don't commit secrets, basic input validation at boundaries
-- Minimal: just don't commit .env files
-
-**Q8. Dependency management**
-Options:
-- Always ask: never add or remove dependencies without explicit approval
-- Ask for new only: can update existing versions, must ask before adding new packages
-- Autonomous: can add dependencies freely
-
-### Group C: Version control and collaboration
-
-**Q9. Branch conventions**
-Options:
-- Type prefix: `feature/`, `fix/`, `chore/`, `hotfix/` + description
-- Ticket prefix: `PROJ-123/description` or `PROJ-123-description`
-- Flat descriptive: just a kebab-case name, no prefix
-- Other: ask them to specify
-
-**Q10. Commit conventions**
-Options:
-- Conventional commits: `feat:`, `fix:`, `chore:`, etc.
-- Ticket prefix: `PROJ-123: description`
-- Freeform: no enforced format
-
-Follow-up: "Should the agent add itself as co-author on commits?" (Yes / No)
-
-**Q11. PR/MR creation**
-Options:
-- Structured template: ## Summary, ## Test Plan, linked issues
-- Minimal: title + short description
-- Don't create PRs: agent should never push or create PRs without asking
-
-### Group D: Agent workflow
-
-**Q12. Planning discipline**
-Options:
-- Always plan first: enter plan mode for every task
-- Plan for 3+ steps: plan mode only for multi-step tasks
-- Minimal planning: jump straight to implementation
-
-**Q13. Autonomy level**
-Options:
-- Autonomous: fix bugs, failing CI, lint errors without asking
-- Semi-autonomous: ask before destructive or risky operations only
-- Conservative: confirm everything before acting
-
-**Q14. Boundaries (never-do list)**
-Options:
-- Standard safety: never force push main, never delete branches without asking, never modify CI/CD
-- Strict boundaries: above + never run destructive commands, never access production, never modify lock files
-- Custom: ask the user to specify their never-do list
-
-**Q15. Agent parallelization**
-Options:
-- Always parallelize: delegate to agent teams by default for any multi-part task
-- Parallel for large tasks: use agent teams when 3+ independent subtasks exist
-- Sequential only: work through tasks one at a time, no agent delegation
-
-**Q16. Task tracking**
-Options:
-- Todo files: maintain a `TODO.md` or similar tracking file
-- Built-in tasks: use the agent's built-in task/todo system
-- No formal tracking: just work through tasks naturally
-
-Follow-up: "Do you use an external tracking tool?" (Jira / Linear / GitHub Issues / None)
-- If a tool is selected, generate rules referencing it (e.g., "Use Jira MCP for work task tracking" or "Reference GitHub issue numbers in commits")
-
-**Q17. Self-improvement**
-Options:
-- Lessons file: maintain a lessons-learned file, update after corrections
-- No formal tracking: learn implicitly from context
-
-### Group E: Communication and personality
-
-**Q18. Communication style**
-Options:
-- Direct and minimal: no emojis, terse responses, just the facts
-- Structured explanations: sectioned with headings, clear and direct, no emojis
-- Conversational: casual tone, emojis OK, friendly and approachable
-
-**Q19. Persona / roleplay**
-Options:
-- Yes: I want the agent to adopt a persona
-- No: just be a straightforward assistant
-
-If "Yes": ask the user to describe the persona (e.g. "a grumpy senior engineer", "Gandalf", "a pirate captain"). Accept any input. If the persona is obscure or fictional, use web search to gather details before generating rules.
-
-Then generate:
-1. A one-paragraph persona description capturing the character's voice and attitude
-2. 5-8 catchphrases the agent can sprinkle into responses (drawn from the character or invented in their style)
-3. A hard constraint: **Precision always comes first. The persona is flavor, not substance.** Technical accuracy, correct code, and clear answers are never sacrificed for character. Use at most one catchphrase per response and do not repeat them.
-
-### Group F: Freeform
-
-**Q20. Additional comments**
-Free-text. Ask: "Any additional rules, preferences, or comments you'd like included?"
-- If the user provides text, include it verbatim in an "## Additional Rules" section at the end of the generated file
-- If the user says "no" or skips, omit the section entirely
+| Question | Handling |
+|---|---|
+| Q1 Primary stack | Offer the 4 most relevant stacks (PHP+Symfony, TypeScript+React, Python+Django, Go, Rust, Java+Spring); "Other" is added automatically. If "Other", ask the user to specify |
+| Q3 Build/run commands | Free text, blank allowed. Include verbatim in a `## Commands` section; omit the section if blank |
+| Q4 Code quality bar | Follow-up: documentation level |
+| Q10 Commit conventions | Follow-up: should the agent add itself as co-author |
+| Q14 Boundaries | If "Custom", ask for the never-do list and include it prefixed with NEVER |
+| Q16 Task tracking | Follow-up: external tool (Jira, Linear, GitHub Issues, None). If one is selected, generate rules that reference it |
+| Q19 Persona | If "Yes", ask the user to describe the persona (any input); use web search if it is obscure. Generate a one-paragraph description, 5-8 catchphrases, and the hard constraint that precision always comes first and the persona is flavor, not substance (at most one catchphrase per response, never repeated consecutively) |
+| Q20 Additional comments | Free text. Include verbatim in an `## Additional Rules` section at the end; omit the section if the user skips |
 
 ---
 
@@ -517,7 +392,7 @@ alwaysApply: true
 [content here]
 ```
 
-**Windsurf**: check the character count. If it is over 12,000, condense sections (remove examples, shorten descriptions) until it is under the limit. Add a comment at the top: `<!-- Windsurf rules: kept under 12,000 chars -->`.
+**Windsurf**: check the character count. The global file is limited to 6,000 characters and each workspace rule file to 12,000. If the file is over its limit, condense sections (remove examples, shorten descriptions) until it is under. Add a comment at the top: `<!-- Windsurf rules -->`.
 
 **Claude Code / Amp (global)**: keep it under 200 lines. Add a note at the end: `For project-specific rules, use .claude/rules/*.md files.`
 
@@ -527,184 +402,7 @@ alwaysApply: true
 
 ### Rule generation examples
 
-These examples show how questionnaire answers map to generated rules.
-
-**Q1 = "PHP+Symfony"** generates:
-```
-- Use strict types in every file. Follow PSR-12 coding standard
-- Use PHP 8.3+ features (readonly, enums, named arguments)
-- Prefer constructor injection
-```
-
-**Q2 = "Follow existing"** generates:
-```
-- Always match the project's existing directory structure and naming conventions
-- Do not reorganize or restructure directories unless explicitly asked
-- Place new files where similar files already exist
-```
-
-**Q4 = "Senior pragmatic"** generates:
-```
-- Write clean, well-structured code with practical trade-offs
-- Handle edge cases that are likely to occur in production
-```
-
-**Q4 documentation = "Inline comments for non-obvious logic only"** generates:
-```
-- Add inline comments only where the logic is not self-evident
-- Do not add docblocks, type annotations, or comments to code you did not change
-```
-
-**Q5 = "Strict TDD"** generates:
-```
-- Write failing tests before any implementation code
-- Red-green-refactor cycle for every change
-- Never skip the refactor step
-```
-
-**Q6 = "Fail fast"** generates:
-```
-- Throw exceptions early on unexpected state. Do not silently swallow errors
-- Validate inputs at system boundaries and fail immediately on invalid data
-- Prefer explicit error types over generic exceptions
-```
-
-**Q7 = "Strict"** generates:
-```
-- Never read, commit, or log .env files, credentials, API keys, or secrets
-- Flag potential security vulnerabilities (injection, XSS, CSRF) during code review
-- Sanitize all user inputs at system boundaries
-- Follow OWASP Top 10 awareness in generated code
-```
-
-**Q7 = "Standard"** generates:
-```
-- Never commit secrets, credentials, or API keys to version control
-- Validate and sanitize user inputs at system boundaries
-```
-
-**Q8 = "Always ask"** generates:
-```
-- Never add, remove, or update dependencies without explicit approval
-- When suggesting a dependency, explain why it's needed and list alternatives
-```
-
-**Q8 = "Ask for new only"** generates:
-```
-- Ask before adding new dependencies: explain why and list alternatives
-- Updating existing dependency versions is allowed without asking
-```
-
-**Q9 = "Type prefix"** generates:
-```
-- Name branches with type prefix: feature/, fix/, chore/, hotfix/
-- Use kebab-case for the description part
-- Example: feature/add-user-auth, fix/payment-timeout
-```
-
-**Q10 = "Conventional commits"** generates:
-```
-- Use conventional commit format: feat:, fix:, chore:, docs:, refactor:, test:
-- Keep subject line under 72 characters
-- Use body for context when the change is non-trivial
-```
-
-**Q10 co-authorship = "No"** generates:
-```
-- Do not add the agent as co-author on commits
-```
-
-**Q11 = "Structured template"** generates:
-```
-- Create PRs with structured description: ## Summary, ## Test Plan
-- Link related issues in the PR description
-- Keep PR title short (under 72 characters), use description for details
-```
-
-**Q11 = "Don't create PRs"** generates:
-```
-- Never push to remote or create pull requests without explicit approval
-- Prepare commits locally and ask before pushing
-```
-
-**Q12 = "Plan for 3+ steps"** generates:
-```
-- Enter plan mode for any task that requires 3 or more steps
-- For simple changes (single file, obvious fix), proceed directly
-```
-
-**Q13 = "Semi-autonomous"** generates:
-```
-- Fix lint errors, type errors, and failing tests without asking
-- Ask before: force-pushing, deleting branches, modifying CI/CD, running destructive commands
-- Ask before making architectural changes not covered by the current task
-```
-
-**Q14 = "Standard safety"** generates:
-```
-- NEVER force push to main/master
-- NEVER delete branches without explicit approval
-- NEVER modify CI/CD pipelines without explicit approval
-- NEVER commit secrets, .env files, or credentials
-```
-
-**Q14 = "Strict boundaries"** generates:
-```
-- NEVER force push to main/master
-- NEVER delete branches without explicit approval
-- NEVER modify CI/CD pipelines without explicit approval
-- NEVER commit secrets, .env files, or credentials
-- NEVER run destructive commands (rm -rf, DROP TABLE, etc.) without explicit approval
-- NEVER access or modify production environments
-- NEVER modify lock files (package-lock.json, composer.lock) manually
-```
-
-**Q15 = "Parallel for large tasks"** generates:
-```
-- Use agent teams to parallelize work when 3 or more independent subtasks exist
-- For smaller tasks, work sequentially
-- When delegating, define clear boundaries per agent to avoid conflicts
-```
-
-**Q16 = "Built-in tasks" + external tool = "Jira"** generates:
-```
-- Use the built-in task tracking for multi-step work
-- Use Jira MCP for work task tracking
-- Reference Jira ticket IDs in commits and PR descriptions
-```
-
-**Q17 = "Lessons file"** generates:
-```
-- After any correction or mistake, update the lessons-learned file
-- Review lessons file at the start of each session
-```
-
-**Q18 = "Structured explanations"** generates:
-```
-- Use clear, direct language with section headings
-- No emojis in responses or generated code
-- Break complex explanations into numbered steps or bullet points
-```
-
-**Q19 = "Yes" with persona "a grumpy senior engineer"** generates:
-```
-## Persona
-You are a grumpy senior engineer who has seen too many production incidents caused by
-clever code. You're blunt, slightly impatient with over-engineering, and deeply
-practical. You respect simplicity and distrust anything "elegant" that can't survive
-a 3 AM incident.
-
-Catchphrases (use at most one per response, do not repeat consecutively):
-- "I've seen this blow up in prod before."
-- "Clever is the enemy of maintainable."
-- "Ship it or shut up about it."
-- "That's a Tuesday 2 AM pager right there."
-- "YAGNI. Next question."
-- "Who's going to debug this at 3 AM? Not me."
-
-IMPORTANT: Precision and correctness always come first. The persona is flavor on top
-of accurate, well-structured responses. Never sacrifice technical quality for character.
-```
+Each answer maps to a short block of 2-5 rule bullets. [references/questionnaire.md](references/questionnaire.md) lists the generated rules for every answer of all 20 questions, plus full persona output examples (pirate captain, grumpy senior engineer). Load it while assembling the sections above and take the bullets from there instead of inventing wording.
 
 ---
 
@@ -727,3 +425,12 @@ After writing the file, do the following:
 - If the user reports no installed code-virtuoso plugins in Phase 4, skip the Skills, Custom Agents, and Agent Roles sections entirely and include a short "Recommended (not installed)" list pointing to `tool-using-ecosystem` and `agents-virtuoso` as starting installs
 - If `using-ecosystem` is not installed, do not fabricate the ecosystem inventory. Ask the user what they have
 - For project scopes, verify you are inside a git repository before writing
+
+---
+
+## Reference files
+
+| Reference | Contents |
+|---|---|
+| [agent-targets](references/agent-targets.md) | Output paths, format requirements, limits, and testing steps for each agent and scope (Phases 1, 2, and 5) |
+| [questionnaire](references/questionnaire.md) | Question text, option tables, answer-to-rule mappings, and persona examples for Q1-Q20 (Phases 3 and 5) |
