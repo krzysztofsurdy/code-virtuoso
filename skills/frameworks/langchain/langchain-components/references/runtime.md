@@ -46,27 +46,28 @@ agent = create_agent(
 # Supply context at invocation time
 response = agent.invoke(
     {"messages": [{"role": "user", "content": "Update my profile"}]},
-    config={"context": AgentContext(
+    context=AgentContext(
         user_id="user_123",
         db_connection=db,
         api_key="sk-..."
-    )}
+    )
 )
 ```
 
 ### Accessing runtime in tools
 
-Import `ToolRuntime` to access runtime values within tool functions.
+Add a `runtime: ToolRuntime` parameter to a tool. The agent injects it at call time and hides it from the schema the model sees.
 
 ```python
-from langchain.agents import ToolRuntime
+from langchain.tools import tool, ToolRuntime
 
-def search_docs(query: str) -> str:
-    runtime = ToolRuntime.get()
+@tool
+def search_docs(query: str, runtime: ToolRuntime[AgentContext]) -> str:
+    """Search the user's documents."""
     user_id = runtime.context.user_id
     # Use user_id to filter results
     results = runtime.store.search(
-        namespace=("docs", user_id),
+        ("docs", user_id),
         query=query
     )
     return str(results)
@@ -80,8 +81,7 @@ Node-style hooks receive a `Runtime` parameter. Wrap-style hooks access it throu
 from langchain.agents.middleware import AgentMiddleware
 
 class UserAwareMiddleware(AgentMiddleware):
-    def before_model(self, state, config):
-        runtime = config["runtime"]
+    def before_model(self, state, runtime):
         user_id = runtime.context.user_id
         print(f"Processing request for user: {user_id}")
         return {}
@@ -92,22 +92,24 @@ class UserAwareMiddleware(AgentMiddleware):
 The runtime store provides persistent key-value storage accessible across invocations.
 
 ```python
-from langchain.agents import ToolRuntime
+from langchain.tools import tool, ToolRuntime
 
-def save_preference(key: str, value: str) -> str:
-    runtime = ToolRuntime.get()
+@tool
+def save_preference(key: str, value: str, runtime: ToolRuntime[AgentContext]) -> str:
+    """Save a user preference."""
     user_id = runtime.context.user_id
     runtime.store.put(
-        namespace=("preferences", user_id),
-        key=key,
-        value={"preference": value}
+        ("preferences", user_id),
+        key,
+        {"preference": value}
     )
     return f"Saved {key}={value}"
 
-def get_preferences() -> str:
-    runtime = ToolRuntime.get()
+@tool
+def get_preferences(runtime: ToolRuntime[AgentContext]) -> str:
+    """List the user's preferences."""
     user_id = runtime.context.user_id
-    items = runtime.store.list(namespace=("preferences", user_id))
+    items = runtime.store.search(("preferences", user_id))
     return str(items)
 ```
 
@@ -181,6 +183,8 @@ agent = create_agent(
 Supervisor agents coordinate specialist agents on complex tasks.
 
 ```python
+from langchain.tools import tool
+
 researcher = create_agent(
     model="gpt-4.1",
     tools=[search_web],
@@ -193,9 +197,19 @@ writer = create_agent(
     name="writer",
 )
 
+@tool("research", description="Research a topic and return findings")
+def call_researcher(query: str) -> str:
+    result = researcher.invoke({"messages": [{"role": "user", "content": query}]})
+    return result["messages"][-1].content
+
+@tool("write", description="Write a document from the given notes")
+def call_writer(brief: str) -> str:
+    result = writer.invoke({"messages": [{"role": "user", "content": brief}]})
+    return result["messages"][-1].content
+
 supervisor = create_agent(
     model="gpt-4.1",
-    tools=[researcher.as_tool(), writer.as_tool()],
+    tools=[call_researcher, call_writer],
     name="supervisor",
 )
 ```
@@ -205,7 +219,7 @@ supervisor = create_agent(
 | API | Purpose |
 |-----|---------|
 | `create_agent()` | Create agent with runtime support |
-| `ToolRuntime.get()` | Access runtime in tools |
+| `ToolRuntime` | Parameter type that gives tools access to state, context, and store |
 | `runtime.context` | Access injected context values |
 | `runtime.store` | Access persistent key-value store |
 | `get_stream_writer()` | Get stream writer for custom updates |

@@ -57,7 +57,7 @@ model = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite")
 
 # AWS Bedrock
 from langchain_aws import ChatBedrock
-model = ChatBedrock(model="anthropic.claude-3-5-sonnet-20240620-v1:0")
+model = ChatBedrock(model="us.anthropic.claude-sonnet-4-6")
 
 # HuggingFace
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint

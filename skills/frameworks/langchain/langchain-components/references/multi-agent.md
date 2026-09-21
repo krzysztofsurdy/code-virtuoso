@@ -90,7 +90,7 @@ A central supervisor agent coordinates specialized subagents by invoking them as
 from langchain.tools import tool
 from langchain.agents import create_agent
 
-subagent = create_agent(model="anthropic:claude-sonnet-4-20250514", tools=[...])
+subagent = create_agent(model="anthropic:claude-sonnet-4-6", tools=[...])
 
 @tool("research", description="Research a topic and return findings")
 def call_research_agent(query: str):
@@ -100,7 +100,7 @@ def call_research_agent(query: str):
     return result["messages"][-1].content
 
 main_agent = create_agent(
-    model="anthropic:claude-sonnet-4-20250514",
+    model="anthropic:claude-sonnet-4-6",
     tools=[call_research_agent]
 )
 ```
@@ -108,8 +108,8 @@ main_agent = create_agent(
 ### Single dispatch registry
 
 ```python
-research_agent = create_agent(model="gpt-4.1", prompt="Research specialist...")
-writer_agent = create_agent(model="gpt-4.1", prompt="Writing specialist...")
+research_agent = create_agent(model="gpt-4.1", system_prompt="Research specialist...")
+writer_agent = create_agent(model="gpt-4.1", system_prompt="Writing specialist...")
 
 SUBAGENTS = {
     "research": research_agent,

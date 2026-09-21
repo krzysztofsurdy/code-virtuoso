@@ -48,6 +48,9 @@ Prefer `snake_case` for tool names to avoid compatibility issues across model pr
 ### Custom names and descriptions
 
 ```python
+import ast
+import operator
+
 @tool("web_search")
 def search(query: str) -> str:
     """Search the web for information."""
@@ -56,7 +59,17 @@ def search(query: str) -> str:
 @tool("calculator", description="Performs arithmetic calculations...")
 def calc(expression: str) -> str:
     """Evaluate mathematical expressions."""
-    return str(eval(expression))
+    ops = {ast.Add: operator.add, ast.Sub: operator.sub,
+           ast.Mult: operator.mul, ast.Div: operator.truediv}
+
+    def evaluate(node: ast.expr) -> float:
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+            return node.value
+        if isinstance(node, ast.BinOp) and type(node.op) in ops:
+            return ops[type(node.op)](evaluate(node.left), evaluate(node.right))
+        raise ValueError("Only + - * / on numbers is allowed")
+
+    return str(evaluate(ast.parse(expression, mode="eval").body))
 ```
 
 ### Advanced schema with Pydantic

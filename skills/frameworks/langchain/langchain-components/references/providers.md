@@ -122,11 +122,11 @@ pip install langchain-google-community
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Gemini Developer API (quick setup with API key)
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
+llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash")
 
 # Vertex AI backend (enterprise Google Cloud integration)
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash",
+    model="gemini-3.5-flash",
     project="my-project",
     location="us-central1"
 )
@@ -175,11 +175,11 @@ pip install langchain-aws
 ```python
 # Amazon Bedrock
 from langchain_aws import ChatBedrock
-llm = ChatBedrock(model_id="anthropic.claude-v2")
+llm = ChatBedrock(model_id="us.anthropic.claude-sonnet-4-6")
 
 # Bedrock Converse (recommended for standard use cases)
 from langchain_aws import ChatBedrockConverse
-llm = ChatBedrockConverse(model_id="anthropic.claude-v2")
+llm = ChatBedrockConverse(model_id="us.anthropic.claude-sonnet-4-6")
 ```
 
 Bedrock provides managed access to foundation models from AI21 Labs, Anthropic, Cohere, Meta, and Stability AI.

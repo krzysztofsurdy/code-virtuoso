@@ -308,15 +308,14 @@ from langgraph.checkpoint.memory import MemorySaver
 
 checkpointer = MemorySaver()
 
-def make_backend(runtime):
-    return CompositeBackend(
-        default=StateBackend(runtime),
-        routes={"/memories/": StoreBackend(runtime)}
-    )
+backend = CompositeBackend(
+    default=StateBackend(),
+    routes={"/memories/": StoreBackend(namespace=lambda rt: ("filesystem",))},
+)
 
 agent = create_deep_agent(
     store=InMemoryStore(),
-    backend=make_backend,
+    backend=backend,
     checkpointer=checkpointer
 )
 ```
@@ -411,7 +410,7 @@ modal_sandbox = modal.Sandbox.create(app=app)
 backend = ModalSandbox(sandbox=modal_sandbox)
 
 agent = create_deep_agent(
-    model=ChatAnthropic(model="claude-sonnet-4-20250514"),
+    model=ChatAnthropic(model="claude-sonnet-4-6"),
     system_prompt="You are a Python coding assistant with sandbox access.",
     backend=backend,
 )

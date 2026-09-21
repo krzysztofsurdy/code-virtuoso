@@ -153,19 +153,19 @@ Switches to alternative models when the primary model fails.
 from langchain.agents.middleware import ModelFallbackMiddleware
 
 ModelFallbackMiddleware(
-    fallbacks=["anthropic:claude-sonnet-4-20250514", "openai:gpt-4.1-mini"]
+    fallbacks=["anthropic:claude-sonnet-4-6", "openai:gpt-4.1-mini"]
 )
 ```
 
 ### PII detection middleware
 
-Detects personally identifiable information (PII) and handles it with a configurable strategy.
+Detects personally identifiable information (PII) and handles it with a configurable strategy. Each instance handles one PII type, so add one middleware per type.
 
 ```python
-from langchain.agents.middleware import PIIDetectionMiddleware
+from langchain.agents.middleware import PIIMiddleware
 
-PIIDetectionMiddleware(
-    types=["email", "credit_card", "ip", "mac_address", "url"],
+PIIMiddleware(
+    "email",                     # Built-in: "email", "credit_card", "ip", "mac_address", "url", or a custom name
     strategy="redact",           # "block", "redact", "mask", or "hash"
     apply_to_input=True,         # Check user messages (default: True)
     apply_to_output=False,       # Check AI responses (default: False)
@@ -178,7 +178,7 @@ PIIDetectionMiddleware(
 | Strategy | Behavior |
 |----------|----------|
 | `block` | Raise an exception when PII is detected |
-| `redact` | Replace with `[REDACTED_{TYPE}]` |
+| `redact` | Replace with `[REDACTED_{PII_TYPE}]` |
 | `mask` | Partially obscure (e.g., `****-****-****-1234`) |
 | `hash` | Replace with deterministic hash |
 
@@ -189,9 +189,9 @@ PIIDetectionMiddleware(
 Gives agents task planning and tracking for complex multi-step operations.
 
 ```python
-from langchain.agents.middleware import ToDoListMiddleware
+from langchain.agents.middleware import TodoListMiddleware
 
-ToDoListMiddleware(
+TodoListMiddleware(
     system_prompt="Plan tasks carefully...",
     tool_description="Write and track todos",
 )
@@ -319,39 +319,42 @@ FileSearchMiddleware(
 
 ### Filesystem middleware (Deep Agents)
 
-Provides context engineering through filesystem access, for memory management.
+Provides context engineering through filesystem access, for memory management. The filesystem and subagent middleware ship in the `deepagents` package (`pip install deepagents`), not in `langchain`.
 
 ```python
-from langchain.agents.middleware import FilesystemMiddleware
-from langchain.agents.middleware import StateBackend, StoreBackend, CompositeBackend
+from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
+from deepagents.middleware import FilesystemMiddleware
 
 FilesystemMiddleware(
     backend=CompositeBackend(
-        routes={"/memories/": StoreBackend(store=my_store)},
         default=StateBackend(),
+        routes={"/memories/": StoreBackend(namespace=lambda rt: ("filesystem",))},
     )
 )
 ```
 
-Tools provided: `ls`, `read_file`, `write_file`, `edit_file`.
+Tools provided: `ls`, `read_file`, `write_file`, `edit_file`, `glob`, `grep`.
 
 ### Subagent middleware (Deep Agents)
 
 Spawns subagents to isolate context and handle specialized tasks.
 
 ```python
-from langchain.agents.middleware import SubagentMiddleware, SubagentDefinition
+from deepagents.middleware.subagents import SubAgentMiddleware
 
-SubagentMiddleware(
+SubAgentMiddleware(
+    default_model="claude-sonnet-4-6",
+    default_tools=[],
     subagents=[
-        SubagentDefinition(
-            name="researcher",
-            description="Researches topics using web search",
-            system_prompt="You are a research assistant...",
-            tools=[search_web],
-            model="gpt-4.1-mini",
-        ),
-    ]
+        {
+            "name": "researcher",
+            "description": "Researches topics using web search",
+            "system_prompt": "You are a research assistant...",
+            "tools": [search_web],
+            "model": "gpt-4.1-mini",
+            "middleware": [],
+        },
+    ],
 )
 ```
 

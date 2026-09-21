@@ -56,9 +56,9 @@ Reference for the LangChain ecosystem on Python 3.10+: models, agents, tools, re
 
 ```python
 from langchain.chat_models import init_chat_model
-from langgraph.prebuilt import create_agent
+from langchain.agents import create_agent
 
-model = init_chat_model("anthropic:claude-sonnet-4-20250514")
+model = init_chat_model("anthropic:claude-sonnet-4-6")
 
 def get_weather(city: str) -> str:
     """Get weather for a city."""
@@ -100,14 +100,26 @@ retriever_tool = vector_store.as_retriever()
 ### Multi-agent handoffs
 
 ```python
-from langgraph.prebuilt import create_agent
+from langchain.agents import create_agent
+from langchain.tools import tool
 
 billing_agent = create_agent(model, [lookup_billing], name="billing")
 tech_agent = create_agent(model, [check_status], name="tech_support")
+
+@tool("billing", description="Handle billing questions")
+def ask_billing(query: str) -> str:
+    result = billing_agent.invoke({"messages": [{"role": "user", "content": query}]})
+    return result["messages"][-1].content
+
+@tool("tech_support", description="Handle technical support questions")
+def ask_tech_support(query: str) -> str:
+    result = tech_agent.invoke({"messages": [{"role": "user", "content": query}]})
+    return result["messages"][-1].content
+
 supervisor = create_agent(
     model,
-    [billing_agent, tech_agent],
-    prompt="Route to the appropriate specialist."
+    [ask_billing, ask_tech_support],
+    system_prompt="Route to the appropriate specialist."
 )
 ```
 
