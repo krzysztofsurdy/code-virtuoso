@@ -172,6 +172,7 @@ class EditorHistory {
 // Client code
 $editor = new TextEditor();
 $history = new EditorHistory();
+$history->save($editor); // initial empty state, so the first undo can return to it
 
 $editor->write('Hello');
 $history->save($editor);

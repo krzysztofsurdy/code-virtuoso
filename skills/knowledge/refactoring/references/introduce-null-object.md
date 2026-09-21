@@ -121,7 +121,7 @@ class User
 {
     private Notification $notification;
 
-    public function __construct(Notification $notification = null)
+    public function __construct(?Notification $notification = null)
     {
         $this->notification = $notification ?? new NullNotification();
     }

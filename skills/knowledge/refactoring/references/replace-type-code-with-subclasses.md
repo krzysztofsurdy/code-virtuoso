@@ -225,7 +225,7 @@ echo $employee->calculateBonus(); // 10000.0
 ## When not to use
 
 - **Simple, rarely changing types**: if the variations are minimal and stable, type codes may be acceptable.
-- **Type codes are immutable**: when the type can never change after initialization, consider sealed classes instead.
+- **Type codes change at runtime**: an object cannot change its class after creation, so when the type code can change during the object's life, use Replace Type Code with State or Strategy. Subclasses fit type codes that stay fixed.
 - **Performance critical code**: polymorphism adds minor overhead (usually negligible).
 - **Legacy integration**: external systems mandate specific type code formats.
 - **Temporary workaround**: the whole structure is about to be redesigned.

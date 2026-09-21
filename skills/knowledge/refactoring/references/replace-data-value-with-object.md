@@ -273,5 +273,5 @@ class OrderProcessor
 - **Extract Class**: Use it when a value object needs to become a full entity with identity
 - **Introduce Parameter Object**: Groups multiple parameters as a value object
 - **Move Method**: Transfer behavior from procedural code into the new value object
-- **Replace Type Code with Classes**: Converts enumerations to value objects with behavior
+- **Replace Type Code with Class**: Converts enumerations to value objects with behavior
 - **Hide Delegate**: Hides access to the value object behind a simpler interface

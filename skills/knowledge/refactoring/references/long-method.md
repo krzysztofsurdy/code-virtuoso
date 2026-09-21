@@ -123,15 +123,14 @@ class OrderProcessor
     {
         $subtotal = $this->calculateSubtotal($orderData['items']);
         $tax = $this->calculateTax($subtotal);
-        $memberDiscount = $this->applyMembershipDiscount($subtotal + $tax, $orderData['customer']);
-        $shipping = $this->calculateShipping($memberDiscount);
-
         $discountedTotal = $this->applyMembershipDiscount($subtotal + $tax, $orderData['customer']);
+        $shipping = $this->calculateShipping($discountedTotal);
 
         return new OrderResult(
             total: $discountedTotal + $shipping,
             tax: $tax,
             shipping: $shipping,
+            appliedDiscounts: $this->findBulkDiscountedItemIds($orderData['items']),
         );
     }
 
@@ -147,9 +146,19 @@ class OrderProcessor
     private function calculateItemPrice(array $item): float
     {
         $price = $item['price'] * $item['quantity'];
-        return $item['quantity'] >= self::BULK_DISCOUNT_THRESHOLD
+        return $item['quantity'] > self::BULK_DISCOUNT_THRESHOLD
             ? $price * self::BULK_DISCOUNT_RATE
             : $price;
+    }
+
+    private function findBulkDiscountedItemIds(array $items): array
+    {
+        $discounted = array_filter(
+            $items,
+            fn (array $item): bool => $item['quantity'] > self::BULK_DISCOUNT_THRESHOLD,
+        );
+
+        return array_values(array_column($discounted, 'id'));
     }
 
     private function calculateTax(float $subtotal): float
@@ -165,11 +174,11 @@ class OrderProcessor
             : $amount;
     }
 
-    private function calculateShipping(float $subtotal): float
+    private function calculateShipping(float $total): float
     {
         return match (true) {
-            $subtotal > 1000 => 0,
-            $subtotal > 500 => 5,
+            $total > 1000 => 0,
+            $total > 500 => 5,
             default => 10,
         };
     }

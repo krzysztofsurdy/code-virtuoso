@@ -358,7 +358,7 @@ for ($i = 0; $i < 3000; $i++) {
     $system->emit('smoke', rand(0, 800), rand(0, 600), rand(-1, 1), rand(-3, 0), 3.0);
 }
 
-// Only 2 Flyweight objects exist (fire, smoke, spark)
+// Only 2 Flyweight objects exist (fire and smoke)
 // But 8000 particles are rendered efficiently
 echo "Particles: " . $system->getParticleCount() . "\n";  // 8000
 echo "Flyweights: " . $system->getFlyweightCount() . "\n"; // 2

@@ -181,6 +181,5 @@ class ProductPresenter
 
 - **Extract Method**: Often applied before Rename Method to isolate and clarify functionality
 - **Move Method**: Combines renaming with relocating a method to a more appropriate class
-- **Change Function Declaration**: Related technique for updating function signatures alongside names
-- **Rename Variable**: The same principle applied to variable names
-- **Deprecation**: Use the PHP 8.1+ `#[Deprecated]` attribute for safe public API transitions
+- **Add Parameter** and **Remove Parameter**: Other changes to a method's signature
+- For public API, mark the old name with the PHP 8.4+ `#[Deprecated]` attribute so callers can migrate safely

@@ -83,10 +83,10 @@ declare(strict_types=1);
 namespace DesignPatterns\Interpreter;
 
 // Context to hold interpretation state
-readonly class Context
+class Context
 {
     public function __construct(
-        private string $statement,
+        private readonly string $statement,
         private array $variables = []
     ) {}
 

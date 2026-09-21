@@ -227,8 +227,8 @@ In these cases you can keep the temp and still extract the method for clarity, o
 
 - **Extract Method**: The complementary technique that creates the query method itself
 - **Introduce Parameter Object**: When there are many temporaries, bundling them into a value object may fit better
-- **Introduce Variable**: Use a descriptive temp to simplify a complex expression before deciding whether to extract a method
-- **Cache Query Result**: Memoize the result of expensive query methods to preserve performance
+- **Extract Variable**: Use a descriptive temp to simplify a complex expression before deciding whether to extract a method
+- If the query method is expensive, memoize its result to preserve performance
 - **Remove Middle Man**: Avoid extracting queries that only delegate to another method
 
 ## Examples in other languages

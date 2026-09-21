@@ -75,8 +75,8 @@ declare(strict_types=1);
 
 class Order
 {
-    private int $basePrice;
-    private float $taxRate;
+    public int $basePrice;
+    public float $taxRate;
 
     public function __construct(int $basePrice, float $taxRate)
     {

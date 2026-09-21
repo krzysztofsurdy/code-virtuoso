@@ -164,8 +164,8 @@ $dist = $point->distance($moved);
 - **Extract Class**: Move related properties into their own class
 - **Introduce Parameter Object**: Group method parameters into an object
 - **Replace Magic Number with Symbolic Constant**: Use named constants alongside object properties
-- **Extract Value Object**: Create immutable objects that represent domain concepts
-- **Introduce Builder**: Use builders for complex object construction
+- **Replace Data Value with Object**: Create immutable objects that represent domain concepts
+- **Builder pattern**: Use builders for complex object construction
 
 ## Examples in other languages
 
@@ -205,7 +205,7 @@ row.SetWins("15");
 
 **Before:**
 ```python
-row = [None * 2]
+row = [None] * 2
 row[0] = "Liverpool"
 row[1] = "15"
 ```

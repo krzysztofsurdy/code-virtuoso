@@ -168,13 +168,14 @@ class ReportService
 
 ## Alternative: marking foreign methods with attributes
 
-In PHP 8.3+, you can use attributes to mark foreign methods:
+In PHP 8+, you can use attributes to mark foreign methods:
 
 ```php
 <?php
 
 namespace App\Service;
 
+use Attribute;
 use DateTime;
 
 #[Attribute]
@@ -187,7 +188,7 @@ class ForeignMethod
 
 class DateTimeExtension
 {
-    #[ForeignMethod(reason: 'DateTime is immutable and from PHP core')]
+    #[ForeignMethod(reason: 'DateTime is a PHP core class we cannot modify')]
     public static function getStartOfMonth(DateTime $date): DateTime
     {
         $startOfMonth = clone $date;

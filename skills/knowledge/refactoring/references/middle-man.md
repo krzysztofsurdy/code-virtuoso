@@ -67,71 +67,58 @@ $person = $repo->findById(1);
 <?php
 declare(strict_types=1);
 
-readonly class PersonDatabaseConnection
+// PersonRepository is deleted. Clients depend on DatabaseConnection,
+// which already offers findById(), save() and delete().
+readonly class PersonProfile
 {
     public function __construct(private DatabaseConnection $db) {}
 
-    public function findById(int $id): ?Person
+    public function load(int $id): ?Person
     {
         return $this->db->findById($id);
     }
-
-    public function save(Person $person): void
-    {
-        $this->db->save($person);
-    }
-
-    public function delete(int $id): void
-    {
-        $this->db->delete($id);
-    }
 }
 
-// Client code - interact directly with the actual implementation
-$connection = new PersonDatabaseConnection($db);
-$person = $connection->findById(1);
+// Client code
+$profile = new PersonProfile($connection);
+$person = $profile->load(1);
 ```
 
 ## Recommended refactorings
 
 ### Remove Middle Man
 
-Eliminate the intermediary class and have clients talk directly to the real implementation. This is the primary solution.
+Eliminate the intermediary class and have clients talk directly to the real implementation. This is the primary solution. Work in small steps:
+
+1. Add an accessor that exposes the delegate.
+2. Change each client to call the delegate through that accessor instead of the forwarding method.
+3. Delete each forwarding method once no client uses it.
+4. When no forwarders are left, delete the class and inject the delegate into its clients.
 
 ```php
 <?php
 declare(strict_types=1);
 
-interface PersonRepositoryInterface
-{
-    public function findById(int $id): ?Person;
-    public function save(Person $person): void;
-    public function delete(int $id): void;
-}
-
-readonly class PersonDatabaseConnection implements PersonRepositoryInterface
+readonly class PersonRepository
 {
     public function __construct(private DatabaseConnection $db) {}
+
+    public function getConnection(): DatabaseConnection
+    {
+        return $this->db;
+    }
 
     public function findById(int $id): ?Person
     {
         return $this->db->findById($id);
     }
-
-    public function save(Person $person): void
-    {
-        $this->db->save($person);
-    }
-
-    public function delete(int $id): void
-    {
-        $this->db->delete($id);
-    }
 }
 
-// Client code
-$repo = new PersonDatabaseConnection($db);
+// Client code, before
 $person = $repo->findById(1);
+
+// Client code, after step 2: findById() on the repository can now be deleted
+$person = $repo->getConnection()->findById(1);
 ```
 
 ### Inline Method

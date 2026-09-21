@@ -119,5 +119,5 @@ Avoid this refactoring if:
 
 - **Add Parameter**: The opposite refactoring; use it when a method needs additional data.
 - **Rename Method**: Often combined with Remove Parameter to better reflect intent.
-- **Change Method Signature**: A broader refactoring that covers parameter changes.
+- **Add Parameter** and **Rename Method**: The other changes to a method's signature.
 - **Extract Method**: Can eliminate parameters by creating small, focused methods.

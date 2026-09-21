@@ -49,7 +49,7 @@ class OrderProcessor
     public function calculateTotal(
         Order $order,
         Customer $customer,
-        string $couponCode = null
+        ?string $couponCode = null
     ): float {
         $subtotal = 0;
 
@@ -62,7 +62,7 @@ class OrderProcessor
 
         $discount = 0;
         if ($couponCode) {
-            $coupon = new CouponService()->findByCode($couponCode);
+            $coupon = (new CouponService())->findByCode($couponCode);
             if ($coupon && $coupon->isValid()) {
                 $discount = $coupon->getPercentage() * $subtotal / 100;
             }
@@ -139,7 +139,7 @@ class OrderProcessor
     public function calculateTotal(
         Order $order,
         Customer $customer,
-        string $couponCode = null
+        ?string $couponCode = null
     ): float {
         return (new CalculateOrderTotal($order, $customer, $couponCode))();
     }

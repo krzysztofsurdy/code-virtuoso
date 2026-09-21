@@ -10,7 +10,7 @@
 
 ## Overview
 
-Separate Query from Modifier splits a method that both returns data and changes object state into two methods. It applies the Command Query Responsibility Segregation (CQRS) principle at method level: a method either performs an action or returns data, not both.
+Separate Query from Modifier splits a method that both returns data and changes object state into two methods. It applies Command Query Separation (CQS) at method level: a method either performs an action or returns data, not both. Command Query Responsibility Segregation (CQRS) takes the same idea to the architecture level, with separate read and write models.
 
 ## Motivation
 
@@ -91,7 +91,7 @@ $count = $user->getSmileyCount(); // Same result as first call
 - **Testability**: query and modifier logic can be tested independently.
 - **Caching**: query methods become candidates for result caching.
 - **Concurrency**: separating reads from writes makes thread-safety easier to reason about.
-- **CQRS alignment**: matches the architectural pattern of the same name.
+- **CQRS groundwork**: the same separation at method level is the starting point for CQRS at the architecture level.
 
 ## When not to use
 
@@ -104,6 +104,6 @@ $count = $user->getSmileyCount(); // Same result as first call
 
 - **Command pattern**: encapsulates requests as objects, similar to separating modifiers.
 - **Query pattern**: a dedicated pattern for side-effect-free data retrieval.
-- **Command Query Responsibility Segregation (CQRS)**: the architectural pattern that extends this principle.
+- **Command Query Responsibility Segregation (CQRS)**: the architectural extension of Command Query Separation.
 - **Remove Setting Method**: prevents unwanted modifications to immutable objects.
 - **Introduce Parameter Object**: can simplify the signatures of the separated query and modifier methods.

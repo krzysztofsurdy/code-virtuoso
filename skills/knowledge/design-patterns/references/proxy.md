@@ -117,15 +117,15 @@ readonly class Document implements DocumentInterface
 
 declare(strict_types=1);
 
-readonly class DocumentProxy implements DocumentInterface
+class DocumentProxy implements DocumentInterface
 {
     private ?DocumentInterface $realDocument = null;
     private ?string $cachedContent = null;
     private bool $isInitialized = false;
 
     public function __construct(
-        private string $filename,
-        private string $userRole = 'guest'
+        private readonly string $filename,
+        private readonly string $userRole = 'guest'
     ) {
     }
 

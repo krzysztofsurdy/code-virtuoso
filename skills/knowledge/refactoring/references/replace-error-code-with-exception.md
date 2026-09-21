@@ -140,9 +140,8 @@ try {
 ## Related Refactorings
 
 - **Extract Method**: Often combined to isolate error-throwing logic
-- **Replace Parameter with Method**: Can help reduce error-prone parameter passing
-- **Introduce Custom Exception**: Create domain-specific exceptions with clearer meaning
-- **Replace Magic Number**: Use exception types instead of numeric error codes
+- **Replace Parameter with Method Call**: Can help reduce error-prone parameter passing
+- **Replace Magic Number with Symbolic Constant**: Name any numeric error codes that remain while callers migrate to exceptions
 
 ## Examples in other languages
 

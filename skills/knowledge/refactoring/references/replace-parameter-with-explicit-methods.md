@@ -250,12 +250,14 @@ void SetWidth(int arg)
 **Before:**
 ```python
 def output(self, name):
-    if name == "banner"
+    if name == "banner":
         # Print the banner.
         # ...
-    if name == "info"
+        pass
+    if name == "info":
         # Print the info.
         # ...
+        pass
 ```
 
 **After:**
@@ -263,10 +265,12 @@ def output(self, name):
 def outputBanner(self):
     # Print the banner.
     # ...
+    pass
 
 def outputInfo(self):
     # Print the info.
     # ...
+    pass
 ```
 
 ### TypeScript
@@ -274,11 +278,11 @@ def outputInfo(self):
 **Before:**
 ```typescript
 setValue(name: string, value: number): void {
-  if (name.equals("height")) {
+  if (name === "height") {
     height = value;
     return;
   }
-  if (name.equals("width")) {
+  if (name === "width") {
     width = value;
     return;
   }
@@ -290,7 +294,7 @@ setValue(name: string, value: number): void {
 setHeight(arg: number): void {
   height = arg;
 }
-setWidth(arg: number): number {
+setWidth(arg: number): void {
   width = arg;
 }
 ```

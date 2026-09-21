@@ -123,7 +123,7 @@ class StringFormatter
      */
     public function extractEmailDomain(string $email): string
     {
-        // Use filter_var or parse_email equivalent
+        // Reject addresses without an @ before splitting
         if (!str_contains($email, '@')) {
             return '';
         }
@@ -260,7 +260,10 @@ def foundPerson(people):
 ```python
 def foundPerson(people):
     candidates = ["Don", "John", "Kent"]
-    return people if people in candidates else ""
+    for person in people:
+        if person in candidates:
+            return person
+    return ""
 ```
 
 ### TypeScript
@@ -269,13 +272,13 @@ def foundPerson(people):
 ```typescript
 foundPerson(people: string[]): string {
   for (let person of people) {
-    if (person.equals("Don")){
+    if (person === "Don"){
       return "Don";
     }
-    if (person.equals("John")){
+    if (person === "John"){
       return "John";
     }
-    if (person.equals("Kent")){
+    if (person === "Kent"){
       return "Kent";
     }
   }

@@ -135,4 +135,4 @@ $account = new Account('ACC-12345', 'John Doe');
 - **Introduce Parameter Object**: Group multiple constructor parameters into dedicated objects
 - **Change Reference to Value**: Often paired with this refactoring for immutable value objects
 - **Replace Constructor with Factory Method**: Provides alternative initialization patterns
-- **Introduce Builder**: For complex objects with many optional initialization parameters
+- **Builder pattern**: For complex objects with many optional initialization parameters

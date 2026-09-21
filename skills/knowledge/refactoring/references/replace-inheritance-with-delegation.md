@@ -41,7 +41,7 @@ Replace Inheritance with Delegation swaps an "extends" relationship for composit
 <?php
 declare(strict_types=1);
 
-abstract readonly class Stack
+abstract class Stack
 {
     private array $items = [];
 
@@ -61,7 +61,7 @@ abstract readonly class Stack
     }
 }
 
-final readonly class InstrumentedStack extends Stack
+final class InstrumentedStack extends Stack
 {
     private int $accessCount = 0;
 
@@ -83,7 +83,7 @@ final readonly class InstrumentedStack extends Stack
 <?php
 declare(strict_types=1);
 
-final readonly class Stack
+final class Stack
 {
     public function __construct(private array $items = []) {}
 

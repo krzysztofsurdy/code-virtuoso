@@ -143,4 +143,4 @@ $intern = Employee::createIntern('Charlie');
 - **Replace Conditional with Polymorphism**: Consider it if the single class starts to grow switch statements on the type field
 - **Extract Superclass**: Use it to share behavior among several classes by moving it up
 - **Factory Method Pattern**: The factory methods introduced here follow this pattern
-- **Replace Type Code with Subclass**: The inverse refactoring, applied when distinct behavior is needed
+- **Replace Type Code with Subclasses**: The inverse refactoring, applied when distinct behavior is needed

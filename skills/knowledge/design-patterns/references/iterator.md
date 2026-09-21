@@ -80,23 +80,19 @@ Iterator Interface (hasNext(), next(), current(), key(), valid())
 <?php
 declare(strict_types=1);
 
-readonly interface Iterator {
-    public function current(): mixed;
-    public function key(): mixed;
-    public function next(): void;
-    public function rewind(): void;
-    public function valid(): bool;
-}
+namespace DesignPatterns\Iterator;
 
-readonly interface Aggregate {
+use Iterator;
+
+interface Aggregate {
     public function createIterator(): Iterator;
 }
 
-readonly class FileIterator implements Iterator {
+class FileIterator implements Iterator {
     private int $position = 0;
 
     public function __construct(
-        private array $files
+        private readonly array $files
     ) {}
 
     public function current(): mixed {
@@ -120,7 +116,7 @@ readonly class FileIterator implements Iterator {
     }
 }
 
-readonly class FileCollection implements Aggregate {
+class FileCollection implements Aggregate {
     public function __construct(
         private array $files
     ) {}
@@ -149,13 +145,18 @@ foreach ($iterator as $file) {
 <?php
 declare(strict_types=1);
 
-readonly class DatabaseRecordIterator implements Iterator {
+namespace DesignPatterns\Iterator;
+
+use Iterator;
+use PDO;
+
+class DatabaseRecordIterator implements Iterator {
     private int $position = 0;
     private array $records = [];
 
     public function __construct(
-        private PDO $connection,
-        private string $query
+        private readonly PDO $connection,
+        private readonly string $query
     ) {
         $this->loadRecords();
     }
@@ -215,11 +216,15 @@ foreach ($userRepo->findAllIterator() as $user) {
 <?php
 declare(strict_types=1);
 
-readonly class ReverseIterator implements Iterator {
+namespace DesignPatterns\Iterator;
+
+use Iterator;
+
+class ReverseIterator implements Iterator {
     private int $position;
 
     public function __construct(
-        private array $items
+        private readonly array $items
     ) {
         $this->position = count($items) - 1;
     }

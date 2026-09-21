@@ -85,9 +85,8 @@ class Square extends Rectangle
 }
 
 // This function works with Rectangle but breaks with Square
-function doubleWidth(Rectangle $rect): void
+function resizeToTenByFive(Rectangle $rect): void
 {
-    $originalHeight = $rect->area() / $rect->area() * 10; // simplified
     $rect->setWidth(10);
     $rect->setHeight(5);
 

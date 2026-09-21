@@ -107,7 +107,7 @@ $price = $order->getPrice();
 
 - **Extract Method**: Apply when the retrieval logic is complex enough to warrant its own method
 - **Add Parameter**: The inverse refactoring, used when a method needs more flexibility
-- **Simplify Method Calls**: The broader family of refactorings that reduce parameter list complexity
+- The simplifying method calls group of refactorings: Other techniques that reduce parameter list complexity
 - **Remove Parameter**: A related technique for eliminating parameters that are no longer used
 
 ## Examples in other languages

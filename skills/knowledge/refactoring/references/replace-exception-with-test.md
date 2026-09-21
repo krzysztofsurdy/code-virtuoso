@@ -93,11 +93,10 @@ function divideNumbers(float $dividend, float $divisor): float
 
 ## Related Refactorings
 
-- **Replace Magic with Constants**: Assign descriptive constant names to values used in predictable condition checks
+- **Replace Magic Number with Symbolic Constant**: Assign descriptive constant names to values used in predictable condition checks
 - **Extract Method**: Pull validation logic into its own method
-- **Introduce Guard Clauses**: Use early returns paired with conditional tests
 - **Consolidate Duplicate Conditional Fragments**: Merge overlapping validation checks
-- **Replace Nested Conditionals with Guard Clauses**: Flatten complex validation hierarchies
+- **Replace Nested Conditional with Guard Clauses**: Flatten complex validation hierarchies
 
 ## Examples in other languages
 

@@ -74,9 +74,9 @@ class Order
 
     public function calculateTotal(): float
     {
-        $isBelowTaxThreshold = $this->subtotal > 100 && $this->subtotal * $this->taxRate > 15;
+        $isAboveTaxThreshold = $this->subtotal > 100 && $this->subtotal * $this->taxRate > 15;
 
-        if ($isBelowTaxThreshold) {
+        if ($isAboveTaxThreshold) {
             $totalWithTax = $this->subtotal * (1 + $this->taxRate);
             return $totalWithTax * (1 - $this->discountRate);
         }

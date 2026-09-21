@@ -73,7 +73,7 @@ $employee = new Employee(1, 'John', 50000);
 ```php
 abstract class Employee
 {
-    public function __construct(
+    private function __construct(
         protected int $type,
         protected string $name,
         protected float $salary
@@ -89,8 +89,6 @@ abstract class Employee
     }
 
     abstract public function getSalary(): float;
-
-    private function __construct(int $type, string $name, float $salary) {}
 }
 
 class Manager extends Employee

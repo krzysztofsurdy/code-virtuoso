@@ -197,7 +197,7 @@ class PricingCalculator
 - **Introduce Parameter Object**: Bundles related constants into one object
 - **Extract Class**: Useful when a group of related magic numbers deserves its own class
 - **Replace Type Code with Subclasses**: An alternative when numeric categories stand for distinct behaviors
-- **Replace Magic Number with Symbolic Constant (Enum)**: The PHP 8.1+ approach using backed enums
+- Backed enums (PHP 8.1+) are an alternative to class constants when the values form a closed set
 
 ## Examples in other languages
 

@@ -75,9 +75,9 @@ Singleton
 <?php
 declare(strict_types=1);
 
-readonly class DatabaseConnection {
+class DatabaseConnection {
     private static ?self $instance = null;
-    private PDO $connection;
+    private readonly PDO $connection;
 
     // Private constructor prevents external instantiation
     private function __construct() {
@@ -128,9 +128,9 @@ $results = $db1->query('SELECT * FROM users');
 <?php
 declare(strict_types=1);
 
-readonly class Logger {
+class Logger {
     private static ?self $instance = null;
-    private string $logFile;
+    private readonly string $logFile;
 
     private function __construct() {
         $this->logFile = dirname(__DIR__) . '/logs/app.log';
@@ -181,7 +181,7 @@ Logger::getInstance()->error('An error occurred');
 <?php
 declare(strict_types=1);
 
-readonly class ConfigurationManager {
+class ConfigurationManager {
     private static self $instance;
     private array $config;
 
@@ -198,7 +198,7 @@ readonly class ConfigurationManager {
 
     public static function getInstance(): self {
         if (!isset(self::$instance)) {
-            self::$init();
+            self::init();
         }
         return self::$instance;
     }
