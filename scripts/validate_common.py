@@ -15,6 +15,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 MARKETPLACE_PATH = REPO_ROOT / ".claude-plugin" / "marketplace.json"
 SKILLS_DIR = REPO_ROOT / "skills"
 AGENTS_DIR = REPO_ROOT / "agents"
+PLUGINS_DIR = REPO_ROOT / "plugins"
 
 errors: list[str] = []
 warnings: list[str] = []
@@ -85,6 +86,20 @@ def parse_frontmatter(path: Path) -> dict[str, object] | None:
             result[key] = value
 
     return result
+
+
+def find_skill_files() -> list[Path]:
+    """Return every SKILL.md in skills/ and in plugins/*/skills/."""
+    found = list(SKILLS_DIR.rglob("SKILL.md"))
+    found += PLUGINS_DIR.glob("*/skills/**/SKILL.md")
+    return sorted(found)
+
+
+def find_reference_files() -> list[Path]:
+    """Return every skill reference file in skills/ and in plugins/*/skills/."""
+    found = list(SKILLS_DIR.rglob("references/*.md"))
+    found += PLUGINS_DIR.glob("*/skills/**/references/*.md")
+    return sorted(found)
 
 
 def rel(path: Path) -> str:

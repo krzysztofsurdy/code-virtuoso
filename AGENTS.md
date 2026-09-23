@@ -13,6 +13,7 @@ Where **skills** provide reference knowledge (patterns, checklists, component do
 - [Role agents](#role-agents)
 - [Agent chaining patterns](#agent-chaining-patterns)
 - [Conventions](#conventions)
+- [Plugins](#plugins)
 
 ## Architecture
 
@@ -182,3 +183,9 @@ Both role and specialist agents preload relevant skills. The skill name matches 
 ### Punctuation Style
 
 Do not use em dashes (`—`), en dashes (`–`), or the double-dash (`--`) as a pause in agent definitions, skills, specs, or any project documentation. Use a comma, colon, period, parentheses, or a single hyphen (`-`) with surrounding spaces instead. Number ranges use a plain hyphen (`1-5`). This rule applies to prose only: CLI flags (`--help`), argument separators (`git checkout -- .`, `cargo test -- --nocapture`), and SQL comments (`-- note`) keep their double dash.
+
+## Plugins
+
+Skills and agents in this repo are agent-agnostic markdown. The `plugins/` directory is the one deliberate exception: each entry is a self-contained Claude Code plugin with its own `.claude-plugin/plugin.json`, and it may ship hooks, scripts, commands, and skills that run inside Claude Code. `plugins/loop-virtuoso` is the first one. It is Claude Code only. Install it with `/plugin install loop-virtuoso@code-virtuoso`.
+
+Plugins under `plugins/` are listed in `.claude-plugin/marketplace.json` with `name`, `source`, and `description` only. The plugin's own `plugin.json` is the source of truth for its version and components.

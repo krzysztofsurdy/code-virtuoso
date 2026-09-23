@@ -35,6 +35,7 @@ File: `.claude-plugin/marketplace.json`
 - When updating an existing skill's content: bump **patch** version
 - When renaming skills, reorganizing directories, or changing plugin structure: bump **major** version
 - Also update README.md skill tables and repository structure when adding/renaming/moving skills
+- Plugins under `plugins/` (Claude Code only) have their own `plugin.json` that owns the plugin version. Their marketplace entry has only `name`, `source`, and `description`. Changing one still bumps the marketplace version.
 
 ## Commit conventions
 

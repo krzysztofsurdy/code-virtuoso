@@ -18,7 +18,7 @@ from pathlib import Path
 from validate_common import (
     AGENTS_DIR,
     REPO_ROOT,
-    SKILLS_DIR,
+    find_skill_files,
     error,
     ok,
     print_summary,
@@ -126,7 +126,7 @@ def check_internal_links(skill_files: list[Path]) -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> int:
-    skill_files = sorted(SKILLS_DIR.rglob("SKILL.md"))
+    skill_files = find_skill_files()
     agent_files = sorted(AGENTS_DIR.glob("*.md")) if AGENTS_DIR.is_dir() else []
 
     check_markdown_lint(skill_files, agent_files)

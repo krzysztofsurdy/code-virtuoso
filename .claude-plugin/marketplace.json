@@ -4,7 +4,7 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "45 skills and 19 agents for software engineering: knowledge, tools, frameworks, playbooks, roles, and agents",
+    "description": "47 skills and 19 agents for software engineering: knowledge, tools, frameworks, playbooks, roles, and agents, plus the loop-virtuoso Claude Code plugin",
     "version": "9.7.3"
   },
   "plugins": [
@@ -115,6 +115,11 @@
         "./agents/readiness-checker.md",
         "./agents/course-corrector.md"
       ]
+    },
+    {
+      "name": "loop-virtuoso",
+      "source": "./plugins/loop-virtuoso",
+      "description": "Claude Code only. A backlog-driven delivery loop that feeds the agent one small item at a time and accepts it only when verify commands pass and a write-boundary guard approves. Ships hooks, scripts, commands, and 2 skills"
     }
   ]
 }

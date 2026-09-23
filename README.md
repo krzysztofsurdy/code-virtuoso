@@ -38,6 +38,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release notes.
 - [Playbook skills](#playbook-skills)
 - [Role skills](#role-skills)
 - [Agents](#agents)
+- [Plugins](#plugins)
 - [Installation (detailed)](#installation-detailed)
 - [Works well with](#works-well-with)
 - [FAQ](#faq)
@@ -84,6 +85,7 @@ That is the whole tour. For fine-grained install modes (per-skill, global, offli
 | [Roles](#role-skills) | 6 | Team-role reference skills used by role agents |
 | [Agents](#agents) | 19 | 12 specialist + 7 role sub-agents with tool, isolation, and memory metadata |
 | [Teams](#teams) | 3 | Pre-composed agent teams with bundled skills and coordination protocols |
+| [Plugins](#plugins) | 1 | Self-contained Claude Code plugins with hooks and scripts |
 
 ---
 
@@ -227,6 +229,23 @@ Pre-composed agent teams with bundled skills and coordination protocols. Pick a 
 
 ---
 
+## Plugins
+
+Everything above is agent-agnostic markdown. The `plugins/` directory is the one deliberate exception: each entry is a self-contained Claude Code plugin with its own `.claude-plugin/plugin.json`, and it may ship hooks, scripts, commands, and skills. These plugins run code, so they work in Claude Code only.
+
+| Plugin | Summary |
+|--------|---------|
+| [loop-virtuoso](plugins/loop-virtuoso/README.md) | Backlog-driven delivery loop. Feeds the agent one small item at a time and accepts it only when verify commands pass and a write-boundary guard approves |
+
+Install it from the Claude Code marketplace:
+
+```
+/plugin marketplace add krzysztofsurdy/code-virtuoso
+/plugin install loop-virtuoso@code-virtuoso
+```
+
+---
+
 ## Installation (detailed)
 
 ### Selective install
@@ -243,6 +262,20 @@ npx skills add krzysztofsurdy/code-virtuoso -g
 
 # Preview what's available without installing
 npx skills add krzysztofsurdy/code-virtuoso --list
+```
+
+### Claude Code marketplace
+
+The same repository is a Claude Code plugin marketplace. Add it once, then install any bundle:
+
+```
+/plugin marketplace add krzysztofsurdy/code-virtuoso
+/plugin install knowledge-virtuoso@code-virtuoso
+/plugin install tools-virtuoso@code-virtuoso
+/plugin install frameworks-virtuoso@code-virtuoso
+/plugin install playbooks-virtuoso@code-virtuoso
+/plugin install agents-virtuoso@code-virtuoso
+/plugin install loop-virtuoso@code-virtuoso
 ```
 
 ### Updating
@@ -312,7 +345,7 @@ MCP server that replaces built-in grep/file search with ranked, compact results 
 ## FAQ
 
 **Which AI coding assistants does this support?**
-Anything that follows the [Agent Skills](https://agentskills.io) open standard, including Claude Code, Cursor, Windsurf, GitHub Copilot, Codex, Gemini CLI, Cline, OpenCode, Continue, Trae, Roo Code, Amp, and more. Skills use portable frontmatter; platform-specific extensions (tool names, isolation, memory) are noted per-agent.
+Anything that follows the [Agent Skills](https://agentskills.io) open standard, including Claude Code, Cursor, Windsurf, GitHub Copilot, Codex, Gemini CLI, Cline, OpenCode, Continue, Trae, Roo Code, Amp, and more. Skills use portable frontmatter; platform-specific extensions (tool names, isolation, memory) are noted per-agent. The plugins under `plugins/` are the exception and need Claude Code.
 
 **Do I have to install the full bundle?**
 No. Install only the skills you need with `--skill <name>`, or install a single plugin (e.g., `role-backend-dev`, `knowledge-virtuoso`, `tool-ticket-writer`). Each plugin is documented in `.claude-plugin/marketplace.json`.
@@ -437,6 +470,14 @@ code-virtuoso/
 │       ├── stakeholder-update-writer/
 │       ├── web-screenshot/
 │       └── image-annotate/
+├── plugins/                       # Self-contained Claude Code plugins (hooks, scripts)
+│   └── loop-virtuoso/             # Backlog-driven delivery loop (Claude Code only)
+│       ├── .claude-plugin/        # plugin.json
+│       ├── commands/
+│       ├── hooks/
+│       ├── scripts/
+│       └── skills/
+├── scripts/                       # Repository validators
 ├── spec/                          # Format specifications
 │   ├── skill-spec.md
 │   ├── agent-spec.md

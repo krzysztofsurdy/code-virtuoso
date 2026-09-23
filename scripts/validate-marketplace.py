@@ -3,6 +3,7 @@
 
 Checks:
 - Marketplace JSON validity (valid JSON, required fields, paths exist)
+- Self-contained plugins (source under plugins/ with its own plugin.json)
 - Plugin naming convention
 - Orphan detection (skills/agents not registered)
 
@@ -30,9 +31,58 @@ from validate_common import (
     warn,
 )
 
+CONFLICTING_ENTRY_FIELDS = ("strict", "skills", "agents", "hooks", "version")
+
 PLUGIN_NAME_RE = re.compile(
     r"^([\w-]+-virtuoso|role-[\w-]+|agent-[\w-]+|tool-[\w-]+|code-virtuoso)$"
 )
+
+
+def self_contained_source(plugin: dict) -> Path | None:
+    """Return the plugin directory when the entry points at its own plugin, else None.
+
+    An entry whose source is a relative path other than the repo root ("./")
+    is a self-contained plugin that ships its own .claude-plugin/plugin.json.
+    """
+    source = plugin.get("source")
+    if not isinstance(source, str):
+        return None
+    resolved = (REPO_ROOT / source).resolve()
+    if resolved == REPO_ROOT:
+        return None
+    return resolved
+
+
+def check_self_contained_plugin(plugin: dict, plugin_dir: Path) -> None:
+    pname = plugin.get("name", "<unnamed>")
+    source = plugin["source"]
+
+    if not plugin_dir.is_dir():
+        error(f"{source} does not exist (source of {pname})")
+        return
+
+    manifest = plugin_dir / ".claude-plugin" / "plugin.json"
+    if not manifest.is_file():
+        error(f"{source}/.claude-plugin/plugin.json does not exist (source of {pname})")
+        return
+
+    try:
+        manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        error(f"{rel(manifest)} is not valid JSON: {exc}")
+        return
+
+    if manifest_data.get("name") != pname:
+        error(f"{rel(manifest)}: name '{manifest_data.get('name')}' does not match marketplace entry '{pname}'")
+
+    conflicts = [f for f in CONFLICTING_ENTRY_FIELDS if f in plugin]
+    if conflicts:
+        error(
+            f"{pname}: marketplace entry sets {', '.join(conflicts)} but the plugin has its own "
+            "plugin.json (conflicting manifests); remove them from the entry"
+        )
+    else:
+        ok(f"{pname}: self-contained plugin at {source}")
 
 
 # ---------------------------------------------------------------------------
@@ -74,6 +124,11 @@ def check_marketplace(data: dict) -> None:
 
     for plugin in plugins:
         pname = plugin.get("name", "<unnamed>")
+
+        plugin_dir = self_contained_source(plugin)
+        if plugin_dir is not None:
+            check_self_contained_plugin(plugin, plugin_dir)
+            continue
 
         for spath in plugin.get("skills", []):
             resolved = REPO_ROOT / spath.lstrip("./")
@@ -121,15 +176,20 @@ def check_orphans(data: dict) -> None:
     # Collect all skill and agent paths referenced in any plugin
     referenced_skill_dirs: set[Path] = set()
     referenced_agent_paths: set[Path] = set()
-    uses_auto_discovery = False
+    repo_auto_discovery = False
 
     for plugin in data.get("plugins", []):
+        # Self-contained plugins (own plugin.json) auto-discover inside their
+        # own source directory only, so they never cover skills/ or agents/.
+        if self_contained_source(plugin) is not None:
+            continue
+
         skills_list = plugin.get("skills", [])
         agents_list = plugin.get("agents", [])
 
-        # If a plugin has source but no explicit skills/agents, it uses auto-discovery
+        # A repo-root entry with no explicit lists auto-discovers the whole repo
         if plugin.get("source") and not skills_list and not agents_list:
-            uses_auto_discovery = True
+            repo_auto_discovery = True
 
         for spath in skills_list:
             resolved = (REPO_ROOT / spath.lstrip("./")).resolve()
@@ -139,14 +199,12 @@ def check_orphans(data: dict) -> None:
             resolved = (REPO_ROOT / apath.lstrip("./")).resolve()
             referenced_agent_paths.add(resolved)
 
-    if uses_auto_discovery:
-        skill_files = sorted(SKILLS_DIR.rglob("SKILL.md"))
-        agent_files = sorted(AGENTS_DIR.glob("*.md")) if AGENTS_DIR.is_dir() else []
-        ok(f"Auto-discovery mode: found {len(skill_files)} skill(s) and {len(agent_files)} agent(s)")
-        return
-
     skill_files = sorted(SKILLS_DIR.rglob("SKILL.md"))
     agent_files = sorted(AGENTS_DIR.glob("*.md")) if AGENTS_DIR.is_dir() else []
+
+    if repo_auto_discovery:
+        ok(f"Auto-discovery mode: found {len(skill_files)} skill(s) and {len(agent_files)} agent(s)")
+        return
 
     # Check skill orphans
     for path in skill_files:

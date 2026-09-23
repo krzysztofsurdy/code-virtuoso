@@ -17,7 +17,8 @@ import sys
 from pathlib import Path
 
 from validate_common import (
-    SKILLS_DIR,
+    find_reference_files,
+    find_skill_files,
     error,
     ok,
     parse_frontmatter,
@@ -33,10 +34,10 @@ from validate_common import (
 
 def check_skill_frontmatter() -> list[Path]:
     print("\n=== Skill Frontmatter ===")
-    skill_files = sorted(SKILLS_DIR.rglob("SKILL.md"))
+    skill_files = find_skill_files()
 
     if not skill_files:
-        warn("No SKILL.md files found in skills/")
+        warn("No SKILL.md files found in skills/ or plugins/*/skills/")
         return []
 
     for path in skill_files:
@@ -132,7 +133,7 @@ def check_skill_size(skill_files: list[Path]) -> None:
 def check_reference_file_sizes() -> None:
     print("\n=== Reference File Size Check ===")
 
-    ref_files = sorted(SKILLS_DIR.rglob("references/*.md"))
+    ref_files = find_reference_files()
 
     if not ref_files:
         return

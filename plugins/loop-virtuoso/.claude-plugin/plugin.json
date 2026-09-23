@@ -5,8 +5,8 @@
   "author": {
     "name": "Krzysztof Surdy"
   },
-  "homepage": "https://github.com/krzysztofsurdy/loop-virtuoso",
-  "repository": "https://github.com/krzysztofsurdy/loop-virtuoso",
-  "license": "GPL-3.0",
+  "homepage": "https://github.com/krzysztofsurdy/code-virtuoso",
+  "repository": "https://github.com/krzysztofsurdy/code-virtuoso",
+  "license": "MIT",
   "keywords": ["autonomous", "loop", "backlog", "verification", "tdd"]
 }

@@ -19,7 +19,7 @@ Code Virtuoso is a collection of AI agent skills and sub-agent definitions built
 
 ## Getting started
 
-There is no build step, test suite, or runtime. "Development" means writing and editing markdown files that follow specific conventions. To contribute:
+The skills and agents have no build step, test suite, or runtime: "development" means writing and editing markdown files that follow specific conventions. The exception is `plugins/`, which holds Claude Code plugins with hooks and scripts. Run the validators in `scripts/` before you commit. To contribute:
 
 1. Clone the repository
 2. Read this guide and the [README](README.md) for project context
@@ -37,10 +37,14 @@ skills/
   playbooks/         - Step-by-step operational procedures (PHP upgrade, etc.)
   roles/             - Team role reference skills (product manager, architect, etc.)
   frameworks/{name}/ - Framework-specific skills (Symfony, Django, LangChain)
+plugins/             - Self-contained Claude Code plugins with hooks and scripts (loop-virtuoso)
+scripts/             - Repository validators (python3 scripts/validate-*.py)
 spec/                - Format specifications
 template/            - Starter templates
 .claude-plugin/      - Marketplace configuration (Claude Code format; adaptable to other platforms)
 ```
+
+`plugins/` is the one deliberate exception to the agent-agnostic rule. Each plugin there is a Claude Code plugin with its own `.claude-plugin/plugin.json` and may ship hooks, scripts, commands, and skills. Everything else in the repo stays agent-agnostic.
 
 See the [README](README.md) for the full directory tree and skill tables.
 
@@ -381,7 +385,7 @@ There are two distinct uses of the word "plugin" in this repository. Know which 
 | Meaning | File | Purpose |
 |---|---|---|
 | **Marketplace entry** | an object inside `.claude-plugin/marketplace.json` | Bundles existing skills and/or agents from this repo for installation. Most "add a plugin" work is this. |
-| **Standalone Claude Code plugin** | its own directory with `.claude-plugin/plugin.json` | A self-contained plugin that can live in a separate repo and be distributed through any marketplace. |
+| **Standalone Claude Code plugin** | its own directory with `.claude-plugin/plugin.json` | A self-contained plugin that can live in a separate repo and be distributed through any marketplace. Plugins that live in this repo go in `plugins/{name}/`. |
 
 For a guided, interactive scaffold, run the `plugin-creator` skill in `skills/tools/plugin-creator/`. This guide is the reference for contributors and reviewers; the canonical specification lives in [`spec/plugin-spec.md`](spec/plugin-spec.md).
 
@@ -415,7 +419,7 @@ See [Marketplace Configuration](#marketplace-configuration) below for the full r
 Use this path when the plugin should be its own repo or its own directory outside this marketplace - for example, when shipping hooks, MCP servers, or LSP servers that do not belong inside the code-virtuoso content library.
 
 1. **Scaffold with `plugin-creator`**. The skill generates the full directory structure, writes a validated `plugin.json`, and wires up any components you select (skills, agents, hooks, MCP servers, LSP servers, bin, output styles, default settings).
-2. **Place the plugin directory** at the top of the plugin's own repository, or anywhere outside `skills/` and `agents/` in this repo.
+2. **Place the plugin directory** at the top of the plugin's own repository, or in this repo under `plugins/{name}/`.
 3. **Follow [`spec/plugin-spec.md`](spec/plugin-spec.md)** for structural rules. Critical points:
    - Only `plugin.json` belongs inside `.claude-plugin/`. Every other directory (`skills/`, `agents/`, `hooks/`, etc.) lives at the plugin root.
    - All paths in `plugin.json` must be relative and start with `./`.
@@ -426,7 +430,7 @@ Use this path when the plugin should be its own repo or its own directory outsid
    claude --plugin-dir ./your-plugin
    claude plugin validate
    ```
-5. **Add a marketplace entry** if you want this marketplace to distribute it - the entry's `source` can be a relative path (same repo), a `github` object, a `url` object, a `git-subdir` object, or an `npm` object. See `plugin-creator/references/marketplace-manifest.md` for all source types.
+5. **Add a marketplace entry** if you want this marketplace to distribute it - the entry's `source` can be a relative path (same repo), a `github` object, a `url` object, a `git-subdir` object, or an `npm` object. See `plugin-creator/references/marketplace-manifest.md` for all source types. For a plugin under `plugins/`, use `{"name": "{name}", "source": "./plugins/{name}", "description": "..."}` and nothing else: because the plugin has its own `plugin.json`, adding `strict`, `skills`, `agents`, `hooks`, or `version` to the entry creates conflicting manifests (`scripts/validate-marketplace.py` rejects it). Users install it with `/plugin install {name}@code-virtuoso`.
 6. **Seed a `CHANGELOG.md`** with the initial `1.0.0` release entry. Standalone plugins track their own version independently of the marketplace version.
 
 ### Common mistakes
@@ -473,7 +477,7 @@ The file `.claude-plugin/marketplace.json` defines how skills and agents are pac
 
 ### Plugin naming convention
 
-All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` subdirectory, plus one for agents.
+All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` subdirectory, plus one for agents, plus one per self-contained plugin under `plugins/`.
 
 | Plugin | Maps to | Contains |
 |---|---|---|
@@ -482,6 +486,7 @@ All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` s
 | `frameworks-virtuoso` | `skills/frameworks/` | All framework-specific skills (Symfony, Django, LangChain) |
 | `playbooks-virtuoso` | `skills/playbooks/` | All operational playbook skills |
 | `agents-virtuoso` | `skills/roles/` + `agents/` | All 19 agents + all 7 role skills |
+| `loop-virtuoso` | `plugins/loop-virtuoso/` | Self-contained Claude Code plugin with its own `plugin.json` (not a bundle of repo skills) |
 
 When adding a new skill:
 - Identify which `skills/` subdirectory it belongs to
@@ -540,8 +545,9 @@ All content must be **language-agnostic** and **LLM provider-agnostic** by defau
 | Agent definitions | No provider-specific model names. No platform-specific tool names in the body. |
 | Framework skills (`frameworks/`) | Language/framework-specific by definition. Target latest stable version. |
 | Playbooks | May be language-specific if the procedure is (e.g., PHP upgrade). State the scope clearly. |
+| Plugins (`plugins/`) | Claude Code only, by design. They ship hooks and scripts that run inside Claude Code. State this in the plugin README. |
 
-**The only exceptions** are skills that explicitly exist for a specific language, framework, or LLM provider (e.g., `symfony-components`, `django-components`, `php-upgrade`). These should state their scope in the description.
+**The only exceptions** are skills that explicitly exist for a specific language, framework, or LLM provider (e.g., `symfony-components`, `django-components`, `php-upgrade`), and the self-contained plugins under `plugins/`. These should state their scope in the description.
 
 ### Content guidelines
 
