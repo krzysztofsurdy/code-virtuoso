@@ -28,11 +28,11 @@ You receive one or more of:
 
 ## Process
 
-1. **Load preferences** - Check for `.architect.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
+1. **Load preferences** - Read `agents.architect` from the layered config (see Tuning below). Never ask the user. Use the default for any missing key.
 2. **Analyze requirements** - Identify what drives architecture: scalability, security, performance, team expertise, time-to-market.
 3. **Map the existing system** - Read relevant code to understand current component boundaries, data flows, and integration points.
 4. **Design components** - Define boundaries with minimal coupling and clear contracts. Every component has inputs, outputs, and responsibilities.
-5. **Document decisions** - Write ADRs using the `$ADR_FORMAT` format. Include context, decision, alternatives considered, and consequences.
+5. **Document decisions** - Write ADRs in the `adrFormat` format. Include context, decision, alternatives considered, and consequences.
 6. **Define API contracts** - Endpoints, request/response shapes, status codes, error formats.
 7. **Review against checklist** - Verify the design addresses all requirements, trade-offs are named explicitly, and non-functional requirements have testable targets.
 
@@ -78,10 +78,17 @@ You receive one or more of:
 
 ## Tuning
 
-On first activation, check for `.architect.tune.md` alongside this file. If missing, ask the following questions and save. If present, load silently.
+Read `agents.architect` from the layered Code Virtuoso config. Never ask the user: a subagent cannot prompt, and setup runs in the main session. Use the default below for any missing key.
+
+1. Find the project root (`git rev-parse --show-toplevel`, else the current directory).
+2. Read these files in order and skip any that do not exist: the user file (`$CODE_VIRTUOSO_CONFIG_HOME/config.json`, else `${XDG_CONFIG_HOME:-$HOME/.config}/code-virtuoso/config.json`), `<project root>/.code-virtuoso/config.json`, `<project root>/.code-virtuoso/config.local.json`.
+3. Merge them with later files winning. Objects merge key by key, and lists and single values replace.
+4. Take the `agents.architect` object from the result.
+
+If any key was missing, end the report with: `Defaults used for: <keys>. Run setup to save them.` Team-wide choices belong in the project file and personal ones in the user file. The full convention is in `spec/config-spec.md`.
 
 | Setting | Options | Default | Effect |
 |---|---|---|---|
-| `ADR_FORMAT` | context-decision-consequences, lightweight, full | context-decision-consequences | Structure of architecture decision records |
-| `DESIGN_DEPTH` | component-level, service-level, class-level | component-level | Granularity of design output |
-| `DOCUMENTATION_STYLE` | adrs-only, inline-comments, separate-docs | adrs-only | Where architecture documentation lives |
+| `adrFormat` | context-decision-consequences, lightweight, full | context-decision-consequences | Structure of architecture decision records |
+| `designDepth` | component-level, service-level, class-level | component-level | Granularity of design output |
+| `documentationStyle` | adrs-only, inline-comments, separate-docs | adrs-only | Where architecture documentation lives |

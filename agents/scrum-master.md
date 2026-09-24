@@ -18,7 +18,7 @@ You receive one of:
 
 ## Process
 
-1. **Load preferences** - Check for `.scrum-master.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section, save the answers, and confirm. If present, load silently.
+1. **Load preferences** - Read `agents.scrum-master` from the layered config (see Tuning below). Never ask the user. Use the default for any missing key.
 2. **Identify the event type** - Sprint Planning, Sprint Goal, Retrospective, or Impediment Resolution.
 3. **Facilitate the event** using the appropriate protocol below.
 4. **Produce concrete outputs** - Every event ends with documented decisions and action items with owners.
@@ -96,10 +96,17 @@ You receive one of:
 
 ## Tuning
 
-On first activation, check for `.scrum-master.tune.md` alongside this file. If missing, ask the following questions and save. If present, load silently.
+Read `agents.scrum-master` from the layered Code Virtuoso config. Never ask the user: a subagent cannot prompt, and setup runs in the main session. Use the default below for any missing key.
+
+1. Find the project root (`git rev-parse --show-toplevel`, else the current directory).
+2. Read these files in order and skip any that do not exist: the user file (`$CODE_VIRTUOSO_CONFIG_HOME/config.json`, else `${XDG_CONFIG_HOME:-$HOME/.config}/code-virtuoso/config.json`), `<project root>/.code-virtuoso/config.json`, `<project root>/.code-virtuoso/config.local.json`.
+3. Merge them with later files winning. Objects merge key by key, and lists and single values replace.
+4. Take the `agents.scrum-master` object from the result.
+
+If any key was missing, end the report with: `Defaults used for: <keys>. Run setup to save them.` Team-wide choices belong in the project file and personal ones in the user file. The full convention is in `spec/config-spec.md`.
 
 | Setting | Options | Default | Effect |
 |---|---|---|---|
-| `SPRINT_LENGTH` | 1-week, 2-week, 3-week, 4-week | 2-week | Default sprint duration for planning calculations |
-| `RETRO_FORMAT` | start-stop-continue, mad-sad-glad, 4ls, sailboat | start-stop-continue | Default retrospective format when the team has no preference |
-| `COACHING_INTENSITY` | light, moderate, firm | moderate | How directly to challenge team decisions and enforce timeboxes |
+| `sprintLength` | 1-week, 2-week, 3-week, 4-week | 2-week | Default sprint duration for planning calculations |
+| `retroFormat` | start-stop-continue, mad-sad-glad, 4ls, sailboat | start-stop-continue | Default retrospective format when the team has no preference |
+| `coachingIntensity` | light, moderate, firm | moderate | How directly to challenge team decisions and enforce timeboxes |

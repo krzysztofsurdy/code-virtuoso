@@ -148,7 +148,7 @@ Both fields are optional. When present, they reference artifact types defined in
 
 ## Tuning (optional)
 
-Agents whose behavior varies by team preference can include a `## Tuning` section in their body. This follows the supplement pattern: on first activation, the agent asks the user a short questionnaire (3-5 questions) about their preferences, saves the answers alongside the agent file as a `.tune.md` supplement, and reuses them on subsequent activations.
+Agents whose behavior varies by team preference can include a `## Tuning` section in their body. Settings live in the layered Code Virtuoso config under `agents.<agent-name>`, as defined in [config-spec.md](config-spec.md). The agent reads them and never prompts, because subagents cannot ask the user. A setup run in the main session asks the questions (3-5) and writes the answers.
 
 ### When to include tuning
 
@@ -158,19 +158,20 @@ Agents whose behavior varies by team preference can include a `## Tuning` sectio
 
 Do not add tuning for agents where behavior is fixed by design (e.g., investigator, cold-reviewer).
 
-### Tune file convention
+### Config convention
 
-- File name: `.{agent-name}.tune.md` (dot-prefixed to stay out of agent discovery scans)
-- Location: alongside the agent file in the same directory
-- Format: simple `KEY: value` pairs, one per line, with a header comment
-- Created by the agent on first activation via interactive questions
-- Editable by the user at any time; deletable to re-run setup
+- Namespace: `agents.{agent-name}` in the layered config (user, project shared, project local)
+- Keys: camelCase (e.g., `reviewDepth`), one JSON value per key
+- Location: never next to the agent file. That directory is a replaceable cache in plugin installs. See [config-spec.md](config-spec.md) for paths and precedence
+- Team-wide choices go to the project shared file (`.code-virtuoso/config.json`), personal choices to the user file
+- Missing keys use the defaults in the agent's Tuning table. When any key is missing, the agent ends its report with: `Defaults used for: <keys>. Run setup to save them.`
+- Settings are editable by the user at any time. Never store secrets
 
 ### How to add tuning to an agent
 
-1. Add a `## Tuning` section to the agent body listing available knobs with defaults
-2. In the Process, add a first step: "Check for `.{agent-name}.tune.md` alongside this file. If missing, ask the team preference questions and save. If present, load silently."
-3. Reference knobs as `$VARIABLE_NAME` throughout the process and rules
+1. Add a `## Tuning` section to the agent body listing the keys with options and defaults, plus the steps for reading `agents.{agent-name}` from the layered config
+2. In the Process, add a first step: "Read `agents.{agent-name}` from the layered config. Never ask the user. Use the default for any missing key."
+3. Reference the keys by name (e.g., `reviewDepth`) throughout the process and rules
 
 See the [tuning reference](../skills/tools/agent-creator/references/tuning.md) for the full pattern and examples.
 

@@ -1,25 +1,25 @@
 ---
 name: ticket-delivery
-description: End-to-end ticket workflow from ticket analysis through investigation, planning, TDD implementation, committing, and PR creation. Adapts to your environment via a supplement file created on first run. Use when starting work on a ticket, implementing a feature end-to-end, or following a structured development workflow from ticket to PR.
+description: End-to-end ticket workflow from ticket analysis through investigation, planning, TDD implementation, committing, and PR creation. Adapts to your environment via layered config saved on first run. Use when starting work on a ticket, implementing a feature end-to-end, or following a structured development workflow from ticket to PR.
 user-invocable: true
 argument-hint: "<ticket-id>"
 ---
 
 # Ticket Workflow
 
-This workflow takes a ticket ID and drives it through analysis, codebase investigation, planning, TDD implementation, committing, and PR creation. An interactive supplement, created on first run, adapts it to your stack.
+This workflow takes a ticket ID and drives it through analysis, codebase investigation, planning, TDD implementation, committing, and PR creation. Saved config, created by an interactive setup on first run, adapts it to your stack.
 
-## Phase 0: Environment supplement
+## Phase 0: Environment config
 
-Before anything else, check for a supplement file stored alongside this skill (e.g., `.supplement.md` in the skill directory).
+Before anything else, load the saved choices for this workflow from the layered Code Virtuoso config. They live under the `ticket-delivery` namespace, never next to this skill, so they survive updates and reinstalls. See [setup questions](references/supplement-questions.md) for the key list, the read recipe, and the legacy mapping.
 
-### If the supplement exists
-Read the file and load all `$VARIABLE` values for use throughout the workflow.
+1. **Resolve layers.** Read, in order, the user file (`$CODE_VIRTUOSO_CONFIG_HOME/config.json`, else `${XDG_CONFIG_HOME:-~/.config}/code-virtuoso/config.json`), `<project root>/.code-virtuoso/config.json`, and `<project root>/.code-virtuoso/config.local.json`. Later files win, objects merge key by key, missing files are normal. Use the merged `ticket-delivery` object for the rest of the workflow. Keys it does not set fall back to the defaults in the setup reference.
+2. **Migrate legacy files.** If the namespace is empty in every layer, look for an old `.supplement.md` (locations and the key mapping are in the setup reference). Import its values to the user layer, then tell the user the old file can be deleted. Leave it in place.
+3. **Run setup for missing values.** If required values are still missing, run the interactive setup. Setup runs in the main session only. When running as a sub-agent, never ask the user: use the defaults and end the report with "Defaults used for: <keys>. Run ticket-delivery setup to save them."
+4. **Write to the right layer.** Each question is tagged `scope: user` or `scope: project`. Save the answer to that layer, changing only the `ticket-delivery` keys you own and keeping every other key. After writing, show the user the path of each file written.
+5. **Offer the pointer line.** Offer to add `Shared tool decisions: .code-virtuoso/config.json` to the project `AGENTS.md` (or `CLAUDE.md`). Add it only if the user agrees.
 
-### If the supplement is missing
-Run an interactive setup. Present an interactive prompt (or the platform's equivalent) for each question, wait for the answer, then move to the next. Save all answers to a supplement file stored alongside this skill (e.g., `.supplement.md` in the skill directory).
-
-**Questions to ask** (see [supplement reference](references/supplement-questions.md) for full details):
+**Questions to ask** (see the [setup reference](references/supplement-questions.md) for options, follow-ups, scope, and keys). Ask one at a time and wait for each answer:
 
 1. **Ticket system:** GitHub Issues / GitLab Issues / Jira / Linear / Other? Integration tool name for fetching tickets?
 2. **Version control:** Bitbucket / GitHub / GitLab? CLI tool (`gh`, `glab`)? Main branch name?
@@ -27,11 +27,11 @@ Run an interactive setup. Present an interactive prompt (or the platform's equiv
 4. **Logging:** CloudWatch / Datadog / ELK / Grafana / none? Tool access or manual paste?
 5. **Database:** ORM (ActiveRecord / Doctrine / Eloquent / Prisma / TypeORM / none)? Read-only query command?
 6. **CI/CD hooks:** Pre-commit hooks to skip? (e.g., `SKIP=lint,test git commit`)
-7. **Testing framework:** Go test / Jest / PHPUnit / pytest / RSpec / other? TDD style preference (London / Chicago)?
+7. **Testing framework:** Go test / Jest / PHPUnit / pytest / RSpec / other? Test, lint, and static analysis commands? TDD style preference (London / Chicago)?
 8. **Architecture:** Monolith / microservices? Admin panel? API layer (REST / GraphQL / both)?
 9. **PR conventions:** Branch naming pattern? Commit message format?
 
-After saving, confirm: "Supplement saved. You can edit it anytime at the supplement file path or delete it to re-run setup."
+Config keys are written in `code font` below, for example `mainBranch` or `commands.test`.
 
 ---
 
@@ -54,9 +54,9 @@ Delegate only when the ticket scope justifies parallel investigation. For small 
 
 ### Step 1.1: Fetch ticket details
 
-**If `$TICKET_MCP_TOOL` is configured:**
+**If `ticketTool` is configured:**
 ```
-Use $TICKET_MCP_TOOL to fetch ticket $TICKET_ID
+Use ticketTool to fetch ticket $TICKET_ID
 ```
 
 **If no integration tool is configured:**
@@ -72,9 +72,9 @@ Extract and organize:
 
 ### Step 1.3: Fetch error context (bugs only)
 
-**If `$ERROR_TRACKING_MCP_TOOL` is configured and the ticket is a bug:**
+**If `errorTrackingTool` is configured and the ticket is a bug:**
 ```
-Use $ERROR_TRACKING_MCP_TOOL to fetch error details linked in the ticket
+Use errorTrackingTool to fetch error details linked in the ticket
 ```
 Extract: stack trace, affected file paths, frequency, first/last seen.
 
@@ -82,7 +82,7 @@ Extract: stack trace, affected file paths, frequency, first/last seen.
 
 ### Step 1.4: Fetch log context (if applicable)
 
-**If `$LOGGING_TOOL` is configured:**
+**If `loggingTool` is configured:**
 Fetch relevant log entries around the error timeframe.
 
 **If manual:** Ask the developer to paste relevant log snippets if available.
@@ -106,8 +106,8 @@ Ask the developer: "Does this look correct? Any additional context before I inve
 
 ```bash
 git fetch origin
-git checkout $MAIN_BRANCH
-git pull origin $MAIN_BRANCH
+git checkout <mainBranch>
+git pull origin <mainBranch>
 ```
 
 Do NOT create a feature branch yet. That happens in Phase 5, after planning.
@@ -116,7 +116,7 @@ Do NOT create a feature branch yet. That happens in Phase 5, after planning.
 
 ## Phase 3: Codebase investigation
 
-Investigate the codebase to understand the area the ticket affects. Adapt the investigation to your project's architecture (`$ARCHITECTURE`).
+Investigate the codebase to understand the area the ticket affects. Adapt the investigation to your project's architecture (`architecture`).
 
 ### Investigation areas
 
@@ -125,7 +125,7 @@ Run these in parallel when using sub-agents, or one after another as a single ag
 #### 3a: Entity / model layer
 - Find domain models or entities related to the ticket
 - Check properties, relationships, validation rules
-- If using an ORM (`$ORM`): check mappings, migrations, schema
+- If using an ORM (`orm`): check mappings, migrations, schema
 
 #### 3b: Service / business logic layer
 - Find services, handlers, use cases related to the ticket
@@ -144,7 +144,7 @@ Run these in parallel when using sub-agents, or one after another as a single ag
 #### 3e: Repository / data access layer
 - Find repositories, query builders, or data access objects
 - Understand existing query patterns for the affected area
-- If read-only queries are available (`$DB_QUERY_COMMAND`): verify current data state if relevant
+- If read-only queries are available (`dbQueryCommand`): verify current data state if relevant
 
 #### 3f: Test layer
 - Find existing tests for the affected area
@@ -216,9 +216,9 @@ Present the plan to the developer and wait for approval before continuing.
 
 After plan approval, create the feature branch.
 
-**Using `$BRANCH_PATTERN` from the supplement:**
+**Using `branchPattern` from the config** (fill `{ticket}` and `{slug}`):
 ```bash
-git checkout -b $BRANCH_PATTERN
+git checkout -b <branchPattern>
 ```
 
 Example patterns:
@@ -230,18 +230,18 @@ Example patterns:
 
 ## Phase 6: TDD implementation
 
-Follow a strict TDD cycle. Use `$TEST_COMMAND` from the supplement.
+Follow a strict TDD cycle. Use `commands.test` from the config.
 
 ### Step 6.1: Write failing tests first
 For each item in the test plan:
 1. Write the test
-2. Run it to confirm it fails: `$TEST_COMMAND path/to/TestFile`
+2. Run it to confirm it fails: `<commands.test> path/to/TestFile`
 3. Confirm the failure is for the RIGHT reason (not a syntax error)
 
 ### Step 6.2: Implement to make tests pass
 Write the minimum code that makes each test pass:
 1. Implement the change
-2. Run the specific test: `$TEST_COMMAND path/to/TestFile`
+2. Run the specific test: `<commands.test> path/to/TestFile`
 3. Confirm it passes
 
 ### Step 6.3: Refactor
@@ -253,18 +253,20 @@ After tests pass:
 ### Step 6.4: Run the full test suite
 Run the broader test suite to catch regressions:
 ```bash
-$TEST_COMMAND [relevant test directory or suite]
+<commands.test> [relevant test directory or suite]
 ```
 
 Fix any failures before continuing.
 
 ### Step 6.5: Commit changes
-Commit using the project's conventions (`$COMMIT_FORMAT`):
+Commit using the project's conventions (`commitFormat`, filling `{ticket}` and `{summary}`):
 
 ```bash
-$SKIP_HOOKS git add [specific files]
-git commit -m "$COMMIT_FORMAT"
+git add [specific files]
+git commit -m "<commitFormat>"
 ```
+
+For intermediate commits, apply `skipHooks` if set (an environment prefix such as `SKIP=lint,test`, or a flag such as `--no-verify`). Run the final commit before the PR with all hooks.
 
 For large changes, make several focused commits rather than one large commit.
 
@@ -306,11 +308,11 @@ Use the `pr-message-writer` skill if available, or create the PR directly.
 Invoke the skill with the implementation summary and ticket context to generate a structured PR description.
 
 ### Direct PR creation
-Use `$VCS_CLI` (e.g., `gh`, `glab`) to create the PR:
+Use `vcsCli` (e.g., `gh`, `glab`) to create the PR:
 
 ```bash
 git push -u origin HEAD
-$VCS_CLI pr create --title "$TICKET_ID: [short description]" --body "[PR body]"
+<vcsCli> pr create --title "$TICKET_ID: [short description]" --body "[PR body]"
 ```
 
 The PR body should include:
@@ -337,7 +339,7 @@ This is optional but recommended for complex tickets.
 
 ## Critical rules
 
-1. **Never skip Phase 0.** The supplement adapts the workflow to your stack. Without it, the skill cannot work correctly.
+1. **Never skip Phase 0.** The saved config adapts the workflow to your stack. Without it, the skill cannot work correctly.
 
 2. **Get plan approval before coding.** Phase 4 must end with explicit developer approval.
 
@@ -361,7 +363,7 @@ This is optional but recommended for complex tickets.
 
 | Reference | Contents |
 |---|---|
-| [supplement-questions](references/supplement-questions.md) | Full details on each supplement question, options, follow-ups, and example entries |
+| [supplement-questions](references/supplement-questions.md) | Config layers and read recipe, each setup question with scope, options, and keys, legacy supplement mapping, and an example config |
 
 ## Integration with Other Skills
 

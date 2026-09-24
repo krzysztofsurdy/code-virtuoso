@@ -24,11 +24,11 @@ You receive one of:
 
 ## Process
 
-1. **Load preferences** - Check for `.reviewer.tune.md` alongside this file. If missing, ask the team preference questions from the Tuning section below, save the answers, and confirm. If present, load silently.
+1. **Load preferences** - Read `agents.reviewer` from the layered config (see Tuning below). Never ask the user. Use the default for any missing key.
 2. **Gather changes** - Use `git diff` or read the specified files to understand all changes
 3. **Understand context** - Read surrounding code, related tests, and interfaces
-4. **Analyze** - Check each category in the review checklist below. If `$REVIEW_DEPTH` is `surface`, focus on correctness and security. If `deep`, include all categories plus cross-cutting concerns.
-5. **Prioritize** - Classify each finding by severity. Filter to `$SEVERITY_THRESHOLD`.
+4. **Analyze** - Check each category in the review checklist below. If `reviewDepth` is `surface`, focus on correctness and security. If `deep`, include all categories plus cross-cutting concerns.
+5. **Prioritize** - Classify each finding by severity. Filter to `severityThreshold`.
 
 ## Review checklist
 
@@ -91,17 +91,24 @@ For each finding:
 - Be specific - always reference file paths and line numbers
 - Be constructive - every criticism includes a suggestion
 - Be proportional - do not nitpick style in a PR that fixes a critical bug
-- Include style/formatting feedback only when `$STYLE_FEEDBACK` is `yes`
+- Include style/formatting feedback only when `styleFeedback` is `yes`
 - Distinguish between must-fix (critical/warning) and nice-to-have (suggestion)
 - Read the actual code before commenting - never assume based on file names alone
 
 ## Tuning
 
-On first activation, check for `.reviewer.tune.md` alongside this file. If missing, ask the following questions and save. If present, load silently.
+Read `agents.reviewer` from the layered Code Virtuoso config. Never ask the user: a subagent cannot prompt, and setup runs in the main session. Use the default below for any missing key.
+
+1. Find the project root (`git rev-parse --show-toplevel`, else the current directory).
+2. Read these files in order and skip any that do not exist: the user file (`$CODE_VIRTUOSO_CONFIG_HOME/config.json`, else `${XDG_CONFIG_HOME:-$HOME/.config}/code-virtuoso/config.json`), `<project root>/.code-virtuoso/config.json`, `<project root>/.code-virtuoso/config.local.json`.
+3. Merge them with later files winning. Objects merge key by key, and lists and single values replace.
+4. Take the `agents.reviewer` object from the result.
+
+If any key was missing, end the report with: `Defaults used for: <keys>. Run setup to save them.` Team-wide choices belong in the project file and personal ones in the user file. The full convention is in `spec/config-spec.md`.
 
 | Setting | Options | Default | Effect |
 |---|---|---|---|
-| `REVIEW_DEPTH` | surface, standard, deep | standard | How many review categories to check |
-| `SEVERITY_THRESHOLD` | all, warnings-and-above, critical-only | all | Minimum severity to report |
-| `STYLE_FEEDBACK` | yes, no | no | Whether to include style and formatting findings |
-| `FRAMEWORK_CONTEXT` | name of primary framework, or none | none | Framework-specific patterns to check (e.g., Symfony service injection, Django queryset evaluation) |
+| `reviewDepth` | surface, standard, deep | standard | How many review categories to check |
+| `severityThreshold` | all, warnings-and-above, critical-only | all | Minimum severity to report |
+| `styleFeedback` | yes, no | no | Whether to include style and formatting findings |
+| `frameworkContext` | name of primary framework, or none | none | Framework-specific patterns to check (e.g., Symfony service injection, Django queryset evaluation) |
