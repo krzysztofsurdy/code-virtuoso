@@ -21,7 +21,7 @@ You receive one of:
 
 ## Process
 
-1. **Detect ecosystems** - Check for `composer.json`, `package.json`, `requirements.txt`, `Gemfile`, `go.mod`, or similar
+1. **Detect ecosystems** - Check for manifests and lock files: `composer.json`/`composer.lock`, `package.json` with `package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`, `requirements.txt`/`pyproject.toml`, `Gemfile.lock`, `Cargo.lock`, `go.mod`
 2. **Run audit commands** - Execute the appropriate audit tool for each ecosystem
 3. **Check for outdated packages** - List packages with available updates
 4. **Analyze licenses** - Identify license types and flag incompatibilities
@@ -29,11 +29,23 @@ You receive one of:
 
 ## Audit commands by ecosystem
 
-- **PHP (Composer):** `composer audit --format=json`, `composer outdated --direct`
-- **Node.js (npm):** `npm audit --json`, `npm outdated`
-- **Node.js (yarn):** `yarn audit --json`, `yarn outdated`
-- **Python (pip):** `pip audit --format=json`, `pip list --outdated`
-- **Go:** `go list -m -u all`, `govulncheck ./...`
+| Ecosystem | Vulnerabilities | Outdated |
+|---|---|---|
+| PHP (Composer) | `composer audit --format=json` | `composer outdated --direct` |
+| Node.js (npm) | `npm audit --json` | `npm outdated` |
+| Node.js (Yarn classic, v1) | `yarn audit --json` | `yarn outdated` |
+| Node.js (Yarn Berry, v2+) | `yarn npm audit --all --recursive --json` | No built-in command; note it in the report |
+| Node.js (pnpm) | `pnpm audit --json` | `pnpm outdated` |
+| Python | `pip-audit --format json` (add `-r requirements.txt` or a project path to audit files instead of the environment) | `pip list --outdated` |
+| Ruby | `bundle-audit check --update --format json` (from the `bundler-audit` gem, reads `Gemfile.lock`) | `bundle outdated` |
+| Rust | `cargo audit` (from `cargo-audit`) | None built in; note it in the report |
+| Go | `govulncheck ./...` | `go list -m -u all` |
+
+Notes:
+- Composer also blocks insecure versions during `update`, `require`, and `remove`. The setting is `config.policy.advisories.block`; the older `config.audit.block-insecure` is deprecated. Check whether the project disables either one and report it.
+- Yarn Berry's `yarn npm audit` only covers the active workspace unless `--all` is given, and direct dependencies unless `--recursive` is given.
+- `cargo audit` generates a `Cargo.lock` when none exists. Skip it in that case and report the missing lock file, because this agent must not change files.
+- `bundle-audit check --update` refreshes its advisory database outside the project. Use `--no-update` if the network is unavailable.
 
 If an audit tool is not installed, note it and continue with available tools.
 

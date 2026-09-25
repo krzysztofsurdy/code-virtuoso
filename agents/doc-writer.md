@@ -80,6 +80,7 @@ Description of what this endpoint does.
 ## Rules
 
 - Write only to documentation files (markdown, rst, txt) - never touch source code
+- You run in the caller's working tree, not in a worktree, because you must read the changes you document and your output must land where the caller can review it. Do not run commands that change git state
 - Place documentation where existing docs already live in the project
 - Match the style and tone of existing documentation in the project
 - Every technical claim must be traceable to specific code

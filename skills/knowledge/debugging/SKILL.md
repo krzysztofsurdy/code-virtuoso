@@ -194,14 +194,14 @@ This debugging workflow connects to broader team processes:
 | Fix | A peer reviews the code before merge, since a second pair of eyes catches fix-induced regressions |
 | Prevent | Post-mortem shared with the team; action items tracked in the backlog |
 
-When using other code-virtuoso skills:
+When using other skills from this library:
 
 | Situation | Recommended Skill |
 |---|---|
-| Bug fix reveals design problems | Install `design-patterns-virtuoso` from `krzysztofsurdy/code-virtuoso` |
-| Fix involves refactoring | Install `refactoring-virtuoso` from `krzysztofsurdy/code-virtuoso` |
-| SOLID violation is root cause | Install `solid-virtuoso` from `krzysztofsurdy/code-virtuoso` |
-| PR for the fix | Use `pr-message-writer` from `krzysztofsurdy/code-virtuoso` |
+| Bug fix reveals design problems | `design-patterns` |
+| Fix involves refactoring | `refactoring` |
+| SOLID violation is root cause | `solid` |
+| PR for the fix | `pr-message-writer` |
 
 ---
 

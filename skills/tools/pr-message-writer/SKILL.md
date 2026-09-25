@@ -183,5 +183,5 @@ Before finalizing the PR message, check that:
 |---|---|
 | Starting work on a ticket end-to-end | `ticket-delivery` |
 | Generating a summary report after completing work | `report-writer` |
-| Reviewing code before writing the PR | `code-review-excellence` |
-| Requesting a code review from teammates | `requesting-code-review` |
+| Reviewing code before writing the PR | `reviewer` agent |
+| Getting a fresh-eyes review before requesting one from teammates | `cold-reviewer` agent |

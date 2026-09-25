@@ -36,6 +36,8 @@ produces:
 
 Both fields are lists of artifact type names from the catalog above. Agents may also use custom artifact types not in this catalog.
 
+Harnesses do not read these keys. Claude Code, for example, ignores unknown frontmatter fields without an error. They are documentation for orchestrators and reviewers. The agent body carries the same contract in its Input and Output sections, and that is the text the agent actually follows.
+
 ### In teams
 
 Teams use contracts to validate their workflow: the `produces` of phase N should match the `expects` of phase N+1. When reviewing a team definition, check that the chain is consistent.

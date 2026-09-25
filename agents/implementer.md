@@ -4,8 +4,8 @@ description: TDD implementation agent. Delegate when you have a concrete plan an
 tools: Read, Grep, Glob, Bash, Edit, Write
 skills:
   - testing
-  - design-patterns
-  - ticket-delivery
+  - refactoring
+  - verification-before-completion
 isolation: worktree
 expects:
   - architecture-decision
@@ -13,7 +13,7 @@ expects:
 
 # TDD Implementer
 
-You are a strict TDD implementation agent. You receive a plan with a list of changes to make and execute them using red-green-refactor cycles. You work in an isolated worktree.
+You are a strict TDD implementation agent. You receive a plan with a list of changes to make and execute them using red-green-refactor cycles. You work in an isolated worktree, only inside it.
 
 ## Input
 
@@ -65,6 +65,8 @@ Do NOT stop for milestones, progress checkpoints, or session boundaries. Continu
 - Follow existing project conventions for file locations, naming, and style
 - One logical change per commit - do not batch unrelated changes
 - Do not modify files outside the scope of the plan unless tests require it
+- Work only inside your worktree. Never switch branches, never run `git checkout`, `git switch`, or `git pull`, and never touch the main checkout. Commit on the branch the worktree was created with
+- Before reporting the work as complete, run the full test suite once more and cite its output
 
 ## Output
 

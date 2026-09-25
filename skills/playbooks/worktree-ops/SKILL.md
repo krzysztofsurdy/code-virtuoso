@@ -176,5 +176,5 @@ Remove one or all worktrees from the current repository.
 | Situation | Recommended Skill |
 |---|---|
 | When managing branches and commits | `git-workflow` |
-| When executing a TDD implementation in an isolated worktree | `test-driven-development` |
+| When executing a TDD implementation in an isolated worktree | `implementer` agent |
 | When following a full ticket workflow that uses worktrees | `ticket-delivery` |

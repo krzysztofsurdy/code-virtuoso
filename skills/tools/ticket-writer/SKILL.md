@@ -166,7 +166,7 @@ Which fields are required (R), optional (O), or not used (-) per type.
 | Planning sprints and setting sprint goals | `scrum` |
 | Tracking initiatives as part of a delivery plan | `project-manager` |
 | Writing the commit and PR for a story once implemented | `pr-message-writer` |
-| Kicking off the ticket workflow after writing | `ticket-workflow` |
+| Kicking off the ticket workflow after writing | `ticket-delivery` |
 
 ---
 

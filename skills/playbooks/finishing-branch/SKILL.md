@@ -319,8 +319,8 @@ Run through this before considering the branch done.
 | Situation | Recommended Skill |
 |---|---|
 | Writing a full PR message | `pr-message-writer` |
-| Reviewing code before merging | `code-review-excellence` |
-| Managing git worktrees | `worktree-start`, `worktree-list`, `worktree-switch`, `worktree-clean` |
+| Reviewing code before merging | `reviewer` agent |
+| Managing git worktrees | `worktree-ops` |
 | Choosing a branching strategy | `git-workflow` |
 | Running verification before declaring done | `verification-before-completion` |
-| Requesting a structured code review | `requesting-code-review` |
+| Getting a fresh-eyes review before merging | `cold-reviewer` agent |

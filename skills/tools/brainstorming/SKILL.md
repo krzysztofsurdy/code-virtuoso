@@ -105,10 +105,10 @@ See [anti-patterns](references/anti-patterns.md) for the full guide.
 
 | Situation | Recommended skill |
 |---|---|
-| Spec approved, ready for planning | `writing-plans` |
+| Spec approved, ready to plan and deliver it end to end | `ticket-delivery` |
 | Complex requirements, need stakeholder analysis | `product-manager` role |
 | Spec reveals architectural decisions needed | `architect` role |
-| Spec approved, ready for direct TDD | `test-driven-development` |
+| Spec approved, ready for direct TDD | `testing`, or the `implementer` agent |
 | Acceptance criteria need test plan detail | `qa-engineer` role |
 | API design decisions | `api-design` |
 | Database schema decisions | `database-design` |
