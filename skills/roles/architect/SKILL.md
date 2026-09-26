@@ -1,6 +1,6 @@
 ---
 name: architect
-description: Agent team role for system design and technical decision-making. Use when the user asks to design system architecture, define component boundaries, write Architecture Decision Records (ADRs), select technologies, define API contracts, or evaluate architectural trade-offs. Owns the "how": translates product requirements into components, data flows, and technology choices.
+description: "Agent team role for system design and technical decision-making. Use when the user asks to design system architecture, define component boundaries, write Architecture Decision Records (ADRs), select technologies, define API contracts, or evaluate architectural trade-offs. Owns the \"how\": translates product requirements into components, data flows, and technology choices."
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---

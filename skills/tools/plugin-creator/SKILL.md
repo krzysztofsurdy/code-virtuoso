@@ -1,6 +1,6 @@
 ---
 name: plugin-creator
-description: Interactive tool to scaffold a Claude Code plugin: plugin.json manifest, skills, agents, hooks, MCP servers, LSP servers, and an optional marketplace.json catalog entry. Use when the user asks to create a plugin, build a Claude Code plugin, scaffold a plugin marketplace, convert an existing .claude/ configuration into a plugin, or package skills and agents for distribution. Runs a guided questionnaire, writes all required files to disk, and prints test instructions.
+description: "Interactive tool to scaffold a Claude Code plugin: plugin.json manifest, skills, agents, hooks, MCP servers, LSP servers, and an optional marketplace.json catalog entry. Use when the user asks to create a plugin, build a Claude Code plugin, scaffold a plugin marketplace, convert an existing .claude/ configuration into a plugin, or package skills and agents for distribution. Runs a guided questionnaire, writes all required files to disk, and prints test instructions."
 user-invocable: true
 argument-hint: "[optional: plugin-name]"
 ---

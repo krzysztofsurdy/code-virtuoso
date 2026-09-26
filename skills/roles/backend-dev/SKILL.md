@@ -1,6 +1,6 @@
 ---
 name: backend-dev
-description: Agent team role for backend implementation and service reliability. Use when the user asks to implement API endpoints, design data models, write backend services, create database queries, build service integrations, or write backend tests. Owns production backend code: translates architectural designs and API contracts into working, tested implementations.
+description: "Agent team role for backend implementation and service reliability. Use when the user asks to implement API endpoints, design data models, write backend services, create database queries, build service integrations, or write backend tests. Owns production backend code: translates architectural designs and API contracts into working, tested implementations."
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---

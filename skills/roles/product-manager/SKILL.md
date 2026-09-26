@@ -1,6 +1,6 @@
 ---
 name: product-manager
-description: Agent team role for product ownership and requirements definition. Use when the user asks to write a PRD, gather requirements, define acceptance criteria, prioritize features, scope an MVP, write user stories, or make product trade-off decisions. Owns the "what" and "why": translates business goals and user needs into clear, prioritized requirements for the engineering team.
+description: "Agent team role for product ownership and requirements definition. Use when the user asks to write a PRD, gather requirements, define acceptance criteria, prioritize features, scope an MVP, write user stories, or make product trade-off decisions. Owns the \"what\" and \"why\": translates business goals and user needs into clear, prioritized requirements for the engineering team."
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---

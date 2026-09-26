@@ -11,68 +11,68 @@
     {
       "name": "knowledge-virtuoso",
       "description": "15 knowledge skills: design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, scrum, performance, microservices, git workflow, CI/CD, accessibility, and database design",
-      "source": "./",
+      "source": "./skills",
       "strict": false,
       "skills": [
-        "./skills/knowledge/design-patterns",
-        "./skills/knowledge/refactoring",
-        "./skills/knowledge/solid",
-        "./skills/knowledge/debugging",
-        "./skills/knowledge/clean-architecture",
-        "./skills/knowledge/testing",
-        "./skills/knowledge/api-design",
-        "./skills/knowledge/security",
-        "./skills/knowledge/scrum",
-        "./skills/knowledge/performance",
-        "./skills/knowledge/microservices",
-        "./skills/knowledge/git-workflow",
-        "./skills/knowledge/cicd",
-        "./skills/knowledge/accessibility",
-        "./skills/knowledge/database-design"
+        "./knowledge/design-patterns",
+        "./knowledge/refactoring",
+        "./knowledge/solid",
+        "./knowledge/debugging",
+        "./knowledge/clean-architecture",
+        "./knowledge/testing",
+        "./knowledge/api-design",
+        "./knowledge/security",
+        "./knowledge/scrum",
+        "./knowledge/performance",
+        "./knowledge/microservices",
+        "./knowledge/git-workflow",
+        "./knowledge/cicd",
+        "./knowledge/accessibility",
+        "./knowledge/database-design"
       ]
     },
     {
       "name": "tools-virtuoso",
       "description": "11 tool skills: rules writer, ticket writer, agent creator, plugin creator, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, web screenshot, and image annotate",
-      "source": "./",
+      "source": "./skills",
       "strict": false,
       "skills": [
-        "./skills/tools/agentic-rules-writer",
-        "./skills/tools/ticket-writer",
-        "./skills/tools/agent-creator",
-        "./skills/tools/plugin-creator",
-        "./skills/tools/brainstorming",
-        "./skills/tools/using-ecosystem",
-        "./skills/tools/pr-message-writer",
-        "./skills/tools/report-writer",
-        "./skills/tools/stakeholder-update-writer",
-        "./skills/tools/web-screenshot",
-        "./skills/tools/image-annotate"
+        "./tools/agentic-rules-writer",
+        "./tools/ticket-writer",
+        "./tools/agent-creator",
+        "./tools/plugin-creator",
+        "./tools/brainstorming",
+        "./tools/using-ecosystem",
+        "./tools/pr-message-writer",
+        "./tools/report-writer",
+        "./tools/stakeholder-update-writer",
+        "./tools/web-screenshot",
+        "./tools/image-annotate"
       ]
     },
     {
       "name": "frameworks-virtuoso",
       "description": "4 framework skills: Symfony components, Symfony upgrade, Django components, and LangChain components",
-      "source": "./",
+      "source": "./skills",
       "strict": false,
       "skills": [
-        "./skills/frameworks/symfony/symfony-components",
-        "./skills/frameworks/symfony/symfony-upgrade",
-        "./skills/frameworks/django/django-components",
-        "./skills/frameworks/langchain/langchain-components"
+        "./frameworks/symfony/symfony-components",
+        "./frameworks/symfony/symfony-upgrade",
+        "./frameworks/django/django-components",
+        "./frameworks/langchain/langchain-components"
       ]
     },
     {
       "name": "playbooks-virtuoso",
       "description": "5 playbook skills: PHP upgrade, Composer dependencies, branch finishing, ticket delivery, and worktree ops",
-      "source": "./",
+      "source": "./skills",
       "strict": false,
       "skills": [
-        "./skills/playbooks/php-upgrade",
-        "./skills/playbooks/composer-dependencies",
-        "./skills/playbooks/finishing-branch",
-        "./skills/playbooks/ticket-delivery",
-        "./skills/playbooks/worktree-ops"
+        "./playbooks/php-upgrade",
+        "./playbooks/composer-dependencies",
+        "./playbooks/finishing-branch",
+        "./playbooks/ticket-delivery",
+        "./playbooks/worktree-ops"
       ]
     },
     {

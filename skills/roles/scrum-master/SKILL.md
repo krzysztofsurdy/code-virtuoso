@@ -1,6 +1,6 @@
 ---
 name: scrum-master
-description: Agent team role for Scrum Master facilitation, coaching, and servant leadership. Use when the user asks to facilitate scrum events, coach a team on self-management, resolve impediments, run retrospectives, improve team processes, or address scrum anti-patterns. Owns the "how we work": helps the team apply scrum well, removes obstacles, and keeps improving the process.
+description: "Agent team role for Scrum Master facilitation, coaching, and servant leadership. Use when the user asks to facilitate scrum events, coach a team on self-management, resolve impediments, run retrospectives, improve team processes, or address scrum anti-patterns. Owns the \"how we work\": helps the team apply scrum well, removes obstacles, and keeps improving the process."
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---

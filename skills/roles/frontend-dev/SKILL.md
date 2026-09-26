@@ -1,6 +1,6 @@
 ---
 name: frontend-dev
-description: Agent team role for UI implementation and frontend architecture. Use when the user asks to build UI components, implement responsive layouts, manage client-side state, integrate with backend APIs, ensure accessibility compliance, or write frontend tests. Owns the user-facing interface: translates design specs into working, accessible, performant components.
+description: "Agent team role for UI implementation and frontend architecture. Use when the user asks to build UI components, implement responsive layouts, manage client-side state, integrate with backend APIs, ensure accessibility compliance, or write frontend tests. Owns the user-facing interface: translates design specs into working, accessible, performant components."
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---

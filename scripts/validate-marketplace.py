@@ -21,6 +21,7 @@ from pathlib import Path
 from validate_common import (
     AGENTS_DIR,
     MARKETPLACE_PATH,
+    PLUGINS_DIR,
     REPO_ROOT,
     SKILLS_DIR,
     error,
@@ -33,24 +34,32 @@ from validate_common import (
 
 CONFLICTING_ENTRY_FIELDS = ("strict", "skills", "agents", "hooks", "version")
 
+DEFAULT_COMPONENT_PATHS = ("agents", "commands", "workflows", "hooks/hooks.json")
+
 PLUGIN_NAME_RE = re.compile(
     r"^([\w-]+-virtuoso|role-[\w-]+|agent-[\w-]+|tool-[\w-]+|code-virtuoso)$"
 )
 
 
+def plugin_base(plugin: dict) -> Path:
+    """Return the directory that the entry's relative skill and agent paths resolve from."""
+    source = plugin.get("source")
+    if isinstance(source, str):
+        return (REPO_ROOT / source).resolve()
+    return REPO_ROOT
+
+
 def self_contained_source(plugin: dict) -> Path | None:
     """Return the plugin directory when the entry points at its own plugin, else None.
 
-    An entry whose source is a relative path other than the repo root ("./")
-    is a self-contained plugin that ships its own .claude-plugin/plugin.json.
+    An entry whose source is a directory under plugins/ is a self-contained
+    plugin that ships its own .claude-plugin/plugin.json. Entries that point at
+    the repo root or at skills/ are bundles: the entry is the manifest.
     """
-    source = plugin.get("source")
-    if not isinstance(source, str):
-        return None
-    resolved = (REPO_ROOT / source).resolve()
-    if resolved == REPO_ROOT:
-        return None
-    return resolved
+    base = plugin_base(plugin)
+    if base == PLUGINS_DIR or PLUGINS_DIR in base.parents:
+        return base
+    return None
 
 
 def check_self_contained_plugin(plugin: dict, plugin_dir: Path) -> None:
@@ -130,8 +139,10 @@ def check_marketplace(data: dict) -> None:
             check_self_contained_plugin(plugin, plugin_dir)
             continue
 
+        base = plugin_base(plugin)
+
         for spath in plugin.get("skills", []):
-            resolved = REPO_ROOT / spath.lstrip("./")
+            resolved = base / spath
             skill_md = resolved / "SKILL.md"
             if not skill_md.is_file():
                 error(f"{spath}/SKILL.md does not exist (referenced by {pname})")
@@ -139,13 +150,36 @@ def check_marketplace(data: dict) -> None:
                 skill_count += 1
 
         for apath in plugin.get("agents", []):
-            resolved = REPO_ROOT / apath.lstrip("./")
+            resolved = base / apath
             if not resolved.is_file():
                 error(f"{apath} does not exist (referenced by {pname})")
             else:
                 agent_count += 1
 
     ok(f"Checked {skill_count} skill path(s) and {agent_count} agent path(s)")
+    check_default_component_scan(plugins)
+
+
+def check_default_component_scan(plugins: list[dict]) -> None:
+    """Each entry scans its source for agents/, commands/, workflows/, hooks/hooks.json.
+
+    An entry's own `agents` list adds to that scan instead of replacing it, so
+    two entries that share a source directory both register what it holds.
+    """
+    by_source: dict[Path, list[str]] = {}
+    for plugin in plugins:
+        if self_contained_source(plugin) is None:
+            by_source.setdefault(plugin_base(plugin), []).append(plugin.get("name", "<unnamed>"))
+
+    for base, names in by_source.items():
+        if len(names) < 2:
+            continue
+        for component in DEFAULT_COMPONENT_PATHS:
+            if (base / component).exists():
+                error(
+                    f"{rel(base / component)} is scanned by {len(names)} entries sharing source "
+                    f"{rel(base)} ({', '.join(names)}); give the entries different sources"
+                )
 
 
 # ---------------------------------------------------------------------------
@@ -186,17 +220,18 @@ def check_orphans(data: dict) -> None:
 
         skills_list = plugin.get("skills", [])
         agents_list = plugin.get("agents", [])
+        base = plugin_base(plugin)
 
         # A repo-root entry with no explicit lists auto-discovers the whole repo
         if plugin.get("source") and not skills_list and not agents_list:
             repo_auto_discovery = True
 
         for spath in skills_list:
-            resolved = (REPO_ROOT / spath.lstrip("./")).resolve()
+            resolved = (base / spath).resolve()
             referenced_skill_dirs.add(resolved)
 
         for apath in agents_list:
-            resolved = (REPO_ROOT / apath.lstrip("./")).resolve()
+            resolved = (base / apath).resolve()
             referenced_agent_paths.add(resolved)
 
     skill_files = sorted(SKILLS_DIR.rglob("SKILL.md"))

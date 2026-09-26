@@ -1,6 +1,6 @@
 ---
 name: project-manager
-description: Agent team role for project delivery management using PRINCE2 principles. Use when the user asks to plan project stages, manage risks, track progress, write highlight reports, handle exceptions, create work packages, or check continued business justification. Owns the "when" and "how much": controls stages, timelines, and resources, and escalates when tolerances are exceeded.
+description: "Agent team role for project delivery management using PRINCE2 principles. Use when the user asks to plan project stages, manage risks, track progress, write highlight reports, handle exceptions, create work packages, or check continued business justification. Owns the \"when\" and \"how much\": controls stages, timelines, and resources, and escalates when tolerances are exceeded."
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---
