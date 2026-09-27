@@ -2,7 +2,7 @@
 # The deterministic completion gate.
 #
 # Pure function: reports pass/fail/violation/stall for one step. Never writes
-# backlog.json -- callers apply the result via lib/backlog.sh's
+# backlog.json - callers apply the result via lib/backlog.sh's
 # step_apply_verdict. Both run modes call this same function; neither
 # reimplements it.
 
@@ -21,11 +21,11 @@ verify_gate_run() {
 
   # The check that matters most: did the worker edit the loop's own control
   # files during its turn? File-name-based protected-path matching (below)
-  # can never catch this alone -- the loop's directory is excluded from that
+  # can never catch this alone - the loop's directory is excluded from that
   # scan entirely (it's infrastructure, not work product), and even without
   # that exclusion, rewriting verifyCommand to "true" touches no path a glob
   # would flag. Comparing file *content* against a snapshot is what closes
-  # this -- but ONLY if the snapshot itself lives somewhere the worker's
+  # this - but ONLY if the snapshot itself lives somewhere the worker's
   # tools cannot reach. An earlier version kept it as a sibling file next to
   # backlog.json; a worker with the same Edit/Write/Bash access used to
   # tamper with backlog.json could just as easily overwrite the sibling
@@ -49,13 +49,13 @@ verify_gate_run() {
   fi
 
   # The project directory (parent of the loop's own .delivery-loop/) is the
-  # frame of reference every backlog is authored against -- verifyCommand's
+  # frame of reference every backlog is authored against - verifyCommand's
   # relative paths, protectedPaths globs, all of it. That's only the same
   # directory as the git repo root when the project isn't nested inside a
   # bigger repo (a monorepo). When it is, `git diff`/`ls-files` still need to
   # run repo-wide (a step legitimately touching a sibling directory, e.g.
   # `--cwd ../other-package`, must still be seen) but their output comes back
-  # relative to the repo root, not the project directory -- project_prefix is
+  # relative to the repo root, not the project directory - project_prefix is
   # how far below the repo root the project directory sits, used below to
   # translate those paths back to the frame everything else assumes.
   local project_dir repo_dir project_prefix
@@ -65,58 +65,56 @@ verify_gate_run() {
   project_prefix="$(git -C "$project_dir" rev-parse --show-prefix 2>/dev/null || true)"
   project_prefix="${project_prefix%/}"
 
-  # `git diff` alone misses brand-new files -- a worker that only creates a
-  # file (no existing file touched) would otherwise read as a stall. Union it
-  # with untracked-but-not-gitignored files. This is only safe because every
-  # non-violation iteration ends in a checkpoint commit (below) -- so "still
-  # untracked" always means "new this iteration", never leftover cruft from
-  # before the run started or from a prior iteration.
+  # `git diff` alone misses brand-new files, so union it with untracked but
+  # not gitignored files. "Untracked" always means "new this iteration": the
+  # run starts from a clean tree (loop_preflight) and every non-violation
+  # iteration ends in a checkpoint commit.
   #
   # The loop's own directory (backlog.json, teams.json, session/progress/
-  # events files) is excluded entirely, not just protected -- it's the loop's
+  # events files) is excluded entirely, not just protected: it is the loop's
   # infrastructure, never the worker's work product.
-  local loop_dir_name
-  loop_dir_name="$(basename "$(dirname "$backlog_file")")"
+  #
+  # An empty diff does NOT mean skip straight to a stall verdict. It only
+  # means "no tracked-file changes this iteration", which is also what a
+  # worker sees after fixing something outside git's view (a corrupted
+  # gitignored vendor/ autoloader, a stale build cache) while the already
+  # committed implementation was correct all along. verifyCommand is the
+  # sole arbiter of done, so it always runs; an empty diff only changes how
+  # a failure is classified below (stall vs fail).
+  local loop_dir_name="$loop_dir_label"
+  local has_changes=0 protected allowed path rel
+  local violating_repo=() violating_proj=()
+  protected=$(backlog_protected_paths "$backlog_file")
+  allowed=$(jq -c '.config.allowedPaths // empty' "$backlog_file" 2>/dev/null || true)
 
-  local changed_files
-  changed_files=$(
+  while IFS= read -r path; do
+    [[ -z "$path" ]] && continue
+    rel="$(_verify_gate_rel1 "$project_prefix" "$path")"
+    _verify_gate_in_loop_dir "$loop_dir_name" "$rel" && continue
+    has_changes=1
+    # Layer 2 of the write-boundary guard: checks the resulting tree state,
+    # not which tool produced it, so it catches what PreToolUse misses.
+    if backlog_path_is_protected "$rel" "$protected"; then
+      violating_repo+=("$path"); violating_proj+=("$rel")
+    elif ! git -C "$repo_dir" cat-file -e "${start_sha}:${path}" 2>/dev/null \
+         && ! _verify_gate_new_file_allowed "$rel" "$allowed"; then
+      # A file that did not exist at the iteration's start, outside
+      # allowedPaths or with a secret-like name, is never accepted.
+      violating_repo+=("$path"); violating_proj+=("$rel")
+    fi
+  done < <(
     {
-      git -C "$repo_dir" diff --name-only "$start_sha" 2>/dev/null
-      git -C "$repo_dir" ls-files --others --exclude-standard 2>/dev/null
-    } | sort -u | _verify_gate_to_project_relative "$project_prefix" | _verify_gate_drop_loop_dir "$loop_dir_name"
+      git -C "$repo_dir" -c core.quotepath=off diff --name-only "$start_sha" 2>/dev/null
+      git -C "$repo_dir" -c core.quotepath=off ls-files --others --exclude-standard 2>/dev/null
+    } | sort -u
   )
 
-  # An empty diff does NOT mean skip straight to a stall verdict -- it only
-  # means "no tracked-file changes this iteration," which is also exactly
-  # what a worker sees after fixing something outside git's view entirely
-  # (a corrupted gitignored vendor/ autoloader, a stale build cache) while
-  # the real, already-committed implementation from an earlier iteration
-  # was correct all along. verifyCommand is the sole arbiter of done, so it
-  # always runs; an empty diff only changes how a *failure* gets classified
-  # below (stall vs. fail), never whether a pass gets reported as one.
-  local has_changes=1
-  [[ -z "$changed_files" ]] && has_changes=0
-
-  # Layer 2 of the write-boundary guard -- checks the resulting tree state,
-  # not which tool produced it, so it catches what PreToolUse's Edit/Write
-  # coverage misses. Only meaningful when something actually changed; skip
-  # it on an empty diff rather than iterating zero lines for no reason.
-  if [[ "$has_changes" -eq 1 ]]; then
-    local protected violations=()
-    protected=$(backlog_protected_paths "$backlog_file")
-    while IFS= read -r f; do
-      [[ -z "$f" ]] && continue
-      if backlog_path_is_protected "$f" "$protected"; then
-        violations+=("$f")
-      fi
-    done <<< "$changed_files"
-
-    if [[ ${#violations[@]} -gt 0 ]]; then
-      local violated_json
-      violated_json=$(printf '%s\n' "${violations[@]}" | jq -R . | jq -sc .)
-      echo "{\"verdict\":\"violation\",\"paths\":$violated_json}"
-      return 0
-    fi
+  if [[ ${#violating_repo[@]} -gt 0 ]]; then
+    _verify_gate_revert_paths "$repo_dir" "$start_sha" "${violating_repo[@]}"
+    local violated_json
+    violated_json=$(printf '%s\n' "${violating_proj[@]}" | jq -R . | jq -sc .)
+    echo "{\"verdict\":\"violation\",\"paths\":$violated_json}"
+    return 0
   fi
 
   local step verify_cmd exit_code output output_json
@@ -127,105 +125,147 @@ verify_gate_run() {
   exit_code=$?
 
   if [[ $exit_code -eq 0 ]]; then
-    # Checkpoint commit on pass or fail (not violation -- those changes get
-    # left uncommitted for inspection, not preserved). Without this, an
+    # Checkpoint commit on pass or fail. A violation never reaches here: its
+    # offending paths were reverted above. Without a checkpoint, an
     # iteration's uncommitted diff persists into every later iteration's
     # `git diff $start_sha`, since nothing the worker does is required to
-    # commit -- which would both mask a true stall forever after the first
-    # real change, and let leftover untracked files keep re-triggering the
-    # union check above. One checkpoint per iteration keeps `start_sha`
-    # meaningful for the next one.
-    _verify_gate_checkpoint "$repo_dir" "${project_prefix:+$project_prefix/}${loop_dir_name}" "loop-virtuoso: ${item_id}/${step_id}"
+    # commit, which would mask a true stall forever after the first real
+    # change. One checkpoint per iteration keeps `start_sha` meaningful.
+    _verify_gate_checkpoint "$backlog_file" "loop-virtuoso: ${item_id}/${step_id}"
     echo '{"verdict":"pass"}'
   elif [[ "$has_changes" -eq 0 ]]; then
     echo '{"verdict":"stall"}'
   else
-    _verify_gate_checkpoint "$repo_dir" "${project_prefix:+$project_prefix/}${loop_dir_name}" "loop-virtuoso: ${item_id}/${step_id}"
+    _verify_gate_checkpoint "$backlog_file" "loop-virtuoso: ${item_id}/${step_id}"
     output_json=$(echo "$output" | tail -n 40 | jq -Rs .)
     echo "{\"verdict\":\"fail\",\"exitCode\":$exit_code,\"output\":$output_json}"
   fi
 }
 
-# _verify_gate_drop_loop_dir <loop_dir_name>
-# Reads paths on stdin, drops anything under <loop_dir_name>/, prints the
-# rest. A plain `case` inside a `$(...)` command substitution does not parse
-# on bash 3.2 (macOS's default /bin/bash) -- it's a real, documented parser
-# bug in that version, not a style issue -- so this filtering lives in its
-# own function instead of inline where verify_gate_run needs it.
-_verify_gate_drop_loop_dir() {
-  local loop_dir_name="$1" f
-  while IFS= read -r f; do
-    [[ -z "$f" ]] && continue
-    case "$f" in
-      "${loop_dir_name}"/*) ;;
-      *) echo "$f" ;;
-    esac
-  done
+# _verify_gate_in_loop_dir <loop_dir_name> <project_relative_path>
+# True if the path sits under the loop's own directory. A plain `case` inside
+# a `$(...)` command substitution does not parse on bash 3.2 (macOS's
+# default /bin/bash), so this lives in its own function.
+_verify_gate_in_loop_dir() {
+  case "$2" in
+    "${1}"/*) return 0 ;;
+    *) return 1 ;;
+  esac
 }
 
-# _verify_gate_to_project_relative <project_prefix>
-# Reads repo-root-relative paths on stdin (what `git diff`/`ls-files` always
-# produce, regardless of which directory you ran them from) and rewrites
-# each to be relative to the project directory instead -- the frame every
-# backlog is authored against for protectedPaths globs and the loop-dir
-# exclusion below. <project_prefix> is the project directory's own path
-# relative to the repo root ("" if they're the same directory). A path
-# outside the project directory (a sibling a step legitimately touches, e.g.
-# `--cwd ../other-package`) is escaped with the matching number of `../`
-# rather than dropped -- it's real, in-scope work, just not underneath the
-# project directory.
-_verify_gate_to_project_relative() {
-  local prefix="$1" f
-  while IFS= read -r f; do
-    [[ -z "$f" ]] && continue
-    if [[ -z "$prefix" ]]; then
-      echo "$f"
-      continue
+# _verify_gate_rel1 <project_prefix> <repo_relative_path>
+# Rewrites one repo-root-relative path (what `git diff`/`ls-files` always
+# produce) to be relative to the project directory, the frame every backlog
+# is authored against for protectedPaths and allowedPaths globs.
+# <project_prefix> is the project directory's own path relative to the repo
+# root ("" if they are the same directory). A path outside the project
+# directory (a sibling a step legitimately touches, e.g. `--cwd
+# ../other-package`) is escaped with matching `../` rather than dropped.
+_verify_gate_rel1() {
+  local prefix="$1" f="$2"
+  if [[ -z "$prefix" ]]; then
+    echo "$f"
+    return
+  fi
+  case "$f" in
+    "${prefix}"/*) echo "${f#"${prefix}"/}" ;;
+    "${prefix}") echo "." ;;
+    *)
+      local depth up="" i
+      depth=$(awk -F'/' '{print NF}' <<< "$prefix")
+      for ((i = 0; i < depth; i++)); do up="../${up}"; done
+      echo "${up}${f}"
+      ;;
+  esac
+}
+
+# _verify_gate_is_sensitive <project_relative_path>
+# Secret-like file names a worker must never get committed on its behalf.
+_verify_gate_is_sensitive() {
+  local base="${1##*/}"
+  case "$base" in
+    .env.example|.env.dist|.env.sample|.env.template) return 1 ;;
+    .env|.env.*|*.pem|*.key|*.p12|*.pfx|*.keystore|id_rsa*|id_ed25519*|id_ecdsa*|.npmrc|.netrc|.pgpass|*.tfstate) return 0 ;;
+  esac
+  return 1
+}
+
+# _verify_gate_new_file_allowed <project_relative_path> <allowed_paths_json_or_empty>
+# A new file is acceptable when its name is not secret-like and, if the
+# backlog sets config.allowedPaths, it matches one of those globs. With no
+# allowedPaths the whole project is allowed (protectedPaths still apply).
+_verify_gate_new_file_allowed() {
+  local rel="$1" allowed="$2"
+  _verify_gate_is_sensitive "$rel" && return 1
+  [[ -z "$allowed" || "$allowed" == "null" ]] && return 0
+  backlog_path_is_protected "$rel" "$allowed"
+}
+
+# _verify_gate_revert_paths <repo_dir> <start_sha> <repo_relative_path>...
+# Undoes a violation by restoring only the offending paths to their state at
+# <start_sha> (tracked there) or deleting them (new this iteration). If the
+# worker had already committed the offending change, the revert is committed
+# too, so the next iteration's start_sha is clean and does not re-report it.
+# Other changes the worker made stay in the tree untouched.
+_verify_gate_revert_paths() {
+  local repo_dir="${1:?}" start_sha="$2" p
+  shift 2
+  for p in "$@"; do
+    if git -C "$repo_dir" cat-file -e "${start_sha}:${p}" 2>/dev/null; then
+      git -C "$repo_dir" checkout -q "$start_sha" -- "$p" >/dev/null 2>&1 || true
+    else
+      git -C "$repo_dir" rm -q -f --cached --ignore-unmatch -- "$p" >/dev/null 2>&1 || true
+      rm -f -- "${repo_dir:?}/${p:?}"
     fi
-    case "$f" in
-      "${prefix}"/*) echo "${f#"${prefix}"/}" ;;
-      "${prefix}") echo "." ;;
-      *)
-        local depth up="" i
-        depth=$(awk -F'/' '{print NF}' <<< "$prefix")
-        for ((i = 0; i < depth; i++)); do up="../${up}"; done
-        echo "${up}${f}"
-        ;;
-    esac
   done
-}
-
-# _verify_gate_checkpoint <repo_dir> <exclude_pathspec> <message>
-# Stages everything except the loop's own directory (matched by
-# <exclude_pathspec>, expressed relative to <repo_dir> -- the loop
-# directory's bare name when the project directory IS the repo root, or that
-# name prefixed with the project's own path within the repo otherwise) and
-# commits if there's anything staged. Best-effort: a failed commit (e.g. no
-# git identity configured) doesn't fail the gate, it just leaves start_sha
-# stale for one more iteration.
-_verify_gate_checkpoint() {
-  local repo_dir="$1" exclude_pathspec="$2" message="$3"
-  git -C "$repo_dir" add -A -- . ":!${exclude_pathspec}" 2>/dev/null || true
-  if ! git -C "$repo_dir" diff --cached --quiet 2>/dev/null; then
-    git -C "$repo_dir" commit -q -m "$message" --no-verify 2>/dev/null || true
+  git -C "$repo_dir" rev-parse -q --verify HEAD >/dev/null 2>&1 || return 0
+  local differing=()
+  while IFS= read -r p; do
+    [[ -n "$p" ]] && differing+=("$p")
+  done < <(git -C "$repo_dir" -c core.quotepath=off diff --name-only HEAD -- "$@" 2>/dev/null)
+  if [[ ${#differing[@]} -gt 0 ]]; then
+    git -C "$repo_dir" commit -q -m "loop-virtuoso: revert violation" -- "${differing[@]}" >/dev/null 2>&1 \
+      || echo "loop-virtuoso: could not commit the violation revert (a commit hook may have rejected it)" >&2
   fi
 }
 
-# verify_gate_initial_checkpoint <backlog_file>
-# Call once, at setup time, before computing the run's first start_sha.
-# Without this, pre-existing untracked files sitting under a protected path
-# from before the run even started would read as a violation on iteration 1
-# -- the per-iteration checkpoint above only protects iteration 2 onward.
-verify_gate_initial_checkpoint() {
-  local backlog_file="$1"
-  local project_dir repo_dir project_prefix loop_dir_name
-  project_dir="$(cd "$(dirname "$(dirname "$backlog_file")")" && pwd)"
+# _verify_gate_checkpoint <backlog_file> <message>
+# Commits the iteration's work without ever touching files the loop may not
+# own. Stages tracked changes (`add -u`) plus new files that pass
+# _verify_gate_new_file_allowed and are not protected; anything else stays
+# untracked and is never committed. Commit hooks run and are never skipped, so
+# pre-commit secret scanners and linters still apply. Best effort:
+# a rejected commit (hook failure, no git identity) does not fail the gate,
+# it leaves start_sha stale for one more iteration.
+_verify_gate_checkpoint() {
+  local backlog_file="$1" message="$2"
+  local loop_dir project_dir repo_dir project_prefix loop_dir_name
+  loop_dir="$(cd "$(dirname "$backlog_file")" && pwd)"
+  loop_dir_name="$(basename "$loop_dir")"
+  project_dir="$(dirname "$loop_dir")"
   repo_dir="$(git -C "$project_dir" rev-parse --show-toplevel 2>/dev/null || true)"
-  [[ -z "$repo_dir" ]] && repo_dir="$project_dir"
+  [[ -z "$repo_dir" ]] && return 0
   project_prefix="$(git -C "$project_dir" rev-parse --show-prefix 2>/dev/null || true)"
   project_prefix="${project_prefix%/}"
-  loop_dir_name="$(basename "$(dirname "$backlog_file")")"
-  _verify_gate_checkpoint "$repo_dir" "${project_prefix:+$project_prefix/}${loop_dir_name}" "loop-virtuoso: run start"
+
+  local protected allowed path rel
+  protected=$(backlog_protected_paths "$backlog_file")
+  allowed=$(jq -c '.config.allowedPaths // empty' "$backlog_file" 2>/dev/null || true)
+
+  git -C "$repo_dir" add -u -- . ":!${project_prefix:+$project_prefix/}${loop_dir_name}" >/dev/null 2>&1 || true
+  while IFS= read -r path; do
+    [[ -z "$path" ]] && continue
+    rel="$(_verify_gate_rel1 "$project_prefix" "$path")"
+    _verify_gate_in_loop_dir "$loop_dir_name" "$rel" && continue
+    backlog_path_is_protected "$rel" "$protected" && continue
+    _verify_gate_new_file_allowed "$rel" "$allowed" || continue
+    git -C "$repo_dir" add -- "$path" >/dev/null 2>&1 || true
+  done < <(git -C "$repo_dir" -c core.quotepath=off ls-files --others --exclude-standard 2>/dev/null)
+
+  if ! git -C "$repo_dir" diff --cached --quiet 2>/dev/null; then
+    git -C "$repo_dir" commit -q -m "$message" >/dev/null 2>&1 \
+      || echo "loop-virtuoso: checkpoint commit was rejected (a commit hook may have failed); changes stay uncommitted" >&2
+  fi
 }
 
 # verify_gate_snapshot_path <file>
@@ -239,14 +279,14 @@ verify_gate_initial_checkpoint() {
 verify_gate_snapshot_path() {
   local file="$1"
   local abs_path hash
-  abs_path="$(cd "$(dirname "$file")" && pwd)/$(basename "$file")"
+  abs_path="$(cd "$(dirname "$file")" && pwd -P)/$(basename "$file")"
   hash=$(printf '%s' "$abs_path" | cksum | cut -d' ' -f1)
   echo "${TMPDIR:-/tmp}/loop-virtuoso-snapshots/${hash}.snapshot"
 }
 
 # verify_gate_snapshot <file>
 # Call once per tracked file (backlog.json, teams.json if present) right
-# before handing a step's prompt to the worker -- every step, both modes.
+# before handing a step's prompt to the worker - every step, both modes.
 # Without a fresh snapshot per step, the tamper check would compare against a
 # stale baseline from a previous step and reject the engine's own legitimate
 # status/attempts update from the iteration before as "tampering".
@@ -269,9 +309,22 @@ verify_gate_snapshot_all() {
   verify_gate_snapshot "$(dirname "$backlog_file")/teams.json"
 }
 
+# verify_gate_snapshot_cleanup <backlog_file>
+# Removes the out-of-tree snapshots of backlog.json and teams.json once a run
+# ends (any stop reason, or cancel), so nothing accumulates under $TMPDIR.
+verify_gate_snapshot_cleanup() {
+  local backlog_file="$1" f snapshot_path
+  for f in "$backlog_file" "$(dirname "$backlog_file")/teams.json"; do
+    [[ -f "$f" ]] || continue
+    snapshot_path="$(verify_gate_snapshot_path "$f")"
+    rm -f "${snapshot_path:?}"
+  done
+  rmdir "${TMPDIR:-/tmp}/loop-virtuoso-snapshots" 2>/dev/null || true
+}
+
 # _verify_gate_check_tamper <file>
 # Returns 0 (true) and restores $file from its snapshot if content differs;
-# returns 1 (false, no tampering -- or no snapshot exists yet) otherwise.
+# returns 1 (false, no tampering - or no snapshot exists yet) otherwise.
 _verify_gate_check_tamper() {
   local file="$1"
   local snapshot_path

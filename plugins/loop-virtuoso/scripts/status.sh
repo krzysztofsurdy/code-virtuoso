@@ -7,8 +7,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/backlog.sh"
 # shellcheck source=lib/teams.sh
 source "${SCRIPT_DIR}/lib/teams.sh"
+# shellcheck source=lib/preflight.sh
+source "${SCRIPT_DIR}/lib/preflight.sh"
 
-file="${1:-.delivery-loop/backlog.json}"
+file="${1:-$(loop_default_backlog .)}"
 
 if [[ ! -f "$file" ]]; then
   echo "No backlog found at: $file" >&2
@@ -22,7 +24,8 @@ if ! jq empty "$file" >/dev/null 2>&1; then
 fi
 
 dir="$(cd "$(dirname "$file")" && pwd)"
-session_file="${dir}/session.local.json"
+repo_root="$(loop_repo_root "$dir")"
+session_file="$(loop_session_file "${repo_root:-$(dirname "$dir")}")"
 progress_log="${dir}/progress.log"
 teams_file="$(teams_path_for "$file")"
 global_teams_file="$(teams_global_path)"

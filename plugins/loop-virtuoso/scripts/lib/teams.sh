@@ -2,14 +2,14 @@
 # Named participants (delegate to an existing Claude Code subagent, or an
 # inline custom persona) and named teams (an ordered group of participants
 # used as a template when compiling a backlog). The engine only ever
-# executes participants -- "teams" are a backlog-compiler-time convenience
+# executes participants - "teams" are a backlog-compiler-time convenience
 # for composing steps, not something the engine itself needs at run time.
 #
 # Two layers, project over global: a project's own .delivery-loop/teams.json
 # is checked first; anything not defined there falls back to the shared
 # library at teams_global_path, so participants/teams defined once are
 # usable across every project without copy-pasting the same definitions.
-# Missing files at either layer are not an error -- a backlog with no
+# Missing files at either layer are not an error - a backlog with no
 # participant references still runs fine, it just has no role framing.
 
 teams_path_for() {

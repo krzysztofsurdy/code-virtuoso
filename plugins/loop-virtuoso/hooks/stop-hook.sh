@@ -1,5 +1,5 @@
 #!/bin/bash
-# Mode A (session-supervised) loop engine -- the Stop hook.
+# Mode A (session-supervised) loop engine - the Stop hook.
 #
 # Fires when the session would end. If a loop is active here and owned by this
 # session, runs the verify gate on the current step, applies the verdict, then
@@ -9,16 +9,21 @@
 # only lib/backlog.sh writes the backlog.
 set -euo pipefail
 
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../scripts/lib/preflight.sh
+source "$HOOK_DIR/../scripts/lib/preflight.sh"
+
 HOOK_INPUT=$(cat)
 CWD=$(echo "$HOOK_INPUT" | jq -r '.cwd // "."')
 HOOK_SESSION=$(echo "$HOOK_INPUT" | jq -r '.session_id // ""')
 
-STATE_FILE="$CWD/.delivery-loop/session.local.json"
-
-# No active loop in this project -> zero effect on a normal session.
+# The session file lives at the git root, whatever directory the session is
+# in. Not in a repository, or no session file -> zero effect on a normal session.
+REPO_ROOT="$(loop_repo_root "$CWD")"
+[[ -n "$REPO_ROOT" ]] || exit 0
+STATE_FILE="$(loop_session_file "$REPO_ROOT")"
 [[ -f "$STATE_FILE" ]] || exit 0
 
-HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=../scripts/lib/verify-gate.sh
 source "$HOOK_DIR/../scripts/lib/verify-gate.sh"
 # shellcheck source=../scripts/lib/teams.sh
@@ -34,11 +39,11 @@ STALL_COUNT=$(jq -r '.stallCount // 0' "$STATE_FILE" 2>/dev/null || echo "0")
 VIOLATION_COUNT=$(jq -r '.violationCount // 0' "$STATE_FILE" 2>/dev/null || echo "0")
 
 # State is project-scoped but the Stop hook fires in every session here.
-# Bound + non-matching session: skip. Empty sessionId: claim it.
-if [[ -n "$SESSION_ID" && "$SESSION_ID" != "$HOOK_SESSION" ]]; then
+# Only the session that started the loop may drive it. A state file with an
+# empty sessionId belongs to no session, so no session claims it.
+if [[ -z "$SESSION_ID" || "$SESSION_ID" != "$HOOK_SESSION" ]]; then
   exit 0
 fi
-[[ -z "$SESSION_ID" ]] && SESSION_ID="$HOOK_SESSION"
 
 # Missing/insane core field: can't drive the loop. Drop state, end session.
 if [[ ! "$ITERATION" =~ ^[0-9]+$ ]] || [[ -z "$BACKLOG_FILE" ]] || \
@@ -50,11 +55,11 @@ fi
 [[ "$STALL_COUNT" =~ ^[0-9]+$ ]] || STALL_COUNT=0
 [[ "$VIOLATION_COUNT" =~ ^[0-9]+$ ]] || VIOLATION_COUNT=0
 
-# Resolve a relative backlog path against cwd so helpers work regardless of
-# process cwd.
+# Resolve a relative backlog path against the git root so helpers work
+# regardless of the session's cwd.
 case "$BACKLOG_FILE" in
   /*) BACKLOG_ABS="$BACKLOG_FILE" ;;
-  *)  BACKLOG_ABS="$CWD/$BACKLOG_FILE" ;;
+  *)  BACKLOG_ABS="$REPO_ROOT/$BACKLOG_FILE" ;;
 esac
 if [[ ! -f "$BACKLOG_ABS" ]]; then
   echo "loop-virtuoso: backlog file missing (stop reason: corrupted) -- removing $STATE_FILE" >&2
@@ -63,10 +68,10 @@ if [[ ! -f "$BACKLOG_ABS" ]]; then
 fi
 
 # Loop bounds; fall back to defaults if a config key is unset.
-MAX_ITERATIONS=$(backlog_get_config "$BACKLOG_ABS" "maxIterations"); MAX_ITERATIONS=${MAX_ITERATIONS:-30}
-MAX_ATTEMPTS=$(backlog_get_config "$BACKLOG_ABS" "maxAttemptsPerItem"); MAX_ATTEMPTS=${MAX_ATTEMPTS:-3}
-MAX_STALL=$(backlog_get_config "$BACKLOG_ABS" "maxStallIterations"); MAX_STALL=${MAX_STALL:-3}
-MAX_VIOLATIONS=$(backlog_get_config "$BACKLOG_ABS" "maxViolations"); MAX_VIOLATIONS=${MAX_VIOLATIONS:-3}
+MAX_ITERATIONS=$(backlog_get_config_or "$BACKLOG_ABS" maxIterations 30)
+MAX_ATTEMPTS=$(backlog_get_config_or "$BACKLOG_ABS" maxAttemptsPerItem 3)
+MAX_STALL=$(backlog_get_config_or "$BACKLOG_ABS" maxStallIterations 3)
+MAX_VIOLATIONS=$(backlog_get_config_or "$BACKLOG_ABS" maxViolations 3)
 
 # Gate the current step, then apply the verdict through the single write point.
 # step_apply_verdict echoes the resolved action; the loop branches on that.
@@ -89,10 +94,15 @@ case "$ACTION" in
     ;;
   *)
     echo "loop-virtuoso: unexpected verdict action '$ACTION' (stop reason: corrupted) -- removing $STATE_FILE" >&2
+    events_emit "$BACKLOG_ABS" "run_stopped" '{"reason":"corrupted"}'
+    progress_append "$BACKLOG_ABS" "stop reason=corrupted"
+    verify_gate_snapshot_cleanup "$BACKLOG_ABS"
     rm -f "$STATE_FILE"
     exit 0
     ;;
 esac
+
+progress_iteration_result "$BACKLOG_ABS" "$ITERATION" "$CURRENT_ITEM_ID" "$CURRENT_STEP_ID" "$ACTION" "$STALL_COUNT" "$VIOLATION_COUNT"
 
 NEXT=$(backlog_next_pending_step "$BACKLOG_ABS")
 COUNTS=$(backlog_counts "$BACKLOG_ABS")
@@ -102,6 +112,9 @@ stop_loop() {
   # $1 = stop reason. Caller already printed the human summary; record the
   # run-level transition (step/item events come from step_apply_verdict).
   events_emit "$BACKLOG_ABS" "run_stopped" "$(jq -nc --arg reason "$1" '{reason: $reason}')"
+  progress_append "$BACKLOG_ABS" "stop reason=$1"
+  progress_run_end "$BACKLOG_ABS" "$1" "$ITERATION"
+  verify_gate_snapshot_cleanup "$BACKLOG_ABS"
   rm -f "$STATE_FILE"
   exit 0
 }
@@ -146,7 +159,7 @@ PARTICIPANT_ID=$(echo "$NEXT_STEP" | jq -r '.participant // empty')
 PARTICIPANT_JSON=$(teams_get_participant "$BACKLOG_ABS" "$PARTICIPANT_ID")
 
 NEXT_ITERATION=$(( ITERATION + 1 ))
-NEXT_START_SHA=$(git -C "$CWD" rev-parse HEAD 2>/dev/null || true)
+NEXT_START_SHA=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || true)
 [[ -z "$NEXT_START_SHA" ]] && NEXT_START_SHA="4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 
 STATE_TMP="${STATE_FILE}.tmp.$$"
@@ -174,7 +187,10 @@ jq -n \
   }' > "$STATE_TMP"
 mv "$STATE_TMP" "$STATE_FILE"
 
-# Snapshot right before the worker sees the next prompt -- taken after
+PARTICIPANT_KIND=$(echo "$PARTICIPANT_JSON" | jq -r '.kind // empty')
+progress_iteration_started "$BACKLOG_ABS" "$NEXT_ITERATION" "$NEXT_ITEM_ID" "$NEXT_STEP_ID" "$PARTICIPANT_ID" "$PARTICIPANT_KIND"
+
+# Snapshot right before the worker sees the next prompt - taken after
 # step_apply_verdict's own write above, so that legitimate update is part of
 # the trusted baseline the next verify_gate_run call compares against.
 verify_gate_snapshot_all "$BACKLOG_ABS"

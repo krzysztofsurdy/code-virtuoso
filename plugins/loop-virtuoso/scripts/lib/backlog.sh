@@ -3,7 +3,7 @@
 #
 # Every item is a sequence of steps; there is no flat item-level verifyCommand
 # any more. A single-step item is just a one-element steps array. Item status
-# is never stored -- it's derived from its steps every time, so there's one
+# is never stored - it's derived from its steps every time, so there's one
 # source of truth instead of two that can drift apart.
 #
 # Only this file may write a step's status/attempts/notes. That boundary is
@@ -39,7 +39,7 @@ backlog_item_status() {
 
 # backlog_next_pending_step <file>
 # The lowest-priority item that isn't fully verified, and within it, the
-# first step not yet verified -- only if that step is "pending". If that
+# first step not yet verified - only if that step is "pending". If that
 # step is "blocked" the whole item is stuck and is skipped entirely; later
 # steps in a blocked item never become eligible on their own.
 backlog_next_pending_step() {
@@ -154,7 +154,7 @@ backlog_counts() {
   }" "$file"
 }
 
-# Step-level view -- finer-grained progress than backlog_counts.
+# Step-level view - finer-grained progress than backlog_counts.
 backlog_step_counts() {
   local file="$1"
   jq -c '{
@@ -176,6 +176,15 @@ backlog_get_config() {
   jq -r --arg key "$key" '.config[$key] // empty' "$file"
 }
 
+# backlog_get_config_or <file> <key> <default>
+# Same as backlog_get_config, but falls back to <default> when the key is
+# missing or null. Both run modes use it so they share the same defaults.
+backlog_get_config_or() {
+  local value
+  value="$(backlog_get_config "$1" "$2")"
+  echo "${value:-$3}"
+}
+
 backlog_get_config_json() {
   local file="$1" key="$2"
   jq -c --arg key "$key" '.config[$key] // empty' "$file"
@@ -183,7 +192,7 @@ backlog_get_config_json() {
 
 # Always includes the backlog file's own path and its sibling teams.json,
 # expressed the same cwd-relative way callers express every other path here
-# (".delivery-loop/backlog.json") -- an earlier version passed $file through
+# (".delivery-loop/backlog.json") - an earlier version passed $file through
 # as-is, which was whatever absolute/relative form the caller happened to
 # resolve it to, and silently never matched the relative paths it was being
 # compared against.
@@ -191,7 +200,7 @@ backlog_get_config_json() {
 # This closes the Edit/Write vector for both files (layer 1, real time) and
 # the git-diff-audit vector for anything outside the loop's own excluded
 # directory (layer 2). It does NOT close the content-tamper vector on its
-# own -- a worker with a bare-interpreter Bash grant can rewrite either
+# own - a worker with a bare-interpreter Bash grant can rewrite either
 # file's content without ever calling Edit/Write or touching a path outside
 # the excluded loop directory. That's what verify-gate.sh's snapshot-based
 # tamper check is for, and why it matters more than this glob ever could.
@@ -207,7 +216,7 @@ backlog_protected_paths() {
 
 # backlog_path_is_protected <path> <protected_paths_json_array>
 # Bash's case-pattern glob already matches "*" across "/", so "tests/**" and
-# "tests/*" behave identically here -- no special globstar handling needed.
+# "tests/*" behave identically here - no special globstar handling needed.
 backlog_path_is_protected() {
   local path="$1" patterns_json="$2"
   local pattern
@@ -224,7 +233,7 @@ backlog_path_is_protected() {
 # backlog_build_step_prompt <item_json> <step_json> <participant_json>
 # Regenerated fresh every iteration from the backlog, never a stored string.
 # participant_json may be "null" (or empty) for a step with no assigned
-# participant -- it's just dropped from the prompt.
+# participant - it's just dropped from the prompt.
 backlog_build_step_prompt() {
   local item_json="$1" step_json="$2" participant_json="${3:-null}"
   local item_id item_title item_desc crit step_id instructions verify

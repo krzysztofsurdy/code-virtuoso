@@ -1,13 +1,16 @@
 ---
 description: "Cancel the active delivery loop; backlog state is left untouched"
-allowed-tools: ["Bash(test -f .delivery-loop/session.local.json:*)", "Bash(cat .delivery-loop/session.local.json:*)", "Bash(rm .delivery-loop/session.local.json)"]
+allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/scripts/cancel.sh:*)"]
 ---
 
 # Cancel the delivery loop
 
-The loop is armed only while `.delivery-loop/session.local.json` exists. Cancelling means removing that one file — the backlog itself is left untouched: `verified` items stay `verified`, `pending` items stay `pending`, and a later `/loop-virtuoso:start` resumes from where it left off.
+The loop is armed only while `<git root>/.delivery-loop/session.local.json` exists. Cancelling removes that file. The backlog itself is left untouched: `verified` items stay `verified`, `pending` items stay `pending`, and a later `/loop-virtuoso:start` resumes from where it left off.
 
-1. Check whether `.delivery-loop/session.local.json` exists (`test -f .delivery-loop/session.local.json`).
-2. If it does not exist, report: "No active loop." and stop.
-3. If it exists, read its `iteration` field before removing it (`cat` the file and note the value), then remove the file (`rm .delivery-loop/session.local.json`).
-4. Report that the loop was cancelled and at which iteration (e.g. "Cancelled at iteration 7. Backlog state preserved — run /loop-virtuoso:start to resume.").
+Run the cancel script:
+
+```
+${CLAUDE_PLUGIN_ROOT}/scripts/cancel.sh
+```
+
+It finds the session file from the git root (so the current directory does not matter), records a `run_stopped` event with reason `cancelled` in `events.jsonl`, removes the loop's temporary snapshots, and removes the session file. Relay its output: either "No active loop." or the iteration the loop was cancelled at.

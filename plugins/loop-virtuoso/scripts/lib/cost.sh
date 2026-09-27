@@ -1,6 +1,6 @@
 #!/bin/bash
 # Extracts/accumulates total_cost_usd from `claude -p --output-format json`.
-# Mode B only -- Mode A relies on --max-iterations for cost control instead.
+# Mode B only - Mode A relies on --max-iterations for cost control instead.
 
 # cost_extract <json_output>
 # Defaults to 0 if the field is absent, so a missing/older CLI build degrades

@@ -1,7 +1,21 @@
 #!/bin/bash
-# Archive a finished run so the next backlog-compiler starts clean.
-# Called at run start by setup-start.sh (Mode A) and run-batch.sh (Mode B);
-# runs standalone and no-ops when there's nothing to archive.
+# Archive a run so the next backlog starts clean.
+#   archive-run.sh <path-to-backlog.json> [new-branch]
+#
+# Run by the backlog-compiler skill before it writes a new backlog; also safe
+# to run by hand. It is NOT called at run start: starting a run never moves
+# the backlog it is about to execute.
+#
+# An archive is made when the run has a progress.log with more than a header's
+# worth of lines (so something actually ran) and either:
+#   - no item is pending (the run finished), or
+#   - [new-branch] is given and differs from the backlog's own branch (the old
+#     run is being abandoned for different work).
+# Anything else is an in-progress run and is left alone.
+#
+# backlog.json, progress.log and events.jsonl are run state: they move into
+# archive/<date>-<branch-slug>/. teams.json is configuration shared by later
+# runs: it is copied, never moved.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -9,13 +23,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/backlog.sh"
 
 if [[ $# -lt 1 ]]; then
-  echo "usage: archive-run.sh <path-to-backlog.json>" >&2
+  echo "usage: archive-run.sh <path-to-backlog.json> [new-branch]" >&2
   exit 1
 fi
 
 file="$1"
+new_branch="${2:-}"
 
-# Fresh project -- nothing to archive.
+# Fresh project, nothing to archive.
 if [[ ! -f "$file" ]]; then
   exit 0
 fi
@@ -31,11 +46,17 @@ teams_file="${dir}/teams.json"
 events_file="${dir}/events.jsonl"
 archive_root="${dir}/archive"
 
-# Pending items remain -- run still in progress, never archive.
+branch="$(jq -r '.branch // "run"' "$file")"
 counts="$(backlog_counts "$file")"
 pending="$(echo "$counts" | jq -r '.pending')"
-if [[ "$pending" -gt 0 ]]; then
-  echo "archive-run: backlog has $pending pending item(s); in-progress run left alone."
+
+finished=0
+[[ "$pending" -eq 0 ]] && finished=1
+branch_changed=0
+[[ -n "$new_branch" && "$new_branch" != "$branch" ]] && branch_changed=1
+
+if [[ "$finished" -eq 0 && "$branch_changed" -eq 0 ]]; then
+  echo "archive-run: backlog has $pending pending item(s) and the branch is unchanged; in-progress run left alone."
   exit 0
 fi
 
@@ -51,7 +72,6 @@ if [[ "$log_lines" -le 2 ]]; then
   exit 0
 fi
 
-branch="$(jq -r '.branch // "run"' "$file")"
 date_stamp="$(date -u +%Y-%m-%d)"
 
 # lowercase, non-alphanumerics -> '-', collapse and trim.
@@ -62,7 +82,7 @@ slug="$(echo "$branch" \
 
 target="${archive_root}/${date_stamp}-${slug}"
 
-# Same branch archived twice in one day -- suffix instead of clobbering.
+# Same branch archived twice in one day: suffix instead of clobbering.
 if [[ -e "$target" ]]; then
   n=2
   while [[ -e "${target}-${n}" ]]; do
@@ -74,8 +94,7 @@ fi
 mkdir -p "$target"
 mv "$file" "${target}/$(basename "$file")"
 mv "$progress_log" "${target}/$(basename "$progress_log")"
-# Companion files are optional -- archive whichever exist.
-[[ -f "$teams_file" ]] && mv "$teams_file" "${target}/$(basename "$teams_file")"
 [[ -f "$events_file" ]] && mv "$events_file" "${target}/$(basename "$events_file")"
+[[ -f "$teams_file" ]] && cp "$teams_file" "${target}/$(basename "$teams_file")"
 
-echo "archive-run: archived finished run to ${target}/"
+echo "archive-run: archived run to ${target}/ (teams.json copied, not moved)"

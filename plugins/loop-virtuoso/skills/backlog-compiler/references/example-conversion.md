@@ -1,10 +1,10 @@
 # Worked example
 
-**Input — freeform feature request:**
+**Input - freeform feature request:**
 
 > Add the ability to mark tasks with a status (pending/in progress/done), show it on each task card, let users change it, and filter the list by it. Project uses PHPUnit and PHPStan; tests live in `tests/`.
 
-**Output — `.delivery-loop/backlog.json`:**
+**Output - `.delivery-loop/backlog.json`:**
 
 ```json
 {
@@ -110,6 +110,6 @@
 }
 ```
 
-Note the dependency order (schema → display → mutation → filtering) and that every criterion maps to something a step's `verifyCommand` actually checks — no item's "done" depends on a model's opinion.
+Note the dependency order (schema → display → mutation → filtering) and that every criterion maps to something a step's `verifyCommand` actually checks - no item's "done" depends on a model's opinion.
 
-Each item here is a single step, the common case. To add an independent review phase, you'd give an item a second step — e.g. an `implement` step run by a `backend-dev` participant followed by a `review` step run by a `qa-reviewer` persona — each with its own `verifyCommand`. See `references/teams-and-participants.md`.
+Each item here is a single step, the common case. To add an independent review phase, you'd give an item a second step - e.g. an `implement` step run by a `backend-dev` participant followed by a `review` step run by a `qa-reviewer` persona - each with its own `verifyCommand`. See `references/teams-and-participants.md`.

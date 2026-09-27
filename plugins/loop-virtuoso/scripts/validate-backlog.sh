@@ -152,7 +152,7 @@ else
       done <<< "$dup_ids"
     fi
 
-    # ITEM-NNN is convention, not a hard rule -- warn only.
+    # ITEM-NNN is convention, not a hard rule - warn only.
     bad_ids="$(jq -r '[.items[].id | select(type == "string") | select(test("^ITEM-[0-9]+$") | not)] | .[]' "$file" 2>/dev/null || true)"
     if [[ -z "$bad_ids" ]]; then
       emit_check ok "item ids follow ITEM-NNN convention"
@@ -164,10 +164,10 @@ else
       done <<< "$bad_ids"
     fi
 
-    # Step participant references resolve against teams.json -- project-local
+    # Step participant references resolve against teams.json - project-local
     # layer first, then the shared global layer (teams_get_participant checks
     # both). No teams.json at either layer, or steps with no participant, is
-    # fine. An unparseable teams.json at either layer is not fine -- without
+    # fine. An unparseable teams.json at either layer is not fine - without
     # this check, teams_get_participant's jq call fails silently and every
     # reference at that layer looks "resolved" by accident.
     teams_file="$(teams_path_for "$file")"
@@ -206,12 +206,12 @@ else
       #
       # Only participants this backlog's steps actually reference are
       # checked, resolved through the same project-then-global lookup the
-      # engine uses at run time -- not "every participant in whichever file
+      # engine uses at run time - not "every participant in whichever file
       # happens to exist", which would mean every project's validate run
       # re-checking the whole shared global library on every invocation.
       #
       # The check itself lives entirely in jq, one complete message per
-      # output line -- an earlier version split a jq @tsv row in the shell
+      # output line - an earlier version split a jq @tsv row in the shell
       # via `IFS=$'\t' read`, which silently collapsed a persona's always-
       # empty "agent" field (tab is IFS *whitespace*, so bash treats
       # consecutive tabs as one delimiter, not an empty field between two),

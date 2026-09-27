@@ -13,7 +13,7 @@
 # total_cost_usd is reported on both API billing and a Claude subscription (a
 # real notional figure even with no separate charge), so total_budget_exceeded
 # works either way. What a subscription's usage/rate limit can't express as
-# cost is a hard stop -- that surfaces as invocation_failed instead.
+# cost is a hard stop - that surfaces as invocation_failed instead.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -25,6 +25,8 @@ source "$SCRIPT_DIR/lib/verify-gate.sh"
 source "$SCRIPT_DIR/lib/cost.sh"
 # shellcheck source=./lib/teams.sh
 source "$SCRIPT_DIR/lib/teams.sh"
+# shellcheck source=./lib/preflight.sh
+source "$SCRIPT_DIR/lib/preflight.sh"
 
 backlog_file="${1:-}"
 if [[ -z "$backlog_file" ]]; then
@@ -35,40 +37,35 @@ if [[ ! -f "$backlog_file" ]]; then
   echo "error: backlog file not found: $backlog_file" >&2
   exit 1
 fi
-backlog_file="$(cd "$(dirname "$backlog_file")" && pwd)/$(basename "$backlog_file")"
 
-# Backlog lives at <repo>/.delivery-loop/backlog.json; repo root is two levels up.
+# Hard gate: validation, clean tree, branch guard. Exits on any failure.
+loop_preflight "$backlog_file"
+backlog_file="$LOOP_BACKLOG_ABS"
+trap 'verify_gate_snapshot_cleanup "$backlog_file"' EXIT
+
+# Backlog lives at <project>/.delivery-loop/backlog.json; the project is its parent.
 loop_dir="$(dirname "$backlog_file")"
 repo_dir="$(dirname "$loop_dir")"
-progress_log="$loop_dir/progress.log"
+progress_log="$(progress_path_for "$backlog_file")"
 
-now() { date -u +%Y-%m-%dT%H:%M:%SZ; }
-
-# Append to progress.log and echo, so a long run can be watched via tail -f.
+# Append to progress.log and echo the line, so a long run can be watched via tail -f.
 log_line() {
-  local msg="$1"
-  printf '%s %s\n' "$(now)" "$msg" | tee -a "$progress_log"
+  progress_append "$backlog_file" "$1"
+  tail -n 1 "$progress_log"
 }
 
-# Optional siblings; tolerate them missing.
-[[ -x "$SCRIPT_DIR/archive-run.sh" ]] && "$SCRIPT_DIR/archive-run.sh" "$backlog_file" || true
-[[ -x "$SCRIPT_DIR/validate-backlog.sh" ]] && "$SCRIPT_DIR/validate-backlog.sh" "$backlog_file" || true
-
-# Commit pre-existing cruft before the first start_sha, so iteration 1 can't get
-# a false violation from something that predates the run.
-verify_gate_initial_checkpoint "$backlog_file"
 events_emit "$backlog_file" "run_started" '{}'
 
-max_iterations="$(backlog_get_config "$backlog_file" maxIterations)"
-max_attempts="$(backlog_get_config "$backlog_file" maxAttemptsPerItem)"
-max_stall="$(backlog_get_config "$backlog_file" maxStallIterations)"
-max_violations="$(backlog_get_config "$backlog_file" maxViolations)"
+max_iterations="$(backlog_get_config_or "$backlog_file" maxIterations 30)"
+max_attempts="$(backlog_get_config_or "$backlog_file" maxAttemptsPerItem 3)"
+max_stall="$(backlog_get_config_or "$backlog_file" maxStallIterations 3)"
+max_violations="$(backlog_get_config_or "$backlog_file" maxViolations 3)"
 total_budget="$(backlog_get_config "$backlog_file" totalBudgetUsd)"
 per_iter_budget="$(backlog_get_config "$backlog_file" perIterationBudgetUsd)"
 per_iter_turns="$(backlog_get_config "$backlog_file" perIterationMaxTurns)"
-permission_mode="$(backlog_get_config "$backlog_file" permissionMode)"
+permission_mode="$(backlog_get_config_or "$backlog_file" permissionMode acceptEdits)"
 
-# allowedTools is an array -- expand each pattern as its own CLI argument.
+# allowedTools is an array - expand each pattern as its own CLI argument.
 allowed_tools=()
 allowed_tools_json="$(backlog_get_config_json "$backlog_file" allowedTools)"
 if [[ -n "$allowed_tools_json" && "$allowed_tools_json" != "null" ]]; then
@@ -85,7 +82,8 @@ iteration=0
 iterations_run=0
 stop_reason=""
 
-log_line "run-start project=$(jq -r '.project // empty' "$backlog_file" 2>/dev/null || true) backlog=$backlog_file repo=$repo_dir"
+progress_run_start "$backlog_file" "$repo_dir"
+tail -n 1 "$progress_log"
 
 while true; do
   iteration=$((iteration + 1))
@@ -151,7 +149,7 @@ while true; do
           step_tools+=("$tool")
         done < <(echo "$persona_tools_json" | jq -r '.[]')
         # An explicit [] means "nothing beyond reads", not "fall through to
-        # the backlog default" -- dropping --allowedTools entirely would let
+        # the backlog default" - dropping --allowedTools entirely would let
         # acceptEdits auto-approve writes regardless, the opposite of what a
         # read-only persona is for.
         if [[ ${#step_tools[@]} -eq 0 ]]; then
@@ -162,9 +160,10 @@ while true; do
   esac
 
   iterations_run=$((iterations_run + 1))
-  log_line "iteration=$iterations_run item=$item_id step=$step_id participant=${participant_id:-none} kind=${participant_kind:-none} status=running"
+  progress_iteration_started "$backlog_file" "$iterations_run" "$item_id" "$step_id" "$participant_id" "$participant_kind"
+  tail -n 1 "$progress_log"
 
-  # Snapshot right before the worker sees the prompt -- verify_gate_run below
+  # Snapshot right before the worker sees the prompt - verify_gate_run below
   # compares against this to detect (and undo) any edit to the backlog's own
   # content during the step, regardless of which tool made it.
   verify_gate_snapshot_all "$backlog_file"
@@ -184,7 +183,7 @@ while true; do
   fi
 
   # A max-turns/max-budget cutoff still returns a valid JSON envelope and exits
-  # non-zero -- that stops the agent, not the loop, so we swallow the exit code
+  # non-zero - that stops the agent, not the loop, so we swallow the exit code
   # and verify whatever diff exists. An invocation that returns no parseable
   # JSON at all is a different problem: auth failure, network error, or (most
   # common under a Claude subscription rather than API billing) the plan's
@@ -227,7 +226,8 @@ while true; do
       ;;
   esac
 
-  log_line "iteration=$iterations_run item=$item_id step=$step_id action=$action cost=$cumulative_cost stalls=$stall_count violations=$violation_count"
+  progress_iteration_result "$backlog_file" "$iterations_run" "$item_id" "$step_id" "$action" "$stall_count" "$violation_count" "$cumulative_cost"
+  tail -n 1 "$progress_log"
 
   if (( violation_count >= max_violations )); then
     stop_reason="violation_limit"
@@ -246,7 +246,8 @@ verified="$(echo "$final_counts" | jq -r '.verified')"
 pending="$(echo "$final_counts" | jq -r '.pending')"
 blocked="$(echo "$final_counts" | jq -r '.blocked')"
 
-log_line "run-end reason=$stop_reason iterations=$iterations_run verified=$verified pending=$pending blocked=$blocked cost=$cumulative_cost"
+progress_run_end "$backlog_file" "$stop_reason" "$iterations_run" "$cumulative_cost"
+tail -n 1 "$progress_log"
 events_emit "$backlog_file" "run_stopped" "$(jq -nc --arg reason "$stop_reason" '{reason: $reason}')"
 
 echo "----------------------------------------"
