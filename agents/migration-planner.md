@@ -2,8 +2,6 @@
 name: migration-planner
 description: Analyze database migration files and produce safe migration plans with zero-downtime strategies and rollback paths. Delegate before running migrations.
 tools: Read, Grep, Glob, Bash
-skills:
-  - database-design
 produces:
   - migration-plan
 ---
@@ -47,6 +45,16 @@ You receive one of:
 - Truncate table
 - Remove enum values
 - Reduce column size
+
+## Zero-downtime checks
+
+- Use expand then contract: add the new shape, deploy code that reads and writes both, backfill, then drop the old shape in a later release
+- New NOT NULL columns need a default, or a nullable add, backfill, then constraint
+- Backfills run in batches outside the schema migration, never as one long transaction
+- Check the lock each statement takes and the table size; long locks block reads and writes
+- Foreign keys and unique constraints on large tables: add as not-validated or concurrent, then validate
+- Renames and type changes need a dual-write phase or a new column and a copy
+- Every step has a tested down path, or is marked irreversible with a restore plan
 
 ## Output format
 

@@ -2,8 +2,6 @@
 name: test-gap-analyzer
 description: Find untested code paths in changed files - missing test cases, uncovered edge cases, and integration gaps. Delegate after implementation to verify coverage.
 tools: Read, Grep, Glob, Bash
-skills:
-  - testing
 produces:
   - test-gap-report
 ---
@@ -51,6 +49,16 @@ You receive one of:
 - Validation failure scenarios
 - Timeout and retry behavior
 - Partial failure in batch operations
+
+## Test design checks
+
+- Every public behavior has at least one test that fails if the behavior breaks
+- Each conditional branch and each exception path has its own case
+- Boundary values are covered: zero, one, many, max, empty, null
+- Assertions check outcomes, not internal calls; a test with mocks only proves wiring
+- Tests are isolated: no shared mutable state, no order dependence, no real clock or network
+- Test doubles are used at system boundaries only; domain logic runs for real
+- Money, auth, and data-loss paths have tests at more than one level
 
 ## Output format
 

@@ -1,13 +1,14 @@
 ---
 name: design-patterns
-description: Reference for 26 design patterns (Gang of Four plus Object Pool, Private Class Data, and Null Object) with practical implementations and real-world examples. Use when the user asks to apply a design pattern, refactor code using patterns, choose between competing patterns, or review existing pattern usage. Covers creational (Abstract Factory, Builder, Factory Method, Prototype, Singleton, Object Pool), structural (Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy, Private Class Data), and behavioral patterns (Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor, Null Object) with real-world examples, trade-offs, and anti-patterns.
+description: Reference for 26 design patterns (Gang of Four plus Object Pool, Private Class Data, Null Object) with trade-offs and anti-patterns. Use to pick, apply, or review a pattern.
 allowed-tools: Read Grep Glob Bash
-user-invocable: false
+user-invocable: true
+disable-model-invocation: true
 ---
 
 # Design Patterns
 
-Reference for 26 design patterns organized by intent (creational, structural, behavioral), with PHP 8.3+ implementations, UML guidance, and practical use cases.
+Reference for 26 design patterns organized by intent (creational, structural, behavioral), with implementations in PHP, Python, Java, C++ and others, UML guidance, and practical use cases.
 
 ## Pattern Index
 
@@ -75,6 +76,6 @@ Reference for 26 design patterns organized by intent (creational, structural, be
 
 - Favor **composition over inheritance**: reach for Decorator, Strategy, or Bridge before building deep class hierarchies
 - Apply patterns to **real problems**, not hypothetical ones
-- Use PHP 8.3+ features: **enums** for State, **readonly classes** for Value Objects, **first-class callables** for Strategy
+- Use your language's modern features where they fit: enums for State, immutable value types for Value Objects, first-class functions for Strategy
 - Combine patterns when it makes sense (for example, Builder + Fluent Interface, Strategy + Factory Method)
 - Keep pattern implementations **minimal**. If the pattern adds more complexity than it removes, reconsider it

@@ -2,10 +2,6 @@
 name: refactor-scout
 description: Scan code for structural health - code smells, duplication, complexity hotspots, and refactoring opportunities. Delegate for codebase health assessments.
 tools: Read, Grep, Glob, Bash
-skills:
-  - refactoring
-  - design-patterns
-  - solid
 produces:
   - smell-report
 ---
@@ -26,7 +22,7 @@ You receive one of:
 1. **Discover** - Find relevant files using Glob patterns and directory structure
 2. **Measure** - Assess each file for size, complexity, and coupling
 3. **Classify** - Categorize findings by code smell type
-4. **Recommend** - Map each smell to a specific refactoring technique
+4. **Recommend** - Map each smell to a specific refactoring technique using the table below. When the right technique is unclear or you need its steps, read the catalog entry on demand at `skills/knowledge/refactoring/references/<technique>.md` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Read only the entries you need.
 
 ## Code smell categories
 
@@ -59,6 +55,23 @@ You receive one of:
 - Inappropriate Intimacy (classes access each other's internals)
 - Message Chains (long chains of method calls)
 - Middle Man (class that only delegates)
+
+## Smell to technique
+
+| Smell | Techniques |
+|---|---|
+| Long Method | Extract Method, Replace Temp with Query, Replace Method with Method Object |
+| Large Class | Extract Class, Extract Subclass, Extract Interface |
+| Long Parameter List, Data Clumps | Introduce Parameter Object, Preserve Whole Object |
+| Primitive Obsession | Replace Data Value with Object, Replace Type Code with Class |
+| Switch Statements | Replace Conditional with Polymorphism, Replace Type Code with Strategy |
+| Divergent Change | Extract Class |
+| Shotgun Surgery | Move Method, Move Field, Inline Class |
+| Duplicate Code | Extract Method, Pull Up Method, Form Template Method |
+| Feature Envy | Move Method, Extract Method |
+| Message Chains, Middle Man | Hide Delegate, Remove Middle Man |
+| Dead Code, Lazy Class | Remove Dead Code, Inline Class, Collapse Hierarchy |
+| Speculative Generality | Collapse Hierarchy, Inline Class, Remove Parameter |
 
 ## Output format
 

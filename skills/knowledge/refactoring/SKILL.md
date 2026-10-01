@@ -1,13 +1,14 @@
 ---
 name: refactoring
-description: Reference for 89 refactoring techniques and 22 code smells with practical examples. Use when the user asks to refactor code, detect code smells, improve code quality, reduce complexity, or clean up technical debt. Covers composing methods, moving features between objects, organizing data, simplifying conditionals and method calls, dealing with generalization, and detecting smells across bloaters, OO abusers, change preventers, dispensables, and couplers with before/after comparisons and step-by-step mechanics.
+description: Reference for 89 refactoring techniques and 22 code smells with mechanics and before/after examples. Use to detect smells, clean up technical debt, or choose a technique.
 allowed-tools: Read Grep Glob Bash
-user-invocable: false
+user-invocable: true
+disable-model-invocation: true
 ---
 
 # Refactoring
 
-Reference for 89 refactoring techniques and code smells. Each entry has PHP 8.3+ examples, rationale, step-by-step mechanics, and before/after comparisons.
+Reference for 89 refactoring techniques and code smells. Each entry has examples in PHP, Python, TypeScript, Java, C# and others, rationale, step-by-step mechanics, and before/after comparisons.
 
 ## Refactoring techniques (67)
 

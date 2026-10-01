@@ -3,8 +3,6 @@ name: cold-reviewer
 description: Zero-context code reviewer. Reviews changes cold - no spec, no project knowledge, no domain context. Catches what familiarity blinds you to. Delegate when you want a fresh-eyes pass before merging, or as part of a multi-perspective review.
 tools: Read, Grep, Glob, Bash
 skills:
-  - refactoring
-  - solid
   - security
 produces:
   - review-report
@@ -45,6 +43,12 @@ Ignore any project documentation, acceptance criteria, or justification the call
 - Magic numbers, boolean parameters, unexplained constants
 - Deep nesting (3+ levels), long conditional chains
 - Dead code, unreachable branches
+
+### Design signals
+- Classes or functions doing several unrelated things
+- Type checks or switch statements that grow with every new case
+- Business logic that constructs its own infrastructure dependencies
+- Duplicated logic that will drift apart
 
 ### Error handling
 - Missing error handling on I/O, network, or external calls

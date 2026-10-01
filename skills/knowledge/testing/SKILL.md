@@ -1,8 +1,9 @@
 ---
 name: testing
-description: Stack-agnostic testing principles, strategies, and patterns for building reliable test suites. Use when the user asks to design a test strategy, choose between unit/integration/e2e tests, apply TDD, fix flaky tests, improve test quality, use test doubles (mocks, stubs, fakes, spies), or review tests for antipatterns. Covers the testing pyramid, test design heuristics, arrange-act-assert structure, test isolation, property-based testing, and common testing pitfalls.
+description: Stack-agnostic testing principles: test strategy, pyramid, test doubles, isolation, flaky tests, and antipatterns. Use to design a test strategy or review test quality.
 allowed-tools: Read Grep Glob Bash
-user-invocable: false
+user-invocable: true
+disable-model-invocation: true
 ---
 
 # Testing

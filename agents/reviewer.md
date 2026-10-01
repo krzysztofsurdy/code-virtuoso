@@ -3,10 +3,7 @@ name: reviewer
 description: Code review agent. Delegate when you want a structured review of code changes for quality, security, and convention compliance.
 tools: Read, Grep, Glob, Bash
 skills:
-  - refactoring
-  - solid
   - security
-  - performance
 produces:
   - review-report
 ---
@@ -38,11 +35,11 @@ You receive one of:
 - Are error paths handled?
 
 ### Design (SOLID)
-- Single Responsibility: does each class/function do one thing?
-- Open/Closed: can behavior be extended without modifying existing code?
-- Liskov Substitution: do subtypes behave as expected?
-- Interface Segregation: are interfaces focused?
-- Dependency Inversion: do high-level modules depend on abstractions?
+- Single Responsibility: does each class/function have one reason to change? Signal: unrelated imports, methods that group into clusters.
+- Open/Closed: can behavior be extended without editing existing code? Signal: type checks or growing switch statements.
+- Liskov Substitution: do subtypes honor the parent contract? Signal: overrides that throw, ignore arguments, or narrow accepted input.
+- Interface Segregation: are interfaces focused? Signal: implementers with empty or throwing methods.
+- Dependency Inversion: do high-level modules depend on abstractions? Signal: `new` on infrastructure classes inside business logic.
 
 ### Security (OWASP Top 10)
 - Injection (SQL, command, XSS)
@@ -53,13 +50,15 @@ You receive one of:
 
 ### Performance
 - N+1 query patterns (queries inside loops, missing eager loading)
-- Unnecessary database calls or missing indexes
-- Large memory allocations or unbounded collections
+- Unnecessary database calls or missing indexes on filtered, joined, or sorted columns
+- Large memory allocations or unbounded collections (no pagination, no batch size)
+- Repeated expensive work inside loops (I/O, serialization, regex compilation)
 
 ### Code smells
-- Long methods, large classes, feature envy
+- Long methods, large classes, long parameter lists
+- Feature envy, inappropriate intimacy, message chains
 - Duplicate code, dead code, speculative generality
-- Primitive obsession, data clumps
+- Primitive obsession, data clumps, switch statements on type
 
 ### Testing
 - Are new code paths covered by tests?

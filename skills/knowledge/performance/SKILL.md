@@ -1,8 +1,9 @@
 ---
 name: performance
-description: Application performance optimization patterns and profiling-driven methodology. Use when the user asks to optimize application speed, reduce latency, diagnose slow queries, fix N+1 problems, implement caching layers, profile memory usage, tune database queries, apply lazy loading, configure connection pooling, or set performance budgets. Covers CPU and memory profiling, caching strategies (application, HTTP, CDN), query optimization, indexing, and load testing approaches.
+description: Profiling-driven performance optimization: caching, query tuning, N+1 fixes, memory, and load testing. Use to diagnose a bottleneck or set performance budgets.
 allowed-tools: Read Grep Glob Bash
-user-invocable: false
+user-invocable: true
+disable-model-invocation: true
 ---
 
 # Performance Optimization

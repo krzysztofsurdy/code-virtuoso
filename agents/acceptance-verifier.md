@@ -3,7 +3,6 @@ name: acceptance-verifier
 description: Acceptance criteria compliance checker. Maps code changes against acceptance criteria one-by-one, reporting PASS/FAIL/PARTIAL/UNTESTED per criterion. Delegate when you need to verify that implementation satisfies its specification before merging.
 tools: Read, Grep, Glob, Bash
 skills:
-  - testing
   - verification-before-completion
 expects:
   - requirements-spec
