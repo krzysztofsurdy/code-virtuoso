@@ -1,6 +1,6 @@
 ---
 name: finishing-branch
-description: "End-to-end workflow for finishing a development branch. Use when implementation is complete and the branch is ready to ship. Runs verification checks, reviews the diff, picks the integration path (direct merge, pull request, squash-and-merge, stacked PR), writes the PR/merge message, pushes to the remote, and cleans up branches and worktrees. Covers rebase vs merge vs squash decisions, pre-push checklists, stacked-branch handling, and recovery from common missteps like force-pushing the wrong branch or deleting an unmerged branch. Triggers: 'I'm done', 'ready to merge', 'ready to push', 'ready for review', 'wrap up this branch', 'finish this up'."
+description: "Finishes a development branch: verifies tests and lint, reviews the diff, picks merge, squash, rebase, or stacked PR, writes the PR message, pushes, opens the PR, and cleans up branches and worktrees. Also covers commit conventions, PR sizing, and recovery from force-push mistakes. Use when the user says 'ready to merge', 'finish this branch', 'open a PR', or 'clean up after merge'."
 user-invocable: true
 argument-hint: "[optional: branch name or PR target]"
 ---
@@ -115,9 +115,10 @@ git diff main...HEAD | grep -iE '(password|secret|token|api.key|private.key)' ||
 - [ ] No commented-out code that should be deleted
 - [ ] No secrets, tokens, or credentials in the diff
 - [ ] No unrelated changes mixed into the branch
-- [ ] Commit messages are clear and follow project conventions
+- [ ] Commit messages follow the project convention ([Commit Conventions](references/commit-conventions.md))
 - [ ] New files are in the correct directories
 - [ ] Tests cover the changes (not just existing tests passing)
+- [ ] The PR is within size targets, or split (see [PR Sizing and Review](references/pr-sizing-and-review.md))
 
 ---
 
@@ -133,36 +134,33 @@ Choose how to integrate based on your team's workflow, the branch's history, and
 | **Rebase and merge** | Linear history wanted, clean commit discipline | `git rebase main && git checkout main && git merge --ff-only <branch>` |
 | **Stacked PR** | Branch builds on another unmerged branch | Push + open PR targeting parent branch |
 
-See [Integration Strategies Reference](references/integration-strategies.md) for the full decision matrix, rebase vs merge trade-offs, and stacked PR workflow.
+Default to the repository's configured strategy. Squash when the branch history is WIP noise, rebase when every commit is atomic, merge commit for shared branches, and never squash a branch that is the base of a stack. See [Integration Strategies](references/integration-strategies.md) for the decision matrix, rebase vs merge rules, stacked PRs, and the target branch per branching model.
 
 ---
 
 ## Phase 5: Message writing
 
-Write a clear, structured message whether you are creating a PR or a merge commit.
+Use the `pr-message-writer` skill to write the PR description. It reads the diff and ticket, follows a template, and writes testing instructions.
 
-### PR message structure
+If that skill is not installed, write this minimal message:
 
 ```
 ## Summary
-What changed and why (1-3 sentences).
+What changed and why, in 1-3 sentences. Link the ticket.
 
 ## Changes
-- Bullet list of specific changes
+- Specific changes, grouped by area
 
-## Test Plan
-- How to verify the changes work
+## Test plan
+- [ ] How a reviewer verifies each change
 
 ## Risks
-- What could go wrong, migration notes, rollback considerations
-
-## Linked Tickets
-- PROJ-123
+- Migrations, deploy order, rollback. "Low risk" if none.
 ```
 
-For fuller PR messages, use the `pr-message-writer` skill, which provides templates, structured sections, and verification queries.
+Title: under 72 characters, imperative, in the project's commit format (see [Commit Conventions](references/commit-conventions.md)). Under squash merge the title becomes the commit message. Use closing keywords (`Closes #123`) to link issues; GitLab accepts the same, and Bitbucket links Jira keys.
 
-See [PR Message Template Reference](references/pr-message-template.md) for the full template and guidance on writing good messages.
+For a direct merge without a PR, write the merge commit message as a short summary of the change and its reason.
 
 ---
 
@@ -307,8 +305,9 @@ Run through this before considering the branch done.
 | Reference | Contents |
 |---|---|
 | [Pre-Push Checks](references/pre-push-checks.md) | Verification command order, CI parity, conflict detection, pre-push hook setup |
-| [Integration Strategies](references/integration-strategies.md) | Merge vs rebase vs squash decision matrix, stacked PRs, when each strategy fits |
-| [PR Message Template](references/pr-message-template.md) | Structured PR template, writing guidance, cross-reference to `pr-message-writer` skill |
+| [Integration Strategies](references/integration-strategies.md) | Merge vs rebase vs squash choice, stacked PRs, target branch per branching model |
+| [Commit Conventions](references/commit-conventions.md) | Conventional Commits, ticket prefixes, breaking changes, message quality, commit-msg hook |
+| [PR Sizing and Review](references/pr-sizing-and-review.md) | Size targets, keeping PRs small, author and reviewer etiquette, review gates |
 | [Cleanup Commands](references/cleanup-commands.md) | Branch pruning, worktree removal, upstream cleanup, batch operations |
 | [Recovery](references/recovery.md) | Detailed recovery walkthroughs for force-push, deleted branch, lost stash, bad merge |
 
@@ -321,6 +320,5 @@ Run through this before considering the branch done.
 | Writing a full PR message | `pr-message-writer` |
 | Reviewing code before merging | `reviewer` agent |
 | Managing git worktrees | `worktree-ops` |
-| Choosing a branching strategy | `git-workflow` |
 | Running verification before declaring done | `verification-before-completion` |
 | Getting a fresh-eyes review before merging | `cold-reviewer` agent |

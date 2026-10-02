@@ -6,8 +6,10 @@ The integration strategy decides the shape of your history, how easy it is to re
 
 - [Strategy overview](#strategy-overview)
 - [Decision matrix](#decision-matrix)
+- [Choosing the merge strategy](#choosing-the-merge-strategy)
 - [Rebase vs merge: when to use each](#rebase-vs-merge-when-to-use-each)
 - [Stacked PRs](#stacked-prs)
+- [Branching model context](#branching-model-context)
 - [Handling upstream changes](#handling-upstream-changes)
 
 ## Strategy overview
@@ -114,6 +116,22 @@ Use this matrix to pick the right strategy for your situation.
 3. **Is the branch history messy with WIP commits?** Use squash and merge to collapse it into one clean commit.
 4. **Do you need to see branch topology in the graph?** Use direct merge with `--no-ff`.
 5. **Solo project or pre-approved change?** Use direct merge or rebase, depending on your history preference.
+
+---
+
+## Choosing the merge strategy
+
+Check the repository settings first: the platform often allows only some strategies, and the project's default is the answer unless you have a reason.
+
+| Situation | Use | Why |
+|---|---|---|
+| Commits are WIP, fixups, or review churn | Squash | One clean commit on the target. Write the squash message by hand |
+| Each commit is atomic, builds, and has a good message | Rebase and merge | Keeps useful history, stays linear |
+| Long-running or shared branch, audit trail needed | Merge commit | Preserves topology, reverts as one unit |
+| Branch is the base of a stack | Merge commit or rebase, not squash | Squash rewrites the base, so downstream branches need a rebase |
+| Hotfix on a release line | Rebase or cherry-pick, then merge forward | Keeps the fix small and traceable |
+
+Rules of thumb: squash is the safe default for feature branches; never squash a branch you still plan to build on; after a squash merge, delete the branch instead of reusing it.
 
 ---
 
@@ -229,6 +247,21 @@ glab mr update <mr-number> --target-branch main
 - **Squash-merging breaks the stack.** If the base PR is squash-merged, downstream branches still reference the old individual commits. You must rebase onto main after the squash. Prefer merge commits or rebase-merge for stacked workflows.
 - **Review burden shifts.** Each PR is small, but reviewers must understand the full context. Link the overall design in each PR description.
 - **Force-push cascades.** A change to PR 1 requires rebasing PR 2 and PR 3. Automate this or accept the overhead.
+
+---
+
+## Branching model context
+
+The model sets the target branch and how long a branch may live. Use the repository's model; do not change it while finishing a branch.
+
+| Model | Target of your PR | Branch lifetime | Release |
+|---|---|---|---|
+| Trunk-based | `main` | Hours to a day, flags hide unfinished work | Every merge |
+| GitHub Flow | `main` | Days | Every merge |
+| Git Flow | `develop` (hotfixes go to `main` and `develop`) | Days to weeks | Release branches |
+| GitLab Flow | `main`, promoted to environment branches | Days | Environment promotion |
+
+If you are unsure of the target, read the contributing guide or ask. A PR against the wrong base is a common avoidable mistake.
 
 ---
 
