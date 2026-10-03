@@ -1,6 +1,6 @@
 ---
 name: composer-dependencies
-description: Composer dependency management playbook for safe package updates. Use when the user asks to update Composer dependencies, audit packages for security vulnerabilities, manage composer.lock, configure Dependabot or Renovate for automated updates, replace abandoned packages, or resolve version conflicts. Covers patch/minor/major update strategies, composer audit, semantic versioning constraints, lock file hygiene, and the changelog-first update workflow.
+description: Composer dependency management playbook for safe package updates. Use when the user asks to update Composer dependencies, audit packages for security vulnerabilities, manage composer.lock, configure Dependabot or Renovate for automated updates, replace abandoned packages, block insecure or abandoned versions with config.policy, or resolve version conflicts. Covers patch/minor/major update strategies, composer audit, semantic versioning constraints, lock file hygiene, and the changelog-first update workflow.
 user-invocable: true
 ---
 
@@ -64,19 +64,67 @@ This is required for major updates. Each package has its own breaking changes, a
 
 ### composer audit
 
-Built into Composer since 2.4. Compares locked versions against GitHub Security Advisories and FriendsOfPHP databases.
+Built into Composer since 2.4. It checks locked versions against the advisory data from Packagist.org (or other repositories listed in `composer.json`), and reports abandoned packages.
 
 ```bash
-# Check for known vulnerabilities
 composer audit
-
-# JSON output for CI parsing
-composer audit --format=json
+composer audit --locked --format=json
+composer audit --abandoned=report
+composer audit --ignore-severity=low --ignore-severity=medium
 ```
 
-It returns a non-zero exit code when vulnerabilities are found, so you can use it as a CI gate.
+| Option | Effect |
+|---|---|
+| `--locked` | Audit `composer.lock` regardless of what is in `vendor/` |
+| `--no-dev` | Skip `require-dev` packages |
+| `--format` | `table` (default), `plain`, `json`, or `summary` |
+| `--abandoned=ignore\|report\|fail` | How abandoned packages affect the exit code. Overrides config and `COMPOSER_AUDIT_ABANDONED` (since 2.8) |
+| `--ignore-severity=<level>` | Ignore `low`, `medium`, `high` or `critical` advisories. Repeat the option for several levels (since 2.8) |
 
-Since Composer 2.9, `composer update` and `composer require` block installation of packages with known security advisories by default.
+Abandoned packages fail the audit by default since Composer 2.7. Since 2.10 the exit code is `0` (clean) or `1` (anything failed), so a CI gate only needs to check for non-zero.
+
+### Blocking insecure and abandoned packages
+
+Since Composer 2.9, `composer update`, `require` and `remove` refuse package versions with known security advisories. Since 2.10, versions flagged as malware are also blocked, including on `composer install`. Configure all of it under `config.policy`:
+
+```json
+{
+    "config": {
+        "policy": {
+            "advisories": {
+                "block": true,
+                "audit": "fail",
+                "ignore-id": {
+                    "PKSA-xxxx-xxxx-xxxx": "Not reachable from our code, fix scheduled."
+                },
+                "ignore-severity": ["low"]
+            },
+            "abandoned": {
+                "block": true,
+                "audit": "report",
+                "ignore": {
+                    "acme/legacy-lib": "Replacement planned for next quarter."
+                }
+            }
+        }
+    }
+}
+```
+
+| Key | Default | Meaning |
+|---|---|---|
+| `policy.advisories.block` | `true` | Block versions with active advisories during `update`, `require`, `remove` |
+| `policy.advisories.audit` | `fail` | `ignore`, `report` or `fail` for `composer audit` |
+| `policy.advisories.ignore-id` | none | Advisory IDs (CVE, GHSA, PKSA), optionally with a reason and `on-block` / `on-audit` scoping |
+| `policy.advisories.ignore`, `ignore-severity` | none | Package names (wildcards allowed) or severity levels to ignore |
+| `policy.abandoned.block` | `false` | Block abandoned packages during `update`, `require`, `remove` |
+| `policy.abandoned.audit` | `fail` | `ignore`, `report` or `fail` for `composer audit` |
+| `policy.abandoned.ignore` | none | Packages to keep despite being abandoned |
+| `policy.malware.block`, `block-scope` | `true`, `all` | Block flagged versions on `update`, `install` or both |
+
+`config.policy` arrived in Composer 2.10. The older `config.audit` keys (`block-insecure`, `block-abandoned`, `ignore`, `ignore-severity`, `ignore-abandoned`, `abandoned`) still work but are deprecated. Composer reads them only when the matching `policy.advisories` or `policy.abandoned` section is absent, and it then ignores all legacy keys for that policy. Migrate them together, not one by one. If a project must support Composer 2.9 or older, keep using `config.audit`.
+
+Always give an ignore entry a reason. An ignore without one hides the risk from the next reviewer.
 
 ### roave/security-advisories
 
@@ -129,13 +177,15 @@ composer install --no-dev --optimize-autoloader --no-interaction
 
 ## Abandoned packages
 
-Composer warns about abandoned packages during install and update. Deal with them early:
+Composer warns about abandoned packages during install and update, and `composer audit` fails on them by default. Deal with them early:
 
 1. **Check the warning.** Some suggest a replacement package directly
-2. **Search Packagist** for maintained alternatives
-3. **Run `composer why vendor/package`** to see who depends on it
-4. **Wrap risky dependencies** behind interfaces (adapter pattern) so they are easier to replace later
-5. **Run `composer-unused`** to find packages in `composer.json` that the code does not use
+2. **Run `composer audit --abandoned=report`** to list them without failing the build while you plan the work
+3. **Search Packagist** for maintained alternatives
+4. **Run `composer why vendor/package`** to see who depends on it
+5. **Wrap risky dependencies** behind interfaces (adapter pattern) so they are easier to replace later
+6. **Run `composer-unused`** to find packages in `composer.json` that the code does not use
+7. **Set `policy.abandoned.block` to `true`** once the backlog is clear, so new abandoned dependencies cannot slip in. Use `policy.abandoned.ignore` with a reason for the ones you cannot replace yet
 
 ---
 
@@ -168,6 +218,6 @@ Composer warns about abandoned packages during install and update. Deal with the
 
 | Situation | Recommended Skill |
 |---|---|
-| Upgrading PHP version (may require dependency updates) | Use the `php-upgrade` playbook skill |
+| Upgrading PHP version (may require dependency updates) | Use the `php-upgrade` skill |
 | Upgrading Symfony framework | Use the `symfony-upgrade` skill in `frameworks/symfony/` |
 | Detecting N+1 query issues after ORM updates | Use the `detect-n-plus-one` skill |

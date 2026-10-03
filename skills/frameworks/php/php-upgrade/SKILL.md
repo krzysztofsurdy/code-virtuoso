@@ -1,6 +1,6 @@
 ---
 name: php-upgrade
-description: Step-by-step PHP version upgrade playbook for PHP 8.0 through 8.4+ with automated tooling. Use when the user asks to upgrade PHP to a new version, check PHP compatibility, fix deprecation warnings, run Rector for automated refactoring, audit code with PHPCompatibility, or plan a PHP migration strategy. Covers breaking changes per version, php.ini configuration updates, extension compatibility, Rector rule sets, testing strategies, and the changelog-first upgrade workflow.
+description: Step-by-step PHP version upgrade playbook for hops from PHP 7.4 up to PHP 8.5. Use when the user asks to upgrade PHP to a new version, check PHP compatibility, fix deprecation warnings, run Rector for automated refactoring, audit code with PHPCompatibility, or plan a PHP migration strategy. Covers fetching the official migration guide per hop, known upgrade traps by version, Rector rule sets, CI matrix, Docker images, and testing strategy.
 user-invocable: true
 ---
 
@@ -12,8 +12,8 @@ Upgrade one minor version at a time and never skip versions. Each step surfaces 
 
 | Principle | Meaning |
 |---|---|
-| **Changelog first** | Before any upgrade, search the web for the official PHP migration guide (php.net/migration) or ask the user for the changelog. Never rely on static knowledge alone |
-| **One version at a time** | Upgrade 8.1 -> 8.2 -> 8.3 -> 8.4 in sequence. Skipping versions makes it impossible to isolate breakage |
+| **Changelog first** | Before each hop, fetch the official php.net migration guide for that hop. Never rely on a static list in this skill or in model memory |
+| **One version at a time** | Upgrade 8.2 -> 8.3 -> 8.4 -> 8.5 in sequence. Skipping versions makes it impossible to isolate breakage |
 | **Fix deprecations before upgrading** | Deprecations in version N become errors in version N+1, so treat them as mandatory fixes |
 | **Automate first, manual second** | Run Rector and PHPCompatibility before touching code by hand. They catch 80%+ of required changes |
 | **Prove it with tests** | An upgrade is not complete until the test suite passes on the target version |
@@ -23,24 +23,33 @@ Upgrade one minor version at a time and never skip versions. Each step surfaces 
 
 ## Upgrade process overview
 
-### Phase 0: Read the changelog
+### Phase 0: Read the migration guide
 
-Before touching any code, obtain the actual changelog for the target PHP version:
+Before touching any code, read the official guide for every hop between the current and target version. Each hop has its own page, named `migrationXY` after the target version:
 
-1. **Search the web** for `PHP X.Y migration guide` (e.g., `PHP 8.4 migration guide php.net`)
-2. **Or ask the user** to provide the changelog or release notes
-3. **Read the official migration page** at `https://www.php.net/manual/en/migrationXY.php`
+| Hop | Page |
+|---|---|
+| 7.4 -> 8.0 | `https://www.php.net/manual/en/migration80.php` |
+| 8.4 -> 8.5 | `https://www.php.net/manual/en/migration85.php` |
 
-This step is required. Each version has its own changes, and this skill cannot capture them all.
+Each guide has sub-pages: `migrationXY.incompatible.php` (backward incompatible changes), `migrationXY.deprecated.php`, and `migrationXY.removed-extensions.php` where it exists. Read at least the first two.
+
+How to fetch them:
+
+1. **Use the `docs-lookup` skill.** For PHP it resolves to the Context7 library ID `/websites/php_net_manual_en`. Ask for "Migrating from PHP X.Y to X.Z, backward incompatible changes and deprecated features"
+2. **Fallback:** fetch the php.net URLs above directly, or ask the user for the release notes
+3. **Write down what applies.** Grep the codebase for each listed item and keep the hits as the work list for the Automate and manual-fix steps
+
+The table under "Known traps by version" is a starting point for the grep, not a replacement for the guide.
 
 ### Phase 1: Audit
 
 Before changing any code, find out how big the upgrade is.
 
-1. **Run PHPCompatibility** against the target version to identify incompatible code
+1. **Run PHPCompatibility** against the target version to identify incompatible code. The last stable release (9.3.5, 2019) predates PHP 8.1 and misses most newer rules. Install `10.0.0-alpha2` or later, which has PHP 8.x sniffs, and read its upgrade notes first
 2. **Run php-parallel-lint** with the target PHP binary to catch syntax errors
 3. **Run `composer outdated`** to check that all dependencies support the target version
-4. **Review the official migration guide** at php.net for the target version
+4. **Check your list** from Phase 0 against the code
 5. **Check PHP extensions** for compatibility (`ext-intl`, `ext-mbstring`, etc.)
 
 ### Phase 2: Automate
@@ -53,7 +62,7 @@ use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
     ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
-    ->withPhpSets(php84: true);  // adjust to target version
+    ->withPhpSets(php85: true);  // adjust to target version
 ```
 
 Always dry-run first:
@@ -72,7 +81,7 @@ Commit Rector changes separately from manual fixes to keep the git history clean
 
 ### Phase 3: Update dependencies
 
-1. Update `composer.json` with the new PHP version constraint: `"php": ">=8.4"`
+1. Update `composer.json` with the new PHP version constraint: `"php": ">=8.5"`
 2. Update `config.platform.php` to match the target version
 3. Run `composer update` and resolve conflicts
 4. Update PHP extensions as needed
@@ -100,16 +109,18 @@ See [Upgrade Process Reference](references/upgrade-process.md) for tool configur
 
 ---
 
-## Breaking changes by version
+## Known traps by version
 
-| Transition | Key breaking changes |
+Items that most often break real upgrades. Each one is taken from the php.net migration pages for that hop. Fetch the full guide (Phase 0) for everything else.
+
+| Hop | Traps |
 |---|---|
-| **8.0 -> 8.1** | Fibers introduced, enums added, readonly properties, intersection types, `never` return type |
-| **8.1 -> 8.2** | Dynamic properties deprecated (use `#[AllowDynamicProperties]` temporarily), `$GLOBALS` access restrictions, readonly classes, disjunctive normal form types |
-| **8.2 -> 8.3** | Typed class constants, `json_validate()` added, `#[Override]` attribute, `Randomizer` additions, date/time exception changes |
-| **8.3 -> 8.4** | Implicit nullable types deprecated (`function foo(string $bar = null)` must become `?string $bar = null`), property hooks, asymmetric visibility, `new Foo()->method()` allowed without wrapping parentheses, new `Dom` namespace classes (the old DOM classes remain), `E_STRICT` and `trigger_error()` with `E_USER_ERROR` deprecated, session ini and `session_set_save_handler()` deprecations |
-
-See [Version Changes Reference](references/version-changes.md) for per-version details with code examples.
+| 7.4 -> 8.0 | `0 == "abc"` is now false (number is cast to string). Arithmetic on arrays, resources, or objects throws `TypeError`. `@` no longer silences fatal errors. Undefined variable, key, and property reads are warnings. Undefined bare constants throw `Error`. `create_function()` and `each()` removed. `.` now binds looser than `+` and `-` |
+| 8.0 -> 8.1 | Passing `null` to non-nullable built-in parameters is deprecated. Float to int conversions that lose precision are deprecated. `Serializable` without `__serialize()` and `__unserialize()` is deprecated. Inherited methods share `static` variables with the parent. Appending to `false` is deprecated. Writing to the whole `$GLOBALS` array is an error |
+| 8.1 -> 8.2 | Dynamic properties are deprecated (declare them, or add `#[\AllowDynamicProperties]`). `"${var}"` interpolation is deprecated. `utf8_encode()` and `utf8_decode()` are deprecated. Callables like `"self::method"` are deprecated. `strtolower()`, `ucfirst()`, and similar are no longer locale-sensitive |
+| 8.2 -> 8.3 | `++` and `--` on empty or non-alphanumeric strings are deprecated. `get_class()` without arguments is deprecated. Date extension errors are now `DateError` and `DateException` types instead of warnings. Traits with static properties redeclare the parent's property. A negative index on an empty array makes the next key `n+1` |
+| 8.3 -> 8.4 | Implicitly nullable parameters (`T $x = null`) are deprecated, use `?T`. `E_STRICT` and `trigger_error()` with `E_USER_ERROR` are deprecated. `exit()` is type-checked. IMAP, OCI8, PDO_OCI, and PSpell moved to PECL. `GMP` is final. A class named `_` is deprecated. `0 ** -1` is deprecated |
+| 8.4 -> 8.5 | Opcache is always built in, and `zend_extension=opcache.so` now warns, so remove it from `php.ini` and Docker configs. The backtick operator, `(boolean)`, `(integer)`, `(double)`, and `(binary)` casts, `null` array offsets, and `case x;` are deprecated. `__sleep()` and `__wakeup()` are soft-deprecated. `disable_classes` INI removed. Traits bind before the parent class. Casting a float that does not fit an int now warns |
 
 ---
 
@@ -150,7 +161,6 @@ See [Version Changes Reference](references/version-changes.md) for per-version d
 | Reference | Contents |
 |---|---|
 | [Upgrade Process](references/upgrade-process.md) | Tool configuration, CI pipeline setup, Docker strategy, and step-by-step commands |
-| [Version Changes](references/version-changes.md) | Per-version breaking changes, new features, and deprecations with code examples (PHP 8.0 through 8.4) |
 
 ---
 
@@ -158,7 +168,8 @@ See [Version Changes Reference](references/version-changes.md) for per-version d
 
 | Situation | Recommended Skill |
 |---|---|
+| Looking up the migration guide for a hop | Use the `docs-lookup` skill |
 | Upgrading Symfony alongside PHP | Use the `symfony-upgrade` skill in `frameworks/symfony/` |
-| Updating Composer dependencies after PHP upgrade | Use the `composer-dependencies` playbook skill |
+| Updating Composer dependencies after PHP upgrade | Use the `composer-dependencies` skill |
 | Modernizing PHP code patterns (DTOs, enums, strict types) | Install `php-modernization` from `dirnbauer/webconsulting-skills` or `netresearch/php-modernization-skill` |
 | Running static analysis after upgrade | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for testing strategies |

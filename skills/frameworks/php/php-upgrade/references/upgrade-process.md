@@ -12,7 +12,7 @@
 
 ### Rector
 
-Rector parses PHP into an AST (Abstract Syntax Tree) and transforms the code automatically. It supports upgrades from PHP 5.3 through 8.4+.
+Rector parses PHP into an AST (Abstract Syntax Tree) and transforms the code automatically. It supports upgrades from PHP 5.3 through 8.5.
 
 **Installation:**
 
@@ -31,21 +31,21 @@ return RectorConfig::configure()
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
-    ->withPhpSets(php84: true);  // includes all rules from 5.3 through 8.4
+    ->withPhpSets(php85: true);  // includes all rules from 5.3 through 8.5
 ```
 
 **Target-specific configuration examples:**
 
 ```php
-// For PHP 8.2 upgrade
-return RectorConfig::configure()
-    ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
-    ->withPhpSets(php82: true);
-
 // For PHP 8.3 upgrade
 return RectorConfig::configure()
     ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
     ->withPhpSets(php83: true);
+
+// For PHP 8.4 upgrade
+return RectorConfig::configure()
+    ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
+    ->withPhpSets(php84: true);
 ```
 
 **Running Rector:**
@@ -73,7 +73,7 @@ use Rector\Symfony\Set\SymfonySetList;
 
 return RectorConfig::configure()
     ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
-    ->withPhpSets(php84: true)
+    ->withPhpSets(php85: true)
     ->withSets([
         SymfonySetList::SYMFONY_72,  // adjust to target Symfony version
     ]);
@@ -85,21 +85,23 @@ A PHP_CodeSniffer ruleset that detects cross-version compatibility issues. It gi
 
 **Installation:**
 
+The last stable release (9.3.5, from 2019) does not know about PHP 8.1 and later. Use the 10.0 pre-release line, which adds PHP 8.x sniffs, and read the upgrade notes in the project wiki because 10.0 has breaking changes:
+
 ```bash
-composer require --dev phpcompatibility/php-compatibility
+composer require --dev phpcompatibility/php-compatibility:^10.0@alpha
 ```
 
 **Running against a target version:**
 
 ```bash
-# Check compatibility with PHP 8.4
-vendor/bin/phpcs -ps --standard=PHPCompatibility --runtime-set testVersion 8.4- src/
+# Check compatibility with PHP 8.5
+vendor/bin/phpcs -ps --standard=PHPCompatibility --runtime-set testVersion 8.5- src/
 
-# Check compatibility across a range (e.g., 8.2 through 8.4)
-vendor/bin/phpcs -ps --standard=PHPCompatibility --runtime-set testVersion 8.2-8.4 src/
+# Check compatibility across a range (e.g., 8.3 through 8.5)
+vendor/bin/phpcs -ps --standard=PHPCompatibility --runtime-set testVersion 8.3-8.5 src/
 
 # Generate a report file
-vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 8.4- --report=json --report-file=compatibility-report.json src/
+vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 8.5- --report=json --report-file=compatibility-report.json src/
 ```
 
 ### php-parallel-lint
@@ -122,7 +124,7 @@ vendor/bin/parallel-lint src/ tests/
 vendor/bin/parallel-lint --blame src/ tests/
 
 # Lint with a specific PHP binary (useful for testing against a different version)
-vendor/bin/parallel-lint -p /usr/bin/php8.4 src/ tests/
+vendor/bin/parallel-lint -p /usr/bin/php8.5 src/ tests/
 
 # Exclude directories
 vendor/bin/parallel-lint --exclude vendor --exclude var src/ tests/ config/
@@ -169,7 +171,7 @@ composer require --dev symfony/phpunit-bridge
 php-upgrade-check:
   strategy:
     matrix:
-      php-version: ['8.3', '8.4']  # Test both current and target
+      php-version: ['8.4', '8.5']  # Test both current and target
   steps:
     - name: Lint check
       run: vendor/bin/parallel-lint --exclude vendor src/ tests/
@@ -203,11 +205,13 @@ During the transition, run tests against both the current and target PHP version
 
 ```dockerfile
 # Update the base image tag
-FROM php:8.4-fpm-alpine
+FROM php:8.5-fpm-alpine
 
 # Ensure extensions are installed for the new version
-RUN docker-php-ext-install pdo_mysql intl opcache
+RUN docker-php-ext-install pdo_mysql intl
 ```
+
+From PHP 8.5 Opcache is always built in. Do not install it with `docker-php-ext-install opcache` and remove any `zend_extension=opcache.so` line from your ini files, because that line now emits a warning. The `opcache.enable` and `opcache.enable_cli` directives still work.
 
 **Rebuild from scratch:**
 
@@ -222,7 +226,7 @@ docker compose up -d
 
 ```dockerfile
 # Build stage with target PHP version
-FROM php:8.4-fpm-alpine AS test
+FROM php:8.5-fpm-alpine AS test
 COPY . /app
 WORKDIR /app
 RUN composer install --no-interaction
@@ -239,7 +243,7 @@ Always set `config.platform.php` to match your lowest deployment target. Compose
 {
     "config": {
         "platform": {
-            "php": "8.4.0"
+            "php": "8.5.0"
         }
     }
 }
@@ -247,7 +251,7 @@ Always set `config.platform.php` to match your lowest deployment target. Compose
 
 **Why this matters:**
 
-- Without it, Composer may install packages that work on your local PHP 8.4 but fail on production PHP 8.3
+- Without it, Composer may install packages that work on your local PHP 8.5 but fail on production PHP 8.4
 - It removes the temptation to use `--ignore-platform-reqs`
 - CI and production get the same dependency versions
 
@@ -255,35 +259,35 @@ Always set `config.platform.php` to match your lowest deployment target. Compose
 
 ## Step-by-step command sequence
 
-For upgrading from PHP 8.3 to 8.4 (adjust versions as needed):
+For upgrading from PHP 8.4 to 8.5 (adjust versions as needed):
 
 ```bash
 # 1. Audit
-vendor/bin/phpcs -ps --standard=PHPCompatibility --runtime-set testVersion 8.4- src/
+vendor/bin/phpcs -ps --standard=PHPCompatibility --runtime-set testVersion 8.5- src/
 vendor/bin/parallel-lint src/ tests/
 composer outdated --direct
 
 # 2. Automate with Rector
-# Edit rector.php to set php84: true
+# Edit rector.php to set php85: true
 vendor/bin/rector process --dry-run
 vendor/bin/rector process
-git add -A && git commit -m "Apply Rector PHP 8.4 transformations"
+git add -A && git commit -m "Apply Rector PHP 8.5 transformations"
 
 # 3. Manual fixes for remaining issues
 # Fix issues identified by PHPCompatibility that Rector didn't handle
-git add -A && git commit -m "Manual PHP 8.4 compatibility fixes"
+git add -A && git commit -m "Manual PHP 8.5 compatibility fixes"
 
 # 4. Update Composer
-# Edit composer.json: "php": ">=8.4", config.platform.php: "8.4.0"
+# Edit composer.json: "php": ">=8.5", config.platform.php: "8.5.0"
 composer update
-git add composer.json composer.lock && git commit -m "Update PHP constraint to 8.4"
+git add composer.json composer.lock && git commit -m "Update PHP constraint to 8.5"
 
 # 5. Verify
 vendor/bin/phpstan analyse
 vendor/bin/phpunit
-vendor/bin/phpcs -ps --standard=PHPCompatibility --runtime-set testVersion 8.4- src/
+vendor/bin/phpcs -ps --standard=PHPCompatibility --runtime-set testVersion 8.5- src/
 
 # 6. Deploy
-# Update Docker/CI to use PHP 8.4
+# Update Docker/CI to use PHP 8.5
 # Deploy to staging, verify, then production
 ```

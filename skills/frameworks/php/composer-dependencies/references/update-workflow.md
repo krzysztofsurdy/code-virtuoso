@@ -183,9 +183,11 @@ Add to your CI pipeline:
 security-audit:
   steps:
     - run: composer install --no-interaction
-    - run: composer audit
+    - run: composer audit --locked
     - run: composer validate --strict
 ```
+
+`composer audit` exits non-zero when it finds advisories, abandoned packages (unless `--abandoned=report`), or malware. Use `--locked` so the result does not depend on what is in `vendor/`.
 
 ### Outdated dependency reporting
 
@@ -250,3 +252,13 @@ If dependencies install locally but fail in CI or production, set the target pla
 ```
 
 Composer then resolves for the target platform regardless of the local PHP version.
+
+### Update blocked by an advisory or abandoned package
+
+Since Composer 2.9, `update`, `require` and `remove` skip package versions with security advisories. If the resolver reports that no version fits, the only matching versions may be blocked. Check with `composer audit`, then pick one:
+
+1. Update to a fixed release (preferred)
+2. Add the advisory to `config.policy.advisories.ignore-id` with a reason, if the code path is not reachable
+3. Use `composer update --no-security-blocking` (or `COMPOSER_NO_SECURITY_BLOCKING=1`) for a one-off run. Newer Composer docs mark this flag deprecated in favor of `--no-blocking`, so check `composer help update`
+
+Do not switch off `policy.advisories.block` to get past the error. Scope the ignore to the one advisory.

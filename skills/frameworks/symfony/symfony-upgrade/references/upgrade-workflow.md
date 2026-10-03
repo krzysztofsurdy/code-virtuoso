@@ -203,36 +203,31 @@ steps:
 
 ## Version-specific migration notes
 
+Read the `UPGRADE-X.0.md` file for the target major (see the main skill) for the full list. The notes below are the headline points only.
+
 ### Symfony 5.4 -> 6.0
 
-Key areas:
-
-- PHP 8.0 minimum requirement
-- Return type declarations required on all controller methods
-- Security component: the authenticator-based system is mandatory
-- Removed `enable_authenticator_manager` setting (always enabled)
-- `AbstractController::getDoctrine()` removed; inject `ManagerRegistry` instead
+- PHP 8.0.2 minimum
+- `AbstractController::get()`, `has()`, `getDoctrine()`, and `dispatchMessage()` removed; inject services (for example `ManagerRegistry`) instead
+- Security: the authenticator-based system is mandatory
 
 ### Symfony 6.4 -> 7.0
 
-Key areas:
-
-- PHP 8.2 minimum requirement
-- Attributes replace annotations entirely (routing, validation, serialization)
-- `MapQueryParameter`, `MapRequestPayload` attributes for controller argument mapping
-- Scheduler component is no longer experimental
-- AssetMapper is available as an alternative to Webpack Encore
-- Removed deprecated `TreeBuilder::root()` method
-- Removed deprecated security configuration options
+- PHP 8.2 minimum
+- The Doctrine annotations integration is removed; use native attributes (routing, validation, serialization)
+- `AbstractController::renderForm()` removed; pass the `FormInterface` to `render()`
 
 ### Symfony 7.4 -> 8.0
 
-Key areas:
+- PHP 8.4 minimum
+- 7.4 and 8.0 are released together with the same features. 8.0 only drops the deprecated code, so a project with no deprecations on 7.4 upgrades with little effort
+- The `Annotation` namespace class aliases (for example in Routing and Serializer) are removed; use attributes
+- The `Type` class in PropertyInfo is removed; use `Symfony\Component\TypeInfo\Type`
 
-- PHP 8.4 minimum requirement
-- TypeInfo component is no longer experimental
-- Remaining annotation support removed
-- Check `UPGRADE-8.0.md` for the complete list
+### Symfony 8.0 -> 8.1
+
+- PHP 8.4.1 minimum (per the 8.1 `composer.json`)
+- A minor release: `UPGRADE-8.1.md` marks the few BC breaks with `[BC BREAK]`
 
 ---
 

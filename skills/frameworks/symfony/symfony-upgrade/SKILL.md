@@ -13,7 +13,7 @@ Symfony's upgrade model rests on one fact: a new major version is the last minor
 
 | Principle | Meaning |
 |---|---|
-| **Changelog first** | Before any upgrade, search the web for the actual UPGRADE-X.Y.md file or ask the user for the changelog. Never rely on built-in knowledge alone |
+| **Changelog first** | Before any upgrade, read the UPGRADE-X.Y.md file for the target version and the CHANGELOG.md of the Symfony packages you use. Never rely on built-in knowledge alone |
 | **Deprecation-first** | Fix every deprecation on the current version before upgrading to the next major. Symfony 8.0 is 7.4 minus deprecations |
 | **Incremental minor upgrades** | Upgrade 6.2 -> 6.3 -> 6.4 and do not skip minors, because each one surfaces new deprecations |
 | **Recipes keep config current** | Run `composer recipes:update` after every upgrade to sync configuration files |
@@ -24,14 +24,15 @@ Symfony's upgrade model rests on one fact: a new major version is the last minor
 
 ## First step: read the changelog
 
-Before touching any code or running any command, obtain the changelog for the target version:
+Before touching any code or running any command, read what changed in the target version:
 
-1. **Search the web** for `Symfony UPGRADE-X.Y.md` (e.g., `Symfony UPGRADE-7.0.md github`)
-2. **Or ask the user** to provide the changelog / release notes
-3. **Read the UPGRADE file** in the Symfony repository: `https://github.com/symfony/symfony/blob/X.Y/UPGRADE-X.Y.md`
+1. **Use the `docs-lookup` skill** to fetch the Symfony upgrade docs and the `UPGRADE-X.Y.md` file for the target version (the file name has the target version: `UPGRADE-8.0.md` covers 7.4 -> 8.0, `UPGRADE-8.1.md` covers 8.0 -> 8.1)
+2. **Without that skill**, read it from the Symfony repository: `https://github.com/symfony/symfony/blob/X.Y/UPGRADE-X.Y.md`
+3. **Check the installed packages.** Each Symfony package ships its own `vendor/symfony/<package>/CHANGELOG.md` with the deprecations and BC breaks for that package. The `UPGRADE-*.md` files are not in those packages. They are only in `vendor/symfony/symfony/` when the project requires the full `symfony/symfony` package, so `vendor/symfony/*/UPGRADE-*.md` usually matches nothing
 4. **Check the Symfony blog** for the release announcement with highlighted changes
+5. **Or ask the user** to provide the release notes
 
-Do not skip this. Each version has its own changes that this skill cannot capture in full. The changelog lists exactly what broke, what was deprecated, and what was removed.
+Do not skip this. Each version has its own changes that this skill cannot capture in full. The UPGRADE file lists exactly what broke, what was deprecated, and what was removed.
 
 ---
 
@@ -46,13 +47,24 @@ Do not skip this. Each version has its own changes that this skill cannot captur
 
 Each major branch has exactly 5 minor versions: X.0, X.1, X.2, X.3, X.4 (LTS).
 
+### Minimum PHP version
+
+| Symfony | Minimum PHP |
+|---|---|
+| 6.4 LTS | 8.1.0 |
+| 7.4 LTS | 8.2.0 |
+| 8.0 | 8.4.0 |
+| 8.1 | 8.4.1 |
+
+Symfony 8.0 and 8.1 both need PHP 8.4 or newer, so moving from 7.4 to 8.x is also a PHP upgrade. Do the PHP upgrade first (see the `php-upgrade` skill), on the Symfony version you already run, then bump Symfony. Check `https://symfony.com/releases.json` (`min_php_requirements`) or the `php` constraint in the package's `composer.json` for the exact value of the version you target.
+
 ---
 
 ## Minor version upgrade (for example 7.3 -> 7.4)
 
 ### Step 1: Read the changelog
 
-Search the web for `UPGRADE-7.4.md` in the Symfony repository. Note the new deprecations and any changes that affect your code.
+Read `UPGRADE-7.4.md` (see "First step: read the changelog"). Note the new deprecations and any changes that affect your code.
 
 ### Step 2: Update composer.json
 
@@ -100,7 +112,7 @@ vendor/bin/phpunit
 
 ### Phase 1: Read the changelog
 
-Search the web for `UPGRADE-7.0.md` in the Symfony repository. It lists every backward-compatibility break and every removed deprecation. Read all of it before starting.
+Read `UPGRADE-7.0.md` (see "First step: read the changelog"). It lists every backward-compatibility break and every removed deprecation. Read all of it before starting.
 
 ### Phase 2: Eliminate all deprecations
 
@@ -249,7 +261,7 @@ Support multiple versions with flexible constraints:
 
 ## Quick reference: major upgrade checklist
 
-- [ ] Search the web for `UPGRADE-X.0.md` and read it completely
+- [ ] Read `UPGRADE-X.0.md` completely
 - [ ] Upgrade to the last minor of current major (for example 6.4)
 - [ ] Update all third-party bundles to latest versions
 - [ ] Configure `SYMFONY_DEPRECATIONS_HELPER` with `max[direct]=0`
@@ -279,7 +291,7 @@ Support multiple versions with flexible constraints:
 
 | Situation | Recommended Skill |
 |---|---|
-| Upgrading PHP version alongside Symfony | Use the `php-upgrade` playbook skill |
+| Upgrading PHP version alongside Symfony | Use the `php-upgrade` skill |
 | Updating Composer dependencies | Use the `composer-dependencies` playbook skill |
 | Working with Symfony components | Use the `symfony-components` skill in `frameworks/symfony/` |
 | Modernizing PHP code patterns | Install `php-modernization` from `dirnbauer/webconsulting-skills` |
