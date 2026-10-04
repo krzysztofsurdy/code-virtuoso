@@ -43,11 +43,11 @@ Evolving an API safely starts with knowing what counts as a breaking change.
 A deprecation is a contract with your consumers. Follow the same steps every time:
 
 1. **Announce:** document the deprecation in your changelog, API docs, and release notes. State what is deprecated, why, and what replaces it.
-2. **Sunset header:** include the `Sunset` HTTP header with the removal date:
+2. **Sunset header:** include the `Sunset` HTTP header (RFC 8594) with the removal date:
    ```
-   Sunset: Sat, 01 Mar 2025 00:00:00 GMT
+   Sunset: Mon, 01 Mar 2027 00:00:00 GMT
    ```
-3. **Deprecation warnings:** return a `Deprecation` header or warning in responses to deprecated endpoints.
+3. **Deprecation header:** return the `Deprecation` header (RFC 9745) on deprecated endpoints. Its value is a structured-field date, for example `Deprecation: @1788220800`. The sunset date must not be earlier than the deprecation date.
 4. **Migration guide:** provide step-by-step instructions for moving to the replacement.
 5. **Monitor usage:** track calls to deprecated endpoints. Reach out to high-volume consumers individually.
 6. **Grace period:** maintain the deprecated endpoint for a reasonable period (typically 6-12 months for public APIs).
@@ -68,7 +68,7 @@ Contract tests complement integration tests but do not replace them. They catch 
 Documentation matters as much as the design. Consumers cannot use what they cannot understand.
 
 **OpenAPI / Swagger:**
-- Define the API schema in OpenAPI 3.x format (YAML or JSON)
+- Define the API schema in OpenAPI 3.x format (YAML or JSON). The latest published version is 3.2.x (3.2.1); 3.1 is still widely supported by tooling, so check your tools before choosing
 - Generate documentation, client SDKs, and server stubs from the schema
 - Keep the schema as the single source of truth. Generate it from code annotations or maintain it manually, but never let docs and implementation diverge
 - Include request/response examples for every endpoint

@@ -34,7 +34,7 @@
 
 *PATCH can be made idempotent with merge-patch semantics (RFC 7396), but it is not inherently idempotent.
 
-**Idempotency means** repeating the same request produces the same result. GET, PUT, and DELETE should be safe to retry. For non-idempotent operations (POST), support an `Idempotency-Key` header so clients can safely retry without creating duplicates.
+**Idempotency means** repeating the same request produces the same result. GET, PUT, and DELETE should be safe to retry. For non-idempotent operations (POST), support an `Idempotency-Key` header so clients can safely retry without creating duplicates. The header is a common convention (the IETF draft `draft-ietf-httpapi-idempotency-key-header` has not been published as an RFC).
 
 ## Status code guide
 
@@ -149,6 +149,15 @@ Include these headers in every response:
 | `X-RateLimit-Remaining` | Requests remaining in the current window |
 | `X-RateLimit-Reset` | Unix timestamp when the window resets |
 | `Retry-After` | Seconds to wait (only on 429 responses) |
+
+The `X-RateLimit-*` headers are a widespread convention, not a standard, and their exact meaning differs between providers. The IETF HTTPAPI working group is standardizing `RateLimit` and `RateLimit-Policy` header fields in the Internet-Draft `draft-ietf-httpapi-ratelimit-headers` (still a draft, so syntax can change):
+
+```
+RateLimit-Policy: "burst";q=100;w=60
+RateLimit: "burst";r=50;t=30
+```
+
+`q` is the quota, `w` the window in seconds, `r` the remaining quota, and `t` the seconds until the quota resets. New APIs can emit the draft fields, and keep `X-RateLimit-*` while existing clients depend on them. Document whichever you choose. `Retry-After` stays the standard way to tell a client when to retry.
 
 **Strategies:**
 - Fixed window: simple but allows burst at window boundaries

@@ -33,7 +33,7 @@ Treat the API surface as a product: consumers should be able to predict behavior
 | **Real-time** | Webhooks, SSE, or polling | Subscriptions built into the spec |
 | **Tooling maturity** | Mature: OpenAPI, Postman, HTTP clients | Growing: Apollo, Relay, GraphiQL |
 | **Learning curve** | Lower, builds on existing HTTP knowledge | Higher: schema language, resolvers, query optimization |
-| **Error handling** | HTTP status codes + response body | Always 200, errors go in the response `errors` array |
+| **Error handling** | HTTP status codes + response body | Executed operations usually return 200 with errors in the response `errors` array; request errors can use 4xx (GraphQL over HTTP, still a draft) |
 | **Versioning** | URL path, headers, or query params | Schema evolution via deprecation + additive changes |
 
 **Choose REST when:** your domain maps to resources and CRUD operations, you need HTTP caching, or your clients are simple (mobile apps, third-party integrations).
@@ -116,7 +116,9 @@ See [GraphQL Patterns Reference](references/graphql-patterns.md) for detailed co
 
 A consistent error format is one of the highest-leverage API design decisions. Consumers should be able to parse errors programmatically without inspecting message strings.
 
-**RFC 7807 Problem Details format (recommended for REST):**
+**RFC 9457 Problem Details format (recommended for REST; it obsoletes RFC 7807):**
+
+Send it with `Content-Type: application/problem+json`. Members beyond the standard five (`type`, `title`, `status`, `detail`, `instance`) are extension members, such as `errors` below.
 
 ```json
 {
@@ -138,6 +140,7 @@ A consistent error format is one of the highest-leverage API design decisions. C
 **Key principles:**
 - Use a machine-readable `type` or `code`. Clients should branch on codes, not messages
 - Include a human-readable `detail` for debugging
+- Give each error kind a stable, documented `type` URI. Omit `type` (or use `about:blank`) only when the HTTP status says everything
 - Return field-level errors for validation failures so clients can highlight specific inputs
 - Use appropriate HTTP status codes (REST) or structured error types (GraphQL)
 - Never expose stack traces, internal paths, or SQL queries in production
@@ -250,7 +253,7 @@ Before shipping or reviewing an API, check that:
 - [ ] Every list endpoint is paginated with a max page size
 - [ ] Error responses use a consistent format with machine-readable codes
 - [ ] Authentication is required and uses HTTPS
-- [ ] Rate limiting is in place with appropriate headers
+- [ ] Rate limiting is in place with appropriate headers (`Retry-After`, plus `RateLimit` fields or legacy `X-RateLimit-*`)
 - [ ] Breaking changes are versioned or avoided via additive evolution
 - [ ] Request/response examples exist for every endpoint
 - [ ] Timestamps use ISO 8601 with timezone

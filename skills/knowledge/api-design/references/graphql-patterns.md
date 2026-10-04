@@ -1,5 +1,7 @@
 # GraphQL API Patterns
 
+The current released GraphQL specification is the September 2025 edition (it follows October 2021). Serving GraphQL over HTTP is covered by the separate GraphQL over HTTP spec, which is still a working draft.
+
 ## Contents
 
 - [Schema design](#schema-design)

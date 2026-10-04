@@ -25,10 +25,10 @@ Reference for identity verification and permission management. The patterns are 
 - Never reuse salts across passwords
 
 **Policy:**
-- Enforce a minimum length (12+ characters recommended)
-- Check passwords against breached password databases (e.g., Have I Been Pwned)
-- Avoid restrictive rules (mandatory special characters) that encourage predictable patterns like `Password1!`
-- Allow long passphrases and do not cap password length at a low value
+- Enforce a minimum length. NIST SP 800-63B-4 requires at least 15 characters when the password is the only factor, and at least 8 when it is used only as part of multi-factor authentication
+- Check passwords against breached password databases (e.g., Have I Been Pwned) and block commonly used ones
+- Do not impose composition rules (mandatory special characters) or periodic forced changes. NIST SP 800-63B-4 says verifiers must not. Force a change only on evidence of compromise
+- Allow long passphrases (at least 64 characters), allow password managers and paste
 
 ## Session-based authentication
 
@@ -74,7 +74,7 @@ Reference for identity verification and permission management. The patterns are 
 - Standard for web applications, single-page apps, and mobile apps
 - Client redirects user to authorization server; receives an authorization code; exchanges code for tokens
 - PKCE (Proof Key for Code Exchange) prevents authorization code interception
-- Always use PKCE, even for confidential clients
+- Always use PKCE with the S256 method. RFC 9700 requires it for public clients and recommends it for confidential clients
 
 **Client Credentials:**
 - For machine-to-machine communication where no user is involved
@@ -82,7 +82,7 @@ Reference for identity verification and permission management. The patterns are 
 - Returns an access token scoped to the client's permissions
 
 **Deprecated flows:**
-- Implicit flow: deprecated; tokens exposed in URL fragments, vulnerable to interception
+- Implicit flow: RFC 9700 says clients should not use it; tokens exposed in URL fragments, vulnerable to leakage and replay
 - Resource Owner Password Credentials: deprecated; requires the client to handle user passwords directly
 
 ## API key management

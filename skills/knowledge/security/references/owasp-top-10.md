@@ -1,223 +1,106 @@
-# OWASP Top 10 (2021)
+# OWASP Top 10:2025 mapping
 
-The OWASP Top 10 is the most widely recognized standard for web application security risks. This reference covers each vulnerability with concrete defenses.
+Key prevention steps for each category of the OWASP Top 10:2025. This file is a short map, not a copy of the standard. For the full description, example attacks, CWE lists, and testing guidance of a category, fetch the current page with the docs-lookup skill (or Context7 library `/owasp/top10`, or https://top10.owasp.org/2025).
 
 ## Contents
 
-- [A01: Broken Access Control](#a01-broken-access-control)
-- [A02: Cryptographic Failures](#a02-cryptographic-failures)
-- [A03: Injection](#a03-injection)
-- [A04: Insecure Design](#a04-insecure-design)
-- [A05: Security Misconfiguration](#a05-security-misconfiguration)
-- [A06: Vulnerable and Outdated Components](#a06-vulnerable-and-outdated-components)
-- [A07: Identification and Authentication Failures](#a07-identification-and-authentication-failures)
-- [A08: Software and Data Integrity Failures](#a08-software-and-data-integrity-failures)
-- [A09: Security Logging and Monitoring Failures](#a09-security-logging-and-monitoring-failures)
-- [A10: Server-Side Request Forgery (SSRF)](#a10-server-side-request-forgery-ssrf)
+- [Changes from 2021](#changes-from-2021)
+- [A01 Broken Access Control](#a01-broken-access-control)
+- [A02 Security Misconfiguration](#a02-security-misconfiguration)
+- [A03 Software Supply Chain Failures](#a03-software-supply-chain-failures)
+- [A04 Cryptographic Failures](#a04-cryptographic-failures)
+- [A05 Injection](#a05-injection)
+- [A06 Insecure Design](#a06-insecure-design)
+- [A07 Authentication Failures](#a07-authentication-failures)
+- [A08 Software or Data Integrity Failures](#a08-software-or-data-integrity-failures)
+- [A09 Security Logging and Alerting Failures](#a09-security-logging-and-alerting-failures)
+- [A10 Mishandling of Exceptional Conditions](#a10-mishandling-of-exceptional-conditions)
 
-## A01: Broken Access Control
+## Changes from 2021
 
-**What it is:** Users can act outside their intended permissions: viewing other users' data, modifying records they should not access, or elevating privileges.
+| 2021 | 2025 |
+|---|---|
+| A01 Broken Access Control | A01 Broken Access Control (still #1) |
+| A02 Cryptographic Failures | A04 Cryptographic Failures |
+| A03 Injection | A05 Injection (includes XSS) |
+| A04 Insecure Design | A06 Insecure Design |
+| A05 Security Misconfiguration | A02 Security Misconfiguration |
+| A06 Vulnerable and Outdated Components | A03 Software Supply Chain Failures (broader scope) |
+| A07 Identification and Authentication Failures | A07 Authentication Failures |
+| A08 Software and Data Integrity Failures | A08 Software or Data Integrity Failures |
+| A09 Security Logging and Monitoring Failures | A09 Security Logging and Alerting Failures |
+| A10 Server-Side Request Forgery (SSRF) | Folded into A01 |
+| (none) | A10 Mishandling of Exceptional Conditions (new) |
 
-**How it happens:**
-- Missing authorization checks on API endpoints or server-side functions
-- Insecure Direct Object References (IDOR): changing an ID in a URL to access another user's data
-- CORS misconfiguration allowing unauthorized origins
-- Metadata manipulation (tampering with JWT, cookies, or hidden fields)
-- Accessing admin pages as an unprivileged user
+## A01 Broken Access Control
 
-**Primary defenses:**
-- Deny by default: require explicit grants for every resource
-- Enforce authorization server-side on every request, not just in the UI
-- Validate that the current user owns or has access to the specific resource
-- Disable directory listing on web servers
+- Deny by default and enforce authorization server-side on every request
+- Check that the current user may access the specific resource (prevents IDOR)
+- Allowlist outbound destinations and URL schemes for server-side fetches, block private and metadata IP ranges (SSRF)
+- Protect state-changing requests against CSRF; restrict CORS to known origins
 - Log and alert on access control failures
 
-**Detection:** Review every endpoint and verify it checks authorization. Test by accessing resources with different user roles and with manipulated IDs.
+## A02 Security Misconfiguration
 
-## A02: Cryptographic Failures
+- Apply a hardened baseline and validate it automatically in CI/CD
+- Remove unused features, ports, sample apps, and default credentials
+- Use different credentials per environment
+- Send generic errors to clients, set security headers, review cloud permissions
 
-**What it is:** Sensitive data exposed due to weak, missing, or misused cryptography. Formerly called "Sensitive Data Exposure."
+## A03 Software Supply Chain Failures
 
-**How it happens:**
-- Transmitting data in clear text (HTTP, FTP, SMTP without TLS)
-- Using deprecated algorithms (MD5, SHA-1, DES, RC4)
-- Using default or weak encryption keys
-- Not enforcing TLS (missing HSTS, mixed content)
-- Storing passwords with reversible encryption instead of hashing
+- Keep an inventory (SBOM) of direct and transitive components, including build tools
+- Pin versions with lock files and verify integrity (checksums, signatures, provenance)
+- Scan dependencies continuously and patch on a defined schedule
+- Secure the build and release pipeline: least-privilege tokens, reviewed changes, no unreviewed deploys
+- Vet new dependencies and sources before adding them; remove unused ones
 
-**Primary defenses:**
-- Classify data by sensitivity; apply appropriate protection to each tier
-- Encrypt all data in transit with TLS 1.2+
-- Encrypt sensitive data at rest with AES-256 or equivalent
-- Use bcrypt, scrypt, or Argon2id for password hashing
-- Generate keys with cryptographically secure random number generators
-- Disable caching for responses containing sensitive data
+## A04 Cryptographic Failures
 
-**Detection:** Identify all places sensitive data is stored, transmitted, or processed. Check for plain-text storage, weak algorithms, and missing TLS.
+- Classify data and encrypt sensitive data in transit (TLS 1.2+, prefer 1.3) and at rest
+- Use current algorithms and vetted libraries; never write your own
+- Hash passwords with Argon2id, bcrypt, or scrypt
+- Generate keys and tokens with a cryptographically secure generator; manage and rotate keys
 
-## A03: Injection
+## A05 Injection
 
-**What it is:** Untrusted data is sent to an interpreter as part of a command or query, allowing attackers to execute unintended commands or access unauthorized data.
+- Use parameterized queries or prepared statements for all interpreters
+- Validate input with allowlists and encode output for its context (HTML, URL, JavaScript)
+- Avoid building OS commands, LDAP, XPath, or template strings from user input
+- Prefer framework auto-escaping and a strict Content-Security-Policy
 
-**How it happens:**
-- String concatenation in SQL queries with user input
-- User input embedded in OS commands, LDAP queries, or XPath expressions
-- Template injection in server-side rendering engines
-- NoSQL query injection through JSON or other structured input
+## A06 Insecure Design
 
-**Primary defenses:**
-- Use parameterized queries or prepared statements for all database access
-- Use ORM query builders; avoid raw query methods with user input
-- Apply input validation with allowlists (not denylist)
-- Escape special characters for the specific interpreter context
-- Use LIMIT and other controls to minimize data exposure if injection occurs
+- Threat model during design and write abuse cases next to use cases
+- Reuse vetted secure design patterns and reference architectures
+- Limit resource use by design (rate limits, quotas); separate trust boundaries
+- Add unit and integration tests for the threat model's critical flows
 
-**Detection:** Search for string concatenation in queries. Audit all points where user input reaches an interpreter. Use static analysis tools that detect injection patterns.
+## A07 Authentication Failures
 
-## A04: Insecure Design
+- Support MFA and passkeys; rate limit and throttle login attempts
+- Check new passwords against breached lists; no composition rules or forced rotation
+- Regenerate session IDs on login and invalidate them on logout and password change
+- Do not ship default credentials; return the same response for unknown users and wrong passwords
 
-**What it is:** Missing or ineffective security controls resulting from flawed design. These are architectural weaknesses, not implementation bugs.
+## A08 Software or Data Integrity Failures
 
-**How it happens:**
-- No threat modeling during design phase
-- Missing rate limiting on sensitive operations (password reset, account creation)
-- Business logic flaws (e.g., negative quantities in orders)
-- No separation between trust boundaries
-- Assuming clients will follow the expected workflow
+- Accept code, updates, and serialized data only from verified, signed sources
+- Do not deserialize untrusted data with native serializers; use data-only formats and type allowlists
+- Protect CI/CD with review, separation of duties, and signed artifacts
+- Verify the integrity of data that drives critical decisions (HMAC, signatures)
 
-**Primary defenses:**
-- Perform threat modeling during design (STRIDE, attack trees)
-- Establish secure design patterns and use them consistently
-- Write abuse cases alongside use cases
-- Limit resource consumption by design (rate limits, quotas)
-- Implement defense in depth: multiple layers of controls
+## A09 Security Logging and Alerting Failures
 
-**Detection:** Review architectural decisions and design documents. Ask "what if an attacker does X?" for every user-facing flow. Conduct design reviews with security-focused team members.
+- Log logins, failures, access denials, and input validation failures with enough context
+- Send logs to a central, tamper-resistant store and keep them out of reach of the app
+- Alert on suspicious patterns and rehearse the response (incident plan, playbooks)
+- Never log secrets, tokens, or unnecessary personal data
 
-## A05: Security Misconfiguration
+## A10 Mishandling of Exceptional Conditions
 
-**What it is:** Insecure default configurations, incomplete configurations, open cloud storage, misconfigured HTTP headers, or verbose error messages containing sensitive information.
-
-**How it happens:**
-- Default credentials left unchanged
-- Unnecessary features, ports, or services enabled
-- Error handling revealing stack traces or internal details to users
-- Missing security headers
-- Cloud storage permissions set to public
-- Outdated or unpatched systems
-
-**Primary defenses:**
-- Establish a hardened baseline configuration and apply it consistently
-- Remove or disable unused features, frameworks, and endpoints
-- Automate configuration validation in CI/CD pipelines
-- Use different credentials for each environment
-- Review cloud permissions regularly (principle of least privilege)
-- Send generic error messages to clients; log detailed errors server-side
-
-**Detection:** Automated scanners can detect many misconfigurations. Regularly review configurations against hardened baselines. Audit cloud resource permissions.
-
-## A06: Vulnerable and Outdated Components
-
-**What it is:** Using libraries, frameworks, or other software components with known vulnerabilities.
-
-**How it happens:**
-- Not tracking dependency versions
-- Using end-of-life or unmaintained components
-- Not scanning for known vulnerabilities
-- Slow or absent patching process
-- Not testing compatibility after updates, leading teams to avoid upgrading
-
-**Primary defenses:**
-- Maintain an inventory of all components and their versions
-- Monitor vulnerability databases (CVE, NVD, GitHub Advisories)
-- Use automated dependency scanning tools in CI/CD
-- Subscribe to security advisories for critical dependencies
-- Remove unused dependencies
-- Prefer components with active maintenance and security track records
-
-**Detection:** Run dependency audit tools regularly. Check component versions against known vulnerability databases. Review the age and maintenance status of dependencies.
-
-## A07: Identification and Authentication Failures
-
-**What it is:** Weaknesses in authentication mechanisms that allow attackers to compromise passwords, session tokens, or exploit implementation flaws to assume other users' identities.
-
-**How it happens:**
-- Permitting brute force attacks (no rate limiting or lockout)
-- Allowing weak or common passwords
-- Using plain text or weakly hashed passwords
-- Missing or broken multi-factor authentication
-- Exposing session IDs in URLs
-- Not invalidating sessions after logout or password change
-- Not rotating session IDs after login
-
-**Primary defenses:**
-- Implement multi-factor authentication
-- Enforce password complexity requirements and check against breached password lists
-- Rate limit and progressively delay failed login attempts
-- Use secure session management (see Authentication patterns in SKILL.md)
-- Invalidate sessions on logout, password change, and after inactivity
-- Generate high-entropy session IDs with a cryptographically secure generator
-
-**Detection:** Test login flows for brute force resilience. Verify session handling (fixation, expiration, invalidation). Check password storage mechanism.
-
-## A08: Software and Data Integrity Failures
-
-**What it is:** Code and infrastructure that does not verify integrity, which lets attackers inject malicious updates, tamper with data, or compromise CI/CD pipelines.
-
-**How it happens:**
-- Using libraries from untrusted sources without integrity verification
-- Auto-update mechanisms without signed updates
-- Insecure CI/CD pipelines that allow unauthorized code deployment
-- Insecure deserialization of untrusted data
-- Unsigned or unverified data used in critical decisions
-
-**Primary defenses:**
-- Verify digital signatures on software updates and dependencies
-- Use package managers with integrity checking (lock files, checksums)
-- Secure CI/CD pipelines: require code review, limit deployment permissions
-- Avoid deserializing untrusted data; if unavoidable, use allowlists for permitted types
-- Implement integrity checks on critical data (checksums, HMAC)
-
-**Detection:** Review CI/CD pipeline security. Check whether dependencies are fetched with integrity verification. Audit deserialization points.
-
-## A09: Security Logging and Monitoring Failures
-
-**What it is:** Insufficient logging, monitoring, and alerting that lets attackers operate undetected, maintain persistence, and pivot to other systems.
-
-**How it happens:**
-- Not logging security-relevant events (logins, failed logins, access denials)
-- Logs not monitored or reviewed
-- No alerting on suspicious patterns
-- Logs stored only locally and lost when systems are compromised
-- Sensitive data included in logs (creating a secondary exposure surface)
-
-**Primary defenses:**
-- Log authentication events (successes and failures), authorization failures, and input validation failures
-- Use a structured log format for automated analysis
-- Send logs to a centralized, append-only log management system
-- Set up alerts for suspicious patterns (brute force, unusual access times, privilege escalation attempts)
-- Protect logs from tampering and unauthorized access
-- Do not log sensitive data (passwords, tokens, PII)
-
-**Detection:** Review what events are logged. Test whether failed logins and access denials generate log entries. Verify that alerts are configured and functioning.
-
-## A10: Server-Side Request Forgery (SSRF)
-
-**What it is:** An attacker makes the server send requests to unintended destinations, such as internal services, cloud metadata endpoints, or other protected resources.
-
-**How it happens:**
-- Application fetches URLs provided by users without validation
-- Accessing cloud instance metadata (169.254.169.254) through SSRF
-- Internal service discovery through port scanning via SSRF
-- Bypassing firewall rules by making requests from a trusted server
-
-**Primary defenses:**
-- Validate and sanitize all user-supplied URLs
-- Use an allowlist of permitted domains, IP ranges, and protocols
-- Block requests to private/internal IP ranges (10.x, 172.16-31.x, 192.168.x, 169.254.x, localhost)
-- Disable unnecessary URL schemes (file://, gopher://, dict://)
-- Do not send raw server responses back to the client
-- Use network-level segmentation to limit server egress
-
-**Detection:** Identify all places the application fetches user-supplied URLs. Test with internal IP addresses, cloud metadata URLs, and various URL schemes.
+- Catch and handle errors where they occur, including resource exhaustion and missing input
+- Fail closed: on error in a security check, deny; roll back partial transactions
+- Never leak stack traces, paths, or internal state in error responses
+- Add a global error handler as a backstop, with rate limits and monitoring for repeated faults
+- Test error paths, not only the happy path
