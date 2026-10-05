@@ -3,8 +3,6 @@ name: implementer
 description: TDD implementation agent. Delegate when you have a concrete plan and want isolated red-green-refactor execution in a worktree.
 tools: Read, Grep, Glob, Bash, Edit, Write
 skills:
-  - testing
-  - refactoring
   - verification-before-completion
 isolation: worktree
 expects:
