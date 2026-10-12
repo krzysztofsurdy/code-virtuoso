@@ -1,0 +1,81 @@
+# Reviews each pull request with two independent agents (reviewer and cold-reviewer)
+# and fails the check when either reports a CRITICAL finding.
+#
+# Copy to .github/workflows/claude-review.yml. Needs the ANTHROPIC_API_KEY secret
+# and the Claude GitHub App on the repository (https://github.com/apps/claude).
+name: Claude review
+
+on:
+  # pull_request, not pull_request_target: fork PRs run without secrets.
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  review:
+    # Skip drafts and fork PRs. GitHub withholds secrets from fork PRs, so the run would fail.
+    if: >-
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write # the action exchanges an OIDC token for its GitHub App token
+    strategy:
+      fail-fast: false
+      matrix:
+        # Drop review-pr-cold for a single review.
+        skill: [review-pr, review-pr-cold]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # the skills run git diff origin/<base>...HEAD
+
+      - name: Run the review skill
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          plugin_marketplaces: https://github.com/krzysztofsurdy/code-virtuoso.git
+          plugins: agents-virtuoso@code-virtuoso
+          prompt: /agents-virtuoso:${{ matrix.skill }} origin/${{ github.base_ref }}
+          claude_args: |
+            --max-turns 30
+            --max-budget-usd 5
+            --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
+
+      - name: Extract the JSON report
+        env:
+          EXECUTION_FILE: ${{ steps.claude.outputs.execution_file }}
+          SKILL: ${{ matrix.skill }}
+        run: |
+          jq -r '[.[] | select(.type == "result")] | last | .result' "$EXECUTION_FILE" \
+            | sed '/^```/d' > "$SKILL.json"
+          jq -e . "$SKILL.json" > /dev/null
+          token=$(cat /proc/sys/kernel/random/uuid)
+          echo "::stop-commands::$token"
+          cat "$SKILL.json"
+          echo "::$token::"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.skill }}
+          path: ${{ matrix.skill }}.json
+
+      - name: Fail on critical findings
+        env:
+          SKILL: ${{ matrix.skill }}
+        run: |
+          critical=$(jq '[.findings[] | select(.severity == "CRITICAL")] | length' "$SKILL.json")
+          if [ "$critical" -gt 0 ]; then
+            echo "::error::$SKILL reported $critical critical finding(s). See the uploaded report."
+            exit 1
+          fi

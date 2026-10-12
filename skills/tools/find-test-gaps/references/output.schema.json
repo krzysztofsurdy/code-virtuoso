@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Test gap report",
+  "description": "Output of the test-gap-analyzer agent in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent",
+    "source_files",
+    "test_files",
+    "assessment",
+    "assessment_note",
+    "gaps",
+    "summary",
+    "recommended_order"
+  ],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "enum": [
+        "test-gap-analyzer"
+      ]
+    },
+    "source_files": {
+      "type": "integer"
+    },
+    "test_files": {
+      "type": "integer"
+    },
+    "assessment": {
+      "type": "string",
+      "enum": [
+        "well_tested",
+        "partially_tested",
+        "under_tested"
+      ]
+    },
+    "assessment_note": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Why the scope was empty or the assessment is uncertain. Otherwise null."
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "file",
+          "test_file",
+          "method",
+          "happy_path",
+          "error_path",
+          "edge_cases",
+          "priority",
+          "missing_tests"
+        ],
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "test_file": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Matching test file, or null when there is none."
+          },
+          "method": {
+            "type": "string"
+          },
+          "happy_path": {
+            "type": "string",
+            "enum": [
+              "tested",
+              "missing",
+              "not_applicable"
+            ]
+          },
+          "error_path": {
+            "type": "string",
+            "enum": [
+              "tested",
+              "missing",
+              "not_applicable"
+            ]
+          },
+          "edge_cases": {
+            "type": "string",
+            "enum": [
+              "tested",
+              "missing",
+              "not_applicable"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "missing_tests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "reason"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer"
+        },
+        "critical": {
+          "type": "integer"
+        },
+        "high": {
+          "type": "integer"
+        },
+        "medium": {
+          "type": "integer"
+        },
+        "low": {
+          "type": "integer"
+        }
+      }
+    },
+    "recommended_order": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

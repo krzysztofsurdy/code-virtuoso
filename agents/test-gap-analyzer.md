@@ -94,6 +94,10 @@ Test file: `path/to/SourceFileTest.ext` (or "NO TEST FILE")
 1. First write tests for: [most critical gaps]
 2. Then cover: [high priority gaps]
 
+### Output (JSON)
+
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/find-test-gaps/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Each method row becomes one entry in `gaps`, with its missing test cases. Use `not_applicable` for a column that does not apply to the method.
+
 ## Rules
 
 - Only flag genuinely missing tests - do not suggest tests for trivial getters/setters

@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Acceptance verification report",
+  "description": "Output of the acceptance-verifier agent in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent",
+    "missing_input",
+    "spec_source",
+    "changes",
+    "criteria",
+    "unspecified_changes",
+    "untraced_criteria",
+    "summary"
+  ],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "enum": [
+        "acceptance-verifier"
+      ]
+    },
+    "missing_input": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Set when the spec or the changes were not available, and the rest of the report is empty. Otherwise null."
+    },
+    "spec_source": {
+      "type": "string"
+    },
+    "changes": {
+      "type": "string",
+      "description": "Branch, commits, or files reviewed."
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "criterion",
+          "status",
+          "evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "For example AC-1."
+          },
+          "criterion": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "PARTIAL",
+              "UNTESTED"
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "description": "File and line, or an explanation."
+          }
+        }
+      }
+    },
+    "unspecified_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "file",
+          "line",
+          "description"
+        ],
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Changes that no criterion requires."
+    },
+    "untraced_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Ids of criteria that no test exercises."
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "satisfied",
+        "total",
+        "failed",
+        "untested",
+        "verdict"
+      ],
+      "properties": {
+        "satisfied": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "untested": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "all_satisfied",
+            "gaps_remain"
+          ]
+        }
+      }
+    }
+  }
+}

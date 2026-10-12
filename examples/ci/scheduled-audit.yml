@@ -1,0 +1,104 @@
+# Weekly dependency audit and refactor scan. Opens one issue with the results.
+#
+# Copy to .github/workflows/scheduled-audit.yml. Needs the ANTHROPIC_API_KEY secret.
+# GitHub runs scheduled workflows from the default branch only.
+name: Scheduled audit
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: audit-dependencies
+            prompt: /agents-virtuoso:audit-dependencies
+            tools: Read,Grep,Glob,Bash(composer audit:*),Bash(composer outdated:*),Bash(npm audit:*),Bash(npm outdated:*),Bash(pip-audit:*),Bash(pip list:*)
+          - name: scan-refactors
+            prompt: /agents-virtuoso:scan-refactors
+            tools: Read,Grep,Glob
+    steps:
+      - uses: actions/checkout@v6
+
+      # Install your toolchain here (setup-php, setup-node, ...) and run the package
+      # install, so the audit commands have a lock file and a package manager to use.
+
+      - name: Run the skill
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          plugin_marketplaces: https://github.com/krzysztofsurdy/code-virtuoso.git
+          plugins: agents-virtuoso@code-virtuoso
+          prompt: ${{ matrix.prompt }}
+          claude_args: |
+            --max-turns 40
+            --max-budget-usd 5
+            --allowedTools "${{ matrix.tools }}"
+
+      - name: Extract the JSON report
+        env:
+          EXECUTION_FILE: ${{ steps.claude.outputs.execution_file }}
+          NAME: ${{ matrix.name }}
+        run: |
+          jq -r '[.[] | select(.type == "result")] | last | .result' "$EXECUTION_FILE" \
+            | sed '/^```/d' > "$NAME.json"
+          jq -e . "$NAME.json" > /dev/null
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: ${{ matrix.name }}.json
+
+  report:
+    needs: analyze
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Open the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          flat='gsub("[\\r\\n]"; " ")'
+          {
+            echo "Weekly run. The full JSON reports are artifacts of [this run]($RUN_URL)."
+            if [ -f audit-dependencies.json ]; then
+              echo
+              echo "## Dependencies"
+              echo
+              jq -r '"Vulnerabilities: \(.vulnerabilities | length). Outdated packages: \(.outdated | length)."' audit-dependencies.json
+              echo
+              jq -r --argjson n 10 '[.vulnerabilities[] | select(.severity == "CRITICAL" or .severity == "HIGH")][:$n][]
+                | "- \(.severity) \(.package) \(.version): \(.fix | '"$flat"')"' audit-dependencies.json
+            fi
+            if [ -f scan-refactors.json ]; then
+              echo
+              echo "## Refactoring hotspots"
+              echo
+              jq -r '"Hotspots: \(.metrics.hotspots) (critical \(.metrics.critical), moderate \(.metrics.moderate))."' scan-refactors.json
+              echo
+              jq -r --argjson n 10 '[.hotspots[] | select(.severity != "minor")][:$n][]
+                | "- \(.file):\(.line // "?") \(.smell), \(.refactoring | '"$flat"')"' scan-refactors.json
+            fi
+          } > body.md
+          gh issue create --title "Code health report $(date -u +%F)" --body-file body.md

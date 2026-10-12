@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Migration plan",
+  "description": "Output of the migration-planner agent in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent",
+    "migrations_reviewed",
+    "overall_risk",
+    "zero_downtime",
+    "steps",
+    "warnings",
+    "recommended_order"
+  ],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "enum": [
+        "migration-planner"
+      ]
+    },
+    "migrations_reviewed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "overall_risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "zero_downtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "compatible",
+        "explanation"
+      ],
+      "properties": {
+        "compatible": {
+          "type": "boolean"
+        },
+        "explanation": {
+          "type": "string"
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "number",
+          "description",
+          "file",
+          "risk",
+          "pre_check",
+          "execution",
+          "rollback",
+          "estimated_impact"
+        ],
+        "properties": {
+          "number": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "risk": {
+            "type": "string",
+            "enum": [
+              "safe",
+              "caution",
+              "dangerous"
+            ]
+          },
+          "pre_check": {
+            "type": "string"
+          },
+          "execution": {
+            "type": "string"
+          },
+          "rollback": {
+            "type": "string"
+          },
+          "estimated_impact": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommended_order": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Deploy and data-migration phases, in order. Empty when the migrations can run in one deploy."
+    }
+  }
+}

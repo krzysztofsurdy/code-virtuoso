@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dependency audit report",
+  "description": "Output of the dependency-auditor agent in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent",
+    "ecosystems",
+    "scan_date",
+    "vulnerabilities",
+    "outdated",
+    "licenses",
+    "tools_unavailable",
+    "recommendations"
+  ],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "enum": [
+        "dependency-auditor"
+      ]
+    },
+    "ecosystems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scan_date": {
+      "type": "string",
+      "description": "ISO 8601 date."
+    },
+    "vulnerabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "severity",
+          "package",
+          "version",
+          "dependency_type",
+          "cve",
+          "description",
+          "fix",
+          "affected_code"
+        ],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "CRITICAL",
+              "HIGH",
+              "MEDIUM",
+              "LOW"
+            ]
+          },
+          "package": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "dependency_type": {
+            "type": "string",
+            "enum": [
+              "direct",
+              "transitive",
+              "unknown"
+            ]
+          },
+          "cve": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "fix": {
+            "type": "string"
+          },
+          "affected_code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "outdated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "package",
+          "current",
+          "latest",
+          "update_type",
+          "dependency_type"
+        ],
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "current": {
+            "type": "string"
+          },
+          "latest": {
+            "type": "string"
+          },
+          "update_type": {
+            "type": "string",
+            "enum": [
+              "major",
+              "minor",
+              "patch"
+            ]
+          },
+          "dependency_type": {
+            "type": "string",
+            "enum": [
+              "direct",
+              "transitive",
+              "unknown"
+            ]
+          }
+        }
+      }
+    },
+    "licenses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "license",
+          "count",
+          "packages",
+          "compatible"
+        ],
+        "properties": {
+          "license": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "packages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "compatible": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "tools_unavailable": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Audit tools or commands that were missing or failed, with the reason."
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

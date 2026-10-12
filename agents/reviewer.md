@@ -85,6 +85,10 @@ For each finding:
 ### Strengths
 - Note what was done well (good patterns, thorough tests, clean design)
 
+### Output (JSON)
+
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/review-pr/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Use the findings from the template above. Verdict values are `approve`, `request_changes`, and `needs_discussion`. Put missing tuning keys in `defaults_used` instead of the closing sentence.
+
 ## Rules
 
 - Be specific - always reference file paths and line numbers

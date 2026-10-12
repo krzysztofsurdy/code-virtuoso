@@ -95,6 +95,10 @@ For each finding:
 - Hotspots found: N (critical: N, moderate: N, minor: N)
 - Most affected areas: list of directories or namespaces
 
+### Output (JSON)
+
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/scan-refactors/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Each hotspot becomes one entry in `hotspots`, with a `severity` of `critical`, `moderate`, or `minor`. Category names are `bloaters`, `oo_abusers`, `change_preventers`, `dispensables`, and `couplers`.
+
 ## Rules
 
 - Use concrete evidence - line counts, parameter counts, dependency counts

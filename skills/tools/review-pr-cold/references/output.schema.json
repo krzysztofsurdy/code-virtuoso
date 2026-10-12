@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cold reviewer report",
+  "description": "Output of the cold-reviewer agent in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent",
+    "scope",
+    "checked",
+    "findings",
+    "patterns"
+  ],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "enum": [
+        "cold-reviewer"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "description": "Files, commits, or diff range reviewed."
+    },
+    "checked": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Checklist areas covered, so an empty result still shows what was examined."
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "severity",
+          "file",
+          "line",
+          "finding",
+          "suggestion"
+        ],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "CRITICAL",
+              "WARNING",
+              "SUGGESTION"
+            ]
+          },
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "finding": {
+            "type": "string",
+            "description": "What the code shows."
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recurring themes across findings. Empty when there are none."
+    }
+  }
+}

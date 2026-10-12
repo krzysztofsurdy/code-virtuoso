@@ -93,6 +93,10 @@ If migrations should run in a specific order or require multi-deploy strategies:
 - [ ] Application code compatible with both old and new schema
 - [ ] Monitoring in place for query performance
 
+### Output (JSON)
+
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/plan-migration/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Each step becomes one entry in `steps`. Leave out the pre-migration checklist.
+
 ## Rules
 
 - Always check if columns being dropped are still referenced in application code

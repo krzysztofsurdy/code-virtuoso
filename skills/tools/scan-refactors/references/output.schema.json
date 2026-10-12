@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Refactor scan report",
+  "description": "Output of the refactor-scout agent in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent",
+    "scope",
+    "assessment",
+    "hotspots",
+    "metrics"
+  ],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "enum": [
+        "refactor-scout"
+      ]
+    },
+    "scope": {
+      "type": "string"
+    },
+    "assessment": {
+      "type": "string",
+      "description": "One or two sentences on overall structural health."
+    },
+    "hotspots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category",
+          "smell",
+          "severity",
+          "file",
+          "line",
+          "evidence",
+          "impact",
+          "refactoring",
+          "effort"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "bloaters",
+              "oo_abusers",
+              "change_preventers",
+              "dispensables",
+              "couplers"
+            ]
+          },
+          "smell": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "moderate",
+              "minor"
+            ]
+          },
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "string"
+          },
+          "refactoring": {
+            "type": "string",
+            "description": "Named technique, for example Extract Method."
+          },
+          "effort": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "files_scanned",
+        "hotspots",
+        "critical",
+        "moderate",
+        "minor",
+        "most_affected_areas"
+      ],
+      "properties": {
+        "files_scanned": {
+          "type": "integer"
+        },
+        "hotspots": {
+          "type": "integer"
+        },
+        "critical": {
+          "type": "integer"
+        },
+        "moderate": {
+          "type": "integer"
+        },
+        "minor": {
+          "type": "integer"
+        },
+        "most_affected_areas": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

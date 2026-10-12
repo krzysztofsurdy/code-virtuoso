@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Reviewer report",
+  "description": "Output of the reviewer agent in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent",
+    "scope",
+    "verdict",
+    "findings",
+    "strengths",
+    "defaults_used"
+  ],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "enum": [
+        "reviewer"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "description": "Files, commits, or diff range reviewed."
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "approve",
+        "request_changes",
+        "needs_discussion"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "severity",
+          "title",
+          "file",
+          "line",
+          "issue",
+          "why_it_matters",
+          "suggestion"
+        ],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "CRITICAL",
+              "WARNING",
+              "SUGGESTION"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string",
+            "description": "Path relative to the repository root."
+          },
+          "line": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Line number, or null when the finding is not tied to a line."
+          },
+          "issue": {
+            "type": "string"
+          },
+          "why_it_matters": {
+            "type": "string"
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "strengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "defaults_used": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tuning keys that were missing from the config and fell back to defaults."
+    }
+  }
+}
