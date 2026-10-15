@@ -13,8 +13,10 @@
 #     run is being abandoned for different work).
 # Anything else is an in-progress run and is left alone.
 #
-# backlog.json, progress.log and events.jsonl are run state: they move into
-# archive/<date>-<branch-slug>/. teams.json is configuration shared by later
+# The archive, <loop-dir>/archive/<date>-<branch-slug>/, is committed and holds
+# the final backlog.json (the plan moves there) plus a copy of the run state
+# (state.json, progress.log, events.jsonl, which are cleared from loop/state so
+# the next run starts empty). pipelines.json is configuration shared by later
 # runs: it is copied, never moved.
 set -euo pipefail
 
@@ -41,9 +43,11 @@ if ! jq empty "$file" >/dev/null 2>&1; then
 fi
 
 dir="$(cd "$(dirname "$file")" && pwd)"
-progress_log="${dir}/progress.log"
-teams_file="${dir}/teams.json"
-events_file="${dir}/events.jsonl"
+state_dir="${dir}/state"
+progress_log="${state_dir}/progress.log"
+state_file="${state_dir}/state.json"
+events_file="${state_dir}/events.jsonl"
+pipelines_file="${dir}/pipelines.json"
 archive_root="${dir}/archive"
 
 branch="$(jq -r '.branch // "run"' "$file")"
@@ -95,6 +99,7 @@ mkdir -p "$target"
 mv "$file" "${target}/$(basename "$file")"
 mv "$progress_log" "${target}/$(basename "$progress_log")"
 [[ -f "$events_file" ]] && mv "$events_file" "${target}/$(basename "$events_file")"
-[[ -f "$teams_file" ]] && cp "$teams_file" "${target}/$(basename "$teams_file")"
+[[ -f "$state_file" ]] && mv "$state_file" "${target}/$(basename "$state_file")"
+[[ -f "$pipelines_file" ]] && cp "$pipelines_file" "${target}/$(basename "$pipelines_file")"
 
-echo "archive-run: archived run to ${target}/ (teams.json copied, not moved)"
+echo "archive-run: archived run to ${target}/ (pipelines.json copied, not moved)"

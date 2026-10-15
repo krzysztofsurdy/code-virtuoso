@@ -1,10 +1,16 @@
 #!/bin/bash
-# Read/write helpers for .delivery-loop/backlog.json.
+# Read/write helpers for the loop's plan and run state.
 #
-# Every item is a sequence of steps; there is no flat item-level verifyCommand
-# any more. A single-step item is just a one-element steps array. Item status
-# is never stored - it's derived from its steps every time, so there's one
-# source of truth instead of two that can drift apart.
+# The plan, <root>/.code-virtuoso/loop/backlog.json, holds items, steps,
+# verifyCommands and config. It is committed and never changes during a run.
+# Run state, loop/state/state.json, holds each step's status, attempts and
+# notes. Readers see the two merged (backlog_view); a step with no state entry
+# is pending with 0 attempts.
+#
+# Every item is a sequence of steps; there is no flat item-level verifyCommand.
+# A single-step item is just a one-element steps array. Item status is never
+# stored - it's derived from its steps every time, so there's one source of
+# truth instead of two that can drift apart.
 #
 # Only this file may write a step's status/attempts/notes. That boundary is
 # what makes "verified" a script's output, not an agent's claim.
@@ -12,14 +18,56 @@
 # All functions take the backlog file path as the first argument.
 
 LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=./config.sh
+source "$LIB_DIR/config.sh"
 # shellcheck source=./events.sh
 source "$LIB_DIR/events.sh"
 
 backlog_atomic_write() {
   local file="$1" content="$2"
   local tmp="${file}.tmp.$$"
-  printf '%s' "$content" > "$tmp"
+  printf '%s\n' "$content" > "$tmp"
   mv "$tmp" "$file"
+}
+
+state_path_for() {
+  echo "$(dirname "$1")/state/state.json"
+}
+
+# backlog_view <file>
+# The plan with each step's status/attempts/notes filled in from run state.
+# State wins over any status key a plan still carries.
+backlog_view() {
+  local file="$1" state
+  state="$(state_path_for "$file")"
+  [[ -f "$state" ]] || state=/dev/null
+  jq -c --slurpfile s "$state" '
+    ($s[0].items // {}) as $st
+    | def entry($i; $j): (($st[$i // ""] // {})[$j // ""] // {});
+    .items |= map(
+      . as $it
+      | .steps = ((.steps // []) | map(
+          . as $step
+          | entry($it.id; $step.id) as $e
+          | $step + {
+              status: ($e.status // "pending"),
+              attempts: ($e.attempts // 0),
+              notes: ($e.notes // "")
+            }))
+    )
+  ' "$file"
+}
+
+# _state_update <file> <jq filter> [jq args...]
+# Read-modify-write of state.json, created on first use.
+_state_update() {
+  local file="$1" filter="$2"
+  shift 2
+  local state updated
+  state="$(loop_state_dir "$file")/state.json"
+  [[ -f "$state" ]] || printf '{\n  "version": 1,\n  "items": {}\n}\n' > "$state"
+  updated=$(jq "$@" "$filter" "$state")
+  backlog_atomic_write "$state" "$updated"
 }
 
 # Derived per-item status: verified iff every step is verified, blocked iff
@@ -34,7 +82,7 @@ _backlog_item_status_filter='
 
 backlog_item_status() {
   local file="$1" item_id="$2"
-  jq -r --arg id "$item_id" ".items[] | select(.id == \$id) | ($_backlog_item_status_filter)" "$file"
+  backlog_view "$file" | jq -r --arg id "$item_id" ".items[] | select(.id == \$id) | ($_backlog_item_status_filter)"
 }
 
 # backlog_next_pending_step <file>
@@ -44,7 +92,7 @@ backlog_item_status() {
 # steps in a blocked item never become eligible on their own.
 backlog_next_pending_step() {
   local file="$1"
-  jq -c '
+  backlog_view "$file" | jq -c '
     [.items[] | select(.steps | length > 0)] | sort_by(.priority) |
     map(
       . as $item |
@@ -53,48 +101,41 @@ backlog_next_pending_step() {
       else {itemId: $item.id, itemTitle: $item.title, itemPriority: $item.priority, step: $next}
       end
     ) | first // empty
-  ' "$file"
+  '
 }
 
 backlog_get_item() {
   local file="$1" id="$2"
-  jq -c --arg id "$id" '.items[] | select(.id == $id)' "$file"
+  backlog_view "$file" | jq -c --arg id "$id" '.items[] | select(.id == $id)'
 }
 
 backlog_get_step() {
   local file="$1" item_id="$2" step_id="$3"
-  jq -c --arg iid "$item_id" --arg sid "$step_id" \
-    '.items[] | select(.id == $iid) | .steps[] | select(.id == $sid)' "$file"
+  backlog_view "$file" | jq -c --arg iid "$item_id" --arg sid "$step_id" \
+    '.items[] | select(.id == $iid) | .steps[] | select(.id == $sid)'
 }
 
 step_mark_status() {
   local file="$1" item_id="$2" step_id="$3" status="$4"
-  local updated
-  updated=$(jq --arg iid "$item_id" --arg sid "$step_id" --arg status "$status" \
-    '(.items[] | select(.id == $iid) | .steps[] | select(.id == $sid) | .status) = $status' "$file")
-  backlog_atomic_write "$file" "$updated"
+  _state_update "$file" '.items[$iid][$sid].status = $status' \
+    --arg iid "$item_id" --arg sid "$step_id" --arg status "$status"
 }
 
 step_increment_attempts() {
   local file="$1" item_id="$2" step_id="$3"
-  local updated
-  updated=$(jq --arg iid "$item_id" --arg sid "$step_id" \
-    '(.items[] | select(.id == $iid) | .steps[] | select(.id == $sid) | .attempts) += 1' "$file")
-  backlog_atomic_write "$file" "$updated"
-  jq -r --arg iid "$item_id" --arg sid "$step_id" \
-    '.items[] | select(.id == $iid) | .steps[] | select(.id == $sid) | .attempts' "$file"
+  _state_update "$file" '.items[$iid][$sid].attempts = ((.items[$iid][$sid].attempts // 0) + 1)' \
+    --arg iid "$item_id" --arg sid "$step_id"
+  jq -r --arg iid "$item_id" --arg sid "$step_id" '.items[$iid][$sid].attempts' "$(state_path_for "$file")"
 }
 
 step_set_note() {
   local file="$1" item_id="$2" step_id="$3" note="$4"
-  local updated
-  updated=$(jq --arg iid "$item_id" --arg sid "$step_id" --arg note "$note" \
-    '(.items[] | select(.id == $iid) | .steps[] | select(.id == $sid) | .notes) = $note' "$file")
-  backlog_atomic_write "$file" "$updated"
+  _state_update "$file" '.items[$iid][$sid].notes = $note' \
+    --arg iid "$item_id" --arg sid "$step_id" --arg note "$note"
 }
 
 # step_apply_verdict <file> <item_id> <step_id> <verdict_json> <max_attempts>
-# The only place a verify-gate verdict turns into a backlog write. Both run
+# The only place a verify-gate verdict turns into a run-state write. Both run
 # modes call this instead of each re-deriving pass/fail/blocked handling --
 # one implementation, one place that emits the matching event.
 # Echoes {"action": "verified"|"failed"|"blocked"|"violation"|"stall"}.
@@ -146,34 +187,41 @@ step_apply_verdict() {
 # Item-level view, item status derived per backlog_item_status.
 backlog_counts() {
   local file="$1"
-  jq -c "{
+  backlog_view "$file" | jq -c "{
     total: (.items | length),
     pending: ([.items[] | select($_backlog_item_status_filter == \"pending\")] | length),
     verified: ([.items[] | select($_backlog_item_status_filter == \"verified\")] | length),
     blocked: ([.items[] | select($_backlog_item_status_filter == \"blocked\")] | length)
-  }" "$file"
+  }"
 }
 
 # Step-level view - finer-grained progress than backlog_counts.
 backlog_step_counts() {
   local file="$1"
-  jq -c '{
+  backlog_view "$file" | jq -c '{
     total: ([.items[].steps[]] | length),
     pending: ([.items[].steps[] | select(.status == "pending")] | length),
     verified: ([.items[].steps[] | select(.status == "verified")] | length),
     blocked: ([.items[].steps[] | select(.status == "blocked")] | length)
-  }' "$file"
+  }'
 }
 
 backlog_blocked_items_report() {
   local file="$1"
-  jq -c "[.items[] | select($_backlog_item_status_filter == \"blocked\") |
-    . as \$item | (\$item.steps[] | select(.status == \"blocked\") | {itemId: \$item.id, itemTitle: \$item.title, stepId: .id, notes: .notes})]" "$file"
+  backlog_view "$file" | jq -c "[.items[] | select($_backlog_item_status_filter == \"blocked\") |
+    . as \$item | (\$item.steps[] | select(.status == \"blocked\") | {itemId: \$item.id, itemTitle: \$item.title, stepId: .id, notes: .notes})]"
 }
 
+# backlog_get_config <file> <key>
+# The backlog's own config.<key>, else the "loop" namespace of the merged
+# shared config (user, project shared, project local), else nothing.
 backlog_get_config() {
-  local file="$1" key="$2"
-  jq -r --arg key "$key" '.config[$key] // empty' "$file"
+  local file="$1" key="$2" value
+  value="$(jq -r --arg key "$key" '.config[$key] // empty' "$file")"
+  if [[ -z "$value" ]]; then
+    value="$(cv_loop_setting "$(cv_root_for "$file")" "$key" | jq -r '.')"
+  fi
+  echo "$value"
 }
 
 # backlog_get_config_or <file> <key> <default>
@@ -185,33 +233,31 @@ backlog_get_config_or() {
   echo "${value:-$3}"
 }
 
+# backlog_get_config_json <file> <key>: same lookup, compact JSON (arrays).
 backlog_get_config_json() {
-  local file="$1" key="$2"
-  jq -c --arg key "$key" '.config[$key] // empty' "$file"
+  local file="$1" key="$2" value
+  value="$(jq -c --arg key "$key" '.config[$key] // empty' "$file")"
+  [[ -n "$value" ]] || value="$(cv_loop_setting "$(cv_root_for "$file")" "$key")"
+  echo "$value"
 }
 
-# Always includes the backlog file's own path and its sibling teams.json,
-# expressed the same cwd-relative way callers express every other path here
-# (".delivery-loop/backlog.json") - an earlier version passed $file through
-# as-is, which was whatever absolute/relative form the caller happened to
-# resolve it to, and silently never matched the relative paths it was being
-# compared against.
+# Protected globs are relative to the project root. The result is the backlog's
+# config.protectedPaths plus the loop namespace's protectedPaths (a protection
+# is never dropped by a narrower plan) plus .code-virtuoso/**, which covers the
+# plan, pipelines, config layers and loop state.
 #
-# This closes the Edit/Write vector for both files (layer 1, real time) and
-# the git-diff-audit vector for anything outside the loop's own excluded
-# directory (layer 2). It does NOT close the content-tamper vector on its
-# own - a worker with a bare-interpreter Bash grant can rewrite either
-# file's content without ever calling Edit/Write or touching a path outside
-# the excluded loop directory. That's what verify-gate.sh's snapshot-based
-# tamper check is for, and why it matters more than this glob ever could.
+# This closes the Edit/Write vector (layer 1, real time). The git-diff audit
+# (layer 2) skips .code-virtuoso entirely, since the engine keeps its own files
+# there. Neither closes the content-tamper vector on its own - a worker with a
+# bare-interpreter Bash grant can rewrite those files without calling
+# Edit/Write. That's what verify-gate.sh's snapshot-based tamper check is for,
+# and why it matters more than this glob ever could.
 backlog_protected_paths() {
-  local file="$1"
-  local loop_dir backlog_rel teams_rel
-  loop_dir="$(basename "$(dirname "$file")")"
-  backlog_rel="${loop_dir}/$(basename "$file")"
-  teams_rel="${loop_dir}/teams.json"
-  jq -c --arg self "$backlog_rel" --arg teams "$teams_rel" \
-    '(.config.protectedPaths // []) + [$self, $teams]' "$file"
+  local file="$1" extra
+  extra="$(cv_loop_setting "$(cv_root_for "$file")" protectedPaths)"
+  [[ -n "$extra" ]] || extra='[]'
+  jq -c --argjson extra "$extra" --arg cv "${CV_DIR_NAME}/**" \
+    '(.config.protectedPaths // []) + (if ($extra | type) == "array" then $extra else [] end) + [$cv]' "$file"
 }
 
 # backlog_path_is_protected <path> <protected_paths_json_array>
@@ -280,7 +326,8 @@ stop:
   ${verify}
 
 Make that command pass. Do not edit it, any test files, or
-.delivery-loop/backlog.json directly -- those are off limits and changes to
-them are rejected and not counted toward this step.
+anything under .code-virtuoso/ (the backlog, pipelines, config and loop state)
+directly -- those are off limits and changes to them are rejected and not
+counted toward this step.
 PROMPT
 }

@@ -4,7 +4,7 @@
 #
 # Finds the session file at the git root, records a run_stopped event with
 # reason "cancelled", removes the out-of-tree snapshots, and removes the
-# session file. The backlog is left untouched.
+# session file. The plan and the run state are left untouched.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -38,4 +38,4 @@ if [[ -n "$backlog_file" && -f "$backlog_file" ]]; then
 fi
 rm -f "$state_file"
 
-echo "Cancelled at iteration ${iteration}. Backlog state preserved. Run /loop-virtuoso:start to resume."
+echo "Cancelled at iteration ${iteration}. Run state preserved. Run /loop-virtuoso:start to resume."

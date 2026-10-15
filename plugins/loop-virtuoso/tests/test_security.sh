@@ -13,7 +13,7 @@ test_untracked_env_blocks_start_and_is_never_committed() {
   assert_contains "$OUT" ".env"
   assert_not_contains "$(all_commit_files "$repo")" ".env"
   assert_file "$repo/.env"
-  assert_no_file "$repo/.delivery-loop/session.local.json"
+  assert_no_file "$repo/.code-virtuoso/loop/state/session.local.json"
 }
 
 test_modified_tracked_file_blocks_start() {

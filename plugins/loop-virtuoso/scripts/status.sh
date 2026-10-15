@@ -5,8 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/backlog.sh
 source "${SCRIPT_DIR}/lib/backlog.sh"
-# shellcheck source=lib/teams.sh
-source "${SCRIPT_DIR}/lib/teams.sh"
+# shellcheck source=lib/pipelines.sh
+source "${SCRIPT_DIR}/lib/pipelines.sh"
 # shellcheck source=lib/preflight.sh
 source "${SCRIPT_DIR}/lib/preflight.sh"
 
@@ -14,7 +14,12 @@ file="${1:-$(loop_default_backlog .)}"
 
 if [[ ! -f "$file" ]]; then
   echo "No backlog found at: $file" >&2
-  echo "Nothing to report -- this project has no delivery loop." >&2
+  legacy_root="$(loop_repo_root .)"
+  if [[ -n "$legacy_root" && -d "${legacy_root}/.delivery-loop" ]]; then
+    echo "This project still has the old .delivery-loop directory. Run /loop-virtuoso:start to migrate it to ${CV_DIR_NAME}/loop." >&2
+  else
+    echo "Nothing to report -- this project has no delivery loop." >&2
+  fi
   exit 1
 fi
 
@@ -23,12 +28,10 @@ if ! jq empty "$file" >/dev/null 2>&1; then
   exit 1
 fi
 
-dir="$(cd "$(dirname "$file")" && pwd)"
-repo_root="$(loop_repo_root "$dir")"
-session_file="$(loop_session_file "${repo_root:-$(dirname "$dir")}")"
-progress_log="${dir}/progress.log"
-teams_file="$(teams_path_for "$file")"
-global_teams_file="$(teams_global_path)"
+session_file="$(loop_session_file "$(cv_root_for "$file")")"
+progress_log="$(progress_path_for "$file")"
+pipelines_file="$(pipelines_path_for "$file")"
+user_pipelines_file="$(pipelines_user_path)"
 events_file="$(events_path_for "$file")"
 
 project="$(jq -r '.project // "(unnamed)"' "$file")"
@@ -59,13 +62,13 @@ s_verified="$(echo "$step_counts" | jq -r '.verified')"
 s_blocked="$(echo "$step_counts" | jq -r '.blocked')"
 echo "  Steps: $s_total total | $s_pending pending | $s_verified verified | $s_blocked blocked"
 
-if [[ -f "$teams_file" || -f "$global_teams_file" ]]; then
-  n_participants="$(teams_list_participants "$file" | jq -r 'length')"
-  n_teams="$(teams_list_teams "$file" | jq -r 'length')"
+if [[ -f "$pipelines_file" || -f "$user_pipelines_file" ]]; then
+  n_participants="$(pipelines_list_participants "$file" | jq -r 'length')"
+  n_pipelines="$(pipelines_list_pipelines "$file" | jq -r 'length')"
   source_note="project"
-  [[ -f "$global_teams_file" ]] && source_note="project + global"
-  [[ ! -f "$teams_file" && -f "$global_teams_file" ]] && source_note="global"
-  echo "  Teams: $n_participants participant(s), $n_teams team(s) defined ($source_note)"
+  [[ -f "$user_pipelines_file" ]] && source_note="project + user"
+  [[ ! -f "$pipelines_file" && -f "$user_pipelines_file" ]] && source_note="user"
+  echo "  Pipelines: $n_participants participant(s), $n_pipelines pipeline(s) defined ($source_note)"
 fi
 echo
 
@@ -121,7 +124,7 @@ fi
 
 # --- Recent activity -----------------------------------------------------
 if [[ -f "$progress_log" ]]; then
-  echo "  Recent activity (last 10 lines of progress.log):"
+  echo "  Recent activity (last 10 lines of state/progress.log):"
   tail -n 10 "$progress_log" | while IFS= read -r line; do
     echo "    | $line"
   done
@@ -130,7 +133,7 @@ fi
 
 # --- Recent events -------------------------------------------------------
 if [[ -f "$events_file" ]]; then
-  echo "  Recent events (last 10 lines of events.jsonl):"
+  echo "  Recent events (last 10 lines of state/events.jsonl):"
   tail -n 10 "$events_file" | while IFS= read -r line; do
     [[ -z "$line" ]] && continue
     # Compact one-line form; fall back to the raw line if it won't parse.

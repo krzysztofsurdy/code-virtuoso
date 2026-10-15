@@ -26,8 +26,8 @@ STATE_FILE="$(loop_session_file "$REPO_ROOT")"
 
 # shellcheck source=../scripts/lib/verify-gate.sh
 source "$HOOK_DIR/../scripts/lib/verify-gate.sh"
-# shellcheck source=../scripts/lib/teams.sh
-source "$HOOK_DIR/../scripts/lib/teams.sh"
+# shellcheck source=../scripts/lib/pipelines.sh
+source "$HOOK_DIR/../scripts/lib/pipelines.sh"
 
 SESSION_ID=$(jq -r '.sessionId // ""' "$STATE_FILE" 2>/dev/null || echo "")
 ITERATION=$(jq -r '.iteration // ""' "$STATE_FILE" 2>/dev/null || echo "")
@@ -67,7 +67,7 @@ if [[ ! -f "$BACKLOG_ABS" ]]; then
   exit 0
 fi
 
-# Loop bounds; fall back to defaults if a config key is unset.
+# Loop bounds: the backlog config, then the loop namespace of the shared config, then these defaults.
 MAX_ITERATIONS=$(backlog_get_config_or "$BACKLOG_ABS" maxIterations 30)
 MAX_ATTEMPTS=$(backlog_get_config_or "$BACKLOG_ABS" maxAttemptsPerItem 3)
 MAX_STALL=$(backlog_get_config_or "$BACKLOG_ABS" maxStallIterations 3)
@@ -154,9 +154,9 @@ NEXT_STEP=$(echo "$NEXT" | jq -c '.step')
 NEXT_STEP_ID=$(echo "$NEXT_STEP" | jq -r '.id')
 NEXT_ITEM_JSON=$(backlog_get_item "$BACKLOG_ABS" "$NEXT_ITEM_ID")
 
-# Resolve the step's participant (if any) from teams.json for role framing.
+# Resolve the step's participant (if any) from pipelines.json for role framing.
 PARTICIPANT_ID=$(echo "$NEXT_STEP" | jq -r '.participant // empty')
-PARTICIPANT_JSON=$(teams_get_participant "$BACKLOG_ABS" "$PARTICIPANT_ID")
+PARTICIPANT_JSON=$(pipelines_get_participant "$BACKLOG_ABS" "$PARTICIPANT_ID")
 
 NEXT_ITERATION=$(( ITERATION + 1 ))
 NEXT_START_SHA=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || true)

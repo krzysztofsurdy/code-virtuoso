@@ -4,8 +4,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=lib/teams.sh
-source "${SCRIPT_DIR}/lib/teams.sh"
+# shellcheck source=lib/pipelines.sh
+source "${SCRIPT_DIR}/lib/pipelines.sh"
 
 if [[ $# -lt 1 ]]; then
   echo "usage: validate-backlog.sh <path-to-backlog.json>" >&2
@@ -56,25 +56,50 @@ for key in project branch description config items; do
   fi
 done
 
+# --- config layers -------------------------------------------------------
+# A key may come from the backlog's own config or from the "loop" namespace of
+# the shared config (user, project shared, project local). A layer that does
+# not parse is a hard error: it would otherwise be skipped without a word.
+root="$(cv_root_for "$file")"
+layers_ok=1
+layer_files=()
+while IFS= read -r layer; do
+  [[ -n "$layer" ]] && layer_files+=("$layer")
+done < <(cv_config_files "$root")
+layer_files+=("$(pipelines_path_for "$file")" "$(pipelines_user_path)")
+for layer in "${layer_files[@]}"; do
+  if [[ -f "$layer" ]] && ! jq empty "$layer" >/dev/null 2>&1; then
+    emit_check fail "$layer is valid JSON"
+    problems+=("not valid JSON: $layer")
+    layers_ok=0
+  fi
+done
+[[ "$layers_ok" -eq 1 ]] && emit_check ok "config and pipelines files parse"
+
 # --- config keys ---------------------------------------------------------
+loop_cfg="$(cv_merged_config "$root" | jq -c '.loop // {}')"
 for key in maxIterations maxAttemptsPerItem maxStallIterations maxViolations permissionMode; do
-  if [[ "$(jq ".config | has(\"$key\")" "$file" 2>/dev/null)" == "true" ]]; then
+  if [[ "$(jq ".config | has(\"$key\")" "$file" 2>/dev/null)" == "true" ]] \
+     || [[ "$(echo "$loop_cfg" | jq "has(\"$key\")")" == "true" ]]; then
     emit_check ok "config.$key present"
   else
     emit_check fail "config.$key present"
-    problems+=("missing config key: $key")
+    problems+=("missing config key: $key (set it in the backlog config or the loop namespace of .code-virtuoso/config.json)")
   fi
 done
 
-# protectedPaths: non-empty array
-case "$(jq -r '.config.protectedPaths | if type == "array" then (if length > 0 then "ok" else "empty" end) else "notarray" end' "$file" 2>/dev/null)" in
+# protectedPaths: the backlog's list plus the loop namespace's, together non-empty
+case "$(jq -r --argjson loop "$loop_cfg" '
+  (.config.protectedPaths // []) as $own | ($loop.protectedPaths // []) as $shared |
+  if ($own | type) != "array" or ($shared | type) != "array" then "notarray"
+  elif (($own + $shared) | length) > 0 then "ok" else "empty" end' "$file" 2>/dev/null)" in
   ok)       emit_check ok "config.protectedPaths is a non-empty array" ;;
   empty)    emit_check fail "config.protectedPaths is a non-empty array"; problems+=("config.protectedPaths is empty") ;;
   *)        emit_check fail "config.protectedPaths is a non-empty array"; problems+=("config.protectedPaths is missing or not an array") ;;
 esac
 
 # allowedTools: array
-case "$(jq -r '.config.allowedTools | if type == "array" then "ok" else "notarray" end' "$file" 2>/dev/null)" in
+case "$(jq -r --argjson loop "$loop_cfg" '(.config.allowedTools // $loop.allowedTools) | if type == "array" then "ok" else "notarray" end' "$file" 2>/dev/null)" in
   ok) emit_check ok "config.allowedTools is an array" ;;
   *)  emit_check fail "config.allowedTools is an array"; problems+=("config.allowedTools is missing or not an array") ;;
 esac
@@ -117,9 +142,7 @@ else
               [
                 (if ($st.id|type) == "string" and ($st.id|length) > 0 then empty else $sref + ": missing or empty id" end),
                 (if ($st.instructions|type) == "string" and ($st.instructions|length) > 0 then empty else $sref + ": missing or empty instructions" end),
-                (if ($st.verifyCommand|type) == "string" and ($st.verifyCommand|length) > 0 then empty else $sref + ": verifyCommand missing or empty" end),
-                (if ($st.status|type) == "string" and (["pending","verified","blocked"] | index($st.status)) != null then empty else $sref + ": status must be pending/verified/blocked" end),
-                (if ($st.attempts|type) == "number" then empty else $sref + ": attempts missing or not numeric" end)
+                (if ($st.verifyCommand|type) == "string" and ($st.verifyCommand|length) > 0 then empty else $sref + ": verifyCommand missing or empty" end)
               ]
             ) | add // [])
           else [] end)
@@ -138,6 +161,12 @@ else
       emit_check ok "all items and steps have required fields"
     else
       emit_check fail "all items and steps have required fields ($item_problem_count problem(s))"
+    fi
+
+    # Run state belongs in loop/state/state.json, not in the plan.
+    stateful_steps="$(jq '[.items[].steps[]? | select(has("status") or has("attempts") or has("notes"))] | length' "$file" 2>/dev/null || echo 0)"
+    if [[ "$stateful_steps" -gt 0 ]]; then
+      warnings+=("$stateful_steps step(s) carry status, attempts or notes in the plan; they are ignored. Run state lives in state/state.json next to the backlog.")
     fi
 
     # Duplicate ids
@@ -164,36 +193,28 @@ else
       done <<< "$bad_ids"
     fi
 
-    # Step participant references resolve against teams.json - project-local
-    # layer first, then the shared global layer (teams_get_participant checks
-    # both). No teams.json at either layer, or steps with no participant, is
-    # fine. An unparseable teams.json at either layer is not fine - without
-    # this check, teams_get_participant's jq call fails silently and every
-    # reference at that layer looks "resolved" by accident.
-    teams_file="$(teams_path_for "$file")"
-    global_teams_file="$(teams_global_path)"
-    teams_json_ok=1
-    for f in "$teams_file" "$global_teams_file"; do
-      if [[ -f "$f" ]] && ! jq empty "$f" >/dev/null 2>&1; then
-        emit_check fail "$f is valid JSON"
-        problems+=("teams.json exists but is not valid JSON: $f")
-        teams_json_ok=0
-      fi
-    done
+    # Step participant references resolve against pipelines.json - project
+    # layer first, then the user layer (pipelines_get_participant checks both).
+    # No pipelines file at either layer, or steps with no participant, is fine.
+    # An unparseable file was already reported above; skip the lookups then,
+    # because pipelines_get_participant's jq call would fail silently and make
+    # every reference at that layer look "resolved" by accident.
+    pipelines_file="$(pipelines_path_for "$file")"
+    user_pipelines_file="$(pipelines_user_path)"
 
-    if [[ "$teams_json_ok" -eq 1 ]] && { [[ -f "$teams_file" ]] || [[ -f "$global_teams_file" ]]; }; then
+    if [[ "$layers_ok" -eq 1 ]] && { [[ -f "$pipelines_file" ]] || [[ -f "$user_pipelines_file" ]]; }; then
       unresolved=0
       referenced_participants=()
       while IFS=$'\t' read -r iid sid pid; do
         [[ -z "$pid" ]] && continue
         referenced_participants+=("$pid")
-        if [[ "$(teams_get_participant "$file" "$pid")" == "null" ]]; then
-          warnings+=("step ${iid}/${sid} references participant \"$pid\" not found in project or global teams.json")
+        if [[ "$(pipelines_get_participant "$file" "$pid")" == "null" ]]; then
+          warnings+=("step ${iid}/${sid} references participant \"$pid\" not found in the project or user pipelines.json")
           unresolved=$((unresolved + 1))
         fi
       done < <(jq -r '.items[] | .id as $iid | (.steps // [])[] | select((.participant // "") != "") | [$iid, .id, .participant] | @tsv' "$file" 2>/dev/null)
       if [[ "$unresolved" -eq 0 ]]; then
-        emit_check ok "step participants resolve against teams.json (project or global)"
+        emit_check ok "step participants resolve against pipelines.json (project or user)"
       else
         emit_check ok "step participants present ($unresolved unresolved, see warnings)"
       fi
@@ -208,7 +229,7 @@ else
       # checked, resolved through the same project-then-global lookup the
       # engine uses at run time - not "every participant in whichever file
       # happens to exist", which would mean every project's validate run
-      # re-checking the whole shared global library on every invocation.
+      # re-checking the whole user library on every invocation.
       #
       # The check itself lives entirely in jq, one complete message per
       # output line - an earlier version split a jq @tsv row in the shell
@@ -220,7 +241,7 @@ else
       # correctly-attributed message, nothing left to mis-split.
       bad_participants=0
       for pid in "${referenced_participants[@]+"${referenced_participants[@]}"}"; do
-        participant_json="$(teams_get_participant "$file" "$pid")"
+        participant_json="$(pipelines_get_participant "$file" "$pid")"
         [[ "$participant_json" == "null" ]] && continue
         while IFS= read -r problem_line; do
           [[ -z "$problem_line" ]] && continue

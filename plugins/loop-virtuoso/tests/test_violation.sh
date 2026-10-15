@@ -6,7 +6,7 @@ setup_gate() {
   REPO="$(mk_repo)"
   on_feature "$REPO"
   write_backlog "$REPO" feat/x
-  BACKLOG="$REPO/.delivery-loop/backlog.json"
+  BACKLOG="$REPO/.code-virtuoso/loop/backlog.json"
   source "$SCRIPTS/lib/verify-gate.sh"
   verify_gate_snapshot_all "$BACKLOG"
   START="$(git -C "$REPO" rev-parse HEAD)"
@@ -56,6 +56,6 @@ test_one_violation_does_not_burn_the_budget_in_mode_a() {
   stop_hook "$repo" >/dev/null
   stop_hook "$repo" >/dev/null
   assert_eq "$(step_actions "$repo" | tr '\n' ' ')" "violation verified " "second iteration is clean"
-  assert_not_contains "$(cat "$repo/.delivery-loop/events.jsonl")" "violation_limit"
-  assert_eq "$(jq -r .violationCount "$repo/.delivery-loop/session.local.json")" "1"
+  assert_not_contains "$(cat "$repo/.code-virtuoso/loop/state/events.jsonl")" "violation_limit"
+  assert_eq "$(jq -r .violationCount "$repo/.code-virtuoso/loop/state/session.local.json")" "1"
 }

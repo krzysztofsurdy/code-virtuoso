@@ -41,3 +41,42 @@ test_start_docs_do_not_claim_archive_on_start() {
   hits="$(grep -n -i "archives a previous run if the branch changed" "$PLUGIN_ROOT/commands/start.md" "$PLUGIN_ROOT/skills/iteration-loop/SKILL.md" || true)"
   [[ -z "$hits" ]] || die "start docs claim archive on start: $hits"
 }
+
+doc_files() { find "$PLUGIN_ROOT/commands" "$PLUGIN_ROOT/skills" -type f -name '*.md'; echo "$PLUGIN_ROOT/README.md"; echo "$PLUGIN_ROOT/REVIEW.md"; }
+
+test_docs_use_the_new_storage_paths_only() {
+  local hits
+  hits="$(doc_files | xargs grep -n -e '\.delivery-loop' -e 'teams\.json' | grep -v -i -e 'migrat' -e 'old ' -e 'earlier' -e 'then named' || true)"
+  [[ -z "$hits" ]] || die "legacy path outside a migration note: $hits"
+}
+
+test_docs_say_pipelines_not_teams() {
+  local hits
+  hits="$(doc_files | xargs grep -n -i -w -e 'team' -e 'teams' | grep -v -i -e 'agent team' -e 'agent-teams' -e 'team plan' -e 'with the team' -e 'earlier' -e 'old ' -e 'then named' -e 'migrat' || true)"
+  [[ -z "$hits" ]] || die "'team' still used for pipelines: $hits"
+}
+
+test_iteration_loop_skill_is_reference_only() {
+  local fm
+  fm="$(sed -n '1,/^---$/p;' "$PLUGIN_ROOT/skills/iteration-loop/SKILL.md" | sed -n '2,/^---$/p')"
+  assert_contains "$fm" "user-invocable: false"
+  assert_not_contains "$fm" "argument-hint"
+}
+
+test_backlog_compiler_reads_shared_config_not_the_supplement() {
+  local text; text="$(cat "$PLUGIN_ROOT/skills/backlog-compiler/SKILL.md")"
+  assert_not_contains "$text" ".supplement.md"
+  assert_contains "$text" "ticket-delivery"
+  assert_contains "$text" ".code-virtuoso/config.json"
+}
+
+test_plugin_docs_cross_link_related_skills() {
+  local text; text="$(cat "$PLUGIN_ROOT/skills/backlog-compiler/SKILL.md" "$PLUGIN_ROOT/README.md")"
+  assert_contains "$text" "ticket-writer"
+  assert_contains "$text" "ticket-delivery"
+  assert_contains "$text" "finishing-branch"
+}
+
+test_plugin_version_is_1_0_0() {
+  assert_eq "$(jq -r .version "$PLUGIN_ROOT/.claude-plugin/plugin.json")" "1.0.0"
+}

@@ -6,8 +6,8 @@ test_start_from_subdirectory_arms_hooks_at_git_root() {
   on_feature "$repo"
   write_backlog "$repo" feat/x
   (cd "$repo/src" && bash "$SCRIPTS/setup-start.sh" >/dev/null)
-  assert_file "$repo/.delivery-loop/session.local.json"
-  assert_no_file "$repo/src/.delivery-loop"
+  assert_file "$repo/.code-virtuoso/loop/state/session.local.json"
+  assert_no_file "$repo/src/.code-virtuoso"
   local out; out="$(stop_hook "$repo/src")"
   assert_eq "$(decision_of "$out")" "block"
   assert_contains "$out" "ITEM-002"
@@ -17,7 +17,7 @@ test_start_with_relative_backlog_from_subdirectory() {
   local repo; repo="$(mk_repo)"
   on_feature "$repo"
   write_backlog "$repo" feat/x
-  (cd "$repo/src" && bash "$SCRIPTS/setup-start.sh" ../.delivery-loop/backlog.json >/dev/null)
+  (cd "$repo/src" && bash "$SCRIPTS/setup-start.sh" ../.code-virtuoso/loop/backlog.json >/dev/null)
   local out; out="$(stop_hook "$repo/src")"
   assert_contains "$out" "ITEM-002"
 }
@@ -53,8 +53,8 @@ test_backlog_outside_loop_dir_is_refused() {
   on_feature "$repo"
   write_backlog "$repo" feat/x
   mkdir -p "$repo/elsewhere"
-  cp "$repo/.delivery-loop/backlog.json" "$repo/elsewhere/backlog.json"
+  cp "$repo/.code-virtuoso/loop/backlog.json" "$repo/elsewhere/backlog.json"
   capture start_loop "$repo" elsewhere/backlog.json
-  [[ $RC -ne 0 ]] || die "backlog must live in a .delivery-loop directory"
-  assert_contains "$OUT" ".delivery-loop"
+  [[ $RC -ne 0 ]] || die "backlog must live in <git root>/.code-virtuoso/loop"
+  assert_contains "$OUT" ".code-virtuoso/loop"
 }

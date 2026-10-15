@@ -1,10 +1,10 @@
 #!/bin/bash
 # Mode A (session-supervised) bootstrap.
 #
-# Called by /loop-virtuoso:start with the backlog path as $1. Runs the
-# preflight (validation, clean tree, branch guard), seeds the session file on
-# the first pending step, and prints that step's prompt. The Stop hook drives
-# every iteration after this.
+# Called by /loop-virtuoso:start with the backlog path as $1. Migrates the old
+# .delivery-loop layout if one exists, runs the preflight (validation, clean
+# tree, branch guard), seeds the session file on the first pending step, and
+# prints that step's prompt. The Stop hook drives every iteration after this.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -13,21 +13,25 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/backlog.sh"
 # shellcheck source=./lib/verify-gate.sh
 source "${SCRIPT_DIR}/lib/verify-gate.sh"
-# shellcheck source=./lib/teams.sh
-source "${SCRIPT_DIR}/lib/teams.sh"
+# shellcheck source=./lib/pipelines.sh
+source "${SCRIPT_DIR}/lib/pipelines.sh"
 # shellcheck source=./lib/preflight.sh
 source "${SCRIPT_DIR}/lib/preflight.sh"
-
-BACKLOG_PATH="${1:-$(loop_default_backlog .)}"
+# shellcheck source=./lib/migrate.sh
+source "${SCRIPT_DIR}/lib/migrate.sh"
 
 if [[ -z "${CLAUDE_CODE_SESSION_ID:-}" ]]; then
   echo "Error: no session id available (CLAUDE_CODE_SESSION_ID is empty); the loop cannot bind to this session" >&2
   exit 1
 fi
 
+loop_migrate_start "${1:-}" || exit 1
+BACKLOG_PATH="${LOOP_BACKLOG_ARG:-$(loop_default_backlog .)}"
+
 loop_preflight "$BACKLOG_PATH"
 BACKLOG_PATH="$LOOP_BACKLOG_ABS"
 REPO_DIR="$LOOP_REPO_ROOT"
+cv_ensure_gitignore "$REPO_DIR"
 
 FIRST=$(backlog_next_pending_step "$BACKLOG_PATH")
 if [[ -z "$FIRST" ]]; then
@@ -44,7 +48,7 @@ FIRST_STEP_ID=$(echo "$FIRST_STEP" | jq -r '.id')
 FIRST_ITEM_JSON=$(backlog_get_item "$BACKLOG_PATH" "$FIRST_ITEM_ID")
 
 PARTICIPANT_ID=$(echo "$FIRST_STEP" | jq -r '.participant // empty')
-PARTICIPANT_JSON=$(teams_get_participant "$BACKLOG_PATH" "$PARTICIPANT_ID")
+PARTICIPANT_JSON=$(pipelines_get_participant "$BACKLOG_PATH" "$PARTICIPANT_ID")
 PARTICIPANT_KIND=$(echo "$PARTICIPANT_JSON" | jq -r '.kind // empty')
 
 START_SHA=$(git -C "$REPO_DIR" rev-parse HEAD 2>/dev/null || true)
@@ -56,8 +60,8 @@ fi
 
 STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-# The session file always lives at <git root>/.delivery-loop, where the hooks
-# look for it regardless of the session's working directory.
+# The session file always lives at <git root>/.code-virtuoso/loop/state, where
+# the hooks look for it regardless of the session's working directory.
 STATE_FILE="$(loop_session_file "$REPO_DIR")"
 mkdir -p "$(dirname "$STATE_FILE")"
 STATE_TMP="${STATE_FILE}.tmp.$$"

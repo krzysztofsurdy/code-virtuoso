@@ -7,7 +7,7 @@ test_setup_refuses_when_backlog_branch_is_default() {
   capture start_loop "$repo"
   [[ $RC -ne 0 ]] || die "must refuse to run on main"
   assert_contains "$OUT" "default branch"
-  assert_no_file "$repo/.delivery-loop/session.local.json"
+  assert_no_file "$repo/.code-virtuoso/loop/state/session.local.json"
 }
 
 test_setup_switches_to_backlog_branch_when_clean() {
@@ -15,7 +15,7 @@ test_setup_switches_to_backlog_branch_when_clean() {
   write_backlog "$repo" feat/x
   start_loop "$repo" >/dev/null
   assert_eq "$(git -C "$repo" symbolic-ref --short HEAD)" "feat/x"
-  assert_file "$repo/.delivery-loop/session.local.json"
+  assert_file "$repo/.code-virtuoso/loop/state/session.local.json"
 }
 
 test_setup_switches_to_existing_branch() {
@@ -57,7 +57,7 @@ test_batch_refuses_default_branch() {
   local repo; repo="$(mk_repo)"
   install_fake_claude
   write_backlog "$repo" main
-  capture bash "$SCRIPTS/run-batch.sh" "$repo/.delivery-loop/backlog.json"
+  capture bash "$SCRIPTS/run-batch.sh" "$repo/.code-virtuoso/loop/backlog.json"
   [[ $RC -ne 0 ]] || die "batch must refuse main"
   assert_contains "$OUT" "default branch"
   assert_eq "$(wc -c < "$FAKE_CLAUDE_LOG" | tr -d ' ')" "0" "claude must not be called"
@@ -67,6 +67,6 @@ test_batch_switches_to_backlog_branch() {
   local repo; repo="$(mk_repo)"
   install_fake_claude
   write_backlog "$repo" feat/x
-  bash "$SCRIPTS/run-batch.sh" "$repo/.delivery-loop/backlog.json" >/dev/null
+  bash "$SCRIPTS/run-batch.sh" "$repo/.code-virtuoso/loop/backlog.json" >/dev/null
   assert_eq "$(git -C "$repo" symbolic-ref --short HEAD)" "feat/x"
 }

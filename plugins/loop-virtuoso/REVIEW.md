@@ -27,10 +27,20 @@ Round 4 is the pivotal one: it's where the design's central claim went from "we 
 
 - Default `allowedTools` for every stack (`skills/backlog-compiler/references/allowed-tools-by-stack.md`) rewritten to remove every bare interpreter and narrow package-manager/build commands to specific subcommands, with the reasoning stated inline, not just the result.
 - `README.md`, `write-boundary.md`, and `permission-modes.md` rewritten to state the real boundary: broad `allowedTools` is safe *only* when every entry is a specific tool invocation, and broadening past that requires an OS-level sandbox - not "the guard protects you regardless," which was the overclaim round 4 caught.
-- `backlog_protected_paths` extended to also protect `teams.json` at the real-time layer, not just `backlog.json`.
+- `backlog_protected_paths` extended to also protect the pipelines file (then named `teams.json`) at the real-time layer, not just `backlog.json`.
 - `scripts/validate-backlog.sh` gained hard-fail checks for malformed participants (bad `kind`, missing `agent`/`systemPrompt`) - then, when round 5 found the check itself was broken by a bash field-splitting footgun, rewritten to do the validation entirely in `jq` instead of shell `IFS` splitting.
 - `hooks/guard-protected-paths.sh`'s path resolution now walks up to the nearest existing ancestor directory before resolving symlinks, closing the gap where a brand-new file in a not-yet-created directory fell back to an unresolved path.
 - A real, separate bug was found and fixed along the way: a `case` statement nested directly inside a `$(...)` command substitution does not parse on bash 3.2 (macOS's frozen default `/bin/bash`, still shipped for licensing reasons) - moved into its own function, which does parse correctly everywhere.
+
+## What changed with the storage move (1.0.0 in code-virtuoso)
+
+This part was not one of the five adversarial rounds. It is a design change reviewed by its own tests, stated here so the trust boundary stays honest.
+
+- The plan (`loop/backlog.json`) is now read-only during a run. Status, attempts and notes moved to `loop/state/state.json`, which only `lib/backlog.sh` writes. Any change to the plan mid-run is tampering by definition.
+- The shared config is a new input: the `loop` namespace supplies defaults the backlog omits. The tamper check now also snapshots `.code-virtuoso/config.json`, `config.local.json` and `loop/pipelines.json`, including their absence, so a worker cannot loosen a limit by editing or creating one of them. The user-layer files live outside the project and are not guarded; the same Bash caveat as above applies to them.
+- `.code-virtuoso/**` is always protected at the real-time layer, and the git-diff audit skips that directory because the engine keeps its own files there. Its content is covered by the snapshot check instead.
+- `protectedPaths` from the backlog and from the shared config are combined, so a narrower plan cannot drop a protection the project set.
+- Snapshots moved from `$TMPDIR` to `${XDG_STATE_HOME:-$HOME/.local/state}/code-virtuoso/loop/snapshots/`. Same reasoning as before: outside the project tree, reachable by Bash only.
 
 ## What this review process did *not* do
 

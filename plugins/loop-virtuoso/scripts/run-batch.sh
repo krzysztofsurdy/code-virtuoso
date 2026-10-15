@@ -1,10 +1,11 @@
 #!/bin/bash
 # Mode B: unattended batch engine.
-#   ./scripts/run-batch.sh path/to/.delivery-loop/backlog.json
+#   ./scripts/run-batch.sh [path/to/.code-virtuoso/loop/backlog.json]
 #
 # Owns the loop itself: a fresh `claude -p` per iteration (no -c/--resume), then
-# the shared verify-gate verdict applied via lib/backlog.sh. The backlog file is
-# the only state carried between iterations.
+# the shared verify-gate verdict applied via lib/backlog.sh. The run state
+# (loop/state/state.json) is the only state carried between iterations; the
+# backlog file is the plan and is never written.
 #
 # Exit code is the CI contract: 0 if the backlog finished (complete/blocked_out),
 # 1 on a guardrail stop (max_iterations/stalled/violation_limit/
@@ -23,16 +24,15 @@ source "$SCRIPT_DIR/lib/backlog.sh"
 source "$SCRIPT_DIR/lib/verify-gate.sh"
 # shellcheck source=./lib/cost.sh
 source "$SCRIPT_DIR/lib/cost.sh"
-# shellcheck source=./lib/teams.sh
-source "$SCRIPT_DIR/lib/teams.sh"
+# shellcheck source=./lib/pipelines.sh
+source "$SCRIPT_DIR/lib/pipelines.sh"
 # shellcheck source=./lib/preflight.sh
 source "$SCRIPT_DIR/lib/preflight.sh"
+# shellcheck source=./lib/migrate.sh
+source "$SCRIPT_DIR/lib/migrate.sh"
 
-backlog_file="${1:-}"
-if [[ -z "$backlog_file" ]]; then
-  echo "usage: run-batch.sh <path-to-.delivery-loop/backlog.json>" >&2
-  exit 1
-fi
+loop_migrate_start "${1:-}" || exit 1
+backlog_file="${LOOP_BACKLOG_ARG:-$(loop_default_backlog .)}"
 if [[ ! -f "$backlog_file" ]]; then
   echo "error: backlog file not found: $backlog_file" >&2
   exit 1
@@ -43,9 +43,9 @@ loop_preflight "$backlog_file"
 backlog_file="$LOOP_BACKLOG_ABS"
 trap 'verify_gate_snapshot_cleanup "$backlog_file"' EXIT
 
-# Backlog lives at <project>/.delivery-loop/backlog.json; the project is its parent.
-loop_dir="$(dirname "$backlog_file")"
-repo_dir="$(dirname "$loop_dir")"
+# The project is the git root; the backlog sits at <root>/.code-virtuoso/loop.
+repo_dir="$LOOP_REPO_ROOT"
+cv_ensure_gitignore "$repo_dir"
 progress_log="$(progress_path_for "$backlog_file")"
 
 # Append to progress.log and echo the line, so a long run can be watched via tail -f.
@@ -120,7 +120,7 @@ while true; do
   step_id="$(echo "$step_json" | jq -r '.id')"
   item_json="$(backlog_get_item "$backlog_file" "$item_id")"
   participant_id="$(echo "$step_json" | jq -r '.participant // empty')"
-  participant_json="$(teams_get_participant "$backlog_file" "$participant_id")"
+  participant_json="$(pipelines_get_participant "$backlog_file" "$participant_id")"
   participant_kind="$(echo "$participant_json" | jq -r '.kind // empty')"
   prompt="$(backlog_build_step_prompt "$item_json" "$step_json" "$participant_json")"
   start_sha="$(git -C "$repo_dir" rev-parse HEAD 2>/dev/null || echo "4b825dc642cb6eb9a060e54bf8d69288fbee4904")"

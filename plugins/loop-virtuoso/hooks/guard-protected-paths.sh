@@ -65,11 +65,11 @@ _guard_resolve_path() {
   echo "${resolved_dir}/${suffix}${base}"
 }
 
-# protectedPaths globs are relative to the project directory, the parent of
-# the loop directory. Resolve both sides through the same normalization before
+# protectedPaths globs are relative to the project root (the git root that holds
+# .code-virtuoso). Resolve both sides through the same normalization before
 # comparing: comparing raw strings broke whenever Claude Code resolved one of
 # them through a symlink and not the other.
-PROJECT_RESOLVED="$(_guard_resolve_path "$(dirname "$(dirname "$BACKLOG_FILE")")")"
+PROJECT_RESOLVED="$(_guard_resolve_path "$(cv_root_for "$BACKLOG_FILE")")"
 FILE_PATH_RESOLVED="$(_guard_resolve_path "$FILE_PATH")"
 
 REL_PATH="$FILE_PATH_RESOLVED"

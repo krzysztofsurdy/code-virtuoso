@@ -14,6 +14,7 @@ export WORK
 
 export HOME="$WORK/home"
 export TMPDIR="$WORK/tmp"
+unset CODE_VIRTUOSO_CONFIG_HOME CLAUDE_CONFIG_DIR
 mkdir -p "$HOME" "$TMPDIR"
 export GIT_CONFIG_NOSYSTEM=1
 export GIT_CONFIG_GLOBAL="$WORK/gitconfig"
@@ -31,7 +32,12 @@ for file in "$TESTS_DIR"/test_*.sh; do
   names="$(grep -o '^test_[A-Za-z0-9_]*()' "$file" | tr -d '()')"
   for name in $names; do
     out="$WORK/out.$$"
-    ( set -e; source "$TESTS_DIR/helpers.sh"; source "$file"; "$name" ) >"$out" 2>&1
+    # Every test gets its own HOME, so user-layer files never leak between tests.
+    test_home="$(mktemp -d "$WORK/home.XXXXXX")"
+    (
+      export HOME="$test_home" XDG_CONFIG_HOME="$test_home/.config" XDG_STATE_HOME="$test_home/.local/state"
+      set -e; source "$TESTS_DIR/helpers.sh"; source "$file"; "$name"
+    ) >"$out" 2>&1
     rc=$?
     if (( rc == 0 )); then
       pass=$((pass + 1))

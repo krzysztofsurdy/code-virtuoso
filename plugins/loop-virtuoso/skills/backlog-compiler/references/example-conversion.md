@@ -4,12 +4,12 @@
 
 > Add the ability to mark tasks with a status (pending/in progress/done), show it on each task card, let users change it, and filter the list by it. Project uses PHPUnit and PHPStan; tests live in `tests/`.
 
-**Output - `.delivery-loop/backlog.json`:**
+**Output - `.code-virtuoso/loop/backlog.json`:**
 
 ```json
 {
   "project": "TaskApp",
-  "branch": "loop/task-status",
+  "branch": "feat/task_status",
   "description": "Track task progress with a status field, badge, toggle, and filter",
   "config": {
     "maxIterations": 20,
@@ -39,10 +39,7 @@
         {
           "id": "implement",
           "instructions": "Add the status column and its migration.",
-          "verifyCommand": "vendor/bin/phpunit --filter=TaskStatusMigrationTest && vendor/bin/phpstan analyse",
-          "status": "pending",
-          "attempts": 0,
-          "notes": ""
+          "verifyCommand": "vendor/bin/phpunit --filter=TaskStatusMigrationTest && vendor/bin/phpstan analyse"
         }
       ]
     },
@@ -59,10 +56,7 @@
         {
           "id": "implement",
           "instructions": "Render a status badge on each task card.",
-          "verifyCommand": "vendor/bin/phpunit --filter=TaskCardStatusBadgeTest && vendor/bin/phpstan analyse",
-          "status": "pending",
-          "attempts": 0,
-          "notes": ""
+          "verifyCommand": "vendor/bin/phpunit --filter=TaskCardStatusBadgeTest && vendor/bin/phpstan analyse"
         }
       ]
     },
@@ -79,10 +73,7 @@
         {
           "id": "implement",
           "instructions": "Add a status control to each row and persist changes.",
-          "verifyCommand": "vendor/bin/phpunit --filter=TaskStatusToggleTest && vendor/bin/phpstan analyse",
-          "status": "pending",
-          "attempts": 0,
-          "notes": ""
+          "verifyCommand": "vendor/bin/phpunit --filter=TaskStatusToggleTest && vendor/bin/phpstan analyse"
         }
       ]
     },
@@ -99,10 +90,7 @@
         {
           "id": "implement",
           "instructions": "Add a status filter to the task list.",
-          "verifyCommand": "vendor/bin/phpunit --filter=TaskStatusFilterTest && vendor/bin/phpstan analyse",
-          "status": "pending",
-          "attempts": 0,
-          "notes": ""
+          "verifyCommand": "vendor/bin/phpunit --filter=TaskStatusFilterTest && vendor/bin/phpstan analyse"
         }
       ]
     }
@@ -112,4 +100,4 @@
 
 Note the dependency order (schema → display → mutation → filtering) and that every criterion maps to something a step's `verifyCommand` actually checks - no item's "done" depends on a model's opinion.
 
-Each item here is a single step, the common case. To add an independent review phase, you'd give an item a second step - e.g. an `implement` step run by a `backend-dev` participant followed by a `review` step run by a `qa-reviewer` persona - each with its own `verifyCommand`. See `references/teams-and-participants.md`.
+Each item here is a single step, the common case. To add an independent review phase, you'd give an item a second step - e.g. an `implement` step run by a `backend-dev` participant followed by a `review` step run by a `qa-reviewer` persona - each with its own `verifyCommand`. See `references/pipelines-and-participants.md`.

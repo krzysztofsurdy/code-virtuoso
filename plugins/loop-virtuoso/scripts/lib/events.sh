@@ -1,5 +1,5 @@
 #!/bin/bash
-# Structured, append-only event log: <backlog-dir>/events.jsonl, one JSON
+# Structured, append-only event log: <loop-dir>/state/events.jsonl, one JSON
 # object per line. backlog.sh's mutators call this so nothing changes state
 # without being recorded. This is what "full visibility" means here: tail
 # or jq the file directly, don't rely on a summary.
@@ -8,9 +8,12 @@
 # iteration-level transition, written by both run modes through
 # progress_append so the two modes produce the same shape.
 
+EVENTS_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=./config.sh
+source "$EVENTS_LIB_DIR/config.sh"
+
 events_path_for() {
-  local backlog_file="$1"
-  echo "$(dirname "$backlog_file")/events.jsonl"
+  echo "$(dirname "$1")/state/events.jsonl"
 }
 
 # events_emit <backlog_file> <event_type> [extra_fields_json_object]
@@ -19,20 +22,21 @@ events_emit() {
   local backlog_file="$1" event_type="$2" extra_json="${3:-}"
   [[ -n "$extra_json" ]] || extra_json='{}'
   local events_file
+  loop_state_dir "$backlog_file" >/dev/null
   events_file=$(events_path_for "$backlog_file")
   jq -nc --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg event "$event_type" --argjson extra "$extra_json" \
     '{ts: $ts, event: $event} + $extra' >> "$events_file"
 }
 
 progress_path_for() {
-  local backlog_file="$1"
-  echo "$(dirname "$backlog_file")/progress.log"
+  echo "$(dirname "$1")/state/progress.log"
 }
 
 # progress_append <backlog_file> <message>
 # Appends "<utc timestamp> <message>" to progress.log. Prints nothing.
 progress_append() {
   local backlog_file="$1" msg="$2"
+  loop_state_dir "$backlog_file" >/dev/null
   printf '%s %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$msg" >> "$(progress_path_for "$backlog_file")"
 }
 

@@ -15,13 +15,13 @@ loop-virtuoso runs a deterministic, backlog-driven autonomous execution loop. It
 
 | Command | What it does |
 |---|---|
-| `/loop-virtuoso:start [backlog]` | Start Mode A over the backlog (default `.delivery-loop/backlog.json` at the git root). Needs a clean working tree and refuses to run on the default branch. |
+| `/loop-virtuoso:start [backlog]` | Start Mode A over the backlog (default `.code-virtuoso/loop/backlog.json` at the git root). Needs a clean working tree and refuses to run on the default branch. |
 | `/loop-virtuoso:status [backlog]` | Report counts, iteration, stall/violation counts, and the progress-log and events tails. |
 | `/loop-virtuoso:cancel` | Stop the loop and record a `cancelled` event; backlog state is preserved. |
 | `/loop-virtuoso:help` | Show this overview. |
 
 ## Getting a backlog
 
-You need a `.delivery-loop/backlog.json` before starting. Use the **`backlog-compiler`** skill to convert a PRD, ticket, or freeform feature description into a loop-ready backlog - it sizes each item to a single context window, orders items by dependency, and writes a literal `verifyCommand` for each one.
+You need a `.code-virtuoso/loop/backlog.json` before starting. Use the **`backlog-compiler`** skill to convert a PRD, ticket, or freeform feature description into a loop-ready backlog - it sizes each item to a single context window, orders items by dependency, and writes a literal `verifyCommand` for each one.
 
 For the full behavior - stop reasons, the write-boundary guard, and configuration - see the `iteration-loop` skill.

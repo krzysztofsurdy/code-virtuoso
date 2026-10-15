@@ -1,6 +1,6 @@
 # Stop-reason state machine, in full
 
-Both modes terminate via exactly one named reason. Both write it to `.delivery-loop/progress.log` (a `stop reason=...` line and a `run-end` line) and to `events.jsonl` (`run_stopped`), and print it to the user. There is no other way out of the loop.
+Both modes terminate via exactly one named reason. Both write it to `.code-virtuoso/loop/state/progress.log` (a `stop reason=...` line and a `run-end` line) and to `events.jsonl` (`run_stopped`), and print it to the user. There is no other way out of the loop.
 
 ## `complete`
 
@@ -28,7 +28,7 @@ The iteration counter reached `config.maxIterations` while items were still `pen
 
 ## `corrupted`
 
-`.delivery-loop/session.local.json` or `.delivery-loop/backlog.json` failed to parse as valid JSON, or a required field was missing/malformed. The hook removes the broken state file and stops rather than guessing - manually inspect both files before running `/loop-virtuoso:start` again.
+`.code-virtuoso/loop/state/session.local.json` or `.code-virtuoso/loop/backlog.json` failed to parse as valid JSON, or a required field was missing/malformed. The hook removes the broken state file and stops rather than guessing - manually inspect both files before running `/loop-virtuoso:start` again.
 
 ## Two more, Mode B only: `total_budget_exceeded` and `invocation_failed`
 
