@@ -200,7 +200,7 @@ Sharding distributes data across separate database instances. Use it only after 
 
 | Situation | Recommended Skill |
 |---|---|
-| Optimizing query performance and caching | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for performance optimization patterns |
-| Designing domain models and aggregates | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for clean architecture and DDD guidance |
-| Building APIs that expose database-backed resources | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for API design principles |
-| Testing database interactions | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for testing strategies |
+| Optimizing query performance and caching | `performance` |
+| Designing domain models and aggregates | `clean-architecture` |
+| Building APIs that expose database-backed resources | `api-design` |
+| Testing database interactions | `testing` |

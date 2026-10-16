@@ -86,7 +86,7 @@ Flag any copyleft licenses (GPL, AGPL) or unknown licenses.
 
 ### Output (JSON)
 
-When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/audit-dependencies/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Keep the severity, CVE, and fix fields from the template above. Record a missing tool or a failed command in `tools_unavailable`.
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `<plugin root>/skills/tools/audit-dependencies/references/output.schema.json`, which is `${CLAUDE_PLUGIN_ROOT}` in Claude Code or the repository root otherwise. Keep the severity, CVE, and fix fields from the template above. Record a missing tool or a failed command in `tools_unavailable`.
 
 ## Rules
 

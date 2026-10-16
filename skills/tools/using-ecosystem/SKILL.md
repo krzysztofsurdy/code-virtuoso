@@ -1,178 +1,156 @@
 ---
 name: using-ecosystem
-description: "Ecosystem discovery advisor. Use when the user asks 'what skill should I use', 'what agent should I delegate to', 'which team fits this task', or when onboarding to available skills, agents, and teams. Scans all installed skills at runtime, not limited to any single plugin or vendor. Triggers: 'which skill', 'which agent', 'what do I use for', 'orient me', 'what tools do I have'."
+description: Ecosystem discovery advisor. Use when the user asks which skill, agent, or workflow fits a task, how to delegate, or what tools are installed. Reads the installed skills and agents at runtime. Triggers include 'which skill', 'which agent', 'orient me'.
 user-invocable: true
 argument-hint: "[optional: situation or topic]"
 ---
 
 # Using ecosystem
 
-Discover the right skill, agent, or team for the situation at hand. This skill teaches a discovery process. It does not maintain a hardcoded inventory, and every recommendation comes from scanning what is installed.
+Find the right skill, agent, or workflow for the situation at hand. The map below says what Code Virtuoso ships. Installs vary, so confirm with a scan before recommending anything.
 
-## Core Principles
+## Core principles
 
 | Principle | Meaning |
 |---|---|
-| **Scan, don't guess** | Scan installed skills/agents/teams before every recommendation. Never assume something is available. |
-| **Match situation, not topic** | Pick the skill whose description triggers match what the user is doing, not the skill whose title only loosely matches. |
-| **Agents act, skills inform** | Skills are reference material. Agents are actors. Delegate work to an agent; consult a skill. |
-| **Teams for multi-role work** | If the work needs 3+ agents coordinating, check for a pre-composed team before assembling ad-hoc. |
-| **Narrower wins** | If two skills overlap, pick the one with the tighter trigger match. |
+| **Scan, don't assume** | The matrix names what the repository ships. What the user has installed may be a subset, so check before you recommend. |
+| **Match situation, not topic** | Pick the item whose description matches what the user is doing, not the one whose title loosely fits. |
+| **Agents act, skills inform** | Delegate work to an agent. Consult a skill for procedure or reference. |
+| **Narrower wins** | When two items overlap, pick the one with the tighter trigger match. |
+| **Workflow only for multi-role work** | A workflow costs several agents' worth of tokens. If one agent can do the job, use one. |
 | **Chain when work crosses domains** | Multi-step tasks often need two or three agents in sequence. |
-
----
 
 ## Step 1: Scan what is installed
 
-Run the discovery commands from [discovery-commands](references/discovery-commands.md) to build a live index of installed skills, agents, and teams. Read each frontmatter `name` and `description` field.
+Run the commands in [discovery-commands](references/discovery-commands.md) to list installed skills, agents, and workflows, then read each `name` and `description`. Skip this only when the user asks what the library offers in general.
 
-Do not skip this step and do not recommend from memory. The installed set varies per user and per project.
+## Step 2: Classify the situation
 
----
-
-## Step 2: Classify the user's situation
-
-Determine what the user needs:
-
-| Signal | Category |
+| Signal | Use |
 |---|---|
-| Needs reference material, patterns, or principles | **Knowledge skill** |
-| Needs to generate a specific output (ticket, PR message, report, rules file) | **Tool skill** |
-| Needs to follow a step-by-step operational procedure | **Playbook skill** |
-| Needs framework-specific component reference | **Framework skill** |
-| Needs a single focused task done (investigate, review, implement) | **Specialist agent** |
-| Needs ongoing domain ownership (requirements, architecture, QA) | **Role agent** |
-| Needs coordinated multi-agent delivery (feature, release, review cycle) | **Team** |
-
----
+| Needs a step-by-step procedure for a recurring job | Playbook skill |
+| Needs a specific output (ticket, PR message, report, rules file) | Tool skill |
+| Needs principles or patterns for a topic | Knowledge skill |
+| Needs framework or AI-engineering guidance | Framework or AI skill |
+| Needs one scoped task done (investigate, review, implement) | Specialist agent |
+| Needs ongoing ownership of a domain (requirements, design, QA) | Role agent |
+| Needs several roles to coordinate (feature delivery, multi-angle review, a decision with trade-offs) | Workflow |
+| Needs a long backlog run unattended | `loop-virtuoso` plugin |
 
 ## Step 3: Match and recommend
 
-### Decision tree
+1. Look the situation up in the decision matrix below, then confirm the item appeared in the scan.
+2. Read the candidate's `description` and match on its trigger phrases.
+3. Skills stack. Recommend two or three together when the task crosses topics, such as `tdd` with `security`.
+4. If nothing installed fits, say so and name the plugin or skill that would, with its install route (see [Installing](#installing)).
 
-```
-User request
-   |
-   v
-Does it need multiple agents coordinating?
-   +-- Yes --> Scan bundled and project teams for a match
-   |            +-- Found --> Recommend the team
-   |            +-- None  --> Assemble ad-hoc from agents (see chaining below)
-   |
-   +-- No --> Is it a well-scoped actionable task?
-               +-- Yes --> Scan agents/ for a matching specialist or role
-               +-- No  --> Scan skills/ for a matching skill
-                            Use the category signals from Step 2
-```
+### Decision matrix
 
-### Matching rules
-
-1. **Read the `description` field** of each candidate. Match on trigger phrases, not the name.
-2. **Prefer the narrower skill.** `database-design` beats `clean-architecture` for a schema question.
-3. **Check `user-invocable`.** If the user wants to run something interactively, only recommend user-invocable skills.
-4. **Skills stack.** You can recommend multiple knowledge skills for one task (e.g., `security` + `solid` for a security review).
-5. **Never recommend what is not installed.** If a skill would fit but is not present, suggest installing it with `npx skills add`.
-
----
+| Situation | Use |
+|---|---|
+| A vague idea, no written spec | `brainstorming`, then `spec-driven-development` |
+| An approved spec to turn into a plan and tasks | `spec-driven-development` |
+| A ticket to carry through to a PR | `ticket-delivery` |
+| Implementing a change or fixing a bug | `tdd`, or the `implementer` agent in a worktree |
+| Unfamiliar code to understand | `investigator` agent |
+| A diff to review | `reviewer` agent. For a significant change use the `review-squad` workflow. For a fresh-eyes pass use `cold-reviewer` |
+| A design decision or ADR | `architect` agent. For a contested choice use the `war-room` workflow |
+| A feature from requirements to QA sign-off | `development-team` workflow, or `product-manager`, `architect`, `backend-dev`, `frontend-dev`, `qa-engineer` in sequence |
+| Plans that may not line up, or a plan that broke mid-work | `plan-auditor` agent |
+| Proof a change meets its acceptance criteria | `acceptance-verifier` agent |
+| Code smells and hotspots | `refactor-scout` agent, with `refactoring` for technique detail |
+| Missing tests | `test-gap-analyzer` agent |
+| A database migration | `migration-planner` agent, with `database-design` |
+| Dependency health | `dependency-auditor` agent. For Composer use `composer-dependencies` |
+| Changelog, API docs, migration guide | `doc-writer` agent |
+| Review comments or failing CI on an open PR | `pr-feedback` |
+| Ready to merge, open a PR, or clean up | `finishing-branch`, with `pr-message-writer` |
+| Pausing mid-task or resuming | `handoff` |
+| Several worktrees or parallel sessions | `worktree-ops` |
+| Splitting work across agents | `agent-orchestration` |
+| Instruction files that get ignored or keep growing | `context-engineering`, with the `instruction-auditor` agent |
+| Hardening an agent setup | `hooks-and-guardrails`, with `agent-security` |
+| Library API questions | `docs-lookup` |
+| Designing an LLM agent or workflow | `agent-design`, plus `llm-evals`, `llm-observability`, `mcp-server-development` |
+| Building with the Vercel AI SDK or LangChain | `vercel-ai-sdk` or `langchain-components` |
+| Symfony, Django, or PHP version work | `symfony-components`, `symfony-upgrade`, `django-components`, `php-upgrade` |
+| Writing a ticket, report, or stakeholder update | `ticket-writer`, `report-writer`, `stakeholder-update-writer` |
+| Writing agent rules files, agents, or plugins | `agentic-rules-writer`, `agent-creator`, `plugin-creator` |
+| Running a compiled backlog with an objective gate | `loop-virtuoso` plugin (Claude Code) |
+| Claiming work is done | `verification-before-completion` |
 
 ## Step 4: Chain when needed
 
-When a single skill or agent is not enough, chain them. Common patterns:
-
-| Pattern | Shape |
-|---|---|
-| **Investigation flow** | Read-only agent --> Design agent --> Implementation agent --> Review agent |
-| **Feature flow** | Requirements role --> Architecture role --> Dev roles (parallel) --> QA role |
-| **Review flow** | Smell scanner --> Reviewer --> (optional) Implementer for fixes |
-| **Coverage flow** | Test gap analyzer --> Implementer --> Reviewer |
-
-These are guidelines. Skip steps that do not apply and add steps that do. If a pre-composed team matches the chain, use the team instead.
-
----
+Common chains are in [chaining-patterns](references/chaining-patterns.md). They are templates: skip steps that do not apply. If a workflow matches the chain, run the workflow instead.
 
 ## Step 5: Compass (what next?)
 
-When the user has just finished work with an agent, skill, or team and asks "what next?" or "where do I go from here?":
+When the user has just finished something and asks "what next?":
 
-1. Ask what they just completed (which agent/skill/team, what output they have)
-2. Consult [compass](references/compass.md) for the recommended next step
-3. Verify the recommended agent/skill/team is installed (scan first, do not recommend from memory)
-4. Present the recommendation with one-line reasoning
-5. If multiple paths exist, present 2-3 options and let the user choose
-6. If nothing chains naturally, say so. Not every task needs a follow-up
+1. Ask what they completed and what output they have.
+2. Read [compass](references/compass.md) for the likely next step.
+3. Confirm the next step is installed.
+4. Give one recommendation with a one-line reason, or two or three options if the path forks.
+5. If nothing chains naturally, say so.
 
-Compass mode is conversational. Ask the user, do not scan the filesystem to infer what happened.
+Compass is conversational. Ask the user; do not scan the filesystem to guess what happened.
 
----
+## What the library contains
 
-## Ecosystem Structure
-
-The ecosystem has five layers. The structure stays the same when skills are added.
-
-| Layer | Location | Format | Purpose |
-|---|---|---|---|
-| **Skills** | `skills/{category}/{name}/SKILL.md` | Markdown + YAML frontmatter | Reference material, tools, playbooks, roles, frameworks |
-| **Agents** | `agents/{name}.md` | Markdown + YAML frontmatter | Specialist and role sub-agents |
-| **Teams** | Bundled inside dispatching skill or at project `teams/{name}.md` | Markdown + YAML frontmatter | Pre-composed agent teams with coordination protocols |
-| **Specs** | `spec/*.md` | Markdown | Format specifications for skills, agents, teams, plugins |
-| **Plugins** | `.claude-plugin/marketplace.json` | JSON | Distribution bundles grouping skills and agents |
+| Layer | Location | Purpose |
+|---|---|---|
+| **Skills** | `skills/{knowledge,tools,playbooks,frameworks,ai}/` | Reference material, tools, procedures, framework guidance, AI engineering |
+| **Agents** | `agents/*.md` | Specialist and role sub-agents. Role agents read their templates from `roles/<name>/` |
+| **Workflows** | `workflows/*.js` | Claude Code scripts for the review squad, development team, and war room |
+| **loop-virtuoso** | `plugins/loop-virtuoso/` | Claude Code plugin that runs a backlog one verified step at a time |
+| **Codex agents** | `codex/agents/*.toml` | The same agents as Codex custom agents, installed by `scripts/install-codex-agents.sh` |
 
 ### Skill categories
 
-| Category | Path | Invocation |
+| Category | Holds | How it runs |
 |---|---|---|
-| Knowledge | `skills/knowledge/` | Auto-loaded when relevant |
-| Tools | `skills/tools/` | User-invocable slash commands |
-| Playbooks | `skills/playbooks/` | User-invocable slash commands |
-| Roles | `skills/roles/` | Auto-loaded by matching role agents |
-| Frameworks | `skills/frameworks/{name}/` | Loaded when the framework is in play |
+| `knowledge` | Principles and reference | Some load automatically. The textbook ones (`solid`, `design-patterns`, `clean-architecture`, `refactoring`, `testing`, `api-design`, `database-design`, `cicd`, `performance`, `microservices`, `scrum`) run only when named, for example `/solid` |
+| `tools` | Outputs and interactive generators | By name. The CI wrappers (`review-pr`, `review-pr-cold`, `scan-refactors`, `find-test-gaps`, `audit-dependencies`, `plan-migration`, `verify-acceptance`) are for headless runs |
+| `playbooks` | Step-by-step procedures | By name or when the task matches |
+| `frameworks` | Symfony, Django, LangChain, PHP, Vercel AI SDK | When the framework is in play |
+| `ai` | Agent design, evals, observability, MCP servers | When building LLM features |
 
 ### Agent tiers
 
 | Tier | Scope | Examples |
 |---|---|---|
-| Specialist | Single repeatable task (stateless) | investigator, reviewer, refactor-scout |
-| Role | Domain of responsibility (some carry memory) | architect, backend-dev, qa-engineer |
+| Specialist | One repeatable task, stateless | `investigator`, `reviewer`, `refactor-scout`, `plan-auditor` |
+| Role | A domain of responsibility, some keep project memory | `architect`, `product-manager`, `backend-dev`, `qa-engineer` |
 
-### Team spawning modes
+## Installing
 
-| Mode | When | How |
-|---|---|---|
-| Peer | Platform supports agent-to-agent messaging | Lead creates team, teammates claim tasks and message each other |
-| Sequential | All other platforms | Lead dispatches one sub-agent per phase, passes outputs forward |
-
----
+| Harness | Route |
+|---|---|
+| Claude Code | `/plugin marketplace add krzysztofsurdy/code-virtuoso`, then install the plugins you want. Install `loop-virtuoso` for the delivery loop |
+| Codex | `codex plugin marketplace add krzysztofsurdy/code-virtuoso` for skills, and `scripts/install-codex-agents.sh` for agents. See `codex/README.md` |
+| Other tools | Copy `skills/` and `agents/` to where the tool reads them, or run `npx skills add krzysztofsurdy/code-virtuoso` |
 
 ## Quality checklist
 
-Before answering a "which skill/agent/team" question:
-
-- [ ] Did I scan installed skills/agents/teams rather than recommending from memory?
-- [ ] Did I match on the description's trigger phrases, not just the name?
-- [ ] Did I consider whether a narrower, more specific skill exists?
-- [ ] Did I recommend an agent when the work is actionable, not just reference material?
-- [ ] Did I check for a pre-composed team when the work needs 3+ agents?
-- [ ] Did I mention chaining when the work crosses domains?
-- [ ] Did I avoid recommending something that is not installed?
-
----
+- [ ] Did the recommendation come from a scan of what is installed, not from memory?
+- [ ] Did it match on trigger phrases, not just the name?
+- [ ] Is there a narrower item that fits better?
+- [ ] Did it pick an agent for actionable work and a skill for reference?
+- [ ] Did it use a workflow only when several roles must coordinate?
+- [ ] Did it avoid presenting something uninstalled as available?
 
 ## Critical rules
 
-1. **Scan first.** Every recommendation starts with a live scan of what is installed. No hardcoded lists.
-2. **Situation over title.** Match what the user is doing, not what the skill is called.
-3. **Specialist for scoped tasks, role for domain work, team for multi-role delivery.**
-4. **Chain over stretch.** If a single skill does not cover the work, combine two. Do not force one skill beyond its fit.
-5. **Never recommend uninstalled skills as available.** Suggest installing with a hint, not as a next step.
-6. **Respect agent boundaries.** Read-only agents do not edit files. Dev agents run in worktrees.
-7. **Category is a signal.** Tools for interactive output, playbooks for procedures, knowledge for reference.
-
----
+1. **Confirm before recommending.** The matrix is the shipped set, not the installed set.
+2. **Situation over title.** Match what the user is doing.
+3. **Specialist for scoped tasks, role for domain work, workflow for multi-role delivery.**
+4. **Chain over stretch.** Combine two items rather than forcing one beyond its fit.
+5. **Respect agent boundaries.** Read-only agents do not edit files. Dev agents run in worktrees.
 
 ## Reference files
 
 | Reference | Contents |
 |---|---|
-| [discovery-commands](references/discovery-commands.md) | Shell commands to scan installed skills, agents, and teams at runtime |
-| [chaining-patterns](references/chaining-patterns.md) | Multi-agent chain templates with when-to-use guidance |
-| [compass](references/compass.md) | "What next?" recommendation map for post-task navigation |
+| [discovery-commands](references/discovery-commands.md) | Commands to list installed skills, agents, and workflows in Claude Code, Codex, and other tools |
+| [chaining-patterns](references/chaining-patterns.md) | Multi-step chain templates with when-to-use guidance |
+| [compass](references/compass.md) | "What next?" map for post-task navigation |

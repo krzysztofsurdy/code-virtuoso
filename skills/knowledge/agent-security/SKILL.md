@@ -1,6 +1,6 @@
 ---
 name: agent-security
-description: "Security rules for AI agents: the coding agents a team runs and the LLM or agent features it builds. Covers prompt injection, lethal trifecta and Rule of Two session design, secrets, sandbox and permission baselines, vetting skills, plugins and MCP servers, untrusted model output, approval gates, OWASP LLM and Agentic mapping. Use when setting up an agent, adding tools or MCP servers, installing third-party skills, or reviewing an LLM feature."
+description: Security rules for AI agents, both the coding agents a team runs and the LLM features it builds. Covers prompt injection, the lethal trifecta, secrets, sandbox baselines, vetting skills and MCP servers, and approval gates. Use when setting up an agent, adding tools, or reviewing an LLM feature.
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---
@@ -161,4 +161,6 @@ The full tables are in [owasp-llm-agentic-mapping](references/owasp-llm-agentic-
 | Reviewing web application security (injection, authz, headers) | `security` |
 | Defining evidence for completion claims | `verification-before-completion` |
 | Securing pipeline credentials and deployment gates | `cicd` |
-| Designing tool APIs an agent will call | `api-design` |
+| Designing tool APIs an agent will call | `api-design`, `mcp-server-development` |
+| Designing the agent, its loop, caps, and tool permissions | `agent-design` |
+| Red-team and injection regression suites | `llm-evals` |

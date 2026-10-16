@@ -126,7 +126,7 @@ See [Resilience Patterns Reference](references/resilience-patterns.md) for imple
 
 | Situation | Recommended Skill |
 |---|---|
-| Domain modeling and bounded context design | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for clean architecture guidance |
-| Testing microservices (contract tests, integration tests) | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for testing strategies |
-| API design for service interfaces | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for API design principles |
-| Performance tuning individual services | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for performance optimization |
+| Domain modeling and bounded context design | `clean-architecture` |
+| Testing microservices (contract tests, integration tests) | `testing` |
+| API design for service interfaces | `api-design` |
+| Performance tuning individual services | `performance` |

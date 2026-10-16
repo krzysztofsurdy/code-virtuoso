@@ -1,6 +1,6 @@
 ---
 name: docs-lookup
-description: Fetch current, version-correct official documentation on demand instead of answering library API questions from memory. Use whenever you need a method signature, config key, CLI flag, attribute or constructor argument, or anything that changes between versions, and before writing code against a library version not yet verified this session. Context7 preferred, with fallbacks.
+description: Fetch current, version-correct official documentation instead of answering library API questions from memory. Use when you need a method signature, config key, CLI flag, or anything that changes between versions. Context7 preferred, with fallbacks.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---
@@ -98,6 +98,8 @@ Documentation tools feed text into the agent's context, so they are an injection
 | Upgrading a framework or runtime across versions | `symfony-upgrade`, `php-upgrade` |
 | Updating packages and reading changelogs | `composer-dependencies` |
 | Django or LangChain work | `django-components`, `langchain-components` |
+| Vercel AI SDK work | `vercel-ai-sdk` |
+| Building an MCP server or client | `mcp-server-development` |
 | Judging whether fetched content is safe to act on | `security` |
 | Confirming the written code actually runs | `verification-before-completion` |
 | Docs and installed behavior disagree | `debugging` |

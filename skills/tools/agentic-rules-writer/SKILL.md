@@ -1,6 +1,6 @@
 ---
 name: agentic-rules-writer
-description: Interactive tool to generate tailored rules and instruction files for any AI coding agent. Use when the user asks to set up agent rules, configure Claude Code instructions, create Cursor rules, write Windsurf rules, generate Copilot instructions, or establish consistent AI coding standards for a team. Supports 13+ agents (Claude Code, Cursor, Windsurf, Copilot, Gemini, Codex, Cline, OpenCode, Continue, Trae, Roo Code, Amp) with global, team-shared, and dev-specific scopes. Defers to the `using-ecosystem` meta-skill for ecosystem discovery (skills, agents, recommendations) and runs an interactive questionnaire for workflow preferences.
+description: Interactive tool that generates rules and instruction files for AI coding agents (Claude Code, Cursor, Windsurf, Copilot, Gemini, Codex, and others). Use when asked to set up agent rules, write CLAUDE.md or AGENTS.md style instructions, or standardize AI coding rules for a team.
 user-invocable: true
 argument-hint: "[optional: agent-name e.g. claude, cursor, windsurf, codex]"
 ---

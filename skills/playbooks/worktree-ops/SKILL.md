@@ -1,6 +1,6 @@
 ---
 name: worktree-ops
-description: Manage git worktrees for isolated parallel development sessions. Create, list, switch between, and remove worktrees with safety checks for uncommitted changes and unpushed commits. Use when the user wants to work on multiple branches simultaneously, run parallel sessions, or isolate experimental changes.
+description: Manages git worktrees for isolated parallel work, with safety checks for uncommitted changes and unpushed commits. Use to work on several branches at once, run parallel sessions, or isolate experiments.
 user-invocable: true
 argument-hint: "[command: create, list, switch, remove] [optional: worktree-name]"
 ---
@@ -175,6 +175,6 @@ Remove one or all worktrees from the current repository.
 
 | Situation | Recommended Skill |
 |---|---|
-| When managing branches and commits | `git-workflow` |
+| When managing branches and commits | `finishing-branch` |
 | When executing a TDD implementation in an isolated worktree | `implementer` agent |
 | When following a full ticket workflow that uses worktrees | `ticket-delivery` |

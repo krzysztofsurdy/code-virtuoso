@@ -47,7 +47,7 @@ The conversion:
 
 - keeps `name` and `description`, and uses the agent body as `developer_instructions`,
 - sets no `model`, so Codex uses the model you configured,
-- adds "Do not modify files." to agents whose tool list has no `Edit` or `Write`,
+- adds "Do not modify files." to agents whose tool list has no `Edit` or `Write` and that set no `memory` (Claude Code lets a memory agent write its notes and records),
 - rewrites `${CLAUDE_PLUGIN_ROOT}` to `${CODE_VIRTUOSO_HOME}`.
 
 ## Limits

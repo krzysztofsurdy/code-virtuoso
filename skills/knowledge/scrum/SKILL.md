@@ -136,7 +136,7 @@ Before committing to a Sprint Goal, verify:
 
 | Situation | Recommended Skill |
 |---|---|
-| Writing user stories with acceptance criteria | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for testing patterns |
-| Planning API work in a sprint | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for API design principles |
-| Sprint involves architecture decisions | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for clean architecture guidance |
-| Sprint retrospective reveals code quality issues | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for refactoring techniques |
+| Writing user stories with acceptance criteria | `testing` |
+| Planning API work in a sprint | `api-design` |
+| Sprint involves architecture decisions | `clean-architecture` |
+| Sprint retrospective reveals code quality issues | `refactoring` |

@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Writes a short handoff note when a session ends mid-task so the next session, agent, or person can continue without re-discovery, and resumes work from one. Use when asked to hand off, save progress, wrap up for now, or continue from a handoff note."
+description: Writes a short handoff note when a session ends mid-task so the next session or person can continue without re-discovery, and resumes from one. Use when asked to hand off, save progress, or continue from a handoff note.
 user-invocable: true
 argument-hint: "[write | resume <path>]"
 ---
@@ -54,7 +54,7 @@ Date: <YYYY-MM-DD>   Branch: <branch>   Base: <commit or PR>
 
 ## Where to save it
 
-Save to the project, under the shared config folder from `spec/config-spec.md`:
+Save to the project, under the shared `.code-virtuoso/` folder (convention: https://github.com/krzysztofsurdy/code-virtuoso/blob/main/spec/config-spec.md):
 
 ```
 <project root>/.code-virtuoso/handoff/<YYYY-MM-DD>-<slug>.md

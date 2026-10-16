@@ -8,7 +8,7 @@
 - [Setup and scope](#setup-and-scope)
 - [Rules](#rules)
 
-Tuning lets agents adapt to team preferences without modifying the agent definition itself. Settings live in the layered Code Virtuoso config, under `agents.<agent-name>`. The agent reads them and never asks the user, because a subagent cannot prompt. A setup run in the main session asks the questions and writes the answers. The storage rules (paths, layers, precedence, secrets) are in [spec/config-spec.md](../../../../spec/config-spec.md).
+Tuning lets agents adapt to team preferences without modifying the agent definition itself. Settings live in the layered Code Virtuoso config, under `agents.<agent-name>`. The agent reads them and never asks the user, because a subagent cannot prompt. A setup run in the main session asks the questions and writes the answers. Layers, from lowest to highest precedence: defaults inside the agent, the user file (`$CODE_VIRTUOSO_CONFIG_HOME/config.json`, else `~/.config/code-virtuoso/config.json`), the committed project file (`.code-virtuoso/config.json`), and the ignored local project file (`.code-virtuoso/config.local.json`). Objects deep-merge, arrays and scalars replace, and secrets are never stored. The full rules are in [spec/config-spec.md](https://github.com/krzysztofsurdy/code-virtuoso/blob/main/spec/config-spec.md).
 
 Do not save settings next to the agent file. In a plugin install that directory is a version cache that is replaced on update, and in a skills.sh install it is deleted on reinstall.
 

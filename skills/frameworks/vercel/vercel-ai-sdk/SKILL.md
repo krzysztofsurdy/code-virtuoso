@@ -1,6 +1,6 @@
 ---
 name: vercel-ai-sdk
-description: Decision guide for building with the Vercel AI SDK (`ai` and `@ai-sdk/*`) in TypeScript. Covers the version matrix, reading the installed major, core versus UI packages, the agent loop and stop conditions, structured output, tool approval, streaming to a UI, provider switching, testing with mock models, and migration traps. API details come from live docs. Use when building or upgrading AI SDK code.
+description: Decision guide for the Vercel AI SDK (`ai` and `@ai-sdk/*`) in TypeScript, covering the version matrix, agent loop, structured output, tool approval, streaming, testing, and migration traps. Use when building or upgrading AI SDK code.
 user-invocable: false
 ---
 
@@ -176,6 +176,9 @@ The vercel/ai repository includes a migration skill for v6 to v7 that lists ever
 | Designing the agent, caps, memory, multi-agent | `agent-design` |
 | Building the MCP server your agent calls | `mcp-server-development` |
 | Test strategy beyond mocks | `testing` |
-| Prompt injection, secrets, approval policy review | `security` |
+| Prompt injection, secrets, approval policy review | `agent-security` |
+| Evals and regression tests for the app | `llm-evals` |
+| OpenTelemetry traces, token cost, and latency | `llm-observability` |
+| The Python equivalent | `langchain-components` |
 | Tuning latency and token cost | `performance` |
 | Debugging a failing run | `debugging` |

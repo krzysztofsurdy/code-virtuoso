@@ -16,7 +16,7 @@
 
 The ticket-delivery skill adapts to your environment through saved choices in the layered Code Virtuoso config, under the `ticket-delivery` namespace. An interactive setup (main session only) fills in what is missing and writes each answer to the right layer. The workflow phases refer to the keys by name, for example `mainBranch` or `commands.test`.
 
-Choices are never saved next to the skill. That directory is replaced on plugin updates and deleted on reinstall, and it cannot be shared with a team. The full convention is in `spec/config-spec.md` of the Code Virtuoso repository. This file holds everything the skill needs on its own.
+Choices are never saved next to the skill. That directory is replaced on plugin updates and deleted on reinstall, and it cannot be shared with a team. The full convention is in https://github.com/krzysztofsurdy/code-virtuoso/blob/main/spec/config-spec.md. This file holds everything the skill needs on its own.
 
 ## Layers and paths
 

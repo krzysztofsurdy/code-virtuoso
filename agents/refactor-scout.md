@@ -22,7 +22,7 @@ You receive one of:
 1. **Discover** - Find relevant files using Glob patterns and directory structure
 2. **Measure** - Assess each file for size, complexity, and coupling
 3. **Classify** - Categorize findings by code smell type
-4. **Recommend** - Map each smell to a specific refactoring technique using the table below. When the right technique is unclear or you need its steps, read the catalog entry on demand at `skills/knowledge/refactoring/references/<technique>.md` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Read only the entries you need.
+4. **Recommend** - Map each smell to a specific refactoring technique using the table below. When the right technique is unclear or you need its steps, read the catalog entry on demand at `<plugin root>/skills/knowledge/refactoring/references/<technique>.md`, which is `${CLAUDE_PLUGIN_ROOT}` in Claude Code or the repository root otherwise. Read only the entries you need.
 
 ## Code smell categories
 
@@ -97,7 +97,7 @@ For each finding:
 
 ### Output (JSON)
 
-When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/scan-refactors/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Each hotspot becomes one entry in `hotspots`, with a `severity` of `critical`, `moderate`, or `minor`. Category names are `bloaters`, `oo_abusers`, `change_preventers`, `dispensables`, and `couplers`.
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `<plugin root>/skills/tools/scan-refactors/references/output.schema.json`, which is `${CLAUDE_PLUGIN_ROOT}` in Claude Code or the repository root otherwise. Each hotspot becomes one entry in `hotspots`, with a `severity` of `critical`, `moderate`, or `minor`. Category names are `bloaters`, `oo_abusers`, `change_preventers`, `dispensables`, and `couplers`.
 
 ## Rules
 

@@ -1,6 +1,6 @@
 ---
 name: mcp-server-development
-description: Design and ship MCP servers and agent tools. Covers MCP versus CLI versus skill, tool design (few workflow-level tools, naming, response formats, pagination, actionable errors), spec 2026-07-28 changes and deprecations, OAuth 2.1 auth, security rules, evals, and SDK choice. Use when building, reviewing, or migrating an MCP server or any tool an LLM will call.
+description: Design and ship MCP servers and agent tools, covering tool design, spec changes, OAuth, security, and SDK choice. Use when building, reviewing, or migrating an MCP server or any tool an LLM will call.
 user-invocable: false
 ---
 
@@ -141,6 +141,9 @@ After the first query, check that the `Source:` URL names the version you expect
 | Designing the agent that calls your tools | `agent-design` |
 | Fetching current SDK or spec details | `docs-lookup` |
 | REST contract design under the tools | `api-design` |
-| Threat review, secrets, and input handling | `security` |
+| Threat review for tools an agent calls (injection, permissions) | `agent-security` |
+| Secrets and input handling in the server | `security` |
+| Calling the server from a TypeScript or Python agent | `vercel-ai-sdk`, `langchain-components` |
+| Evaluating whether agents use the tools well | `llm-evals` |
 | Test strategy for the server | `testing` |
 | Debugging a failing tool call or transport | `debugging` |

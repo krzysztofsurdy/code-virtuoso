@@ -1,6 +1,6 @@
 ---
 name: langchain-components
-description: Decision guide for building agents with LangChain, LangGraph, and Deep Agents in Python. Covers choosing between create_agent, a LangGraph graph, and Deep Agents, picking a multi-agent pattern, checkpointers and human-in-the-loop, middleware order, structured output, memory, testing with fake models, and tool safety. API details come from live docs, not this file. Use when designing, building, or reviewing LangChain agents or RAG apps.
+description: Decision guide for building agents with LangChain, LangGraph, and Deep Agents in Python, covering framework choice, multi-agent patterns, checkpointers, middleware, and tool safety. Use when designing, building, or reviewing LangChain agents or RAG apps.
 user-invocable: false
 ---
 
@@ -204,6 +204,11 @@ The LangChain team maintains agent skills for LangChain, LangGraph, and Deep Age
 | Fetching current library docs | `docs-lookup` |
 | Designing the surrounding service or API | `api-design` |
 | Test strategy beyond agents | `testing` |
-| Reviewing agent code for injection and secrets | `security` |
+| Designing the agent, caps, memory, multi-agent | `agent-design` |
+| Building the MCP server the agent calls | `mcp-server-development` |
+| Reviewing agent code for injection and secrets | `agent-security` |
+| Evals and regression tests for the agent | `llm-evals` |
+| Traces, token cost, and latency | `llm-observability` |
+| The TypeScript equivalent | `vercel-ai-sdk` |
 | Debugging a failing agent run | `debugging` |
 | Tuning latency and token cost | `performance` |

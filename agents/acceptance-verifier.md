@@ -76,4 +76,4 @@ Criteria without a test exercising the acceptance condition:
 
 ### Output (JSON)
 
-When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/verify-acceptance/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). The criteria matrix becomes `criteria`. If either input is missing, set `missing_input` and leave the other fields empty instead of writing prose.
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `<plugin root>/skills/tools/verify-acceptance/references/output.schema.json`, which is `${CLAUDE_PLUGIN_ROOT}` in Claude Code or the repository root otherwise. The criteria matrix becomes `criteria`. If either input is missing, set `missing_input` and leave the other fields empty instead of writing prose.

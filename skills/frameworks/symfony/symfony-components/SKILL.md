@@ -1,6 +1,6 @@
 ---
 name: symfony-components
-description: Opinionated defaults, version facts, and pitfalls for working with Symfony and its components (HttpKernel, DependencyInjection, Messenger, Form, Validator, Cache, Lock, Workflow, Serializer, Security, Console and others). Use when writing, reviewing, or upgrading Symfony code, to pick the installed version's API and avoid known traps. Fetch exact API details from live docs instead of memory.
+description: Opinionated defaults, version facts, and pitfalls for Symfony and its components. Use when writing, reviewing, or upgrading Symfony code, to match the installed version's API and avoid known traps.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---

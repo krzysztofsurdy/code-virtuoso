@@ -1,6 +1,6 @@
 ---
 name: agent-design
-description: Framework-agnostic guide to designing LLM agents and workflows. Covers workflow versus agent, the five workflow patterns, harness anatomy (loop, stop and cost caps, tool permissions, hooks), human approval, memory, multi-agent trade-offs, durable execution, error recovery, structured outputs, model routing, and framework choice. Use before picking a framework or when reviewing an agent design.
+description: Framework-agnostic guide to designing LLM agents and workflows. Covers workflow versus agent, loop and cost caps, tool permissions, approval, memory, and multi-agent trade-offs. Use before picking a framework or when reviewing an agent design.
 user-invocable: false
 ---
 
@@ -149,7 +149,10 @@ Facts above were checked on 2026-10-21 against each project's docs. Majors move 
 | Building agents in TypeScript with the Vercel AI SDK | `vercel-ai-sdk` |
 | Building agents with LangChain, LangGraph, or Deep Agents | `langchain-components` |
 | Fetching current library docs | `docs-lookup` |
-| Prompt injection, secrets, and permission review | `security` |
+| Prompt injection, secrets, and permission review for agents | `agent-security` |
+| Web application security around the agent | `security` |
+| Measuring whether the agent works, graders and regression suites | `llm-evals` |
+| Tracing runs, token cost, and latency | `llm-observability` |
 | Test strategy for agents | `testing` |
-| Tracing cost and latency | `performance` |
+| General latency and bottleneck diagnosis | `performance` |
 | Debugging a failing agent run | `debugging` |

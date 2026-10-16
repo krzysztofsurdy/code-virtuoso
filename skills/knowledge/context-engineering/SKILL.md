@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: How to budget and structure what a coding agent sees. Use when writing or trimming AGENTS.md, CLAUDE.md, rules or skill descriptions, deciding where an instruction belongs, fixing an agent that ignores instructions or drifts in a long session, or planning compaction, progress notes and subagent offloading.
+description: How to budget and structure what a coding agent sees. Use when writing or trimming AGENTS.md, CLAUDE.md, rules, or skill descriptions, fixing an agent that ignores instructions or drifts, or planning compaction and progress notes.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---
@@ -131,8 +131,7 @@ For work that spans many sessions or compactions, keep a progress file and a tas
 | Situation | Recommended Skill |
 |---|---|
 | Fetching version-correct library docs instead of pasting them | `docs-lookup` |
-| Running several agents with separate windows | `dispatching-parallel-agents` |
-| Executing a plan task by task with fresh subagents | `subagent-driven-development` |
+| Running several agents with separate windows, or executing a plan task by task with fresh subagents | `agent-orchestration` |
 | Proving work is complete before closing a long task | `verification-before-completion` |
 | Generating rules files for a specific agent tool | `agentic-rules-writer` |
 | Reviewing instruction files for secrets, hidden characters or injection | `security` |

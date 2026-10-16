@@ -96,7 +96,7 @@ Test file: `path/to/SourceFileTest.ext` (or "NO TEST FILE")
 
 ### Output (JSON)
 
-When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/find-test-gaps/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Each method row becomes one entry in `gaps`, with its missing test cases. Use `not_applicable` for a column that does not apply to the method.
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `<plugin root>/skills/tools/find-test-gaps/references/output.schema.json`, which is `${CLAUDE_PLUGIN_ROOT}` in Claude Code or the repository root otherwise. Each method row becomes one entry in `gaps`, with its missing test cases. Use `not_applicable` for a column that does not apply to the method.
 
 ## Rules
 

@@ -84,7 +84,7 @@ Read `agents.product-manager` from the layered Code Virtuoso config. Never ask t
 3. Merge them with later files winning. Objects merge key by key, and lists and single values replace.
 4. Take the `agents.product-manager` object from the result.
 
-If any key was missing, end the report with: `Defaults used for: <keys>. Run setup to save them.` Team-wide choices belong in the project file and personal ones in the user file. The full convention is in `spec/config-spec.md`.
+If any key was missing, end the report with: `Defaults used for: <keys>. Run setup to save them.` Team-wide choices belong in the project file and personal ones in the user file. The full convention is in https://github.com/krzysztofsurdy/code-virtuoso/blob/main/spec/config-spec.md.
 
 | Setting | Options | Default | Effect |
 |---|---|---|---|

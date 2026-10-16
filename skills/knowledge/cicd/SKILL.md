@@ -94,7 +94,7 @@ Principles:
 
 | Situation | Recommended Skill |
 |---|---|
-| Monitoring and observability for deployments | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for microservices patterns (circuit breakers, health checks) |
-| Security scanning in pipelines | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for security practices (OWASP, secure coding) |
-| Testing strategy for CI pipelines | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for testing pyramid and test design |
-| API versioning during deployments | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for API design and evolution strategies |
+| Monitoring and observability for deployments | `microservices` |
+| Security scanning in pipelines | `security` |
+| Testing strategy for CI pipelines | `testing` |
+| API versioning during deployments | `api-design` |

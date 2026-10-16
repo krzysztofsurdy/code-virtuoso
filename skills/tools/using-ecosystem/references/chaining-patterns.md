@@ -1,78 +1,93 @@
 # Chaining patterns
 
-When a single skill or agent is not enough, chain them. These patterns describe common multi-step flows. Treat them as templates: skip steps that do not apply and add steps that do.
+When one skill or agent is not enough, chain them. These are templates: skip steps that do not apply and add steps that do. If a workflow matches the chain, run the workflow instead of assembling it by hand.
 
-If a pre-composed team exists that matches the chain, use the team instead of assembling ad-hoc.
+## Contents
+
+- [Pattern index](#pattern-index)
+- [Investigation chain](#investigation-chain)
+- [Feature delivery chain](#feature-delivery-chain)
+- [Code health chain](#code-health-chain)
+- [Migration chain](#migration-chain)
+- [Coverage chain](#coverage-chain)
+- [Idea to ship chain](#idea-to-ship-chain)
+- [Review chain](#review-chain)
+- [When not to chain](#when-not-to-chain)
 
 ## Pattern index
 
 | Pattern | Shape | When to use |
 |---|---|---|
-| Investigation | Read-only agents in sequence | Changing unfamiliar code or debugging |
-| Feature delivery | Requirements -> Design -> Implementation -> QA | Building a new user-facing capability |
-| Code health | Scanner -> Reviewer -> (optional) Implementer | Improving code quality and reducing tech debt |
-| Migration | Planner -> Reviewer -> Implementer | Non-trivial schema or data migration |
-| Coverage | Gap analyzer -> Implementer -> Reviewer | Raising test coverage where it counts |
-| Idea to ship | Brainstorming -> Planning -> Execution | Going from a vague idea to shipped code |
+| Investigation | Investigator, architect, implementer, reviewer | Changing unfamiliar code or debugging |
+| Feature delivery | Requirements, design, implementation, QA | Building a new user-facing capability |
+| Code health | Scanner, reviewer, implementer | Reducing tech debt |
+| Migration | Planner, reviewer, implementer | A non-trivial schema or data migration |
+| Coverage | Gap analyzer, implementer, reviewer | Raising test coverage where it counts |
+| Idea to ship | Brainstorming, spec-driven development, tdd | Going from a vague idea to shipped code |
+| Review | Reviewer or review squad, pr-feedback, finishing-branch | Getting a change merged |
 
 ## Investigation chain
 
 ```
-Investigator -> Architect -> Implementer -> Reviewer
+investigator -> architect -> implementer -> reviewer
 ```
 
-Start when the code area is unfamiliar. Investigator maps the code area (dependencies, call paths, data flow). Architect decides what to change. Implementer executes with TDD. Reviewer verifies.
-
-**Skip Architect** if the change is small and the Investigator's findings are sufficient to implement directly.
+The investigator maps dependencies, call paths, and data flow. The architect decides what to change. The implementer executes with `tdd`. The reviewer verifies. Skip the architect when the findings are enough to implement directly.
 
 ## Feature delivery chain
 
 ```
-Product Manager -> Architect -> Backend Dev + Frontend Dev (parallel) -> QA Engineer
+product-manager -> architect -> plan-auditor -> backend-dev + frontend-dev (parallel) -> qa-engineer
 ```
 
-Start when a new feature needs to be built end-to-end. PM defines requirements and acceptance criteria. Architect designs the solution and API contract. Dev roles implement in parallel worktrees. QA writes test plan and signs off.
+The product manager writes requirements and acceptance criteria. The architect designs the solution and API contract. The plan auditor checks that requirements, design, and tasks line up before anyone builds. The dev agents implement in separate worktrees. QA writes the test plan and signs off.
 
-**Use the `development-team`** if it is installed - it adds coordination rules and a spawning protocol to this chain.
-
-**Skip Frontend Dev** for backend-only features. **Skip Architect** if the feature fits an existing pattern with no new design decisions.
+The `development-team` workflow runs this chain with its gates. Skip `frontend-dev` for backend-only work and the architect when the feature fits an existing pattern.
 
 ## Code health chain
 
 ```
-Refactor Scout -> Reviewer -> Implementer
+refactor-scout -> reviewer -> implementer
 ```
 
-Start when improving code quality. Scout scans for smells and structural issues. Reviewer validates findings against actual code context. Implementer applies refactorings with TDD.
-
-**Skip Implementer** if the goal is an audit report, not a fix.
+The scout scans for smells and maps each to a technique from `refactoring`. The reviewer checks the findings against real context. The implementer applies the refactorings with `tdd`. Stop after the reviewer if the goal is an audit, not a fix.
 
 ## Migration chain
 
 ```
-Migration Planner -> Reviewer -> Implementer
+migration-planner -> reviewer -> implementer
 ```
 
-Start before running non-trivial database migrations. Planner classifies risk, checks rollback paths, and produces an execution plan. Reviewer checks that application code handles both old and new schemas. Implementer applies code changes.
+The planner classifies risk, checks rollback paths, and writes the execution plan. The reviewer checks that application code works with both the old and new schema. The implementer applies the code changes.
 
 ## Coverage chain
 
 ```
-Test Gap Analyzer -> Implementer -> Reviewer
+test-gap-analyzer -> implementer -> reviewer
 ```
 
-Start when test coverage needs targeted improvement. Analyzer identifies missing tests by priority. Implementer writes the tests. Reviewer verifies they are meaningful.
+The analyzer ranks missing tests by priority. The implementer writes them. The reviewer checks they are meaningful.
 
 ## Idea to ship chain
 
 ```
-Brainstorming -> Writing-Plans -> Subagent-Driven-Development
+brainstorming -> spec-driven-development -> tdd (per task) -> finishing-branch
 ```
 
-Start when the user has a vague idea. Brainstorming produces a spec. Writing-Plans turns the spec into an ordered implementation plan. Subagent-Driven-Development executes the plan with one agent per task and two-stage review gates.
+Brainstorming produces an approved spec. `spec-driven-development` turns it into a plan and task list and runs the tasks one at a time with a progress log. Each task follows `tdd`. `finishing-branch` merges. For several independent tasks, add `agent-orchestration`. For a long plan that should run without supervision, compile it with the `loop-virtuoso` backlog compiler and run the loop (Claude Code only).
+
+From a ticket, `ticket-delivery` covers the same ground and ends with the PR.
+
+## Review chain
+
+```
+reviewer (or review-squad workflow) -> implementer -> pr-feedback -> finishing-branch
+```
+
+Use the review squad for a significant change: cold reviewer, acceptance verifier, and an optional smell scan feed one full-context reviewer. After the PR is open, `pr-feedback` works through comments and failing CI.
 
 ## When not to chain
 
-- The task fits a single specialist agent. Do not add a chain for ceremony
-- The user asked for reference, not execution - recommend a knowledge skill, not an agent chain
-- The chain would have only two steps with no real dependency - just dispatch the two agents independently
+- The task fits one specialist agent. Do not add steps for ceremony.
+- The user asked for reference, not execution. Recommend a knowledge skill.
+- The chain has two steps with no real dependency. Run the two agents independently.

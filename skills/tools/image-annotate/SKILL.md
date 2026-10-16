@@ -1,6 +1,6 @@
 ---
 name: image-annotate
-description: Mark up an existing image with shapes, arrows, text, numbered steps, highlights, blur, or solid redaction. Use this skill whenever the user wants to annotate a screenshot, add arrows or boxes to a picture, write labels on an image, draw numbered callouts for a tutorial, highlight a region, blur faces or backgrounds, redact passwords or API keys before sharing, or compose multiple marks into a single image. Outputs a new PNG/JPEG with the marks burned in. Pairs naturally with the web-screenshot skill - capture first, then annotate.
+description: Marks up an existing image with arrows, boxes, text, numbered steps, highlights, blur, or redaction, and saves a new PNG or JPEG. Use to annotate a screenshot, add callouts, or redact secrets before sharing.
 user-invocable: true
 argument-hint: "<input-image> [<output-image>] [--name PURPOSE] [--rect ...] [--arrow ...] [--text ...] [--step ...] [--blur ...] [--redact ...] [--spec FILE.json]"
 ---

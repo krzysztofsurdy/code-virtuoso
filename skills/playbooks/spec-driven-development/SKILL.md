@@ -1,6 +1,6 @@
 ---
 name: spec-driven-development
-description: Turns an approved idea or ticket into spec artifacts saved in the repo (spec, plan, tasks), then executes them one task at a time with a progress log. Scales the ceremony to change size. Use to write a spec, plan this feature, break work into tasks, execute the plan, or resume multi-session work.
+description: Turns an approved idea or ticket into spec, plan, and task files saved in the repo, then executes them one task at a time with a progress log. Use to write a spec, plan a feature, break work into tasks, or resume multi-session work.
 user-invocable: true
 argument-hint: "[spec slug, ticket id, or path to an approved brainstorming spec]"
 ---
@@ -107,7 +107,7 @@ The rule that makes multi-session work reliable: **one task per session or per l
 5. Tick the task in `tasks.md` and append an entry to the progress log ([progress-log-template](references/progress-log-template.md)): what was done, evidence, anything the next session must know.
 6. Stop, or take the next task if the session has room. Do not batch several unverified tasks.
 
-`[P]` tasks can go to parallel sub-agents only when their files do not overlap (see `dispatching-parallel-agents`). Each sub-agent gets one task ID, the spec path, and the check; the coordinator merges and updates the log.
+`[P]` tasks can go to parallel sub-agents only when their files do not overlap (see `agent-orchestration`). Each sub-agent gets one task ID, the spec path, and the check; the coordinator merges and updates the log.
 
 ### When the plan breaks
 
@@ -156,5 +156,5 @@ If behavior changed during implementation, update the spec to match what shipped
 | Implementing a task | `tdd` |
 | Claiming a task or the whole change is done | `verification-before-completion` |
 | Gate check before implementation, or a mid-flight change | `plan-auditor` agent |
-| Several independent `[P]` tasks | `dispatching-parallel-agents` |
+| Several independent `[P]` tasks | `agent-orchestration` |
 | A design decision needs an ADR | `architect` role |

@@ -1,6 +1,6 @@
 ---
 name: django-components
-description: Django guidance for writing and reviewing Django code - version matrix (6.1 current, 5.2 LTS), where to fetch exact API details, and the pitfalls that cause real bugs: N+1 and fetch modes, signals, async ORM, transactions and on_commit, migration safety, settings and secrets, security checks, tasks, testing, deployment. Use for any Django model, view, form, admin, auth, cache, or deploy work.
+description: Django version facts, where to fetch exact API details, and pitfalls that cause real bugs (N+1, signals, async ORM, transactions, migrations, settings, security). Use for any Django model, view, form, admin, auth, cache, or deploy work.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---

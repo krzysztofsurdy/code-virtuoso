@@ -1,6 +1,6 @@
 ---
 name: ticket-delivery
-description: End-to-end ticket workflow from ticket analysis through investigation, planning, TDD implementation, committing, and PR creation. Adapts to your environment via layered config saved on first run. Use when starting work on a ticket, implementing a feature end-to-end, or following a structured development workflow from ticket to PR.
+description: End-to-end ticket workflow from analysis through investigation, planning, TDD implementation, commits, and PR creation, adapted to your setup by saved config. Use when starting work on a ticket or implementing a feature from ticket to PR.
 user-invocable: true
 argument-hint: "<ticket-id>"
 ---
@@ -230,7 +230,9 @@ Example patterns:
 
 ## Phase 6: TDD implementation
 
-Follow a strict TDD cycle. Use `commands.test` from the config.
+Follow the `tdd` playbook for the red-green-refactor cycle. Use `commands.test` from the config.
+
+For a large plan, an executor can run the tasks unattended: the `loop-virtuoso` plugin (Claude Code only, optional) runs a backlog one task per iteration. Compile the plan into a backlog with its `backlog-compiler` skill first. Without it, work through the steps below directly.
 
 ### Step 6.1: Write failing tests first
 For each item in the test plan:

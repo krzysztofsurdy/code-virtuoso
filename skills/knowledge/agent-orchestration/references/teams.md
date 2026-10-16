@@ -142,4 +142,4 @@ Variants: lightweight is the architect plus one other role for a yes/no decision
 3. State the gates: which phase blocks which, and who can send work back.
 4. State entry and exit criteria so a run can end cleanly.
 5. Add at least one decision point (a phase to skip, a variant to pick).
-6. For Claude Code, encode it as `workflows/<name>.js` following `spec/team-spec.md` in the Code Virtuoso repository. Keep this Markdown recipe as the fallback for other harnesses.
+6. For Claude Code, encode it as `workflows/<name>.js` following https://github.com/krzysztofsurdy/code-virtuoso/blob/main/spec/team-spec.md. Keep this Markdown recipe as the fallback for other harnesses.

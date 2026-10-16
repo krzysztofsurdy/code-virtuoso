@@ -1,6 +1,6 @@
 ---
 name: accessibility
-description: Web accessibility patterns and WCAG 2.1/2.2 compliance for inclusive user interfaces. Use when the user asks to build accessible components, audit a UI for a11y issues, fix screen reader problems, implement keyboard navigation, check color contrast ratios, add ARIA attributes, create accessible forms, or establish accessibility standards for a team. Covers the POUR principles (Perceivable, Operable, Understandable, Robust), semantic HTML, focus management, and automated/manual a11y testing strategies.
+description: Web accessibility patterns and WCAG 2.1/2.2 compliance. Use to build accessible components, audit a UI for a11y issues, fix screen reader or keyboard problems, check contrast, or add ARIA.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---
@@ -156,7 +156,7 @@ Color must never be the only way to convey information. Pair it with text, icons
 
 | Situation | Recommended Skill |
 |---|---|
-| Building REST or GraphQL APIs with accessible error responses | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for API design guidance |
-| Security headers that affect accessibility (CSP, iframe restrictions) | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for security patterns |
-| Testing accessible components with unit and integration tests | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for testing strategies |
-| Performance optimization that does not sacrifice accessibility | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for performance guidance |
+| Building REST or GraphQL APIs with accessible error responses | `api-design` |
+| Security headers that affect accessibility (CSP, iframe restrictions) | `security` |
+| Testing accessible components with unit and integration tests | `testing` |
+| Performance optimization that does not sacrifice accessibility | `performance` |

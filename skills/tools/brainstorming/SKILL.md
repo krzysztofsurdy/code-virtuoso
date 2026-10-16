@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "Interactive pre-implementation design exploration. Use when the user has a vague idea, feature request, or problem statement but no written spec. Asks focused questions one at a time to surface goals, non-goals, constraints, success criteria, and risks, then produces a written spec and hard-gates implementation until approved. Use before writing any code, before planning, and before answering 'how should I build X'. Triggers: 'I want to build', 'I'm thinking about', 'help me figure out', 'let's brainstorm', 'help me spec out'."
+description: Interactive design exploration before implementation. Use when the user has a vague idea or feature request and no written spec. Asks one focused question at a time, writes a spec, and blocks implementation until approved. Triggers include 'I want to build', 'let's brainstorm', 'help me spec out'.
 user-invocable: true
 argument-hint: "[optional: one-line topic]"
 ---
@@ -105,10 +105,11 @@ See [anti-patterns](references/anti-patterns.md) for the full guide.
 
 | Situation | Recommended skill |
 |---|---|
-| Spec approved, ready to plan and deliver it end to end | `ticket-delivery` |
+| Spec approved, next step: turn it into a plan and tasks and build it | `spec-driven-development` |
+| Spec approved, deliver it end to end from a ticket to a PR | `ticket-delivery` |
 | Complex requirements, need stakeholder analysis | `product-manager` role |
 | Spec reveals architectural decisions needed | `architect` role |
-| Spec approved, ready for direct TDD | `testing`, or the `implementer` agent |
+| Spec approved and small enough to build directly | `tdd`, or the `implementer` agent |
 | Acceptance criteria need test plan detail | `qa-engineer` role |
 | API design decisions | `api-design` |
 | Database schema decisions | `database-design` |

@@ -1,6 +1,6 @@
 ---
 name: pr-feedback
-description: "Works through review comments and failing CI on an open pull request or merge request: fetches unresolved threads and check status, triages each comment, fixes with tests, replies on every thread, and loops until CI is green. Use when asked to address review comments, fix CI, handle PR feedback, or when checks are failing."
+description: Works through review comments and failing CI on an open pull request, triaging each comment, fixing with tests, replying on every thread, and looping until CI is green. Use when asked to address review comments, fix CI, or handle PR feedback.
 user-invocable: true
 argument-hint: "[optional: PR/MR number or URL]"
 ---

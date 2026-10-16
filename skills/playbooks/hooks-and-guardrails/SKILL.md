@@ -1,6 +1,6 @@
 ---
 name: hooks-and-guardrails
-description: "Adds guardrails to an AI coding agent setup: deny rules for secrets, a sandbox and permission-mode choice, and hooks that block .env reads, run checks after edits, gate 'done' on passing tests, and restore context after compaction. Tested scripts for Claude Code and Codex. Use when hardening an agent, adding hooks, stopping secret reads, or making the agent verify its own work."
+description: Adds guardrails to an AI coding agent setup, including deny rules for secrets, sandbox and permission choices, and hooks that block .env reads and gate 'done' on passing tests. Use when hardening an agent, adding hooks, or stopping secret reads.
 user-invocable: true
 argument-hint: "[claude-code | codex] [risk level: low | medium | high]"
 ---

@@ -1,6 +1,6 @@
 ---
 name: web-screenshot
-description: Captures screenshots of web pages using shot-scraper (a Playwright-backed CLI). Use when the user wants to take a screenshot of a website, capture a specific page element, grab a mobile or desktop view, screenshot a URL for documentation or comparison, automate visual captures, build batches of website thumbnails, or produce PNG/JPEG output from a URL. Covers full-page captures, viewport-only captures, CSS-selector element captures, retina scaling, dark/light mode, custom JavaScript injection, batched multi-URL captures, and stable visual snapshots with animations disabled.
+description: Captures web page screenshots with shot-scraper (a Playwright-backed CLI), including full-page, element, mobile, dark mode, and batched captures. Use when asked to screenshot a URL or element, or to produce PNG or JPEG output from a web page.
 user-invocable: true
 argument-hint: "<url-or-batch-yaml> [--full-page] [--selector CSS] [--output PATH] [--width N] [--height N] [--retina] [--dark]"
 ---
@@ -466,7 +466,7 @@ python scripts/multi_viewport.py https://example.com --out screenshots/
 
 | Situation | Recommended Skill |
 |---|---|
-| Apply frames, annotations, or compositing to the captured image | (future) `image-framing` tool skill |
+| Apply frames, annotations, or compositing to the captured image | `image-annotate` |
 | Diff screenshots across runs for visual regression | `testing` knowledge skill (component vs page strategy) |
 | Capture as part of an end-to-end test suite | Use `@playwright/test` directly; this skill is for ad-hoc captures |
 | Accessibility audit of the captured page | `accessibility` knowledge skill |

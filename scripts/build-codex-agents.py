@@ -62,8 +62,10 @@ def multi_line(value: str) -> str:
     return '"""\n' + basic_string(value) + '"""'
 
 
-def is_read_only(tools: object) -> bool:
-    names = {t.strip() for t in str(tools).split(",")}
+def is_read_only(fm: dict[str, object]) -> bool:
+    if fm.get("memory"):
+        return False
+    names = {t.strip() for t in str(fm.get("tools", "")).split(",")}
     return not (names & WRITE_TOOLS)
 
 
@@ -78,7 +80,7 @@ def render_agent(path: Path) -> str:
     body = body.replace("${CLAUDE_PLUGIN_ROOT}", "${CODE_VIRTUOSO_HOME}")
 
     preamble = []
-    if is_read_only(fm.get("tools", "")):
+    if is_read_only(fm):
         preamble.append(READ_ONLY_NOTE)
     if uses_home:
         preamble.append(HOME_NOTE)

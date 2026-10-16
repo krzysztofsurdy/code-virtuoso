@@ -1,6 +1,6 @@
 ---
 name: composer-dependencies
-description: Composer dependency management playbook for safe package updates. Use when the user asks to update Composer dependencies, audit packages for security vulnerabilities, manage composer.lock, configure Dependabot or Renovate for automated updates, replace abandoned packages, block insecure or abandoned versions with config.policy, or resolve version conflicts. Covers patch/minor/major update strategies, composer audit, semantic versioning constraints, lock file hygiene, and the changelog-first update workflow.
+description: Composer playbook for safe package updates. Use to update dependencies, audit for vulnerabilities, manage composer.lock, set up Dependabot or Renovate, replace abandoned packages, or resolve version conflicts.
 user-invocable: true
 ---
 
@@ -220,4 +220,4 @@ Composer warns about abandoned packages during install and update, and `composer
 |---|---|
 | Upgrading PHP version (may require dependency updates) | Use the `php-upgrade` skill |
 | Upgrading Symfony framework | Use the `symfony-upgrade` skill in `frameworks/symfony/` |
-| Detecting N+1 query issues after ORM updates | Use the `detect-n-plus-one` skill |
+| Detecting N+1 query issues after ORM updates | `performance` |

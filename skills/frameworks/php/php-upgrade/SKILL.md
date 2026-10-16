@@ -1,6 +1,6 @@
 ---
 name: php-upgrade
-description: Step-by-step PHP version upgrade playbook for hops from PHP 7.4 up to PHP 8.5. Use when the user asks to upgrade PHP to a new version, check PHP compatibility, fix deprecation warnings, run Rector for automated refactoring, audit code with PHPCompatibility, or plan a PHP migration strategy. Covers fetching the official migration guide per hop, known upgrade traps by version, Rector rule sets, CI matrix, Docker images, and testing strategy.
+description: Step-by-step PHP upgrade playbook for hops from 7.4 to 8.5, with known traps per version, Rector rule sets, and a CI matrix. Use to upgrade PHP, fix deprecations, check compatibility, or plan a PHP migration.
 user-invocable: true
 ---
 
@@ -172,4 +172,4 @@ Items that most often break real upgrades. Each one is taken from the php.net mi
 | Upgrading Symfony alongside PHP | Use the `symfony-upgrade` skill in `frameworks/symfony/` |
 | Updating Composer dependencies after PHP upgrade | Use the `composer-dependencies` skill |
 | Modernizing PHP code patterns (DTOs, enums, strict types) | Install `php-modernization` from `dirnbauer/webconsulting-skills` or `netresearch/php-modernization-skill` |
-| Running static analysis after upgrade | Install `knowledge-virtuoso` from `krzysztofsurdy/code-virtuoso` for testing strategies |
+| Running static analysis after upgrade | `testing` |

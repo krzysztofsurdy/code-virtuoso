@@ -1,6 +1,6 @@
 ---
 name: finishing-branch
-description: "Finishes a development branch: verifies tests and lint, reviews the diff, picks merge, squash, rebase, or stacked PR, writes the PR message, pushes, opens the PR, and cleans up branches and worktrees. Also covers commit conventions, PR sizing, and recovery from force-push mistakes. Use when the user says 'ready to merge', 'finish this branch', 'open a PR', or 'clean up after merge'."
+description: Finishes a development branch by verifying tests and lint, reviewing the diff, choosing merge, squash, rebase, or stacked PR, writing the PR message, opening the PR, and cleaning up. Use when the user says 'ready to merge', 'finish this branch', or 'open a PR'.
 user-invocable: true
 argument-hint: "[optional: branch name or PR target]"
 ---

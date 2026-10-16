@@ -1,6 +1,6 @@
 ---
 name: agent-creator
-description: Interactive tool to design a well-scoped sub-agent definition - specialist, role, or team-lead - with the right frontmatter, tool permissions, isolation, memory, and system prompt. Use when the user asks to create a sub-agent, write an agent file, design a specialized worker, scaffold a role agent, bootstrap an agent team, or turn a repeated delegation pattern into a reusable agent. Runs a six-phase questionnaire and outputs a ready-to-commit agent markdown file plus marketplace registration.
+description: Interactive tool to design a sub-agent definition (specialist, role, or team-lead) with the right frontmatter, tools, isolation, memory, and system prompt. Use when asked to create a sub-agent, write an agent file, or scaffold a role agent.
 user-invocable: true
 argument-hint: "[optional: archetype - specialist, role, team-lead]"
 ---

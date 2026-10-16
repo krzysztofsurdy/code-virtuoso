@@ -95,7 +95,7 @@ If migrations should run in a specific order or require multi-deploy strategies:
 
 ### Output (JSON)
 
-When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/plan-migration/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Each step becomes one entry in `steps`. Leave out the pre-migration checklist.
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `<plugin root>/skills/tools/plan-migration/references/output.schema.json`, which is `${CLAUDE_PLUGIN_ROOT}` in Claude Code or the repository root otherwise. Each step becomes one entry in `steps`. Leave out the pre-migration checklist.
 
 ## Rules
 

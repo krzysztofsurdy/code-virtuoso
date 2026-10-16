@@ -25,7 +25,7 @@ Get explicit user approval before anything proceeds. This is the strictest rule 
 
 3. After approval:
    - The spec is the contract. Implementation must satisfy its acceptance criteria.
-   - Hand off to the appropriate next step (planning, architecture, or implementation skill)
+   - Hand off to the next step: `spec-driven-development` to turn the spec into a plan and tasks, `ticket-delivery` to carry a ticket through to a PR, or `tdd` when the change is small enough to build directly
 
 ## Rules
 
@@ -49,4 +49,4 @@ See [when-to-exit](../references/when-to-exit.md) for detailed guidance on "done
 
 ## Gate
 
-This is the final phase. After approval, confirm: "Spec approved. Ready to hand off to [recommended next step based on the spec's complexity and scope]."
+This is the final phase. After approval, confirm: "Spec approved. Ready to hand off to [recommended next step, by default spec-driven-development, based on the spec's complexity and scope]."

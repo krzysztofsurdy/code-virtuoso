@@ -1,6 +1,6 @@
 ---
 name: pr-message-writer
-description: Writes pull request messages with structured technical documentation, testing instructions, and verification queries. Framework-agnostic with customizable templates. Use when writing or generating a PR description, preparing a pull request for review, or documenting code changes for teammates.
+description: Writes pull request messages with a technical summary, testing instructions, and verification queries, using customizable templates. Use when writing a PR description, preparing a pull request for review, or documenting changes for teammates.
 user-invocable: true
 argument-hint: "[optional: branch-name or ticket-id]"
 ---

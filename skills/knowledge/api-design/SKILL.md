@@ -1,8 +1,9 @@
 ---
 name: api-design
-description: REST and GraphQL API design principles for consistent, predictable, and evolvable APIs. Use when the user asks to design a new API, review an existing API, choose between REST and GraphQL, plan API versioning, define error response contracts, implement pagination, or establish API standards for a team. Covers resource modeling, endpoint naming, HTTP methods, status codes, authentication patterns, rate limiting, HATEOAS, and API evolution strategies.
+description: REST and GraphQL API design covering resource modeling, status codes, error contracts, pagination, versioning, and evolution. Use to design or review an API.
 allowed-tools: Read Grep Glob Bash
-user-invocable: false
+user-invocable: true
+disable-model-invocation: true
 ---
 
 # API Design

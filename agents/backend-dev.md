@@ -3,6 +3,7 @@ name: backend-dev
 description: Backend development agent for API implementation, data modeling, and testing. Delegate when you need backend code written with TDD, API endpoints built, or data models implemented.
 tools: Read, Edit, Write, Bash, Grep, Glob
 skills:
+  - tdd
   - security
   - verification-before-completion
 isolation: worktree
@@ -108,7 +109,7 @@ Read `agents.backend-dev` from the layered Code Virtuoso config. Never ask the u
 3. Merge them with later files winning. Objects merge key by key, and lists and single values replace.
 4. Take the `agents.backend-dev` object from the result.
 
-If any key was missing, end the report with: `Defaults used for: <keys>. Run setup to save them.` Team-wide choices belong in the project file and personal ones in the user file. The full convention is in `spec/config-spec.md`.
+If any key was missing, end the report with: `Defaults used for: <keys>. Run setup to save them.` Team-wide choices belong in the project file and personal ones in the user file. The full convention is in https://github.com/krzysztofsurdy/code-virtuoso/blob/main/spec/config-spec.md.
 
 | Setting | Options | Default | Effect |
 |---|---|---|---|

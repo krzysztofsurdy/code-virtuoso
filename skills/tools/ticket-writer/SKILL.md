@@ -1,6 +1,6 @@
 ---
 name: ticket-writer
-description: Interactive tool that writes tickets of the right type (story, subtask, issue, bug, epic, or initiative), each with its own structure, required fields, and quality checks. Use when the user asks to write a ticket, draft a user story, file a bug report, scope an epic, define an initiative, break work into subtasks, or convert a rough idea into a well-formed backlog item. Runs an interactive type selection and field-by-field questionnaire, then outputs a Markdown ticket ready to paste into Jira, Linear, GitHub Issues, Azure DevOps, or any tracker.
+description: Interactive tool that writes a ticket of the right type (story, subtask, bug, epic, or initiative) with its own structure and quality checks, ready to paste into any tracker. Use when asked to write a ticket, draft a user story, file a bug, or scope an epic.
 user-invocable: true
 argument-hint: "[optional: type - story, subtask, issue, bug, epic, initiative]"
 ---

@@ -1,6 +1,6 @@
 ---
 name: llm-observability
-description: Instrument LLM apps and agents - OpenTelemetry GenAI traces, agent and tool spans, token and cost attribution, latency, sampling, PII-safe content capture, OTLP backends, and prompt caching and batching as measured cost levers. Use when adding tracing, debugging agent runs, or cutting LLM cost and latency.
+description: Instrument LLM apps and agents with OpenTelemetry GenAI traces, token and cost attribution, sampling, and PII-safe capture. Use when adding tracing, debugging agent runs, or cutting LLM cost and latency.
 user-invocable: false
 ---
 
@@ -143,7 +143,9 @@ Endpoints, headers, and regions change. Copy them from each vendor's current doc
 |---|---|
 | Reading traces to find failures and build graders | `llm-evals` |
 | General latency and bottleneck diagnosis | `performance` |
-| Treating PII, secrets, and access control | `security` |
+| Designing the agent being traced | `agent-design` |
+| Treating PII, secrets, and access control | `security`, `agent-security` |
+| Instrumenting a Vercel AI SDK or LangChain app | `vercel-ai-sdk`, `langchain-components` |
 | A slow or looping agent run to diagnose | `debugging` |
 | Tracing and alerting in a delivery pipeline | `cicd` |
 | Confirming instrumentation works before shipping | `verification-before-completion` |

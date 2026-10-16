@@ -40,6 +40,18 @@ tools: Read, Edit, Write, Bash
 Do the work.
 """
 
+MEMORY_WRITER = """---
+name: planner
+description: Plans and records decisions. Use when asked.
+tools: Read, Grep, Glob, Bash
+memory: project
+---
+
+# Planner
+
+Write the decision record.
+"""
+
 TRIPLE = """---
 name: tricky
 description: Has triple quotes.
@@ -84,6 +96,10 @@ class RenderTest(unittest.TestCase):
 
     def test_writer_agent_has_no_sentence(self):
         data = parse(build.render_agent(self.write("writer", WRITER)))
+        self.assertNotIn("Do not modify files.", data["developer_instructions"])
+
+    def test_memory_agent_is_write_capable_so_no_sentence(self):
+        data = parse(build.render_agent(self.write("planner", MEMORY_WRITER)))
         self.assertNotIn("Do not modify files.", data["developer_instructions"])
 
     def test_plugin_root_rewritten_with_home_note(self):

@@ -99,4 +99,4 @@ This review was performed without project context. Some findings may reflect int
 
 ### Output (JSON)
 
-When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/review-pr-cold/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Each row of the findings table becomes one entry in `findings`, `Checked` becomes `checked`, and Patterns becomes `patterns`. Leave out the closing note.
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `<plugin root>/skills/tools/review-pr-cold/references/output.schema.json`, which is `${CLAUDE_PLUGIN_ROOT}` in Claude Code or the repository root otherwise. Each row of the findings table becomes one entry in `findings`, `Checked` becomes `checked`, and Patterns becomes `patterns`. Leave out the closing note.

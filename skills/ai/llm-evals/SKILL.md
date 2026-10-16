@@ -1,6 +1,6 @@
 ---
 name: llm-evals
-description: Evaluate and regression-test LLM features and agents - error analysis of real traces, binary graders, code assertions before model judges, judge validation against human labels, agent evals (pass@k, pass^k), CI thresholds. Use when building an eval suite, checking a prompt or model change, or measuring agent quality.
+description: Evaluate and regression-test LLM features and agents with trace error analysis, binary graders, code assertions, validated judges, and CI thresholds. Use when building an eval suite, checking a prompt or model change, or measuring agent quality.
 user-invocable: false
 ---
 
@@ -126,6 +126,8 @@ A 75 percent per-trial success rate gives about 98 percent pass@3 and about 42 p
 | General test strategy, isolation, flaky tests | `testing` |
 | Wiring the suite into a pipeline and quality gates | `cicd` |
 | Diagnosing why an eval started failing | `debugging` |
-| Red-teaming and injection checks for LLM apps | `security` |
+| Designing the agent being evaluated | `agent-design` |
+| Red-teaming and injection checks for LLM apps | `agent-security` |
+| Building the app with the Vercel AI SDK or LangChain | `vercel-ai-sdk`, `langchain-components` |
 | Latency and cost regressions found by evals | `performance` |
 | Confirming a change works before calling it done | `verification-before-completion` |

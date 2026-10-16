@@ -87,7 +87,7 @@ For each finding:
 
 ### Output (JSON)
 
-When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `skills/tools/review-pr/references/output.schema.json` (under `${CLAUDE_PLUGIN_ROOT}` when installed as a plugin, else the repository root). Use the findings from the template above. Verdict values are `approve`, `request_changes`, and `needs_discussion`. Put missing tuning keys in `defaults_used` instead of the closing sentence.
+When the caller asks for JSON, for example in a CI run, return one JSON object and nothing else: no prose and no code fence. It must match `<plugin root>/skills/tools/review-pr/references/output.schema.json`, which is `${CLAUDE_PLUGIN_ROOT}` in Claude Code or the repository root otherwise. Use the findings from the template above. Verdict values are `approve`, `request_changes`, and `needs_discussion`. Put missing tuning keys in `defaults_used` instead of the closing sentence.
 
 ## Rules
 
@@ -107,7 +107,7 @@ Read `agents.reviewer` from the layered Code Virtuoso config. Never ask the user
 3. Merge them with later files winning. Objects merge key by key, and lists and single values replace.
 4. Take the `agents.reviewer` object from the result.
 
-If any key was missing, end the report with: `Defaults used for: <keys>. Run setup to save them.` Team-wide choices belong in the project file and personal ones in the user file. The full convention is in `spec/config-spec.md`.
+If any key was missing, end the report with: `Defaults used for: <keys>. Run setup to save them.` Team-wide choices belong in the project file and personal ones in the user file. The full convention is in https://github.com/krzysztofsurdy/code-virtuoso/blob/main/spec/config-spec.md.
 
 | Setting | Options | Default | Effect |
 |---|---|---|---|

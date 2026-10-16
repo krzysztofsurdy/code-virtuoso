@@ -29,12 +29,17 @@ IDs change when a source is re-indexed or renamed. If an ID returns 404 `library
 | LangChain | `/websites/langchain_oss` | Verified | docs.langchain.com open-source docs, Python and JavaScript. Pass `language` to avoid mixing them |
 | Deep Agents | `/websites/langchain_oss_python_deepagents` | Verified | Python Deep Agents section of the LangChain docs |
 | Vercel AI SDK | `/vercel/ai` | Verified | Official repository. Version-pinned IDs follow `/vercel/ai/<version>` when the resolve result lists them |
+| Vercel AI SDK 7 | `/vercel/ai/ai_7.0.0` | Verified | Pinned to the 7.0.0 tag. Use it when `package.json` or the lockfile shows `ai` 7.x |
+| Vercel AI SDK, docs site | `/websites/ai-sdk_dev` | Verified | ai-sdk.dev documentation site. Not version-split, so check the `Source:` URL |
 
 ## Standards and protocols
 
 | Source | ID | Status | Notes |
 |---|---|---|---|
 | MCP specification | `/websites/modelcontextprotocol_io_specification_2026-07-28` | Verified | The date is the spec revision. A newer revision gets a new ID: re-resolve when the project targets a different revision |
+| MCP Python SDK | `/modelcontextprotocol/python-sdk/v2.3.0` | Verified | Official repository, pinned to the v2.3.0 tag. Re-resolve for a newer tag |
+| MCP TypeScript SDK | `/modelcontextprotocol/typescript-sdk/v2.3.1` | Verified | Official repository, pinned to the v2.3.1 tag. Re-resolve for a newer tag |
+| MCP TypeScript SDK, docs site | `/websites/ts_sdk_modelcontextprotocol_io_v2` | Verified | Hosted v2 docs of the TypeScript SDK |
 | OWASP Top 10 | `/owasp/top10` | Verified | Official OWASP repository |
 | WCAG | `/w3c/wcag` | Verified | Official W3C repository |
 
