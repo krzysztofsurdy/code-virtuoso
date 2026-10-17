@@ -4,47 +4,55 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - 2026-10-21
+
+### Version reset
+
+1.0.0 is the rebuild that followed 9.7.3. Versioning restarts here. Earlier history is kept below under "Legacy (pre-1.0.0)" and is not rewritten. The `v1.0.0` tag was unused.
 
 ### Added
-- `skills/tools/brainstorming` - interactive pre-implementation design exploration with hard approval gate
-- `skills/tools/using-virtuoso` - meta-skill ecosystem discovery advisor covering skill categories, agent tiers, chaining patterns, and plugin tiers
-- `skills/tools/pr-message-writer` - structured pull request message generation with testing instructions (migrated from dev-virtuoso, made CLI/language/tracker-agnostic)
-- `skills/tools/report-writer` - standalone HTML report generation with Tailwind styling, semantic color tokens, Bootstrap Icons, and print/PDF support (migrated from dev-virtuoso)
-- `skills/tools/stakeholder-update-writer` - stakeholder Slack/email update drafting (migrated from dev-virtuoso)
-- `skills/playbooks/ticket-delivery` - end-to-end ticket workflow from analysis through TDD to PR creation (migrated from dev-virtuoso, made CLI/language/tracker-agnostic)
-- `skills/playbooks/worktree-ops` - git worktree management (create, list, switch, remove) merged from 4 separate skills (migrated from dev-virtuoso)
-- `skills/knowledge/verification-before-completion` - evidence-based completion discipline with tiered definition of done
-- `skills/knowledge/dispatching-parallel-agents` - fan-out/fan-in patterns, briefing, context isolation, result synthesis
-- `skills/knowledge/subagent-driven-development` - one-fresh-agent-per-task with two-stage review gates and structured hand-offs
-- `skills/playbooks/finishing-branch` - end-to-end branch finishing workflow
-- CHANGELOG.md covering full git history (25 versions, 167 commits)
+- `ai` skill category and the `ai-virtuoso` plugin: `agent-design`, `llm-evals`, `llm-observability`, `mcp-server-development`
+- Knowledge skills: `agent-security`, `context-engineering`, `docs-lookup` (version-correct documentation), `agent-orchestration` (replaces four orchestration skills)
+- Playbooks: `spec-driven-development`, `tdd`, `pr-feedback`, `handoff`, `hooks-and-guardrails` (with tested hook scripts for Claude Code and Codex)
+- Framework skill `vercel-ai-sdk`
+- `instruction-auditor` agent and the `instruction-audit-report` artifact type
+- Seven headless wrapper skills (`review-pr`, `review-pr-cold`, `verify-acceptance`, `find-test-gaps`, `plan-migration`, `audit-dependencies`, `scan-refactors`) that run read-only agents as forked subagents and answer in JSON, and `examples/ci` with least-privilege GitHub Actions workflows for Claude Code and Codex
+- Team workflows in `workflows/` (`review-squad`, `development-team`, `war-room`) with Markdown recipes in `agent-orchestration/references/teams.md`
+- `roles/<role>/` reference files read by the role agents on demand
+- Codex support: `scripts/build-codex-agents.py` generates `codex/agents/*.toml` from the agent files, `scripts/install-codex-agents.sh` installs them (28 unit tests), and `codex/README.md`
+- `plugins/loop-virtuoso`, the backlog-driven delivery loop, imported with its history as a self-contained Claude Code plugin (loop-virtuoso 1.0.0 stores state under `.code-virtuoso`, keeps pipelines in user and project files, and checkpoints commits in the project's format)
+- Layered `.code-virtuoso` config (`spec/config-spec.md`): user, project shared, and project local files replace settings stored next to skills
+- `spec/team-spec.md` rewritten for workflows, `template/workflow-template.js`, and a skill-preloading section in `spec/agent-spec.md`
+- Carried from the earlier unreleased work: `brainstorming`, `using-ecosystem`, `pr-message-writer`, `report-writer`, `stakeholder-update-writer`, `ticket-delivery`, `worktree-ops`, `verification-before-completion`, `finishing-branch`
 
 ### Changed
-- Consolidated marketplace from 27 individual plugins down to 5 category bundles (knowledge-virtuoso, tools-virtuoso, frameworks-virtuoso, playbooks-virtuoso, agents-virtuoso)
-- agentic-rules-writer: removed filesystem scanning for skills and agents, deferred ecosystem inventory to `using-virtuoso` as single source of truth
-- `using-virtuoso` ecosystem map, decision matrix, and plugin tiers updated with all new skills and 5-bundle model
-- `knowledge-virtuoso` plugin expanded from 15 to 18 skills
-- `tools-virtuoso` plugin expanded from 6 to 9 skills
-- `playbooks-virtuoso` plugin expanded from 3 to 5 skills
-- README rewritten with centered hero, quickstart, grouped knowledge tables, merged agent table, FAQ, collapsible sections
-- CONTRIBUTING.md updated to reflect simplified plugin distribution model
-- Normalized prose punctuation across 253 markdown/JSON/YAML files: replaced ` -- ` (double hyphen as pause/em-dash) with ` - ` (single hyphen); 1851 occurrences updated
-- Added "Punctuation Style" convention to AGENTS.md prohibiting use of `--` as a pause in project documentation
-- Rewrote prose across all skills, agents, specs, templates, and root docs in a plain human voice: removed every em and en dash (about 1,000), AI vocabulary, filler adverbs, and puffery; switched headings to sentence case
-- Added a Contents section to every reference file over 100 lines, following skill authoring best practice
-- Tightened SKILL.md descriptions to third-person "what + when" form, all under 1,024 characters
-- Restored `--` separators in CLI commands and SQL comments that the earlier punctuation pass had broken (`git checkout -- .`, `cargo test -- --nocapture`, `dbshell -- -c`, SQL `-- comment`)
-- Extended the Punctuation Style convention to ban em and en dashes in prose
-- Moved detail out of the agentic-rules-writer and report-writer SKILL.md files (now 436 and 377 lines) into reference files, including a new `report-writer/references/components.md`
-- Reference file size limit is now 700 lines in `spec/skill-spec.md` and `scripts/validate-skills.py`, matching CONTRIBUTING.md
+- Marketplace is six bundles and one self-contained plugin: `knowledge-virtuoso`, `tools-virtuoso`, `playbooks-virtuoso`, `frameworks-virtuoso`, `ai-virtuoso`, `agents-virtuoso`, and `loop-virtuoso`. Skill-only bundles use `"source": "./skills"` so installing one no longer registers all agents under its own name. `agents-virtuoso` also ships the wrapper skills, `agent-orchestration`, and `verification-before-completion`
+- Role skills folded into their agents: the process lives in the agent bodies and templates and checklists moved to `roles/<role>/`. The role skills were preloaded whole on every spawn and their broad descriptions fired on everyday work
+- Eleven textbook knowledge skills (`solid`, `design-patterns`, `refactoring`, `testing`, `api-design`, and others) are run by name: `disable-model-invocation: true` keeps their descriptions out of the per-turn skill list. Agents use short inline checklists instead of preloading them
+- `readiness-checker` and `course-corrector` merged into `plan-auditor` (gate and change-impact modes)
+- `git-workflow` merged into `finishing-branch`. PHP playbooks moved under `frameworks/php/`
+- `symfony-components`, `django-components`, and `langchain-components` slimmed to version facts, opinions, and pitfalls. About 37k lines of API reference were deleted, and exact details come from `docs-lookup`
+- `security` follows OWASP Top 10:2025, NIST SP 800-63B-4, and RFC 9700. `api-design` uses RFC 9457, the IETF RateLimit fields draft, the Deprecation header, and OpenAPI 3.2
+- Saved choices for `ticket-delivery` and the tuned agents moved to the layered config, and subagents no longer prompt
+- Skills no longer need Core Principles or Integration sections, and skill descriptions were cut to under 300 characters each
+- Specs and CONTRIBUTING describe the role pairing rule, the Edit and Write isolation rule, the `ai` category, run-by-name skills, and the skills-only marketplace source
+- `scripts/validate-markdown.py` ignores the `#fragment` of a file link
+- Earlier unreleased work: marketplace consolidated from 27 plugins to category bundles, README rewritten, prose normalized (no em or en dashes, sentence-case headings, plain voice), Contents lists added to reference files over 100 lines, SKILL.md descriptions tightened to third-person "what and when" form, reference file limit set to 700 lines
+
+### Removed
+- Role skills (`skills/roles/`), the `readiness-checker` and `course-corrector` agents, and the `git-workflow` skill
+- `skills/tools/agent-teams`, `skills/tools/dispatching-agent-teams`, `dispatching-parallel-agents`, and `subagent-driven-development`, replaced by `agent-orchestration`
+- `template/team-template.md` (replaced by `template/workflow-template.js`) and per-team config files
+- API reference files for Symfony, Django, and LangChain components, and the stale PHP per-version reference
 
 ### Fixed
-- Django and Symfony references: wrong imports and API calls, form event types, DomCrawler examples, dead `.html` links, outdated psr7-bridge requirements
-- LangChain references: unsafe `eval()` calculator, wrong middleware, backend, `create_agent`, and `ToolRuntime` APIs, retired model IDs
-- Design-patterns, refactoring, and SOLID examples: `readonly` classes that mutate state, invalid PHP, Python, and TypeScript syntax, logic bugs, wrong technique names
-- web-screenshot flags, PHP 8.4 change notes, OWASP table columns, Windsurf rules limits, agent teams platform notes
-- Stale agent counts and a dead anchor in the root docs
+- loop-virtuoso: checkpoints no longer use `git add -A` or `--no-verify` and never commit secret-like files, the run refuses a dirty tree or the default branch, hooks find state from the git root, one violation no longer burns the budget, a stall verdict no longer masks a real pass, worktree-isolated agents and monorepo paths resolve correctly (92 tests)
+- Agent definitions: `implementer` stays inside its worktree, `cold-reviewer` has no finding quota, `dependency-auditor` uses correct audit commands, agents that write documents or memory no longer claim to be read-only, and references point to skills that exist
+- Validators reject marketplace entries that share a source containing `agents/`, `commands/`, `workflows/`, or `hooks/hooks.json`, and cover plugin skills
+- Plugin spec facts and YAML-unsafe descriptions
+- Earlier unreleased work: wrong APIs and imports in Django, Symfony, and LangChain references, invalid code in pattern, refactoring, and SOLID examples, broken CLI `--` separators, stale agent counts in the root docs
+
+## Legacy (pre-1.0.0)
 
 ## [8.2.0] - 2026-04-13
 

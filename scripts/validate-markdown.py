@@ -89,7 +89,7 @@ def check_internal_links(skill_files: list[Path]) -> None:
             # Skip external links, anchors, and platform-specific references
             if target.startswith(("http://", "https://", "#", "mailto:")):
                 continue
-            resolved = (path.parent / target).resolve()
+            resolved = (path.parent / target.split("#", 1)[0]).resolve()
             if not resolved.exists():
                 error(f"{rp}: broken link '{target}' (file not found)")
             else:
@@ -111,7 +111,7 @@ def check_internal_links(skill_files: list[Path]) -> None:
             target = match.group(2)
             if target.startswith(("http://", "https://", "#", "mailto:")):
                 continue
-            resolved = (readme.parent / target).resolve()
+            resolved = (readme.parent / target.split("#", 1)[0]).resolve()
             if not resolved.exists():
                 error(f"README.md: broken link '{target}' (file not found)")
             else:

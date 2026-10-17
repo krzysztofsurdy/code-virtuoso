@@ -35,6 +35,10 @@ File: `.claude-plugin/marketplace.json`
 - When updating an existing skill's content: bump **patch** version
 - When renaming skills, reorganizing directories, or changing plugin structure: bump **major** version
 - Also update README.md skill tables and repository structure when adding/renaming/moving skills
+- Only `agents-virtuoso` uses `"source": "./"` (it ships `agents/` and `workflows/`). Every skill-only bundle uses `"source": "./skills"` with paths relative to it, so no bundle registers the agents twice
+- After changing an agent file, run `python3 scripts/build-codex-agents.py` to regenerate `codex/agents/`
+- Run `claude plugin validate .` and `python3 scripts/validate-*.py` before committing
+- Versioning restarted at 1.0.0 with the rebuild that followed 9.7.3
 - Plugins under `plugins/` (Claude Code only) have their own `plugin.json` that owns the plugin version. Their marketplace entry has only `name`, `source`, and `description`. Changing one still bumps the marketplace version.
 
 ## Commit conventions

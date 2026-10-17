@@ -38,6 +38,7 @@ Only the first four layers hold configuration. Runtime and machine state are for
   ```
   *.local.json
   loop/state/
+  handoff/
   ```
 
 - **Plugin data directory:** use `${CLAUDE_PLUGIN_DATA}` only for disposable caches. Never store a choice there.
@@ -73,7 +74,12 @@ JSON with a top-level `"version": 1` and one namespace per consumer.
     "reviewer": { "reviewDepth": "standard" },
     "architect": { "adrFormat": "madr" }
   },
-  "loop": { "pipelines": {} }
+  "loop": {
+    "maxIterations": 20,
+    "permissionMode": "acceptEdits",
+    "allowedPaths": ["src/", "tests/"],
+    "protectedPaths": [".env", ".github/workflows/"]
+  }
 }
 ```
 
@@ -87,7 +93,18 @@ JSON with a top-level `"version": 1` and one namespace per consumer.
 |---|---|---|
 | `ticket-delivery` | `ticket-delivery` skill | Tracker, VCS, tooling, test, and PR conventions for the ticket workflow |
 | `agents.<agent-name>` | The agent with that name | The agent's tuning settings, one object per agent |
-| `loop` | The loop plugin | Delivery loop settings |
+| `loop` | The loop plugin | Delivery loop settings only: `maxIterations`, `permissionMode`, `allowedPaths`, `protectedPaths` |
+
+`protectedPaths` is the one exception to the array-replace rule: the loop plugin combines the lists from every layer instead of replacing them, so a project can add protected paths but never remove a user's.
+
+The loop plugin stores its pipelines in separate files, not in `config.json`:
+
+| Layer | Path | Git |
+|---|---|---|
+| User | `${CODE_VIRTUOSO_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}/code-virtuoso}/loop/pipelines.json` | Never in a repo |
+| Project | `<project root>/.code-virtuoso/loop/pipelines.json` | Committed |
+
+When both files define a pipeline with the same name, the project entry wins.
 
 A new consumer picks a namespace that matches its skill or plugin name and documents its keys in its own reference file.
 
@@ -125,7 +142,7 @@ Writing happens only during setup in the main session. Reuse `root` and `home` f
 ```bash
 f="$root/.code-virtuoso/config.json"
 mkdir -p "$root/.code-virtuoso"
-[ -f "$root/.code-virtuoso/.gitignore" ] || printf '*.local.json\nloop/state/\n' > "$root/.code-virtuoso/.gitignore"
+[ -f "$root/.code-virtuoso/.gitignore" ] || printf '*.local.json\nloop/state/\nhandoff/\n' > "$root/.code-virtuoso/.gitignore"
 [ -f "$f" ] || echo '{"version":1}' > "$f"
 jq --arg v "main" '.["ticket-delivery"].mainBranch = $v' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
 ```

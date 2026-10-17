@@ -4,31 +4,33 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "47 skills and 19 agents for software engineering: knowledge, tools, frameworks, playbooks, roles, and agents, plus the loop-virtuoso Claude Code plugin",
-    "version": "9.7.3"
+    "description": "56 skills, 19 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
+    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "knowledge-virtuoso",
-      "description": "15 knowledge skills: design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, scrum, performance, microservices, git workflow, CI/CD, accessibility, and database design",
+      "description": "17 knowledge skills: design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, agent security, context engineering, docs lookup, scrum, performance, microservices, CI/CD, accessibility, and database design",
       "source": "./skills",
       "strict": false,
       "skills": [
-        "./knowledge/design-patterns",
-        "./knowledge/refactoring",
-        "./knowledge/solid",
-        "./knowledge/debugging",
-        "./knowledge/clean-architecture",
-        "./knowledge/testing",
-        "./knowledge/api-design",
-        "./knowledge/security",
-        "./knowledge/scrum",
-        "./knowledge/performance",
-        "./knowledge/microservices",
-        "./knowledge/git-workflow",
-        "./knowledge/cicd",
         "./knowledge/accessibility",
-        "./knowledge/database-design"
+        "./knowledge/agent-security",
+        "./knowledge/api-design",
+        "./knowledge/cicd",
+        "./knowledge/clean-architecture",
+        "./knowledge/context-engineering",
+        "./knowledge/database-design",
+        "./knowledge/debugging",
+        "./knowledge/design-patterns",
+        "./knowledge/docs-lookup",
+        "./knowledge/microservices",
+        "./knowledge/performance",
+        "./knowledge/refactoring",
+        "./knowledge/scrum",
+        "./knowledge/security",
+        "./knowledge/solid",
+        "./knowledge/testing"
       ]
     },
     {
@@ -37,62 +39,77 @@
       "source": "./skills",
       "strict": false,
       "skills": [
-        "./tools/agentic-rules-writer",
-        "./tools/ticket-writer",
         "./tools/agent-creator",
-        "./tools/plugin-creator",
+        "./tools/agentic-rules-writer",
         "./tools/brainstorming",
-        "./tools/using-ecosystem",
+        "./tools/image-annotate",
+        "./tools/plugin-creator",
         "./tools/pr-message-writer",
         "./tools/report-writer",
         "./tools/stakeholder-update-writer",
-        "./tools/web-screenshot",
-        "./tools/image-annotate"
-      ]
-    },
-    {
-      "name": "frameworks-virtuoso",
-      "description": "4 framework skills: Symfony components, Symfony upgrade, Django components, and LangChain components",
-      "source": "./skills",
-      "strict": false,
-      "skills": [
-        "./frameworks/symfony/symfony-components",
-        "./frameworks/symfony/symfony-upgrade",
-        "./frameworks/django/django-components",
-        "./frameworks/langchain/langchain-components"
+        "./tools/ticket-writer",
+        "./tools/using-ecosystem",
+        "./tools/web-screenshot"
       ]
     },
     {
       "name": "playbooks-virtuoso",
-      "description": "5 playbook skills: PHP upgrade, Composer dependencies, branch finishing, ticket delivery, and worktree ops",
+      "description": "8 playbook skills: ticket delivery, spec-driven development, TDD, branch finishing, PR feedback, handoff, worktree ops, and hooks and guardrails",
       "source": "./skills",
       "strict": false,
       "skills": [
-        "./playbooks/php-upgrade",
-        "./playbooks/composer-dependencies",
         "./playbooks/finishing-branch",
+        "./playbooks/handoff",
+        "./playbooks/hooks-and-guardrails",
+        "./playbooks/pr-feedback",
+        "./playbooks/spec-driven-development",
+        "./playbooks/tdd",
         "./playbooks/ticket-delivery",
         "./playbooks/worktree-ops"
       ]
     },
     {
+      "name": "frameworks-virtuoso",
+      "description": "7 framework skills: Symfony components and upgrade, Django components, LangChain components, PHP upgrade, Composer dependencies, and Vercel AI SDK",
+      "source": "./skills",
+      "strict": false,
+      "skills": [
+        "./frameworks/django/django-components",
+        "./frameworks/langchain/langchain-components",
+        "./frameworks/php/php-upgrade",
+        "./frameworks/php/composer-dependencies",
+        "./frameworks/symfony/symfony-components",
+        "./frameworks/symfony/symfony-upgrade",
+        "./frameworks/vercel/vercel-ai-sdk"
+      ]
+    },
+    {
+      "name": "ai-virtuoso",
+      "description": "4 AI engineering skills: agent design, LLM evals, LLM observability, and MCP server development",
+      "source": "./skills",
+      "strict": false,
+      "skills": [
+        "./ai/agent-design",
+        "./ai/llm-evals",
+        "./ai/llm-observability",
+        "./ai/mcp-server-development"
+      ]
+    },
+    {
       "name": "agents-virtuoso",
-      "description": "19 agents, 3 pre-composed teams, 7 role skills, and agent workflow skills: delegation patterns, team library, team dispatcher, subagent-driven development, verification discipline, plus all specialist and role agents",
+      "description": "19 agents (specialists and roles), 3 team workflows, and the agent-orchestration and verification skills, plus headless wrapper skills for CI review, test gaps, migration planning, dependency audit, and refactor scans",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/roles/product-manager",
-        "./skills/roles/architect",
-        "./skills/roles/backend-dev",
-        "./skills/roles/frontend-dev",
-        "./skills/roles/qa-engineer",
-        "./skills/roles/project-manager",
-        "./skills/roles/scrum-master",
-        "./skills/knowledge/dispatching-parallel-agents",
-        "./skills/knowledge/subagent-driven-development",
+        "./skills/knowledge/agent-orchestration",
         "./skills/knowledge/verification-before-completion",
-        "./skills/tools/agent-teams",
-        "./skills/tools/dispatching-agent-teams"
+        "./skills/tools/review-pr",
+        "./skills/tools/review-pr-cold",
+        "./skills/tools/verify-acceptance",
+        "./skills/tools/find-test-gaps",
+        "./skills/tools/plan-migration",
+        "./skills/tools/audit-dependencies",
+        "./skills/tools/scan-refactors"
       ],
       "agents": [
         "./agents/investigator.md",
@@ -103,17 +120,17 @@
         "./agents/doc-writer.md",
         "./agents/migration-planner.md",
         "./agents/test-gap-analyzer.md",
+        "./agents/cold-reviewer.md",
+        "./agents/acceptance-verifier.md",
+        "./agents/plan-auditor.md",
+        "./agents/instruction-auditor.md",
         "./agents/product-manager.md",
         "./agents/architect.md",
         "./agents/backend-dev.md",
         "./agents/frontend-dev.md",
         "./agents/qa-engineer.md",
         "./agents/project-manager.md",
-        "./agents/scrum-master.md",
-        "./agents/cold-reviewer.md",
-        "./agents/acceptance-verifier.md",
-        "./agents/readiness-checker.md",
-        "./agents/course-corrector.md"
+        "./agents/scrum-master.md"
       ]
     },
     {

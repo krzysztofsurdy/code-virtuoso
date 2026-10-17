@@ -30,7 +30,7 @@ agents/
 
 One file per agent. The file name matches the `name` field in the frontmatter.
 
-Role skills that pair with a role agent live in `skills/roles/{name}/`, and the agent file references the role skill via `skills:` in its frontmatter. Agents are not nested inside skill directories.
+A role agent has no paired skill. Its templates, checklists, and guides live in `roles/{name}/` at the repository root, and the agent body points to them by path. They are plain files without frontmatter, so nothing loads them until the agent opens one. Agents are not nested inside skill directories.
 
 ## File format
 
@@ -63,9 +63,9 @@ skills:
 | Field | Description |
 |-------|-------------|
 | `disallowedTools` | Comma-separated denylist applied before `tools` resolves. |
-| `isolation` | Set to `worktree` when the agent creates or modifies source files. Omit for read-only agents. |
+| `isolation` | Set to `worktree` when the agent changes source code. Omit for read-only agents, documentation-only writers, and planning roles that run in place. |
 | `memory` | Persistent memory scope: `user`, `project`, or `local`. Use for role agents that benefit from cross-session context. |
-| `skills` | List of skill names (by `name` field, not path) to preload into the agent's context at startup. |
+| `skills` | List of skill names (by `name` field, not path) to preload into the agent's context at startup. See [Skill preloading](#skill-preloading). |
 | `mcpServers` | MCP servers scoped to this agent. Use inline definitions to keep tool descriptions out of the parent conversation. |
 | `permissionMode` | Override for how the agent handles permission prompts. Use sparingly. |
 | `hooks` | Lifecycle hooks scoped to this agent. |
@@ -111,6 +111,20 @@ Keep the body portable:
 
 See [system-prompts reference](../skills/tools/agent-creator/references/system-prompts.md) for patterns and worked examples.
 
+### Skill preloading
+
+Preload at most four skills, and only skills the agent needs on every run. Names resolve against every installed plugin, not only the agent's own. Checked on Claude Code 2.1.306 with a plugin agent that preloads `security` while the skill ships in a different plugin:
+
+| Setup | Result |
+|---|---|
+| Bare name (`security`), the plugin that holds the skill is installed | Preloaded into the subagent |
+| Scoped name (`knowledge-virtuoso:security`), that plugin is installed | Preloaded |
+| Skill's plugin not installed, or the name is wrong | Nothing is preloaded and there is no error or warning |
+| Subagent started by the Agent tool, or by a skill with `context: fork` and `agent:` | Preloaded |
+| Agent run as the main session (`claude --agent`) | Preloaded skills were not injected. Subagents spawned with the Agent tool get them |
+
+So a missing skill fails silently. Agents must work without their preloads (the preload adds guidance, it is never the only copy of an instruction the agent cannot do without), and bundles that preload from another bundle should say which bundle to install. Prefer bare names: they keep working when a skill moves between bundles.
+
 ## Archetypes
 
 Agents fall into three archetypes. The archetype determines tool permissions, isolation, and memory defaults.
@@ -118,7 +132,7 @@ Agents fall into three archetypes. The archetype determines tool permissions, is
 | Archetype | Scope | Isolation | Memory | Example tools |
 |---|---|---|---|---|
 | **Specialist** | Single repeatable task | Only when modifying files | Stateless | Read, Grep, Glob, Bash |
-| **Role** | Entire domain of responsibility | Only for dev roles | Often `project` | Read, Grep, Glob, Bash (+ Edit, Write for dev roles) |
+| **Role** | Entire domain of responsibility. The agent plus its `roles/{name}/` references | Only for dev roles | Often `project` | Read, Grep, Glob, Bash (+ Edit, Write for dev roles) |
 | **Team-Lead** | Coordinates parallel workers | No (delegates) | Stateless | Read, Grep, Glob, Bash, Agent(...) |
 
 See [archetypes reference](../skills/tools/agent-creator/references/archetypes.md) for worked examples and anti-patterns.
@@ -145,6 +159,8 @@ Both fields are optional. When present, they reference artifact types defined in
 - Use an output template, not prose
 - Trim tool allowlists to the minimum that lets the workflow finish
 - Read-only by default - add write tools only when the agent legitimately modifies files
+- Pair `Edit` and `Write` with `isolation: worktree` when the agent changes source code. Documentation-only writers and planning roles that write only planning documents may run in place
+- A role agent reads its `roles/{name}/` files by path. Do not create a role skill for it
 
 ## Tuning (optional)
 
@@ -185,21 +201,9 @@ See the [tuning reference](../skills/tools/agent-creator/references/tuning.md) f
 
 ## Marketplace registration
 
-Every agent is registered in `.claude-plugin/marketplace.json`:
+Every agent is registered in the `agents` list of the `agents-virtuoso` entry in `.claude-plugin/marketplace.json`. That entry uses `"source": "./"` because agents and workflows live at the repository root. Skill-only bundles use `"source": "./skills"` so they do not register the root `agents/` directory a second time.
 
-- Specialist agents go into the `agents-virtuoso` plugin and an individual `agent-{name}` plugin
-- Role agents go into `agents-virtuoso`, the matching `role-{name}` plugin, and the role skill is paired with the agent
-
-Example:
-
-```json
-{
-  "name": "agent-reviewer",
-  "description": "...",
-  "source": "./",
-  "agents": ["./agents/reviewer.md"]
-}
-```
+Wrapper skills that run an agent with `agent: agents-virtuoso:{name}` ship in the same entry, so the agent and its wrapper install together.
 
 Bump the marketplace `metadata.version`:
 
@@ -215,6 +219,6 @@ The most common rejection reasons:
 
 - Description lacks trigger phrases
 - Tool allowlist is missing or overly permissive
-- Agent modifies files but has no `isolation: worktree`
+- Agent changes source code but has no `isolation: worktree`
 - Output section is vague prose instead of a template
 - Body contains provider-specific or tool-specific phrasing

@@ -80,7 +80,7 @@ Lowercase letters, digits, and hyphens. Name the domain, not a task: `review-squ
 ## Adding a team
 
 1. Write the Markdown recipe in `teams.md` and confirm every agent exists.
-2. Write `workflows/{name}.js` to the contract above.
+2. Write `workflows/{name}.js` to the contract above. Start from [template/workflow-template.js](../template/workflow-template.js).
 3. Test the script before committing: load it as an async function, check the `meta` literal and the phase titles, and run it against a mock `agent` that returns schema-shaped data. Cover each early return (missing input, failed gate), not only the happy path.
 4. Run `claude plugin validate .` for the marketplace manifest. It does not read workflow bodies, so step 3 is not optional.
 5. Register the team in the README team table and, if it adds a chaining pattern, in `AGENTS.md`. Bump the marketplace version.

@@ -2,8 +2,10 @@
 name: agent-name
 description: What this agent does. Delegate when {trigger condition}.
 tools: Read, Grep, Glob, Bash
-skills:
-  - relevant-skill-name
+# skills:
+#   - relevant-skill-name        # at most four, only what every run needs
+# isolation: worktree            # only when the agent changes source code
+# memory: project                # role agents that keep cross-session context
 # expects:
 #   - artifact-type-name
 # produces:
@@ -36,3 +38,6 @@ instead of guessing.
 
 A concrete template the agent fills in. Show the exact sections and formatting
 the caller can rely on - not a prose description.
+
+<!-- Role agents only: add a "Reference files" section that lists the files in
+roles/<role>/ and says when to open each one. Do not create a role skill. -->

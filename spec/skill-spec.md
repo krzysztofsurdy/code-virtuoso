@@ -7,6 +7,8 @@ This document defines the conventions for skills in the code-virtuoso marketplac
 - [Directory structure](#directory-structure)
 - [SKILL.md format](#skillmd-format)
 - [Categories](#categories)
+- [Skills must change behavior](#skills-must-change-behavior)
+- [Run-by-name skills](#run-by-name-skills)
 - [References](#references)
 - [Agents](#agents)
 - [Progressive disclosure](#progressive-disclosure)
@@ -42,7 +44,8 @@ user-invocable: false
 |-------|----------|-------------|
 | `name` | Yes | Must match the parent directory name. Lowercase, hyphens only, 1-64 chars. |
 | `description` | Yes | What the skill does and when to use it. Max 1024 chars. Include trigger keywords. |
-| `user-invocable` | No | Set to `false` for knowledge/reference skills not meaningful as slash commands. Omit for interactive skills. |
+| `user-invocable` | No | Set to `false` for background knowledge that is not meaningful as a slash command. Omit for interactive skills. |
+| `disable-model-invocation` | No | Set to `true` to keep the skill out of the model's context until the user runs it by name. See [Run-by-name skills](#run-by-name-skills). |
 | `argument-hint` | No | Hint text shown after the slash command (e.g. `"[optional: agent-name]"`). |
 | `license` | No | License name or reference to a bundled license file. |
 | `metadata` | No | Arbitrary key-value mapping for additional metadata. |
@@ -53,13 +56,40 @@ The markdown body after frontmatter contains skill instructions. Keep under 500 
 
 ## Categories
 
-Skills are organized into three categories:
+Skills are organized into five categories:
 
 | Category | Path | Purpose |
 |----------|------|---------|
-| `knowledge` | `skills/knowledge/` | Reference material on concepts, patterns, and practices |
-| `frameworks` | `skills/frameworks/` | Framework-specific knowledge and component guides |
-| `tools` | `skills/tools/` | Interactive workflows and setup utilities |
+| `knowledge` | `skills/knowledge/` | Decision rules and pitfalls on concepts, practices, and agent workflow |
+| `frameworks` | `skills/frameworks/{name}/` | Framework-specific version facts, opinions, and pitfalls (also PHP upgrade and Composer playbooks under `php/`) |
+| `tools` | `skills/tools/` | Interactive generators, setup utilities, and headless agent wrappers |
+| `playbooks` | `skills/playbooks/` | Step-by-step procedures for recurring work |
+| `ai` | `skills/ai/` | Building with LLMs and agents: agent design, evals, observability, MCP servers |
+
+Role reference material is not a skill category. It lives in `roles/{name}/` and is read by role agents (see [agent-spec.md](agent-spec.md)).
+
+## Skills must change behavior
+
+A skill earns its place by changing what the model does. Keep what the model gets wrong without help: a procedure with gates, a decision rule, a version fact, a pitfall list, a checklist that catches real misses. Leave out what the model already knows (textbook definitions, generic advice).
+
+- **Core Principles** and **Integration with Other Skills** sections are optional. Add one only when it carries information the body does not. Tables of slogans and lists of sibling skills cost context and change nothing. Testing showed that removing such sections did not hurt results.
+- Test a skill before shipping it. Run the same task with and without the skill and compare. Keep the eval cases under `evals/`. `evals/README.md` describes the layout and how to run them.
+- If the model already does the task correctly without the skill, do not add the skill.
+
+## Run-by-name skills
+
+Reference skills that cover well-known material (design patterns, SOLID, testing theory) are useful on request but waste context when their descriptions sit in every session. Mark them:
+
+```yaml
+---
+name: solid
+description: SOLID principles for object-oriented design. Use to review class design or reduce coupling.
+user-invocable: true
+disable-model-invocation: true
+---
+```
+
+The skill stays installed and the user runs it as `/solid`. Headless wrapper skills that fork an agent use the same pair, because only a person or a script should start them.
 
 ## References
 
@@ -71,7 +101,7 @@ Skills are organized into three categories:
 
 ## Agents
 
-Agents that belong to a skill live in the skill's `agents/` subdirectory. See [agent-spec.md](agent-spec.md) for the agent format.
+Agents live in the top-level `agents/` directory, not inside skills. See [agent-spec.md](agent-spec.md) for the agent format.
 
 ## Progressive disclosure
 
@@ -138,7 +168,7 @@ Do NOT use Platform Notes to make the skill platform-specific. The body must sti
 
 ### Structure
 
-Place a `## Platform Notes` section near the bottom of the SKILL.md (before Reference Files and Integration sections). Use a table with one row per platform.
+Place a `## Platform Notes` section near the bottom of the SKILL.md (before the Reference Files section). Use a table with one row per platform.
 
 ```markdown
 ## Platform Notes

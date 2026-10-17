@@ -9,6 +9,7 @@ Code Virtuoso is a collection of AI agent skills and sub-agent definitions built
 - [Adding a new skill](#adding-a-new-skill)
 - [Updating existing skills](#updating-existing-skills)
 - [Adding a new agent](#adding-a-new-agent)
+- [Adding a team](#adding-a-team)
 - [Updating existing agents](#updating-existing-agents)
 - [Adding a new plugin](#adding-a-new-plugin)
 - [Updating existing plugins](#updating-existing-plugins)
@@ -24,21 +25,25 @@ The skills and agents have no build step, test suite, or runtime: "development" 
 1. Clone the repository
 2. Read this guide and the [README](README.md) for project context
 3. Browse existing skills in `skills/` and agents in `agents/` to understand the format and depth expected
-4. Check the `template/` directory for starter templates (`SKILL.md`, `agent.md`)
-5. Check the `spec/` directory for format specifications (`skill-spec.md`, `agent-spec.md`, `agent-skills-spec.md`, `plugin-spec.md`)
+4. Check the `template/` directory for starter templates (`skill-template.md`, `agent-template.md`, `workflow-template.js`, `phase-template.md`)
+5. Check the `spec/` directory for format specifications (`skill-spec.md`, `agent-spec.md`, `team-spec.md`, `plugin-spec.md`, `config-spec.md`, `artifacts.md`)
 
 ## Project structure
 
 ```
 agents/              - Sub-agent definitions (specialist and role agents)
+roles/{role}/        - Templates and checklists that role agents read by path (not skills)
+workflows/           - Team workflow scripts for Claude Code (review-squad, development-team, war-room)
 skills/
-  knowledge/         - Conceptual reference material (SOLID, testing, debugging, etc.)
-  tools/             - Interactive tools (agentic-rules-writer, ticket-writer, agent-creator, plugin-creator)
-  playbooks/         - Step-by-step operational procedures (PHP upgrade, etc.)
-  roles/             - Team role reference skills (product manager, architect, etc.)
-  frameworks/{name}/ - Framework-specific skills (Symfony, Django, LangChain)
+  knowledge/         - Decision rules and pitfalls (security, debugging, agent orchestration, design references)
+  tools/             - Interactive generators and headless agent wrappers
+  playbooks/         - Step-by-step operational procedures (ticket delivery, TDD, PR feedback)
+  frameworks/{name}/ - Framework-specific skills (Symfony, Django, LangChain, PHP, Vercel AI SDK)
+  ai/                - Building with LLMs and agents (agent design, evals, observability, MCP servers)
+codex/               - Codex support: generated agent TOML files and install notes
+examples/ci/         - Example GitHub Actions workflows for headless agents
 plugins/             - Self-contained Claude Code plugins with hooks and scripts (loop-virtuoso)
-scripts/             - Repository validators (python3 scripts/validate-*.py)
+scripts/             - Repository validators and the Codex agent builder (python3 scripts/validate-*.py)
 spec/                - Format specifications
 template/            - Starter templates
 .claude-plugin/      - Marketplace configuration (Claude Code format; adaptable to other platforms)
@@ -54,11 +59,13 @@ See the [README](README.md) for the full directory tree and skill tables.
 
 | Category | When to use | Example |
 |---|---|---|
-| `skills/knowledge/` | Concepts, principles, reference material | SOLID, design patterns, testing theory |
-| `skills/tools/` | Interactive tools that generate output | Rules writer |
-| `skills/playbooks/` | Step-by-step procedures for recurring tasks | PHP upgrade, dependency updates |
-| `skills/roles/` | Team role definitions with responsibilities and workflows | Product manager, QA engineer |
-| `skills/frameworks/{name}/` | Framework-specific component references or upgrade guides | Symfony components, Django components |
+| `skills/knowledge/` | Decision rules, pitfalls, and reference the model needs on request | Security, debugging, agent orchestration |
+| `skills/tools/` | Interactive tools that generate output, and headless agent wrappers | Rules writer, ticket writer |
+| `skills/playbooks/` | Step-by-step procedures for recurring tasks | Ticket delivery, TDD, PR feedback |
+| `skills/frameworks/{name}/` | Framework-specific version facts, opinions, and upgrade guides | Symfony components, PHP upgrade |
+| `skills/ai/` | Building software with LLMs and agents | LLM evals, MCP server development |
+
+There is no `skills/roles/`. Role material is reference files for a role agent, not a skill: put it in `roles/{role}/` and point to it from the agent (see [Adding a new agent](#adding-a-new-agent)).
 
 ### 2. Create the directory structure
 
@@ -81,6 +88,7 @@ Every skill has a `SKILL.md` at the root and a `references/` directory for deep-
 name: your-skill-name          # Kebab-case, matches directory name
 description: What this skill does. Use when {trigger condition}.
 user-invocable: false           # true only if the skill is meant to be called directly by users
+disable-model-invocation: true  # optional: run by name only (see below)
 allowed-tools: Read Grep Glob Bash  # Optional: restrict tool access (platform-specific, see note below)
 ---
 ```
@@ -97,11 +105,22 @@ The `user-invocable` field controls whether a skill appears as a runnable comman
 |---|---|---|
 | `knowledge/` | `false` | Background reference, auto-loaded by context or agents |
 | `frameworks/` | `false` | Background reference, auto-loaded |
-| `roles/` | `false` | Background reference, loaded by agents |
+| `ai/` | `false` | Background reference, auto-loaded |
 | `playbooks/` | `true` | User runs these as step-by-step procedures |
 | `tools/` | `true` | User runs these directly to generate output |
 
 Every SKILL.md **must** include this field. If omitted, behavior varies by platform.
+
+#### Run-by-name skills
+
+Textbook references the model already knows (design patterns, SOLID, testing theory) and headless agent wrappers should not sit in every session's context. Mark them with both fields:
+
+```yaml
+user-invocable: true
+disable-model-invocation: true
+```
+
+The skill stays installed and the user runs it as `/skill-name`. The model never loads it on its own, so it costs no context until called. The README lists these skills as "run by name". See [skill-spec.md](spec/skill-spec.md#run-by-name-skills).
 
 #### No provider-specific models
 
@@ -125,14 +144,13 @@ Bad example:
 
 #### SKILL.md structure
 
-Follow this order:
+A skill must change what the model does. Keep what the model gets wrong without help: a procedure with gates, a decision rule, a version fact, a pitfall list. Leave out what it already knows.
 
-1. **Title** - one paragraph summary of core philosophy
-2. **Core Principles** - table with `| Principle | Meaning |` columns
-3. **Main sections** - tables, commands, pattern indexes (varies by skill type)
-4. **Quick Reference: Checklist** - step-by-step checklist with `- [ ]` items
-5. **Reference Files** - table linking to `references/` files with `| Reference | Contents |` columns
-6. **Integration with Other Skills** - table with `| Situation | Recommended Skill |` columns
+1. **Title and summary** - one paragraph: the problem and what goes wrong without the skill
+2. **Main sections** - procedure steps, decision tables, pitfalls (varies by skill type)
+3. **Reference Files** - table linking to `references/` files, with when to open each one
+
+**Core Principles**, **Quick Reference: Checklist**, and **Integration with Other Skills** sections are optional. Add one only when it holds information the body lacks. Sections of slogans and lists of sibling skills cost context and change nothing: an earlier version of this library required them, and testing showed that dropping them did not hurt results.
 
 Minimal example:
 
@@ -147,26 +165,20 @@ user-invocable: false
 
 One paragraph summary.
 
-## Core Principles
+## Pitfalls
 
-| Principle | Meaning |
-|---|---|
-| **Principle one** | What it means in practice |
+- A mistake the model makes without this skill, and the fix.
 
 ## Reference Files
 
 | Reference | Contents |
 |---|---|
 | [topic-a](references/topic-a.md) | Deep dive into topic A |
-
-## Integration with Other Skills
-
-| Situation | Recommended Skill |
-|---|---|
-| When you need X | `other-skill` |
 ```
 
-**Note on skill references:** In the Integration table, reference skills by name. How users invoke skills depends on their platform (e.g., `/skill-name` as a slash command in Claude Code, `@skill-name` in other tools, or automatic activation based on context).
+#### Evals
+
+Show that the skill helps before you ship it: run the same task with and without the skill and compare the results. Keep the eval cases under `evals/`. The layout and the way to run them are described in `evals/README.md`. If the model already does the task right without the skill, do not add the skill.
 
 ### 4. Add reference files
 
@@ -176,17 +188,20 @@ Reference files live in `references/` and contain the deep content: code example
 
 Every skill change requires a marketplace.json update. This is non-negotiable.
 
-Add your skill path to the appropriate plugin's `skills` array in `.claude-plugin/marketplace.json`:
+Add your skill path to the appropriate plugin's `skills` array in `.claude-plugin/marketplace.json`. Skill-only bundles use `"source": "./skills"`, so paths are relative to `skills/`:
 
 ```json
 {
   "name": "knowledge-virtuoso",
+  "source": "./skills",
   "skills": [
-    "./skills/knowledge/existing-skill",
-    "./skills/knowledge/your-new-skill"
+    "./knowledge/existing-skill",
+    "./knowledge/your-new-skill"
   ]
 }
 ```
+
+Headless wrapper skills that run an agent (`agent: agents-virtuoso:{name}`) belong to `agents-virtuoso` instead, whose source is `./`, so they are listed there as `./skills/tools/{name}`.
 
 If no existing plugin fits your skill, create a new plugin entry. See [Marketplace Configuration](#marketplace-configuration) for details.
 
@@ -213,7 +228,7 @@ Pick the archetype that matches the scope of responsibility, not the size of the
 | Archetype | When to use | Example |
 |---|---|---|
 | **Specialist** | Single, repeatable task type. Typically stateless and read-only. | Investigator, Reviewer, Dependency Auditor |
-| **Role** | Entire domain of responsibility, often with persistent project memory. | Product Manager, Architect, QA Engineer |
+| **Role** | Entire domain of responsibility, often with persistent project memory. The agent plus its `roles/{role}/` reference files. | Product Manager, Architect, QA Engineer |
 | **Team-Lead** | Coordinates multiple sub-agents running in parallel. | Release lead, parallel-review dispatcher |
 
 Decision tree:
@@ -246,7 +261,7 @@ Naming rules:
 name: your-agent-name
 description: What this agent does. Delegate when {trigger condition}.
 tools: Read, Grep, Glob, Bash
-isolation: worktree              # Optional: only when the agent modifies files
+isolation: worktree              # Optional: only when the agent changes source code
 memory: project                  # Optional: only for role agents that accumulate context
 skills:
   - related-skill-name           # Optional: preload skills at startup
@@ -259,9 +274,9 @@ skills:
 | `description` | Yes | Yes | Pack with trigger phrases ("delegate when", "use after"). No marketing adjectives |
 | `tools` | Yes | No | Allowlist the minimum needed. Never rely on inheritance |
 | `disallowedTools` | No | No | Denylist applied before `tools` resolves |
-| `isolation` | No | No | Set to `worktree` if and only if the agent creates or modifies files |
+| `isolation` | No | No | Set to `worktree` when the agent changes source code. Documentation-only writers and planning roles may run in place |
 | `memory` | No | No | `user`, `project`, or `local`. Use for role agents that need cross-session context |
-| `skills` | No | Yes | Reference by `name` field, not path. Keep to four or fewer |
+| `skills` | No | Yes | Reference by `name` field, not path. Keep to four or fewer. Names resolve across installed plugins, and a missing skill is skipped silently (see [agent-spec.md](spec/agent-spec.md#skill-preloading)) |
 | `mcpServers` | No | No | Scope MCP servers to this agent, keeping descriptions out of the parent conversation |
 | `permissionMode` | No | No | Override permission prompts. Use sparingly |
 | `model` | No | - | **Do not include.** Model selection is a user/platform concern |
@@ -297,6 +312,7 @@ Body guidelines:
 - Do not duplicate the tool list from the frontmatter
 - Do not include persona bloat or provider-specific phrasing ("As Claude...")
 - See `agents/investigator.md` or `agents/implementer.md` for complete examples
+- Role agents point to their `roles/{role}/` files by path. Do not create a role skill, and do not preload one
 
 See [`agent-creator/references/system-prompts.md`](skills/tools/agent-creator/references/system-prompts.md) for worked examples per archetype and common rejection reasons.
 
@@ -307,13 +323,13 @@ Start read-only and add write tools only when the workflow demands them.
 | Archetype | Typical allowlist |
 |---|---|
 | Investigator / Reviewer / Auditor | `Read, Grep, Glob, Bash` |
-| Doc Writer | `Read, Grep, Glob, Bash, Edit, Write` + `isolation: worktree` |
+| Doc Writer | `Read, Grep, Glob, Bash, Edit, Write` (documentation only, runs in place) |
 | Implementer / Dev Role | `Read, Grep, Glob, Bash, Edit, Write` + `isolation: worktree` |
 | Team-Lead | `Read, Grep, Glob, Bash, Agent(specialist-a, specialist-b)` |
 
 Rules:
 
-- Every `Edit`/`Write` capability must pair with `isolation: worktree`
+- Pair `Edit`/`Write` with `isolation: worktree` when the agent changes source code. Documentation-only writers and planning roles that write only planning documents may run in place
 - `Agent(...)` allowlist pins which sub-agent types a team-lead can spawn
 - Never leave `tools` unset - agents that inherit all tools are not least-privileged
 
@@ -323,39 +339,29 @@ See [`agent-creator/references/tool-selection.md`](skills/tools/agent-creator/re
 
 Every new agent requires a `marketplace.json` update. This is non-negotiable.
 
-- Add the agent path to the `agents-virtuoso` plugin's `agents` array
-- If it is a role agent, also add the matching role skill to `agents-virtuoso`
+- Add the agent path to the `agents` array of the `agents-virtuoso` plugin. That entry uses `"source": "./"` because agents and workflows live at the repository root
+- A role agent needs no skill entry. Its `roles/{role}/` files are plain files that ship with the repository
+- If you add a headless wrapper skill for the agent, add it to the same entry
 - Bump the marketplace version per the [Version Bumping Rules](#version-bumping-rules)
 
-Example for a specialist:
-
 ```json
 {
-  "name": "agent-reviewer",
+  "name": "agents-virtuoso",
   "description": "...",
   "source": "./",
   "strict": false,
-  "agents": ["./agents/reviewer.md"]
+  "skills": ["./skills/knowledge/agent-orchestration"],
+  "agents": ["./agents/reviewer.md", "./agents/your-agent-name.md"]
 }
 ```
 
-Example for a role (skill + agent paired):
-
-```json
-{
-  "name": "role-architect",
-  "description": "...",
-  "source": "./",
-  "strict": false,
-  "skills": ["./skills/roles/architect"],
-  "agents": ["./agents/architect.md"]
-}
-```
+Only `agents-virtuoso` uses `"source": "./"`. Every other bundle uses `"source": "./skills"`: Claude Code scans an entry's source for `agents/`, so a second entry with the repository root as its source would register every agent again under its own name.
 
 ### 7. Update README.md and AGENTS.md
 
-- Add a row to the appropriate agent table in [README.md](README.md) (Specialist Agents or Role Agents)
+- Add a row to the agent table in [README.md](README.md)
 - Add a row to the matching table in [AGENTS.md](AGENTS.md), including a short description of when to delegate
+- Run `python3 scripts/build-codex-agents.py` to regenerate the Codex TOML files in `codex/agents/`
 - If the agent introduces a new category of work, update the top-level "Agents" bullet in README.md
 
 ### 8. Validate before committing
@@ -366,7 +372,7 @@ The most common rejection reasons:
 
 - Description lacks trigger phrases
 - Tool allowlist is missing or overly permissive
-- Agent modifies files but has no `isolation: worktree`
+- Agent changes source code but has no `isolation: worktree`
 - Output section is vague prose instead of a template
 - Body contains provider-specific or tool-specific phrasing
 - Agent does two things - should be split into two agents
@@ -377,6 +383,15 @@ The most common rejection reasons:
 - Re-run the validation checklist in [`agent-creator/references/validation.md`](skills/tools/agent-creator/references/validation.md)
 - Bump the version in `marketplace.json` (see [Version Bumping Rules](#version-bumping-rules))
 - If the change alters the agent's output contract or tool permissions, note it in the commit message so reviewers can spot callers that may need updating
+
+## Adding a team
+
+A team is a Markdown recipe plus a Claude Code workflow script that encodes it. Follow [`spec/team-spec.md`](spec/team-spec.md):
+
+1. Add the recipe as a section of `skills/knowledge/agent-orchestration/references/teams.md`. Every agent it names must exist in `agents/`
+2. Copy `template/workflow-template.js` to `workflows/{name}.js` and fill it in. `meta.name` equals the file name
+3. Test the script against a mock `agent` before committing, including each early return
+4. Add the team to the Teams table in [README.md](README.md) and [AGENTS.md](AGENTS.md), and bump the marketplace version. The `agents-virtuoso` entry picks `workflows/` up on its own, so `marketplace.json` needs no new path
 
 ## Adding a new plugin
 
@@ -395,8 +410,8 @@ Use this path when you want to expose existing skills or agents in this repo as 
 
 1. Open `.claude-plugin/marketplace.json`
 2. Add a new object to the `plugins` array following the [Plugin Naming Convention](#plugin-naming-convention)
-3. Use `"source": "./"` and `"strict": false` - the whole repo is the plugin source
-4. Reference existing skill directories in `skills` and existing agent files in `agents`
+3. Use `"source": "./skills"` and `"strict": false` for a skill-only bundle, and list skill paths relative to `skills/`. Use `"source": "./"` only for the entry that ships agents or workflows (`agents-virtuoso`): every entry with the repository root as its source registers every agent in `agents/`, so a second one would duplicate them
+4. Reference existing skill directories in `skills` and, for `agents-virtuoso`, existing agent files in `agents`
 5. Bump `metadata.version` per [Version Bumping Rules](#version-bumping-rules) (minor bump for a new plugin)
 6. Update README.md if the new plugin introduces a new category
 
@@ -404,11 +419,11 @@ Minimal example:
 
 ```json
 {
-  "name": "tool-my-new-tool",
+  "name": "my-new-virtuoso",
   "description": "Interactive tool that ...",
-  "source": "./",
+  "source": "./skills",
   "strict": false,
-  "skills": ["./skills/tools/my-new-tool"]
+  "skills": ["./tools/my-new-tool"]
 }
 ```
 
@@ -463,30 +478,32 @@ The file `.claude-plugin/marketplace.json` defines how skills and agents are pac
 {
   "name": "plugin-name",
   "description": "What this plugin provides",
-  "source": "./",
+  "source": "./skills",
   "strict": false,
-  "skills": ["./skills/category/skill-name"],
-  "agents": ["./agents/agent-name.md"]
+  "skills": ["./category/skill-name"]
 }
 ```
+
+Only `agents-virtuoso` also sets `agents` and uses `"source": "./"`, with skill paths written from the repository root (`./skills/tools/review-pr`).
 
 **When to create a new plugin vs. add to an existing one:**
 
 - Add to an existing plugin when your skill fits its theme (e.g., a new knowledge skill goes into `knowledge-virtuoso`)
-- Create a new plugin only when adding an entirely new category that does not fit any existing bundle
+- Create a new plugin only when adding an entirely new category that does not fit any existing bundle (the `ai` category is an example)
 
 ### Plugin naming convention
 
 All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` subdirectory, plus one for agents, plus one per self-contained plugin under `plugins/`.
 
-| Plugin | Maps to | Contains |
+| Plugin | Source | Contains |
 |---|---|---|
-| `knowledge-virtuoso` | `skills/knowledge/` | All knowledge reference skills |
-| `tools-virtuoso` | `skills/tools/` | All interactive tool skills |
-| `frameworks-virtuoso` | `skills/frameworks/` | All framework-specific skills (Symfony, Django, LangChain) |
-| `playbooks-virtuoso` | `skills/playbooks/` | All operational playbook skills |
-| `agents-virtuoso` | `skills/roles/` + `agents/` | All 19 agents + all 7 role skills |
-| `loop-virtuoso` | `plugins/loop-virtuoso/` | Self-contained Claude Code plugin with its own `plugin.json` (not a bundle of repo skills) |
+| `knowledge-virtuoso` | `./skills` | Knowledge skills (security, debugging, design references, and so on) |
+| `tools-virtuoso` | `./skills` | Interactive tool skills |
+| `playbooks-virtuoso` | `./skills` | Operational playbook skills |
+| `frameworks-virtuoso` | `./skills` | Framework skills (Symfony, Django, LangChain, PHP, Vercel AI SDK) |
+| `ai-virtuoso` | `./skills` | AI engineering skills (agent design, evals, observability, MCP servers) |
+| `agents-virtuoso` | `./` | All 19 agents, the team workflows in `workflows/`, `agent-orchestration`, `verification-before-completion`, and the headless wrapper skills |
+| `loop-virtuoso` | `./plugins/loop-virtuoso` | Self-contained Claude Code plugin with its own `plugin.json` (not a bundle of repo skills) |
 
 When adding a new skill:
 - Identify which `skills/` subdirectory it belongs to
@@ -494,9 +511,9 @@ When adding a new skill:
 - Bump the version
 
 When adding a new role:
-- Create the role skill in `skills/roles/{name}/`
-- Create the agent in `agents/{name}.md`
-- Add both to `agents-virtuoso`
+- Create the reference files in `roles/{name}/`
+- Create the agent in `agents/{name}.md` and point it to those files
+- Add the agent to `agents-virtuoso`
 
 When adding a new specialist agent:
 - Create the agent in `agents/{name}.md`
@@ -508,9 +525,11 @@ The version field lives in `metadata.version` inside `marketplace.json`.
 
 | Change type | Version bump | Example |
 |---|---|---|
-| Content updates to existing skills | Patch | 7.13.0 -> 7.13.1 |
-| New skills or agents added | Minor | 7.13.0 -> 7.14.0 |
-| Restructuring, renames, breaking changes | Major | 7.13.0 -> 8.0.0 |
+| Content updates to existing skills | Patch | 1.0.0 -> 1.0.1 |
+| New skills or agents added | Minor | 1.0.0 -> 1.1.0 |
+| Restructuring, renames, breaking changes | Major | 1.0.0 -> 2.0.0 |
+
+Versioning restarted at 1.0.0 with the rebuild that followed 9.7.3. Older releases are in the legacy section of [CHANGELOG.md](CHANGELOG.md).
 
 ## Commit conventions
 
@@ -529,9 +548,9 @@ Skills are reference material for AI agents that need precise, actionable inform
 | Reference files | 100-700 lines each, with a `## Contents` list of H2 links once a file passes 100 lines |
 | SKILL.md | Under 500 lines (use progressive disclosure) |
 | Tables | Use for all structured data (comparisons, commands, options) |
-| Cross-references | Include an Integration section linking to related skills |
+| Cross-references | Link related skills only where the body needs them. An Integration section is optional |
 | Code examples | Idiomatic for the target language/framework, using current stable versions |
-| Principles table | Required in every SKILL.md - sets the mindset before details |
+| Principles table | Optional. Skip it unless it carries information the body lacks |
 | Frontmatter | Only in SKILL.md and agent files, never in reference files |
 
 ### Language and provider agnosticism
@@ -541,7 +560,8 @@ All content must be **language-agnostic** and **LLM provider-agnostic** by defau
 | Content type | Rule |
 |---|---|
 | Knowledge skills | Fully language-agnostic. Use pseudocode or multi-language examples. |
-| Role skills | Fully agnostic. No language-specific code. |
+| AI skills (`ai/`) | Provider-agnostic. Name a provider only to state a fact about it. |
+| Role references (`roles/`) | Fully agnostic. No language-specific code. |
 | Agent definitions | No provider-specific model names. No platform-specific tool names in the body. |
 | Framework skills (`frameworks/`) | Language/framework-specific by definition. Target latest stable version. |
 | Playbooks | May be language-specific if the procedure is (e.g., PHP upgrade). State the scope clearly. |
@@ -562,4 +582,4 @@ Before writing a new skill:
 1. Search for existing skills: `npx skills find "{topic}"`
 2. Search the web for official documentation and community best practices
 3. Read 2-3 existing skills in this project to match structure and depth
-4. Use the template in `template/SKILL.md` as a starting point
+4. Use the template in `template/skill-template.md` as a starting point
