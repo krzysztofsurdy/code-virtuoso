@@ -1,0 +1,70 @@
+# Runs the Code Virtuoso behavior evals (evals/) with `claude plugin eval`.
+# Trigger cases check that skills fire on realistic prompts and stay quiet on near misses.
+# Outcome cases check that the agent runs the tests, reads the lockfile, writes the failing test first.
+#
+# Copy to .github/workflows/evals.yml. Needs the ANTHROPIC_API_KEY secret.
+# Every run is a real model call. The cost ceiling below applies to each of the two passes.
+name: Evals
+
+on:
+  pull_request:
+    paths:
+      - "skills/**"
+      - "agents/**"
+      - "evals/**"
+      - ".claude-plugin/marketplace.json"
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: evals-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  evals:
+    # GitHub withholds secrets from fork PRs, so skip them instead of failing.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Pin both models so a model rollout is not mistaken for a plugin regression.
+      EVAL_MODEL: claude-sonnet-5-5
+      EVAL_JUDGE_MODEL: claude-haiku-5-5
+      EVAL_THRESHOLD: "0.8"
+      EVAL_OUT: ${{ github.workspace }}/eval-results
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Claude Code and the Bash sandbox prerequisites
+        run: |
+          npm install -g @anthropic-ai/claude-code@2.1.306
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap socat jq
+          claude --version
+          git --version
+
+      - name: Test the staging script and load every case (free)
+        run: |
+          bash evals/tests/test-stage.sh
+          evals/run.sh check
+
+      - name: Run the evals
+        run: evals/run.sh all --max-cost-usd 15
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-results
+          path: eval-results
