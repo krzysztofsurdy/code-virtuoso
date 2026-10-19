@@ -32,6 +32,8 @@ Draft the agent's system prompt following the five-section contract.
    - No tool instructions contradicting the frontmatter
    - No second responsibility smuggled in
    - Output section has a concrete template, not prose
+   - If the agent declares `expects`, the Input section still says what to do when that artifact is missing (harnesses ignore the field)
+   - For a role agent, a "Reference files" section lists each `roles/<role>/` file and when to open it
 
 3. Present the draft to the user.
 

@@ -10,7 +10,9 @@ File templates for every plugin component. Replace the `<placeholder>` values wh
 - [SKILL.md (model-invoked)](#skillmd-model-invoked)
 - [SKILL.md (user-invoked only)](#skillmd-user-invoked-only)
 - [Agent file (read-only specialist)](#agent-file-read-only-specialist)
-- [Agent file (full access, worktree-isolated)](#agent-file-full-access-worktree-isolated)
+- [Agent file (source code, worktree-isolated)](#agent-file-source-code-worktree-isolated)
+- [Agent file (role with reference files)](#agent-file-role-with-reference-files)
+- [Workflow script](#workflow-script)
 - [hooks/hooks.json](#hookshooksjson)
 - [.mcp.json](#mcpjson)
 - [.lsp.json](#lspjson)
@@ -56,15 +58,15 @@ File templates for every plugin component. Replace the `<placeholder>` values wh
   "version": "1.0.0",
   "description": "<description>",
   "userConfig": {
-    "api_endpoint": { "description": "API endpoint URL", "sensitive": false },
-    "api_token": { "description": "API authentication token", "sensitive": true }
+    "api_endpoint": { "type": "string", "title": "API endpoint", "description": "API endpoint URL" },
+    "api_token": { "type": "string", "title": "API token", "description": "API authentication token", "sensitive": true }
   },
   "mcpServers": "./.mcp.json",
   "channels": [
     {
       "server": "<server-key>",
       "userConfig": {
-        "bot_token": { "description": "Bot token", "sensitive": true }
+        "bot_token": { "type": "string", "title": "Bot token", "description": "Bot token", "sensitive": true }
       }
     }
   ]
@@ -145,28 +147,110 @@ You are a <role>. You <core responsibility>.
 <What the agent returns when finished.>
 ```
 
-## Agent file (full access, worktree-isolated)
+## Agent file (source code, worktree-isolated)
 
 ```markdown
 ---
 name: <agent-name>
 description: <Description. Delegate when ...>
+tools: Read, Grep, Glob, Bash, Edit, Write
 isolation: worktree
-memory: project
 skills:
-  - <skill-name-1>
-  - <skill-name-2>
+  - <skill-name>
 ---
 
 You are a <role>. Work in an isolated worktree. Commit after each logical change.
+
+## Input
+
+<What the agent receives.>
 
 ## Process
 
 1. <Step one>
 2. <Step two>
+
+## Rules
+
+- <Constraint>
+
+## Output
+
+<Template.>
 ```
 
-**Not supported on plugin agents**: `hooks`, `mcpServers`, `permissionMode`. These are blocked for security.
+Use `isolation: worktree` only for agents that change source code. A documentation-only writer uses the same `tools` line without `isolation`. List preloaded skills by bare name, at most four, and only skills that are not run-by-name. A missing skill is skipped silently, so the agent must work without it.
+
+**Ignored on plugin agents**: `hooks`, `mcpServers`, `permissionMode`. Put hooks in `hooks/hooks.json` and MCP servers in `.mcp.json`.
+
+## Agent file (role with reference files)
+
+```markdown
+---
+name: <role-name>
+description: <Description. Delegate when ...>
+tools: Read, Grep, Glob, Bash
+memory: project
+---
+
+You are the team's <role>. You own <domain>. You write only <documents and memory notes>, never source code.
+
+## Process
+
+1. <Step one>
+
+## Reference files
+
+- `${CLAUDE_PLUGIN_ROOT}/roles/<role-name>/<template>.md` (or `roles/<role-name>/<template>.md` from the repository root): open when <task>
+```
+
+The reference files are plain Markdown without frontmatter in `roles/<role-name>/`, so they ship with the plugin source and load only when the agent opens them. There is no role skill. `memory` makes Claude Code enable Read, Write, and Edit for the agent. For a full agent design, use the `agent-creator` skill.
+
+## Workflow script
+
+`workflows/<name>.js` runs a fixed recipe of agents as `/<plugin>:<name>` (paid plans). The first statement is a pure-literal `meta` whose `name` equals the file name. The body is plain JavaScript with top-level `await` and a final `return`. It may not use `import`, `Date.now()`, or `Math.random()`.
+
+```javascript
+export const meta = {
+  name: '<name>',
+  description: '<what the team delivers, in one sentence>',
+  whenToUse: '<when to run it and the args it takes>',
+  phases: [
+    { title: 'Work', detail: '<which agents run>' },
+    { title: 'Review', detail: '<who merges the results>' },
+  ],
+}
+
+const input = args || {}
+if (typeof input.target !== 'string' || !input.target.trim()) {
+  return { status: 'error', reason: 'args.target is required' }
+}
+
+phase('Work')
+const results = await parallel([
+  () => agent(`<full brief>. Target: ${input.target}.`, {
+    label: '<label>',
+    phase: 'Work',
+    agentType: '<plugin>:<agent-name>',
+  }),
+])
+
+const reports = results.filter(Boolean)
+if (reports.length === 0) {
+  return { status: 'blocked', reason: 'every agent in the Work phase failed' }
+}
+
+phase('Review')
+const report = await agent(`<lead brief>\n${JSON.stringify(reports)}`, {
+  label: 'Review',
+  phase: 'Review',
+  agentType: '<plugin>:<agent-name>',
+})
+
+return { status: 'approved', target: input.target, report }
+```
+
+Use plugin-scoped `agentType` names, filter `null` results, and return a status object instead of looping at a gate. Pass a JSON `schema` wherever a later step reads the result. A team is also written as a Markdown recipe so other agent harnesses can follow it: see the `agent-orchestration` skill.
 
 ## hooks/hooks.json
 
@@ -314,6 +398,8 @@ The referenced agent name must match a file in the plugin's `agents/` directory 
 
 ## bin/ executable stubs
 
+Files in `bin/` are on the Bash tool's `PATH` while the plugin is enabled, so Claude and skill instructions run them as bare commands. They must be executable and start with a shebang. `${CLAUDE_PLUGIN_ROOT}` and `${CLAUDE_PLUGIN_DATA}` are not set in the environment of commands run through the Bash tool, so a stub finds its bundled files relative to itself, or takes a path as an argument.
+
 ### Bash
 
 ```bash
@@ -322,8 +408,8 @@ set -euo pipefail
 
 # <Name> - <Description>
 
-# Access plugin-bundled resources via ${CLAUDE_PLUGIN_ROOT}.
-echo "Running ${0##*/} from $CLAUDE_PLUGIN_ROOT"
+plugin_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+echo "Running ${0##*/} from $plugin_root"
 ```
 
 ### Node
@@ -333,7 +419,8 @@ echo "Running ${0##*/} from $CLAUDE_PLUGIN_ROOT"
 
 // <Name> - <Description>
 
-const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT;
+const path = require("path");
+const pluginRoot = path.resolve(__dirname, "..");
 console.log(`Running from ${pluginRoot}`);
 ```
 
@@ -344,8 +431,9 @@ console.log(`Running from ${pluginRoot}`);
 
 """<Name> - <Description>"""
 
-import os
-plugin_root = os.environ["CLAUDE_PLUGIN_ROOT"]
+from pathlib import Path
+
+plugin_root = Path(__file__).resolve().parent.parent
 print(f"Running from {plugin_root}")
 ```
 

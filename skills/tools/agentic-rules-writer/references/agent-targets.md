@@ -23,16 +23,28 @@ Output file paths, format requirements, limits, and testing instructions for eac
 | Property | Value |
 |---|---|
 | Format | Plain Markdown |
-| Line limit | Under 200 lines recommended (global) |
+| Line limit | Under about 200 lines per `CLAUDE.md` file |
 
 **Format notes:**
-- Plain Markdown, no frontmatter required
-- Keep the global file concise. Claude Code loads it into every conversation context
-- Project rules in `.claude/rules/` are loaded automatically alongside CLAUDE.md
+- Plain Markdown. Frontmatter is optional and only `paths` is read
+- Keep every always-on file concise. Longer files use more context and reduce adherence
+- Rules in `.claude/rules/` without `paths` frontmatter load at launch, like `.claude/CLAUDE.md`. Rules with `paths` load only when Claude reads or edits a matching file:
+  ```
+  ---
+  paths:
+    - "src/api/**/*.ts"
+  ---
+  ```
+  Use path-scoped rules for anything that matters to only part of the codebase
+- Imports (`@path`) organize a long file but do not reduce its cost, because imported files also load at launch
+- **AGENTS.md:** Claude Code reads `AGENTS.md` as project instructions when there is no `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` in the working directory or above it (Claude Code 2.1.277 or later). If any of those exists, only the `CLAUDE.md` files are read, so a `CLAUDE.md` in a repository that uses `AGENTS.md` should contain `@AGENTS.md`. `~/.claude/CLAUDE.md` and `.claude/rules/` files do not count for that check and keep loading next to `AGENTS.md`
 - For dev-specific rules, advise the user to add the file path to `.gitignore`
 - Add a footer note on global: `For project-specific rules, use .claude/rules/*.md files.`
+- To audit existing instruction files, run `/doctor prompt-audit` or delegate to the `instruction-auditor` agent
 
-**Testing:** Start a new Claude Code session and ask "What are your rules?" It should reference the content.
+**Testing:** Start a new Claude Code session and ask "What are your rules?" It should reference the content. In an interactive session, a line such as `no CLAUDE.md found; AGENTS.md loaded: <path>` confirms `AGENTS.md` loading.
+
+**Sources:** [How Claude remembers your project](https://code.claude.com/docs/en/memory).
 
 ---
 
@@ -64,26 +76,30 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-### Windsurf
+### Windsurf (now Devin Desktop)
+
+Devin Desktop is the new name for Windsurf: the same editor under the Devin brand.
 
 | Scope | Output File |
 |---|---|
 | Global | `~/.codeium/windsurf/memories/global_rules.md` |
-| Project (team-shared) | `.windsurf/rules/team-rules.md` |
-| Project (dev-specific) | `.windsurf/rules/dev-rules.md` (add to `.gitignore`) |
+| Project (team-shared) | `.devin/rules/team-rules.md` (fallback location: `.windsurf/rules/`) |
+| Project (dev-specific) | `.devin/rules/dev-rules.md` (add to `.gitignore`) |
 
 | Property | Value |
 |---|---|
-| Format | Plain Markdown |
+| Format | Plain Markdown, frontmatter on workspace rules |
 | Character limit | **6,000 characters** for the global file, **12,000 characters** per workspace rule file |
 
 **Format notes:**
-- Windsurf documents the limits as 6,000 characters for the global file and 12,000 per workspace rule file
-- Windsurf's docs now prefer `.devin/rules/*.md` for workspace rules and still read `.windsurf/rules/*.md` as a fallback
-- If generated content exceeds the limit, condense by removing examples and shortening descriptions
-- Add a comment at the top: `<!-- Windsurf rules -->`
+- `.devin/rules/` is the preferred workspace location and takes precedence. `.windsurf/rules/` is still read as a fallback, and so is the legacy single file `.windsurfrules`. There is no `.devinrules` single-file equivalent
+- Workspace rule files use a `trigger` frontmatter field: `always_on` (in the prompt on every message), `model_decision` (only the description is in the prompt, the model reads the file when relevant), `glob` (applies when a file matching `globs` is read or edited), or `manual` (only on `@rule-name`). Generate `trigger: always_on` for team-wide rules and `trigger: glob` with `globs` for rules scoped to part of the repo
+- The global file and root-level `AGENTS.md` files take no frontmatter. Devin Desktop reads `AGENTS.md` through the same rules engine: a root file is always on, and a file in a subdirectory applies to that directory
+- If generated content exceeds a limit, condense by removing examples and shortening descriptions
 
-**Testing:** Open Windsurf, start a new Cascade session, and ask about the rules.
+**Testing:** Open Devin Desktop (Windsurf), start a new Cascade session, and ask about the rules.
+
+**Sources:** [Devin Desktop FAQ](https://docs.devin.ai/desktop/devin-desktop-faq.md), [Devin Desktop rules and memories](https://docs.devin.ai/desktop/cascade/memories.md).
 
 ---
 
@@ -109,25 +125,46 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 ---
 
-### Gemini CLI
+### Gemini CLI and Antigravity CLI
+
+Antigravity CLI replaced Gemini CLI on 2026-06-18 for unpaid (free) users and for Google AI Pro and Ultra users, including use through Gemini Code Assist IDE extensions. Gemini CLI stays available for enterprise users with a Gemini Code Assist Standard or Enterprise license, and through paid Gemini or Gemini Enterprise Agent Platform API keys. Ask the user which one they run, and write the files for it.
+
+**Antigravity CLI**
+
+| Scope | Output File |
+|---|---|
+| Global | `~/.gemini/AGENTS.md` (CLI-only rules also load from `~/.gemini/antigravity-cli/rules/*.md`) |
+| Project (team-shared) | `AGENTS.md` (project root) |
+| Project (dev-specific) | `.agents/rules/dev-rules.md` (add to `.gitignore`) |
+
+| Property | Value |
+|---|---|
+| Format | Plain Markdown. `AGENTS.md` and `GEMINI.md` take no frontmatter |
+| Limits | 24 KB per rule file (larger files are truncated). A 20,000-token budget covers all active global and `always_on` rules, and the largest files are demoted to pointers |
+
+**Format notes:**
+- Antigravity reads `AGENTS.md` or `GEMINI.md` in the workspace folder and in each directory on the path from a touched file up to the workspace root, plus `.agents/AGENTS.md`, `.agents/GEMINI.md`, and `.agents/rules/*.md`. Global files are `~/.gemini/AGENTS.md`, `~/.gemini/GEMINI.md`, and `~/.gemini/config/rules/*.md`
+- Rules are cumulative across global, workspace, and directory scopes. When they conflict, the more specific directory rule wins
+- Every `.md` file in a `rules/` directory must start with frontmatter that declares `trigger` (`always_on`, `model_decision`, `glob`, or `manual`). A file without valid frontmatter is silently discarded. `model_decision` needs a `description`, and `glob` needs `globs`:
+  ```
+  ---
+  trigger: always_on
+  ---
+  ```
+
+**Gemini CLI (enterprise and paid API key users)**
 
 | Scope | Output File |
 |---|---|
 | Global | `~/.gemini/GEMINI.md` |
 | Project (team-shared) | `GEMINI.md` (project root) |
-| Project (dev-specific) | `.gemini/rules/dev-rules.md` (add to `.gitignore`) |
+| Project (dev-specific) | Not verified. Use the global file |
 
-| Property | Value |
-|---|---|
-| Format | Plain Markdown |
-| Character limit | No hard limit |
+Gemini CLI loads `GEMINI.md` context files. If the team uses both tools, keep one source of truth: Antigravity reads either file name, so a `GEMINI.md` that holds the shared rules serves both.
 
-**Format notes:**
-- Global rules in `~/.gemini/GEMINI.md` are loaded for all sessions
-- Project-level `GEMINI.md` at root is loaded when Gemini CLI runs in that directory
-- Plain Markdown, no special syntax
+**Testing:** Start the CLI in the project directory and ask about the rules.
 
-**Testing:** Run `gemini` in the project directory and ask about the rules.
+**Sources:** [Antigravity rules](https://antigravity.google/docs/rules), [Transitioning Gemini CLI to Antigravity CLI](https://github.com/google-gemini/gemini-cli/discussions/27274), [Gemini CLI README](https://github.com/google-gemini/gemini-cli).
 
 ---
 
@@ -177,21 +214,23 @@ Output file paths, format requirements, limits, and testing instructions for eac
 
 | Scope | Output File |
 |---|---|
-| Global | `~/.codex/instructions.md` |
+| Global | `~/.codex/AGENTS.md` (in `CODEX_HOME` if set) |
 | Project (team-shared) | `AGENTS.md` (project root) |
-| Project (dev-specific) | `.agents/dev-rules.md` (add to `.gitignore`) |
+| Project (dev-specific) | Not layered. Put personal rules in the global file |
 
 | Property | Value |
 |---|---|
 | Format | Plain Markdown |
-| Character limit | No hard limit |
+| Size limit | 32 KiB combined (`project_doc_max_bytes`). Codex stops adding files once the limit is reached |
 
 **Format notes:**
-- Project-level convention is `AGENTS.md` at project root (emerging cross-tool standard)
+- Codex reads one file per directory (`AGENTS.override.md` first, else `AGENTS.md`) from the Codex home, then from the project root down to the current directory, and concatenates them. Files closer to the working directory come later and override earlier guidance
+- An `AGENTS.override.md` in a project directory replaces the `AGENTS.md` there instead of adding to it, so it is not a place for a small personal layer
 - Plain Markdown, no special syntax
-- Global instructions at `~/.codex/instructions.md`
 
 **Testing:** Run `codex` in the project directory and ask about the rules.
+
+**Sources:** [AGENTS.md in Codex](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
 
 ---
 
@@ -315,5 +354,6 @@ For agents not listed above, ask the user for the output path and write plain Ma
 
 Common conventions that may apply:
 - Most agents look for rules in a dotfile directory (`.agent-name/rules/`)
-- `AGENTS.md` at project root is an emerging cross-tool standard
+- `AGENTS.md` at project root is an emerging cross-tool standard. Claude Code, Codex, Devin Desktop, and Antigravity all read it
+- Keep always-on files short. Put rules for part of a codebase in the tool's path-scoped or glob-triggered rules, if it has them
 - Global rules typically go under `~/` in the agent's config directory

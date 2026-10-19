@@ -21,9 +21,12 @@ Print test commands, reload instructions, and next steps so the user can verify 
    - **Existing marketplace:** "Commit the updated marketplace.json, push, and users update to pick up the new entry."
 
 4. Print **distribution considerations** (only if relevant):
-   - Semantic versioning rules
+   - Semantic versioning rules, and that no version means the commit SHA is the version
    - How to pin to branch/tag/sha
-   - Plugin caching caveat (files outside the plugin root are not cached; use symlinks)
+   - Plugin caching caveat (files outside the plugin root are not cached; use symlinks). `${CLAUDE_PLUGIN_ROOT}` changes on every update
+   - `${CLAUDE_PLUGIN_DATA}` survives updates but is deleted on uninstall unless the user runs `claude plugin uninstall --keep-data`
+   - Workflows run as `/<plugin>:<name>` on paid plans
+   - Codex reads `.claude-plugin/marketplace.json` for skills, but plugins cannot ship agents to Codex
 
 ## Gate
 

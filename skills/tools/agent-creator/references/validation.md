@@ -22,21 +22,27 @@ Run this checklist before writing the agent file. Most agent problems trace back
 
 - [ ] `tools` is set explicitly and never inherited by omission
 - [ ] Allowlist is the minimum that lets the workflow finish
-- [ ] No `Edit` or `Write` unless the agent legitimately modifies files
+- [ ] No `Edit` or `Write` unless the agent legitimately writes files (source code, documents, or planning notes)
 - [ ] `Agent(...)` is scoped to specific sub-agent types, not bare `Agent`
 - [ ] No hardcoded MCP tools the agent will not actually call
 
 ## Isolation and memory
 
-- [ ] `isolation: worktree` is set if and only if the agent writes or edits files
-- [ ] `memory: project` is set only when the agent genuinely benefits from cross-session context
+- [ ] `isolation: worktree` is set when the agent changes source code. Read-only agents, documentation-only writers, and planning roles run in place
+- [ ] `memory` is set only when the agent genuinely benefits from cross-session context
+- [ ] The author knows `memory` enables Read, Write, and Edit, and the body says what the agent may write
 - [ ] Memory scope matches intent (user vs project vs local)
+- [ ] No `hooks`, `mcpServers`, or `permissionMode` on an agent that ships in a plugin (they are ignored)
 
 ## Skills
 
-- [ ] `skills` references by name, not path
+- [ ] `skills` references by bare name, not path
 - [ ] Four or fewer entries
-- [ ] Every listed skill is actually used by the workflow
+- [ ] Every listed skill is needed on every run
+- [ ] No run-by-name skill (`disable-model-invocation: true`) and no role skill in the list
+- [ ] The agent still works if a preload is missing or not injected (missing skills are skipped silently, and `claude -p --agent` does not inject them)
+- [ ] If a skill ships in another bundle, the docs say which bundle to install
+- [ ] A role agent lists its `roles/<role>/` files by path in a "Reference files" section
 
 ## Body
 
@@ -52,10 +58,12 @@ Run this checklist before writing the agent file. Most agent problems trace back
 
 ## Scope and registration
 
-- [ ] File placed in the correct scope (project / user / plugin / managed)
-- [ ] If marketplace / plugin: registered in the plugin manifest
-- [ ] If project has an agent index or README: added there
-- [ ] If a template exists (`template/agent.md`, or equivalent): structure matches
+- [ ] File placed in the correct scope (this library / project / user / plugin / managed)
+- [ ] In this library: listed in the `agents` array of the `agents-virtuoso` entry, marketplace version bumped
+- [ ] In this library: row added to the README and AGENTS agent tables
+- [ ] In this library: `python3 scripts/build-codex-agents.py` run, so `codex/agents/<name>.toml` is current
+- [ ] `expects` and `produces` use names from the artifact catalog, and the body handles missing input (harnesses ignore both fields)
+- [ ] If a template exists (`template/agent-template.md`, or equivalent): structure matches
 
 ## Portability
 
@@ -77,7 +85,8 @@ Run this checklist before writing the agent file. Most agent problems trace back
 | Description reads like marketing | Rewrite with trigger phrases |
 | Agent does two things | Split into two agents |
 | Tool allowlist is permissive-by-default | Trim to the minimum |
-| Isolation missing on a writer | Add `isolation: worktree` |
+| Isolation missing on an agent that changes source code | Add `isolation: worktree` |
+| Role has its own skill, or preloads one | Move the material to `roles/<role>/` files and point to them by path |
 | Output is "a summary" | Replace with a template |
 | Role statement is missing | Add one sentence naming the role |
 | Body contains provider name or tool names | Remove them so the body stays portable |

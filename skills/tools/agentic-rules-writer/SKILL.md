@@ -1,8 +1,8 @@
 ---
 name: agentic-rules-writer
-description: Interactive tool that generates rules and instruction files for AI coding agents (Claude Code, Cursor, Windsurf, Copilot, Gemini, Codex, and others). Use when asked to set up agent rules, write CLAUDE.md or AGENTS.md style instructions, or standardize AI coding rules for a team.
+description: Interactive tool that generates rules and instruction files for AI coding agents (Claude Code, Cursor, Windsurf or Devin Desktop, Copilot, Gemini or Antigravity, Codex, and others). Use when asked to set up agent rules, write CLAUDE.md or AGENTS.md style instructions, or standardize AI coding rules for a team.
 user-invocable: true
-argument-hint: "[optional: agent-name e.g. claude, cursor, windsurf, codex]"
+argument-hint: "[optional: agent-name e.g. claude, cursor, windsurf, antigravity, codex]"
 ---
 
 # Agentic Rules Writer
@@ -29,20 +29,20 @@ Generate a tailored rules or instruction file for any AI coding agent. The skill
 
 ## Phase 1: Agent selection
 
-If `$ARGUMENTS` is provided, map it to an agent from the table below (case-insensitive, partial match OK, e.g. "wind" matches Windsurf). If no argument or no match, present a selectable menu using `AskUserQuestion` (or the agent's equivalent interactive prompt tool).
+If `$ARGUMENTS` is provided, map it to an agent from the table below (case-insensitive, partial match OK, e.g. "wind" or "devin" matches Windsurf, "gemini" or "anti" matches Gemini and Antigravity). If no argument or no match, present a selectable menu using `AskUserQuestion` (or the agent's equivalent interactive prompt tool).
 
 ### Tier 1: full support with dedicated format and paths
 
 | Agent | Format notes |
 |---|---|
-| Claude Code | Plain Markdown, keep under 200 lines |
+| Claude Code | Plain Markdown, under 200 lines per file. Reads `AGENTS.md` when no `CLAUDE.md` exists |
 | Cursor | Requires YAML frontmatter: `alwaysApply: true`, `.mdc` extension |
-| Windsurf | Plain Markdown, under 6,000 characters for the global file and 12,000 per workspace rule file |
+| Windsurf (now Devin Desktop) | Plain Markdown, under 6,000 characters for the global file and 12,000 per workspace rule file. Workspace rules in `.devin/rules/` with a `trigger` frontmatter field |
 | GitHub Copilot | Plain Markdown, `.github/copilot-instructions.md` |
-| Gemini CLI | Plain Markdown |
+| Gemini CLI and Antigravity CLI | Plain Markdown. Antigravity CLI replaced Gemini CLI for unpaid and Google AI Pro and Ultra users on 2026-06-18 |
 | Roo Code | Plain Markdown |
 | Amp | Same format as Claude Code |
-| Codex (OpenAI) | Plain Markdown, uses `AGENTS.md` convention |
+| Codex (OpenAI) | Plain Markdown, uses `AGENTS.md`, 32 KiB combined limit |
 | Cline | Plain Markdown |
 | OpenCode | Plain Markdown |
 | Continue | Plain Markdown |
@@ -192,6 +192,19 @@ When delegating to agent teams, prefer using custom agents over general-purpose 
 ## Phase 5: Assemble and write
 
 Generate the rules file content from the questionnaire answers. The structure depends on the scope.
+
+### Keep the output small
+
+Instruction files are read on every turn, and long ones get followed less. Research on repository context files found that generated and hand-written files alike did not generally raise task success and cost more than 20% extra inference, while specific instructions were followed well. Apply the `context-engineering` skill when it is installed. In short:
+
+- Every line must prevent a mistake the agent would make without it. Drop lines the agent would follow anyway, and anything a linter or formatter enforces.
+- Do not add a repository overview, directory tree, or stack list the agent can read for itself. Commands, non-obvious conventions, and hard prohibitions earn their place.
+- Treat the generic blocks in the templates below (Core Principles, Code Change Hygiene, Don't Guess, Knowledge Sources) as optional. Put them last and drop them first when the file nears its budget.
+- Claude Code: stay under about 200 lines per file. Imports with `@path` organize a file but do not cut its cost. Move rules that matter for only part of the repo into path-scoped rules (`.claude/rules/*.md` with `paths:` frontmatter), which load only when matching files are touched. Other tools have similar scoping (Cursor `.cursor/rules`, Copilot `.github/instructions`, Devin `.devin/rules` with a `glob` trigger).
+- A rule that must hold every time belongs in a hook, linter, or test, not in this file.
+- Keep rules that must survive compaction in the always-on file.
+- Check the budget for the target tool in [agent-targets](references/agent-targets.md) and report the size in Phase 6.
+- Point the user to the `instruction-auditor` agent to audit existing instruction files for size, contradictions, stale rules, secrets, and hidden Unicode.
 
 ### Global scope structure
 
@@ -392,11 +405,15 @@ alwaysApply: true
 [content here]
 ```
 
-**Windsurf**: check the character count. The global file is limited to 6,000 characters and each workspace rule file to 12,000. If the file is over its limit, condense sections (remove examples, shorten descriptions) until it is under. Add a comment at the top: `<!-- Windsurf rules -->`.
+**Windsurf (Devin Desktop)**: check the character count. The global file is limited to 6,000 characters and each workspace rule file to 12,000. If the file is over its limit, condense sections (remove examples, shorten descriptions) until it is under. Workspace rule files start with frontmatter `trigger: always_on`. The global file and a root `AGENTS.md` take no frontmatter.
+
+**Antigravity CLI**: `AGENTS.md` and `GEMINI.md` take no frontmatter. Files in `.agents/rules/` must start with frontmatter that declares a `trigger` (`always_on` for these rules), or Antigravity discards them. A rule file over 24 KB is truncated.
 
 **Claude Code / Amp (global)**: keep it under 200 lines. Add a note at the end: `For project-specific rules, use .claude/rules/*.md files.`
 
-**Codex**: use the `AGENTS.md` filename convention at the project root.
+**Claude Code (project)**: if the repository already has an `AGENTS.md` and no `CLAUDE.md`, Claude Code reads `AGENTS.md` by itself. Adding a `CLAUDE.md` or `CLAUDE.local.md` makes it read the `CLAUDE.md` files only, so a new `CLAUDE.md` should import it with `@AGENTS.md`.
+
+**Codex**: use the `AGENTS.md` filename convention at the project root. Codex stops adding files once the combined chain reaches 32 KiB.
 
 **All others**: write plain Markdown as-is.
 
@@ -414,7 +431,8 @@ After writing the file, do the following:
 2. Show the **file path** where it was written
 3. Show the **line count** and **character count**
 4. If any agent-specific limits were applied (e.g., Windsurf char limit, Claude line limit), mention what was condensed
-5. Offer: "Would you like to edit anything before we're done?"
+5. Say how large the file is against the tool's budget, and offer the `instruction-auditor` agent for a later audit
+6. Offer: "Would you like to edit anything before we're done?"
 
 ---
 

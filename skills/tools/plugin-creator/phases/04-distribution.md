@@ -19,13 +19,16 @@ Determine how the plugin will be distributed: standalone, new marketplace, or ad
    - Marketplace name (kebab-case; reject reserved names - see [references/marketplace-manifest.md](../references/marketplace-manifest.md))
    - Marketplace owner name (free text)
    - Marketplace owner email (optional)
-   - Layout: Flat (single-plugin repo) or Nested (multi-plugin repo, recommended)
+   - Layout: Flat (single-plugin repo) or Nested (multi-plugin repo, recommended). In a multi-entry repository, every entry whose `source` is `"./"` registers the root `agents/`, `commands/`, `workflows/`, and hooks, so give each plugin its own directory or use a narrower source such as `"./skills"` for skill-only bundles
 
 4. **If Add to existing marketplace:**
    - Path to existing marketplace.json
    - Read it, preserve existing fields, append new plugin entry, bump minor version
+   - Check the sources of existing entries. If another entry already uses `"./"` and the new plugin has `agents/`, `commands/`, `workflows/`, or hooks, do not add a second `"./"` entry
 
-See [references/marketplace-manifest.md](../references/marketplace-manifest.md) for the full schema.
+5. Ask where the version lives: one place only, either `plugin.json` or the marketplace entry. If neither sets one, the commit SHA is the version and every commit counts as an update.
+
+See [references/marketplace-manifest.md](../references/marketplace-manifest.md) for the full schema and [references/distribution.md](../references/distribution.md) for versions, Codex, and uninstall behavior.
 
 ## Gate
 

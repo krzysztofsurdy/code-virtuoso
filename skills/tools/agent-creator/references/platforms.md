@@ -7,11 +7,11 @@ Agent platforms differ in frontmatter fields, file locations, and how agents int
 - [Scope and priority](#scope-and-priority)
 - [Claude Code](#claude-code)
 - [Cursor](#cursor)
-- [Codex / AGENTS.md convention](#codex--agentsmd-convention)
+- [Codex](#codex)
 - [Generic / plain-Markdown platforms](#generic--plain-markdown-platforms)
 - [Inter-agent communication](#inter-agent-communication)
 - [Porting checklist](#porting-checklist)
-- [Marketplace / plugin distribution](#marketplace--plugin-distribution)
+- [Plugin and marketplace distribution](#plugin-and-marketplace-distribution)
 
 ## Scope and priority
 
@@ -43,7 +43,9 @@ Project agents are discovered by walking up from the working directory. Restart 
 
 ### Frontmatter
 
-All fields listed in [frontmatter-fields.md](frontmatter-fields.md) are supported. Plugin agents do not support `hooks`, `mcpServers`, or `permissionMode` for security reasons. Copy the agent to `.claude/agents/` if you need those.
+All fields listed in [frontmatter-fields.md](frontmatter-fields.md) are supported, except that plugin agents ignore `hooks`, `mcpServers`, `permissionMode`, and `initialPrompt` for security reasons. Copy the agent to `.claude/agents/` if you need those, or put hooks and MCP servers in the plugin itself. Setting `memory` also enables Read, Write, and Edit for the agent.
+
+Preloaded `skills` resolve by bare name across all installed plugins, are skipped silently when the skill is missing, and cannot include run-by-name skills (`disable-model-invocation: true`). They were not injected when an agent ran as the main session (`claude -p --agent`).
 
 ### Interaction
 
@@ -52,9 +54,11 @@ All fields listed in [frontmatter-fields.md](frontmatter-fields.md) are supporte
 - Sub-agents cannot spawn other sub-agents, which prevents infinite nesting
 - Agents running as the main thread (`claude --agent`) can spawn sub-agents via the `Agent(...)` tool
 
-### Agent teams (experimental)
+### Teams
 
-Claude Code also supports agent teams, where multiple teammates run in parallel and communicate with each other. Teammates can reference sub-agent definitions by name, inheriting their `tools` and `model`. When a sub-agent definition runs as a teammate:
+A team in this library is a workflow: a Markdown recipe plus a script in `workflows/`, run as `/<plugin>:<name>`. It needs no team config file, and there is no `TeamCreate` tool. See the `agent-orchestration` skill and `spec/team-spec.md` in the repository.
+
+Claude Code also has experimental agent teams, enabled with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, where teammates run in parallel and message each other. The lead spawns each teammate with the `Agent` tool and a `name`. Teammates can reference sub-agent definitions by name, inheriting their `tools` and `model`. When a sub-agent definition runs as a teammate:
 
 - The definition's body is appended to the teammate system prompt as additional instructions, not as a replacement
 - `skills` and `mcpServers` are not applied. The teammate loads them from project and user settings
@@ -77,19 +81,19 @@ If you want to bring a sub-agent definition into Cursor, convert it into a rules
 
 See the `agentic-rules-writer` skill for producing these conversions.
 
-## Codex / AGENTS.md convention
+## Codex
 
-The `AGENTS.md` convention (used by OpenAI Codex and several other agents) is a single Markdown file at the project root that contains all agent-related guidance. It is a flat document, not a sub-agent registry in the Claude Code sense.
+Codex runs custom agents from standalone TOML files in `~/.codex/agents/` (personal) or `.codex/agents/` (project). Each file defines `name`, `description`, and `developer_instructions`, and Codex identifies the agent by `name`. Codex plugins cannot ship agents, so agents install separately from the plugin that carries the skills. Codex also reads `AGENTS.md` at the project root for general instructions.
 
-To port a sub-agent definition to an `AGENTS.md`-driven platform:
+In this library you do not write the TOML. `python3 scripts/build-codex-agents.py` generates `codex/agents/<name>.toml` from each `agents/<name>.md`, and `scripts/install-codex-agents.sh` copies them into place. The conversion keeps `name` and `description`, uses the body as `developer_instructions`, drops `tools`, `skills`, and `isolation`, and rewrites `${CLAUDE_PLUGIN_ROOT}` to `${CODE_VIRTUOSO_HOME}`. Agents with no `Edit` or `Write` and no `memory` get "Do not modify files." added, which is an instruction and not a sandbox. Run the script with `--check` to see whether the generated files are out of date, and never edit the TOML by hand.
 
-1. Add a `## [Agent Name]` section to `AGENTS.md`
-2. Copy the role statement, Input, Process, Rules, and Output under that section
-3. Note the trigger condition from the original `description` as the section's first paragraph
+Codex subagents are managed by the parent session, which spawns them and relays results. They do not message each other.
+
+Sources: [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents).
 
 ## Generic / plain-Markdown platforms
 
-Many platforms (Windsurf, Copilot, Gemini CLI, Cline, Continue, Trae, Roo Code, Amp, Goose, Augment, Kilo Code) read a single plain-Markdown instructions file. To use a sub-agent definition there:
+Many platforms (Windsurf, which is now Devin Desktop, Copilot, Antigravity CLI, Cline, Continue, Trae, Roo Code, Amp, Goose, Augment, Kilo Code) read plain-Markdown instruction files. To use a sub-agent definition there:
 
 1. Flatten the frontmatter. Keep only the portable `name`, `description`, and body
 2. Write the body as a section in the instructions file
@@ -115,6 +119,8 @@ Sub-agents do not talk to each other.
 - Shared task lists coordinate work
 - Each teammate is a full, independent session
 
+Codex has no peer messaging. For a recipe that fans out, the parent session spawns the agents and relays their results.
+
 Design for sub-agent mode by default. Move to team mode only when parallel exploration or adversarial debate adds real value. The token cost is much higher.
 
 ## Porting checklist
@@ -125,14 +131,15 @@ Before distributing an agent across platforms:
 - [ ] Tool permissions expressed in frontmatter, not duplicated in the body
 - [ ] Description has trigger phrases the target platform will actually match
 - [ ] `model` omitted (users configure it per platform)
-- [ ] Isolation and memory documented in the agent's README if you ship one
+- [ ] Isolation is set only when the agent changes source code, and `memory` is a deliberate choice because it grants Write and Edit
 - [ ] File name matches the `name` frontmatter field
 
-## Marketplace / plugin distribution
+## Plugin and marketplace distribution
 
-If you ship the agent as part of a plugin or marketplace bundle, also do the following:
+If you ship the agent in a Claude Code plugin:
 
-- Registering the agent in the plugin's manifest (`marketplace.json`, `plugin.json`, or equivalent)
-- Versioning the plugin when the agent changes (patch for content, minor for new agent, major for breaking)
-- Updating the plugin's README to list the agent and its purpose
-- Pairing the agent with any skills it preloads, so installing the plugin makes both available
+- Place the file in the plugin's `agents/` directory. The plugin entry (or the root entry that owns `agents/`) picks it up. In this library, the `agents-virtuoso` entry (source `./`) lists every agent
+- Remember that an entry with the repository root as its source registers every agent in `agents/`. Skill-only bundles use a narrower source such as `./skills`
+- Version the plugin when the agent changes (patch for content, minor for a new agent, major for breaking changes)
+- List the agent in the README and AGENTS tables, and run `python3 scripts/build-codex-agents.py` so Codex users get it too
+- If the agent preloads skills from another bundle, say which bundle to install, because a missing skill is skipped silently

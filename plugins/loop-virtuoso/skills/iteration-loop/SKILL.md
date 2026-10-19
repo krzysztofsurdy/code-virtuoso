@@ -1,6 +1,6 @@
 ---
 name: iteration-loop
-description: Reference for the autonomous execution loop over a .code-virtuoso/loop/backlog.json plan, in session-supervised or unattended batch mode, both gated by deterministic verification rather than self-report. Use when asked to explain how the loop runs, where it stores its plan and state, what a stop reason means, or after backlog-compiler has produced a backlog. The commands /loop-virtuoso:start, :status and :cancel do the running.
+description: Explains how the autonomous delivery loop runs over .code-virtuoso/loop/backlog.json, where it keeps its plan and state, and what each stop reason means. Use after backlog-compiler produces a backlog or when asked how the loop works. The /loop-virtuoso:start command runs it.
 user-invocable: false
 ---
 

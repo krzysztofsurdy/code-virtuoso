@@ -12,6 +12,8 @@ Write all generated files in a single pass after final validation and user appro
    - Plugin name is valid kebab-case, not a reserved marketplace name
    - Generated JSON (plugin.json, marketplace.json) parses cleanly
    - All paths use `./` or `${CLAUDE_PLUGIN_ROOT}`, no absolute paths
+   - Marketplace entry hooks (if any) are an inline object, not a path
+   - No state or user choices are written under `${CLAUDE_PLUGIN_ROOT}` or `${CLAUDE_PLUGIN_DATA}`
 
 2. **Show the target directory and the full file tree** to the user for final approval.
 
@@ -21,6 +23,8 @@ Write all generated files in a single pass after final validation and user appro
    ├── .claude-plugin/plugin.json
    ├── skills/<name>/SKILL.md          (if skills)
    ├── agents/<name>.md                (if agents)
+   ├── commands/<name>.md              (if commands)
+   ├── workflows/<name>.js             (if workflows)
    ├── hooks/hooks.json                (if hooks)
    ├── .mcp.json                       (if MCP servers)
    ├── .lsp.json                       (if LSP servers)

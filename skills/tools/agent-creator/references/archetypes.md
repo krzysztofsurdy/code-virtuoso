@@ -79,8 +79,8 @@ Files examined:
 | Dependency Auditor | Runs vulnerability and licence audits, flags outdated packages |
 | Migration Planner | Classifies migration operations by risk and produces an execution plan |
 | Test Gap Analyzer | Inventories public interfaces and identifies missing test cases by priority |
-| Doc Writer | Reads code changes and produces changelogs or migration guides |
-| Implementer | Executes a concrete plan using strict TDD in an isolated worktree |
+| Doc Writer | Reads code changes and produces changelogs or migration guides. Writes documentation only, so it runs in place |
+| Implementer | Executes a concrete plan using strict TDD in an isolated worktree (it changes source code) |
 
 ### Anti-patterns for specialists
 
@@ -92,7 +92,7 @@ Files examined:
 
 ## Role agent
 
-A role agent holds a team position. It owns a domain across many task types and often maintains project-level memory to carry context across sessions.
+A role agent holds a team position. It owns a domain across many task types and often maintains project-level memory to carry context across sessions. A role is one agent plus a folder of reference files, `roles/<role>/`: templates, checklists, and guides that the agent opens by path when a task needs them. They are plain files with no frontmatter, so nothing loads them until the agent reads one. A role has no skill of its own.
 
 ### When to use
 
@@ -108,11 +108,6 @@ name: architect
 description: System design, component boundaries, API contracts, and technology choices. Delegate when you need an architectural decision, ADR, trade-off evaluation, or design review before implementation begins.
 tools: Read, Grep, Glob, Bash
 memory: project
-skills:
-  - clean-architecture
-  - design-patterns
-  - api-design
-  - microservices
 ---
 
 You are the team's architect. You own the "how" - system design, component
@@ -133,6 +128,10 @@ A design question, a proposed change, or a trade-off to evaluate.
 - Evaluate trade-offs against at least three quality attributes
 - Do not modify source code - write ADRs only
 - Update your memory with new architectural context at the end of each session
+
+## Reference files
+- `${CLAUDE_PLUGIN_ROOT}/roles/architect/adr-template.md` (or `roles/architect/adr-template.md` from the repository root): open when writing an ADR
+- `${CLAUDE_PLUGIN_ROOT}/roles/architect/system-design-checklist.md` (same fallback): open when reviewing a full design
 
 ## Output
 ### ADR: [title]
@@ -167,14 +166,18 @@ Consequences:
 ### Anti-patterns for roles
 
 - A role agent that also implements code (unless it is explicitly a Dev role)
-- Preloading ten skills "just in case". Load four at most.
+- Preloading ten skills "just in case". Load four at most, and never a run-by-name skill.
+- Creating a role skill, or putting the role's templates in a skill. They belong in `roles/<role>/`.
 - No memory for a role whose value comes from remembering decisions.
+- Forgetting that `memory` grants Write and Edit. A role with memory can write, so its rules must say what it may write.
 
 ---
 
 ## Team-lead agent
 
-A team-lead coordinates multiple workers running in parallel. The lead assigns tasks, synthesises results, and communicates with humans. Teammates also communicate with each other.
+A team-lead coordinates multiple workers running in parallel. The lead assigns tasks, synthesises results, and communicates with humans.
+
+Decide first whether you need an agent at all. A team is a workflow: a Markdown recipe (roster, phases, gates) plus a script that runs it. When the roster, phases, and gates are the same every run, write the recipe and a workflow (`workflows/<name>.js`) instead of a lead agent, because a script holds the loop and the gates deterministically. A lead agent fits when the split is decided at run time. There is no `TeamCreate` tool. The lead spawns each worker with the `Agent` tool and a `name`, and Claude Code agent teams, where workers message each other, are experimental.
 
 ### When to use
 

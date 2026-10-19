@@ -14,6 +14,8 @@ Decide which component types this plugin includes. Select at least one.
    |---|---|---|
    | Skills | `skills/<name>/SKILL.md` | User- or model-invokable capabilities |
    | Agents | `agents/<name>.md` | Specialized subagents with tool allow-lists |
+   | Workflows | `workflows/<name>.js` | Scripts that run a fixed recipe of agents, run as `/plugin:name` (paid plans) |
+   | Commands | `commands/<name>.md` | Flat skill files (legacy format, still supported) |
    | Hooks | `hooks/hooks.json` | Event handlers (PreToolUse, PostToolUse, etc.) |
    | MCP servers | `.mcp.json` | External tool integrations via Model Context Protocol |
    | LSP servers | `.lsp.json` | Language Server Protocol for code intelligence |
@@ -23,7 +25,9 @@ Decide which component types this plugin includes. Select at least one.
 
 2. Validate at least one component is selected. If none, ask again.
 
-3. Summarize the selection for confirmation.
+3. Note the default scans: Claude Code registers whatever sits in `agents/`, `commands/`, `workflows/`, `hooks/hooks.json`, `output-styles/`, and `.mcp.json` under the plugin source, without listing them. A plugin inside a repository that already has a root marketplace entry should live in its own directory (for example `plugins/<name>/`) so its components are not registered twice.
+
+4. Summarize the selection for confirmation.
 
 ## Gate
 

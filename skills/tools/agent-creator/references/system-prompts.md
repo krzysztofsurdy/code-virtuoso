@@ -51,7 +51,7 @@ A question or area of the codebase to investigate. Examples:
 - "Map the request lifecycle for the /api/users endpoint"
 ```
 
-When the input is structured (a PR number, a ticket ID, a file path), name the format explicitly.
+When the input is structured (a PR number, a ticket ID, a file path), name the format explicitly. If the frontmatter declares `expects`, say what to do when that input is missing: harnesses ignore the field and will start the agent anyway.
 
 ### Process
 
@@ -159,6 +159,8 @@ Summary:
 
 ### Role: QA engineer with memory
 
+A role agent opens its reference files by path when a task needs them, so it ends with a "Reference files" section listing each `roles/<role>/` file and when to open it. Keep that list out of the Process.
+
 ```markdown
 You are the team's QA engineer. You own quality - test plans, exploratory
 testing, bug reports, and release sign-off. You do not fix bugs; you report
@@ -179,6 +181,7 @@ A feature description, PR, or release candidate to evaluate.
 - Block release when any P0 is open
 - Cite acceptance criteria by number in bug reports
 - Do not propose fixes - describe the defect and expected behaviour
+- Write only test plans, bug reports, and memory notes - never source code
 - Keep memory concise - prune stale entries
 
 ## Output
@@ -201,6 +204,8 @@ Sign-off:
 ```
 
 ### Team-lead: parallel investigator
+
+Use a lead agent only when the split is decided at run time. A fixed roster with fixed phases and gates is better written as a team recipe plus a workflow script.
 
 ```markdown
 You are an investigation team lead. You coordinate 3-5 investigator

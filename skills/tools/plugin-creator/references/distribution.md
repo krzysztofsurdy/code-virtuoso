@@ -7,11 +7,15 @@ How to get a plugin into users' hands: hosting options, versioning rules, update
 - [Distribution options](#distribution-options)
 - [Hosting a marketplace on GitHub](#hosting-a-marketplace-on-github)
 - [Single-plugin repos (flat layout)](#single-plugin-repos-flat-layout)
+- [Several entries in one repository](#several-entries-in-one-repository)
 - [Semantic versioning](#semantic-versioning)
 - [Release workflow](#release-workflow)
 - [Auto-updates](#auto-updates)
 - [Team marketplace configuration](#team-marketplace-configuration)
 - [Plugin caching and file resolution](#plugin-caching-and-file-resolution)
+- [Uninstall and plugin data](#uninstall-and-plugin-data)
+- [Workflows and bin](#workflows-and-bin)
+- [Codex](#codex)
 - [Validation before release](#validation-before-release)
 - [Common distribution mistakes](#common-distribution-mistakes)
 
@@ -86,7 +90,20 @@ my-plugin-repo/
 }
 ```
 
-With `strict: false`, the marketplace entry is the authority for component paths. This is needed when `plugin.json` and the plugin content share the repo root.
+With `strict: false`, the marketplace entry is the authority for component paths. If the repository also has a `plugin.json` that declares components, loading fails with a conflicting-manifests error, so keep component declarations in one place. A flat layout suits a repository that holds exactly one plugin: the `"./"` source registers every root `agents/`, `commands/`, `workflows/`, and hook.
+
+## Several entries in one repository
+
+A marketplace entry without a `plugin.json` is the manifest, and it accepts every `plugin.json` field (`skills`, `commands`, `agents`, `workflows`, an inline `hooks` object, `mcpServers`, `lspServers`, `userConfig`). Claude Code also scans the entry's `source` directory for the default locations.
+
+| Layout | Result |
+|---|---|
+| One entry with `"source": "./"` that owns the root `agents/`, `commands/`, `workflows/`, and hooks | Registers each of them once |
+| A second entry with `"source": "./"` | Registers every root agent, command, workflow, and hook again under its own name |
+| Skill-only bundles with `"source": "./skills"` and paths like `./knowledge/solid` | Register only the listed skills, since `skills/` holds no agents, commands, workflows, or hooks |
+| Self-contained plugins under `plugins/<name>/` with `"source": "./plugins/<name>"` | Each keeps its own components |
+
+`"agents": []` does not stop the default scan, and neither does a placeholder file. Pick the source so that only one entry sees each root component directory. Skills in a bundle cannot link to files outside the source, because those files are not copied into the cache: keep links inside the bundle and give full URLs for anything else, such as a spec on GitHub.
 
 ## Semantic versioning
 
@@ -105,6 +122,7 @@ Follow `MAJOR.MINOR.PATCH`:
 - **In `plugin.json`**: the manifest is authoritative. If the plugin lives outside a marketplace, set it here.
 - **In the marketplace entry**: if the plugin lives inside a marketplace directory, omit `version` from `plugin.json` and manage it in `marketplace.json` instead.
 - **Never both**: when both are set, `plugin.json` wins, but the inconsistency is a maintenance trap.
+- **Nowhere**: the version is the commit SHA of the installed directory (relative-path plugin in a git-hosted marketplace), or `unknown` for a local directory outside a git repository. Every new commit then counts as an update, which suits fast-moving internal plugins but gives users no stable release to pin. An explicit version pins users until you change it.
 
 ## Release workflow
 
@@ -156,7 +174,24 @@ To also force-install specific plugins, pair `extraKnownMarketplaces` with an `e
 - Old versions are marked orphaned on update and removed after 7 days, so concurrent sessions can finish cleanly.
 - **Paths outside the plugin directory (`../shared-utils`) do not work**, because the cache does not copy them.
 - **Symlinks are preserved** by the cache, so use `ln -s /path/to/external ./link-name` if you need to share files across plugins. They are resolved at runtime on the user's machine.
-- `${CLAUDE_PLUGIN_DATA}` survives updates; `${CLAUDE_PLUGIN_ROOT}` changes on each update.
+- `${CLAUDE_PLUGIN_ROOT}` is the version directory (`cache/<marketplace>/<plugin>/<version>/`) and changes on each update. For a `"./"` entry it is a full copy of the repository.
+- `${CLAUDE_PLUGIN_DATA}` survives updates. See [Uninstall and plugin data](#uninstall-and-plugin-data).
+- A marketplace added by local path loads plugins in place, and the root is the source directory.
+
+## Uninstall and plugin data
+
+`${CLAUDE_PLUGIN_DATA}` resolves to `~/.claude/plugins/data/<plugin>-<marketplace>/`. It is created on first reference and survives updates. Claude Code deletes it when the plugin is uninstalled from its last scope, unless the user runs `claude plugin uninstall --keep-data`. Treat it as a cache that can disappear. The variable is substituted in skill and agent Markdown, hook commands, and MCP and LSP configs, and exported to hook and server processes, but it is not set in the environment of commands Claude runs through the Bash tool.
+
+Do not store user or project choices there or in `${CLAUDE_PLUGIN_ROOT}`. Use the layered `.code-virtuoso` config summarized in [plugin-manifest.md](plugin-manifest.md#persistent-user-and-project-choices).
+
+## Workflows and bin
+
+- Plugin workflows (`workflows/*.js`) run as `/plugin:name` on paid plans. A script must start with a pure-literal `export const meta = { name, description }` whose name equals the file name. In `plugin.json`, a `workflows` key replaces the default `workflows/` directory.
+- Files in `bin/` are added to the Bash tool's `PATH` while the plugin is enabled (Claude Code 2.1.91 or later), after the user's own entries. They must be executable and have a shebang. claude.ai and Cowork do not install a plugin that has a `bin/` directory.
+
+## Codex
+
+Codex reads `.claude-plugin/marketplace.json`, so skills in the same marketplace install through `codex plugin marketplace add owner/repo`. Codex plugins cannot ship agents. Publish agents as generated TOML files that users copy into `~/.codex/agents/` or `.codex/agents/`. Hooks, workflows, and `userConfig` are Claude Code features and have no Codex equivalent. Source: [Package your plugin](https://developers.openai.com/plugins/build/plugins).
 
 ## Validation before release
 
@@ -190,3 +225,7 @@ claude --plugin-dir ./my-plugin --debug
 | Pushing without tagging                                           | Users cannot pin to a specific version. Always tag releases.         |
 | Breaking change without MAJOR bump                                | Users on auto-update hit unexpected failures.                        |
 | Force-pushing a tag                                               | Cache may retain the old content. Always bump the version instead.   |
+| A second marketplace entry with `"source": "./"`                  | Every root agent, command, workflow, and hook registers again. Use `"./skills"` for skill-only bundles. |
+| Saving user or project choices under `${CLAUDE_PLUGIN_DATA}`      | Deleted on uninstall unless `--keep-data`. Use the layered config.   |
+| Expecting `${CLAUDE_PLUGIN_ROOT}` to be stable                    | It changes with every version. Never write state there.              |
+| Leaving `version` unset and expecting stable releases             | The commit SHA is the version, so every commit is an update.         |
