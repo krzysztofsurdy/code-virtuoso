@@ -1,6 +1,6 @@
 ---
 name: clean-architecture
-description: Clean and Hexagonal Architecture with DDD tactical patterns: layers, dependency rule, entities, aggregates, repositories. Use to design or evaluate application structure.
+description: "Clean and Hexagonal Architecture with DDD tactical patterns: layers, dependency rule, entities, aggregates, repositories. Use to design or evaluate application structure."
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
 disable-model-invocation: true

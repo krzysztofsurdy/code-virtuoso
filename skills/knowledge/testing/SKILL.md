@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Stack-agnostic testing principles: test strategy, pyramid, test doubles, isolation, flaky tests, and antipatterns. Use to design a test strategy or review test quality.
+description: "Stack-agnostic testing principles: test strategy, pyramid, test doubles, isolation, flaky tests, and antipatterns. Use to design a test strategy or review test quality."
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
 disable-model-invocation: true

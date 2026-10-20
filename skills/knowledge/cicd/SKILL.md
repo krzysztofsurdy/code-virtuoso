@@ -1,6 +1,6 @@
 ---
 name: cicd
-description: CI/CD pipeline design and deployment strategies: stage ordering, caching, quality gates, blue-green, canary, and rollback. Use to design or improve a delivery pipeline.
+description: "CI/CD pipeline design and deployment strategies: stage ordering, caching, quality gates, blue-green, canary, and rollback. Use to design or improve a delivery pipeline."
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
 disable-model-invocation: true

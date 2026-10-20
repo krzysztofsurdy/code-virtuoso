@@ -1,6 +1,6 @@
 ---
 name: microservices
-description: Microservices and distributed systems patterns: service boundaries, sagas, CQRS, resilience, and monolith trade-offs. Use to decompose a monolith or design service communication.
+description: "Microservices and distributed systems patterns: service boundaries, sagas, CQRS, resilience, and monolith trade-offs. Use to decompose a monolith or design service communication."
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
 disable-model-invocation: true

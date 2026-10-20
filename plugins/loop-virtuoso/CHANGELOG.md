@@ -43,4 +43,3 @@ Earlier 1.x versions (1.0.0 to 1.1.2) shipped from the standalone loop-virtuoso 
 
 - The docs agree on the security boundary: the guard and a narrow, interpreter-free `allowedTools` list work together, neither is enough alone. `/loop-virtuoso:status` shows no cost line (in Mode B, cost is in `progress.log`).
 - License is MIT and the install command uses the `code-virtuoso` marketplace.
-

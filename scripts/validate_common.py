@@ -88,6 +88,50 @@ def parse_frontmatter(path: Path) -> dict[str, object] | None:
     return result
 
 
+def plain_scalar_problem(value: str) -> str | None:
+    """Return a problem description if an unquoted YAML value would not parse.
+
+    Python has no stdlib YAML parser, so this applies the minimal rules that
+    strict parsers enforce for plain scalars: no ": " or " #" inside, no
+    trailing colon, and no leading indicator character. Quoted values and
+    block scalar headers (| and >) are accepted as written.
+    """
+    value = value.strip()
+    if not value or value[0] in "\"'":
+        return None
+    if re.fullmatch(r"[|>][+\-0-9]*", value):
+        return None
+    if value[0] in "[]{}&*!%@`":
+        return f"starts with '{value[0]}', quote this value"
+    if ": " in value or value.endswith(":"):
+        return "contains ': ', quote this value"
+    if " #" in value:
+        return "contains ' #', quote this value"
+    return None
+
+
+def frontmatter_yaml_problems(path: Path) -> list[str]:
+    """Return one message per top-level frontmatter value that is invalid YAML."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except Exception:
+        return []
+
+    match = re.match(r"^---\s*\n(.*?)\n---", text, re.DOTALL)
+    if not match:
+        return []
+
+    problems: list[str] = []
+    for number, line in enumerate(match.group(1).splitlines(), start=2):
+        kv = re.match(r"^([A-Za-z_-]+)\s*:\s*(.*)$", line)
+        if not kv:
+            continue
+        problem = plain_scalar_problem(kv.group(2))
+        if problem:
+            problems.append(f"{rel(path)}: '{kv.group(1)}' (line {number}) {problem}")
+    return problems
+
+
 def find_skill_files() -> list[Path]:
     """Return every SKILL.md in skills/ and in plugins/*/skills/."""
     found = list(SKILLS_DIR.rglob("SKILL.md"))

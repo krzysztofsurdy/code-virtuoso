@@ -20,6 +20,7 @@ from validate_common import (
     find_reference_files,
     find_skill_files,
     error,
+    frontmatter_yaml_problems,
     ok,
     parse_frontmatter,
     print_summary,
@@ -47,6 +48,9 @@ def check_skill_frontmatter() -> list[Path]:
         if fm is None:
             error(f"{rp}: missing or invalid YAML frontmatter")
             continue
+
+        for problem in frontmatter_yaml_problems(path):
+            error(problem)
 
         # Required fields
         for field in ("name", "description", "user-invocable"):

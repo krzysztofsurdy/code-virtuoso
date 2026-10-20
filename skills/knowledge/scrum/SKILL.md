@@ -1,6 +1,6 @@
 ---
 name: scrum
-description: Scrum framework fundamentals: roles, events, artifacts, sprint goal writing, and retrospectives. Use to plan a sprint, write a sprint goal, or facilitate a Scrum event.
+description: "Scrum framework fundamentals: roles, events, artifacts, sprint goal writing, and retrospectives. Use to plan a sprint, write a sprint goal, or facilitate a Scrum event."
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
 disable-model-invocation: true

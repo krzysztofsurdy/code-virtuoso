@@ -22,6 +22,7 @@ from pathlib import Path
 from validate_common import (
     AGENTS_DIR,
     error,
+    frontmatter_yaml_problems,
     ok,
     parse_frontmatter,
     print_summary,
@@ -58,6 +59,9 @@ def check_agent_frontmatter() -> list[Path]:
         if fm is None:
             error(f"{rp}: missing or invalid YAML frontmatter")
             continue
+
+        for problem in frontmatter_yaml_problems(path):
+            error(problem)
 
         # Required fields
         for field in ("name", "description", "tools"):

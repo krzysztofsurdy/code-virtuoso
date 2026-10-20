@@ -1,6 +1,6 @@
 ---
 name: database-design
-description: Database schema design and data modeling: normalization, indexing, constraints, migrations, partitioning, audit trails. Use to design or review a schema.
+description: "Database schema design and data modeling: normalization, indexing, constraints, migrations, partitioning, audit trails. Use to design or review a schema."
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
 disable-model-invocation: true

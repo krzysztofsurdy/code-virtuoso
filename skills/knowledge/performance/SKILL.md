@@ -1,6 +1,6 @@
 ---
 name: performance
-description: Profiling-driven performance optimization: caching, query tuning, N+1 fixes, memory, and load testing. Use to diagnose a bottleneck or set performance budgets.
+description: "Profiling-driven performance optimization: caching, query tuning, N+1 fixes, memory, and load testing. Use to diagnose a bottleneck or set performance budgets."
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
 disable-model-invocation: true
