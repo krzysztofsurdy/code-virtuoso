@@ -7,6 +7,7 @@ Workflow files that run the read-only agents in GitHub Actions. They are example
 | [claude-review.yml](claude-review.yml) | `review-pr` and `review-pr-cold` with Claude Code | pull request | JSON reports as artifacts, check fails on a CRITICAL finding |
 | [codex-review.yml](codex-review.yml) | The reviewer agent with Codex, answer shaped by `--output-schema` | pull request | JSON report, check fails on a CRITICAL finding |
 | [scheduled-audit.yml](scheduled-audit.yml) | `audit-dependencies` and `scan-refactors` with Claude Code | weekly, or by hand | One issue with the top findings, full JSON as artifacts |
+| [evals.yml](evals.yml) | The plugin eval suites from [evals/](../../evals/README.md) | pull request touching skills or the marketplace | Eval report as an artifact, fails below the score threshold |
 
 ## How to copy them
 
