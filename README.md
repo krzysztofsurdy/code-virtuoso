@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="Code Virtuoso" width="220" />
+</p>
+
 # Code Virtuoso
 
 [![Version](https://img.shields.io/github/v/tag/krzysztofsurdy/code-virtuoso?label=version&color=1f6feb)](https://github.com/krzysztofsurdy/code-virtuoso/releases)
