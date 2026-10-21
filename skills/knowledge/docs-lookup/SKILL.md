@@ -1,6 +1,6 @@
 ---
 name: docs-lookup
-description: Fetch current, version-correct official documentation instead of answering library API questions from memory. Use when you need a method signature, config key, CLI flag, or anything that changes between versions. Context7 preferred, with fallbacks.
+description: "Looks up current, version-correct docs before answering a library question from memory. Use when asked for an exact method signature, argument order, config key, CLI flag, or the call for 'our version' or a named version (for example 'in 7.2'). Check the docs or lockfile first even when sure, because APIs change between versions."
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---

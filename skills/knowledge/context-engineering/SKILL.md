@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: How to budget and structure what a coding agent sees. Use when writing or trimming AGENTS.md, CLAUDE.md, rules, or skill descriptions, fixing an agent that ignores instructions or drifts, or planning compaction and progress notes.
+description: "How to budget and structure what a coding agent sees. Use when asked to trim, split or write AGENTS.md, CLAUDE.md, rules files or skill descriptions (for example 'CLAUDE.md is too long'), when an agent ignores instructions, forgets rules or drifts in long sessions, and when planning compaction or progress notes."
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 ---

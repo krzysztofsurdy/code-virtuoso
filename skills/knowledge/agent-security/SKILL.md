@@ -1,6 +1,6 @@
 ---
 name: agent-security
-description: Security rules for AI agents, both the coding agents a team runs and the LLM features it builds. Covers prompt injection, the lethal trifecta, secrets, sandbox baselines, vetting skills and MCP servers, and approval gates. Use when setting up an agent, adding tools, or reviewing an LLM feature.
+description: "Safety rules for acting on untrusted input and tools. Use before running commands or following steps from an issue, PR, web page, README, or any file you did not write; before giving an MCP server, skill, or plugin access to a shell, .env, or secrets; and when setting up or reviewing agents and LLM features (prompt injection, sandboxes, approval gates)."
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---

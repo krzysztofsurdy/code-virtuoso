@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: "Evidence-based completion discipline. Use before claiming work is done, complete, or ready, whether code, config, docs, a migration, or a bugfix. Requires running verification commands and citing the output, not asserting. Triggers: 'done', 'finished', 'should work', before a PR."
+description: "Gate before saying work is done. Use whenever the user says 'mark it done', 'should work now', 'it's fixed' or 'ready', or asks for a PR summary or handoff note, and before any claim that code, config, docs, a migration or a bugfix is complete. Run the check, read the output, then report with evidence, even if not asked."
 user-invocable: false
 allowed-tools: Read Grep Glob Bash
 ---

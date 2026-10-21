@@ -1,6 +1,6 @@
 ---
 name: agent-orchestration
-description: Decides how to split work across agents and runs it well. Use whenever the user wants to delegate, parallelize, fan out, run multi-agent work, or execute a multi-task plan with one agent per task. Covers briefs, isolation, merging, and when not to parallelize.
+description: "Plans and runs work across several agents. Use whenever a request says split across agents, run in parallel, fan out, one agent per task, delegate, subagents, or merge their findings, before spawning any agent. Covers briefs, isolation, merging, and when not to parallelize."
 user-invocable: false
 ---
 

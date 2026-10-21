@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Strict red-green-refactor procedure for agents, with the failing test shown first, the minimum code to pass, and refactoring on green. Use when implementing a feature, fixing a bug, or changing code under tests.
+description: "Red-green-refactor procedure: write the failing test first, show it fail, write the minimum code, refactor on green. Use for any bug fix or new behavior in code that has or could have tests, including 'fix this bug', 'add a function', 'use TDD' and 'write the test first'."
 user-invocable: true
 argument-hint: "[behavior to implement or bug to fix]"
 ---
