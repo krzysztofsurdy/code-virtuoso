@@ -525,11 +525,9 @@ The version field lives in `metadata.version` inside `marketplace.json`.
 
 | Change type | Version bump | Example |
 |---|---|---|
-| Content updates to existing skills | Patch | 1.0.0 -> 1.0.1 |
-| New skills or agents added | Minor | 1.0.0 -> 1.1.0 |
-| Restructuring, renames, breaking changes | Major | 1.0.0 -> 2.0.0 |
-
-Versioning restarted at 1.0.0 with the rebuild that followed 9.7.3. Older releases are in the legacy section of [CHANGELOG.md](CHANGELOG.md).
+| Content updates to existing skills | Patch | 10.0.0 -> 10.0.1 |
+| New skills or agents added | Minor | 10.0.0 -> 10.1.0 |
+| Restructuring, renames, breaking changes | Major | 10.0.0 -> 11.0.0 |
 
 ## Commit conventions
 

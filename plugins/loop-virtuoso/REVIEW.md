@@ -32,7 +32,7 @@ Round 4 is the pivotal one: it's where the design's central claim went from "we 
 - `hooks/guard-protected-paths.sh`'s path resolution now walks up to the nearest existing ancestor directory before resolving symlinks, closing the gap where a brand-new file in a not-yet-created directory fell back to an unresolved path.
 - A real, separate bug was found and fixed along the way: a `case` statement nested directly inside a `$(...)` command substitution does not parse on bash 3.2 (macOS's frozen default `/bin/bash`, still shipped for licensing reasons) - moved into its own function, which does parse correctly everywhere.
 
-## What changed with the storage move (1.0.0 in code-virtuoso)
+## What changed with the storage move (2.0.0 in code-virtuoso)
 
 This part was not one of the five adversarial rounds. It is a design change reviewed by its own tests, stated here so the trust boundary stays honest.
 

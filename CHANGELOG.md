@@ -4,11 +4,7 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2026-10-21
-
-### Version reset
-
-1.0.0 is the rebuild that followed 9.7.3. Versioning restarts here. Earlier history is kept below under "Legacy (pre-1.0.0)" and is not rewritten. The `v1.0.0` tag was unused.
+## [10.0.0] - 2026-10-21
 
 ### Added
 - `ai` skill category and the `ai-virtuoso` plugin: `agent-design`, `llm-evals`, `llm-observability`, `mcp-server-development`
@@ -20,7 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Team workflows in `workflows/` (`review-squad`, `development-team`, `war-room`) with Markdown recipes in `agent-orchestration/references/teams.md`
 - `roles/<role>/` reference files read by the role agents on demand
 - Codex support: `scripts/build-codex-agents.py` generates `codex/agents/*.toml` from the agent files, `scripts/install-codex-agents.sh` installs them (28 unit tests), and `codex/README.md`
-- `plugins/loop-virtuoso`, the backlog-driven delivery loop, imported with its history as a self-contained Claude Code plugin (loop-virtuoso 1.0.0 stores state under `.code-virtuoso`, keeps pipelines in user and project files, and checkpoints commits in the project's format)
+- `plugins/loop-virtuoso`, the backlog-driven delivery loop, imported with its history as a self-contained Claude Code plugin (loop-virtuoso 2.0.0 stores state under `.code-virtuoso`, keeps pipelines in user and project files, and checkpoints commits in the project's format)
 - Layered `.code-virtuoso` config (`spec/config-spec.md`): user, project shared, and project local files replace settings stored next to skills
 - `spec/team-spec.md` rewritten for workflows, `template/workflow-template.js`, and a skill-preloading section in `spec/agent-spec.md`
 - Carried from the earlier unreleased work: `brainstorming`, `using-ecosystem`, `pr-message-writer`, `report-writer`, `stakeholder-update-writer`, `ticket-delivery`, `worktree-ops`, `verification-before-completion`, `finishing-branch`
@@ -51,8 +47,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Validators reject marketplace entries that share a source containing `agents/`, `commands/`, `workflows/`, or `hooks/hooks.json`, and cover plugin skills
 - Plugin spec facts and YAML-unsafe descriptions
 - Earlier unreleased work: wrong APIs and imports in Django, Symfony, and LangChain references, invalid code in pattern, refactoring, and SOLID examples, broken CLI `--` separators, stale agent counts in the root docs
-
-## Legacy (pre-1.0.0)
 
 ## [8.2.0] - 2026-04-13
 
