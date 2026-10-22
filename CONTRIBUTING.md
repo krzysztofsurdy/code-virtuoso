@@ -38,7 +38,7 @@ skills/
   knowledge/         - Decision rules and pitfalls (security, debugging, agent orchestration, design references)
   tools/             - Interactive generators and headless agent wrappers
   playbooks/         - Step-by-step operational procedures (ticket delivery, TDD, PR feedback)
-  frameworks/{name}/ - Framework-specific skills (Symfony, Django, LangChain, PHP, Vercel AI SDK)
+  frameworks/{name}/ - Framework-specific skills (Symfony, Django, Godot, LangChain, PHP, Vercel AI SDK)
   ai/                - Building with LLMs and agents (agent design, evals, observability, MCP servers)
 codex/               - Codex support: generated agent TOML files and install notes
 examples/ci/         - Example GitHub Actions workflows for headless agents
@@ -104,7 +104,7 @@ The `user-invocable` field controls whether a skill appears as a runnable comman
 | Category | `user-invocable` | Reason |
 |---|---|---|
 | `knowledge/` | `false` | Background reference, auto-loaded by context or agents |
-| `frameworks/` | `false` for reference skills, `true` for upgrade and update playbooks | Reference is auto-loaded background knowledge. `php-upgrade`, `symfony-upgrade` and `composer-dependencies` are step-by-step procedures a person starts on purpose |
+| `frameworks/` | `false` for reference skills, `true` for upgrade and update playbooks | Reference is auto-loaded background knowledge. `php-upgrade`, `symfony-upgrade`, `godot-upgrade` and `composer-dependencies` are step-by-step procedures a person starts on purpose |
 | `ai/` | `false` | Background reference, auto-loaded |
 | `playbooks/` | `true` | User runs these as step-by-step procedures |
 | `tools/` | `true` | User runs these directly to generate output |
@@ -500,7 +500,7 @@ All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` s
 | `knowledge-virtuoso` | `./skills` | Knowledge skills (security, debugging, design references, and so on) |
 | `tools-virtuoso` | `./skills` | Interactive tool skills |
 | `playbooks-virtuoso` | `./skills` | Operational playbook skills |
-| `frameworks-virtuoso` | `./skills` | Framework skills (Symfony, Django, LangChain, PHP, Vercel AI SDK) |
+| `frameworks-virtuoso` | `./skills` | Framework skills (Symfony, Django, Godot, LangChain, PHP, Vercel AI SDK) |
 | `ai-virtuoso` | `./skills` | AI engineering skills (agent design, evals, observability, MCP servers) |
 | `agents-virtuoso` | `./` | All 20 agents, the team workflows in `workflows/`, `agent-orchestration`, `verification-before-completion`, and the headless wrapper skills |
 | `loop-virtuoso` | `./plugins/loop-virtuoso` | Self-contained Claude Code plugin with its own `plugin.json` (not a bundle of repo skills) |

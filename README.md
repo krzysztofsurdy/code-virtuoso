@@ -36,14 +36,14 @@ scripts/install-codex-agents.sh
 
 ## What is inside
 
-58 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
+67 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
 
 | Bundle | Holds |
 |---|---|
-| `knowledge-virtuoso` | 17 knowledge skills |
-| `tools-virtuoso` | 13 tool skills |
-| `playbooks-virtuoso` | 8 step-by-step procedures |
-| `frameworks-virtuoso` | 7 framework skills |
+| `knowledge-virtuoso` | 18 knowledge skills |
+| `tools-virtuoso` | 14 tool skills |
+| `playbooks-virtuoso` | 10 step-by-step procedures |
+| `frameworks-virtuoso` | 12 framework skills |
 | `ai-virtuoso` | 4 skills for building with LLMs and agents |
 | `agents-virtuoso` | 20 agents, 3 team workflows, 9 skills (see Agents and Teams) |
 | `loop-virtuoso` | Delivery loop plugin, Claude Code only |
@@ -60,6 +60,7 @@ A skill marked "run by name" never loads on its own. It costs no context until y
 | `accessibility` | WCAG 2.1 and 2.2, ARIA, keyboard use, a11y testing |
 | `context-engineering` | What a coding agent should see: AGENTS.md, rules, skill descriptions |
 | `docs-lookup` | Fetch version-correct official docs instead of answering from memory |
+| `motion-design` | Timing, easing, holds, safe areas, and accessibility for anything that moves |
 
 Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `testing`, `api-design`, `database-design`, `performance`, `microservices`, `cicd`, `scrum`.
 
@@ -67,7 +68,7 @@ Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `t
 
 | Skill | Purpose |
 |---|---|
-| `agentic-rules-writer` | Generate rules files for Claude Code, Cursor, Copilot, Codex, and more |
+| `agentic-rules-writer` | Write a short rules file, or trim an existing CLAUDE.md or AGENTS.md |
 | `ticket-writer` | Write a story, bug, epic, or other ticket of the right type |
 | `agent-creator` | Design a sub-agent |
 | `skill-writer` | Write or update a skill, researching the topic first |
@@ -78,6 +79,7 @@ Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `t
 | `pr-message-writer` | Write a pull request message with testing steps |
 | `report-writer` | Make a standalone HTML report |
 | `stakeholder-update-writer` | Draft a status update for Slack or email |
+| `ui-review` | Review UI code and the rendered page against a sourced rule set |
 | `web-screenshot` | Capture a web page with shot-scraper |
 | `image-annotate` | Add arrows, boxes, text, blur, and redaction to images |
 
@@ -93,6 +95,8 @@ Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `t
 | `handoff` | Write and resume from a handoff note |
 | `hooks-and-guardrails` | Deny rules, sandbox choices, and hooks for an agent setup |
 | `worktree-ops` | Create, switch, and remove git worktrees safely |
+| `game-feature-loop` | One game mechanic at a time, proven in the running game, then a feel pass |
+| `video-production` | Brief to delivered video: engine choice, storyboard, review loop, audio, render |
 
 ### Frameworks
 
@@ -100,11 +104,16 @@ Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `t
 |---|---|
 | `symfony-components` | Version matrix, defaults, and pitfalls for Symfony |
 | `symfony-upgrade` | Deprecation-first Symfony upgrades |
+| `doctrine-orm` | Fetch strategy, N+1, migration order, locking, and workers for Doctrine ORM 3 |
+| `symfony-testing` | Pick the right Symfony test type, with PHPUnit 11 to 13 pitfalls |
 | `django-components` | Version matrix and common Django pitfalls |
 | `langchain-components` | Choose between create_agent, LangGraph, and Deep Agents |
 | `vercel-ai-sdk` | Version matrix, packages, the agent loop, TypeScript pitfalls |
 | `php-upgrade` | PHP 7.4 to 8.5 with Rector and breaking changes |
+| `php-quality` | PHPStan, Psalm, PER-CS, Rector quality sets, and modern PHP idioms |
 | `composer-dependencies` | Safe Composer updates and security audits |
+| `godot` | Verify loop, headless test traps, and scene-file rules for Godot 4 |
+| `godot-upgrade` | Godot 4.x upgrades with behavior changes per version |
 
 ### AI engineering
 

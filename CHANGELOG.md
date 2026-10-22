@@ -4,6 +4,26 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [10.2.0] - 2026-10-22
+
+### Added
+- `motion-design` knowledge skill: timing and easing by role, holds by reading time, frame and safe-area rules, an accessibility gate, and the tells of generated-looking motion
+- `video-production` playbook: brief, engine choice (Remotion, HyperFrames, Motion Canvas, Manim, Lottie and Rive, ffmpeg, generative), storyboard stills, numeric spec, frame-snapshot review, audio and loudness, render, delivery
+- `game-feature-loop` playbook: one mechanic at a time on any engine, proven from live game state, then a separate game-feel pass
+- `godot` and `godot-upgrade` framework skills: the verify loop, headless test-runner traps reproduced on Godot 4.6.1, `.tscn` text rules, and behavior changes per 4.x version
+- `doctrine-orm` framework skill: fetch strategy and N+1, migration ordering, transactions and locking, batches, and Messenger workers, measured on ORM 3.7
+- `symfony-testing` framework skill: which test type to write, PHPUnit 11 to 13, Foundry, DAMA, HTTP client, clock, Messenger and mailer test doubles
+- `php-quality` framework skill: PHPStan levels and baselines, Psalm, PER Coding Style, Rector quality sets, and PHP 8.3 to 8.5 idioms
+- `ui-review` tool skill: static and rendered review of UI code against 55 sourced rules, with file:line findings and severity
+- Research notes with a prior-art table and fact ledger in each new skill
+- Trigger evals for every new skill, and an outcome eval for `agentic-rules-writer`
+
+### Changed
+- `agentic-rules-writer` writes only what the model cannot guess, asks eight questions after reading the repo, turns hard limits into deny rules and hooks, adds a trim mode for existing files, and checks each tool's current docs before writing
+- `symfony-components` points to `doctrine-orm` for Doctrine pitfalls
+- `using-ecosystem` lists vendor and community skill sets to install instead of rebuilding them
+- The `context-engineering` trim trigger case also passes when `agentic-rules-writer` trim mode handles the request
+
 ## [10.1.1] - 2026-10-22
 
 ### Changed

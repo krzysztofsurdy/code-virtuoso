@@ -4,13 +4,13 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "58 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
-    "version": "10.1.1"
+    "description": "67 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
+    "version": "10.2.0"
   },
   "plugins": [
     {
       "name": "knowledge-virtuoso",
-      "description": "17 knowledge skills: design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, agent security, context engineering, docs lookup, scrum, performance, microservices, CI/CD, accessibility, and database design",
+      "description": "18 knowledge skills: design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, agent security, context engineering, docs lookup, scrum, performance, microservices, CI/CD, accessibility, database design, and motion design",
       "source": "./skills",
       "strict": false,
       "skills": [
@@ -25,6 +25,7 @@
         "./knowledge/design-patterns",
         "./knowledge/docs-lookup",
         "./knowledge/microservices",
+        "./knowledge/motion-design",
         "./knowledge/performance",
         "./knowledge/refactoring",
         "./knowledge/scrum",
@@ -35,7 +36,7 @@
     },
     {
       "name": "tools-virtuoso",
-      "description": "13 tool skills: rules writer, ticket writer, agent creator, skill writer, plugin creator, research, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, web screenshot, and image annotate",
+      "description": "14 tool skills: rules writer, ticket writer, agent creator, skill writer, plugin creator, research, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, UI review, web screenshot, and image annotate",
       "source": "./skills",
       "strict": false,
       "skills": [
@@ -50,37 +51,45 @@
         "./tools/skill-writer",
         "./tools/stakeholder-update-writer",
         "./tools/ticket-writer",
+        "./tools/ui-review",
         "./tools/using-ecosystem",
         "./tools/web-screenshot"
       ]
     },
     {
       "name": "playbooks-virtuoso",
-      "description": "8 playbook skills: ticket delivery, spec-driven development, TDD, branch finishing, PR feedback, handoff, worktree ops, and hooks and guardrails",
+      "description": "10 playbook skills: ticket delivery, spec-driven development, TDD, branch finishing, PR feedback, handoff, worktree ops, hooks and guardrails, game feature loop, and video production",
       "source": "./skills",
       "strict": false,
       "skills": [
         "./playbooks/finishing-branch",
+        "./playbooks/game-feature-loop",
         "./playbooks/handoff",
         "./playbooks/hooks-and-guardrails",
         "./playbooks/pr-feedback",
         "./playbooks/spec-driven-development",
         "./playbooks/tdd",
         "./playbooks/ticket-delivery",
+        "./playbooks/video-production",
         "./playbooks/worktree-ops"
       ]
     },
     {
       "name": "frameworks-virtuoso",
-      "description": "7 framework skills: Symfony components and upgrade, Django components, LangChain components, PHP upgrade, Composer dependencies, and Vercel AI SDK",
+      "description": "12 framework skills: Symfony components, upgrade, Doctrine ORM and testing, Django components, LangChain components, PHP upgrade and quality, Composer dependencies, Godot and Godot upgrade, and Vercel AI SDK",
       "source": "./skills",
       "strict": false,
       "skills": [
         "./frameworks/django/django-components",
+        "./frameworks/godot/godot",
+        "./frameworks/godot/godot-upgrade",
         "./frameworks/langchain/langchain-components",
         "./frameworks/php/php-upgrade",
         "./frameworks/php/composer-dependencies",
+        "./frameworks/php/php-quality",
+        "./frameworks/symfony/doctrine-orm",
         "./frameworks/symfony/symfony-components",
+        "./frameworks/symfony/symfony-testing",
         "./frameworks/symfony/symfony-upgrade",
         "./frameworks/vercel/vercel-ai-sdk"
       ]
