@@ -4,6 +4,16 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [10.1.1] - 2026-10-22
+
+### Changed
+- `agentic-rules-writer` writes rules only: no skill routing tables or agent rosters, AGENTS.md as the single source with a thin `@AGENTS.md` CLAUDE.md, a 200-line size check, and an optional reminder hook
+- `context-engineering` covers skill listing overflow, instruction drift, and one source of truth for instructions
+- `instruction-auditor` checks that skill references resolve, flags routing tables, estimates listing overflow, and notes whether a reminder hook exists
+- `hooks-and-guardrails` adds a tested `UserPromptSubmit` reminder hook against drift
+- `web-screenshot` prefers a connected real-browser extension (for example Claude in Chrome) before headless tools
+- `image-annotate` offers Snipaya for hand annotation alongside the annotate.py script
+
 ## [10.1.0] - 2026-10-22
 
 ### Added
