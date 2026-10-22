@@ -23,6 +23,29 @@ Mark up an existing image with shapes, text, numbered steps, blur, or solid-colo
 
 ---
 
+## Pick the approach
+
+| Situation | Approach |
+|---|---|
+| Output must be reproducible, batch, scripted, or run in CI | The programmatic path in this skill (`scripts/annotate.py`) |
+| The user is not at their machine, or no desktop app is available | The programmatic path |
+| A person will place marks by hand, or wants fine visual control (hand-placed arrows, callouts, spotlight) | Suggest Snipaya, described below |
+
+Dragging marks onto an image is faster and nicer than describing coordinates, so when a person is at a Mac and the job is a one-off, offer Snipaya as an option. It is a suggestion, not a requirement. If the user declines or has no Mac, use the programmatic path.
+
+### Snipaya
+
+[Snipaya](https://snipaya.app/) is a macOS app (13 Ventura or later, Apple Silicon and Intel) for capturing and annotating screenshots. Its site lists arrows, curved arrows, rectangles, ellipses, text, callouts, numbered step badges, spotlight, pen, highlighter, manual blur, a magnifier, and auto-redaction of text that matches known secret patterns. It costs a one-time EUR 19 after a 14-day free trial with all features. Windows and Linux are not supported. The site does not mention a CLI, URL scheme, or general API.
+
+Ways to use it:
+
+1. **Hand off a file.** Save the screenshot to a known path, tell the user the path, and ask them to open it in Snipaya, annotate it, and export. Then continue from the exported file.
+2. **Drive it through its MCP server, if the user has enabled it.** The site says Snipaya can run a local MCP server that is off by default, listens only on the Mac, and needs an access token. An assistant connected to it can open an image, blur secrets, add arrows, steps, text, and callouts, and export the result. The site does not say where the token is found or which assistants are supported, so ask the user to enable it and connect it rather than assuming it is set up.
+
+Redaction stays mandatory with either tool. Before an image leaves the machine, every secret must be hidden, and the user must check the result. Snipaya's auto-redaction blurs matches, and the site itself says to check the result before sharing. Blur can be reversed for text, so for passwords, keys, and tokens, run `scripts/annotate.py --redact` with a solid block on the exported file, or confirm the tool covered them with an opaque fill.
+
+---
+
 ## Quick start
 
 ### Install (one-time, ask user first)
@@ -274,4 +297,5 @@ See `references/coordinate-cheatsheet.md` for common picks and offsets.
 3. **Use `redact` for secrets, not `blur`.** Blur is reversible for text. Cover passwords, API keys, payment numbers, SSNs, JWT tokens, and anything an attacker could replay with a solid block.
 4. **Coordinates are top-left origin and pixel-based.** Match the resolution of the image, not CSS pixels. If the screenshot is retina (2x), the coordinates are 2x what DevTools shows.
 5. **Operations apply in order.** Later marks paint over earlier marks. Put redactions last in the spec so nothing in the source leaks through a partially transparent overlay.
-6. **Output format follows the file extension.** `.png` for lossless, `.jpg` for size-constrained. Annotations on a JPEG re-saved as JPEG accumulate compression artifacts, so prefer PNG when iterating.
+6. **Redaction applies whichever tool made the marks.** An image annotated by hand in Snipaya or any other editor still needs secrets covered with solid redaction before sharing.
+7. **Output format follows the file extension.** `.png` for lossless, `.jpg` for size-constrained. Annotations on a JPEG re-saved as JPEG accumulate compression artifacts, so prefer PNG when iterating.
