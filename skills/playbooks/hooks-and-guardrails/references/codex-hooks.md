@@ -2,10 +2,11 @@
 
 - [hooks.json form](#hooksjson-form)
 - [config.toml form](#configtoml-form)
+- [Reminder hook](#reminder-hook)
 - [Where Codex differs from Claude Code](#where-codex-differs-from-claude-code)
 - [Sources](#sources)
 
-The same four guardrails work in Codex. Copy the scripts to `.codex/hooks/` and make them executable. Project hooks load only when the project's `.codex/` layer is trusted, and Codex skips new or changed hooks until you review them with `/hooks`.
+The same guardrails work in Codex. Copy the scripts to `.codex/hooks/` and make them executable. Project hooks load only when the project's `.codex/` layer is trusted, and Codex skips new or changed hooks until you review them with `/hooks`.
 
 ## hooks.json form
 
@@ -80,6 +81,30 @@ command = '"$(git rev-parse --show-toplevel)/.codex/hooks/reinject-context.sh"'
 timeout = 10
 ```
 
+## Reminder hook
+
+Codex has a `UserPromptSubmit` event. It takes no matcher, passes the prompt on stdin with `cwd`, and adds plain stdout or `hookSpecificOutput.additionalContext` as developer context on every prompt. `prompt-reminder.sh` works unchanged. Add it to `hooks.json`:
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$(git rev-parse --show-toplevel)/.codex/hooks/prompt-reminder.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+In `config.toml` the same hook is `[[hooks.UserPromptSubmit.hooks]]` with `type = "command"` and a `command` string. The docs show the `hooks.json` form for this event, so the TOML form follows the documented pattern for other events. Codex spills output over about 2,500 tokens to a file, which the 600 character cap stays well under.
+
 ## Where Codex differs from Claude Code
 
 | Topic | Claude Code | Codex |
@@ -101,5 +126,5 @@ timeout = 10
 
 ## Sources
 
-- https://learn.chatgpt.com/docs/hooks (config locations, events, input, output, exit codes)
+- https://learn.chatgpt.com/docs/hooks (config locations, events, UserPromptSubmit input and output, exit codes)
 - https://learn.chatgpt.com/docs/sandboxing (sandbox modes and approval policies)

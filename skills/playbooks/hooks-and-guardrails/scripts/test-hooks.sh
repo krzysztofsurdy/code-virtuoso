@@ -141,5 +141,43 @@ mkdir -p "$WORK/plain"
 expect_exit "no git and no file injects nothing" 0 "$S" "$(ctx "$WORK/plain")"
 expect_empty "nothing printed"
 
+# --- prompt-reminder.sh (UserPromptSubmit) ---
+S="$DIR/prompt-reminder.sh"
+PROJ="$WORK/rproj"
+CFG="$WORK/rcfg"
+mkdir -p "$PROJ" "$CFG"
+prompt() { printf '{"hook_event_name":"UserPromptSubmit","prompt":"hi","cwd":"%s"}' "$PROJ"; }
+rem() { expect_exit "$1" 0 env "$(prompt)" HOME="$WORK/rhome" CODE_VIRTUOSO_CONFIG_HOME="$CFG" "$S"; }
+rem "default reminder is printed"
+expect_contains "default text mentions skills" "the installed skills"
+printf '%s' "$LAST_OUT" | jq -e '.hookSpecificOutput.hookEventName == "UserPromptSubmit" and (.hookSpecificOutput.additionalContext | length) > 0' >/dev/null \
+  && { PASS=$((PASS + 1)); echo "ok   output is valid UserPromptSubmit JSON"; } \
+  || { FAIL=$((FAIL + 1)); echo "FAIL output is not valid UserPromptSubmit JSON"; }
+printf 'User reminder: run make test.\n' > "$CFG/reminder.txt"
+rem "user file overrides the default"
+expect_contains "user text is used" "User reminder: run make test."
+mkdir -p "$PROJ/.code-virtuoso" && printf 'Project reminder: ship small.\n' > "$PROJ/.code-virtuoso/reminder.txt"
+rem "project file is read"
+expect_contains "project text wins over user text" "Project reminder: ship small."
+printf '%s' "$LAST_OUT" | grep -qF "User reminder" \
+  && { FAIL=$((FAIL + 1)); echo "FAIL user text leaked past the project file"; } \
+  || { PASS=$((PASS + 1)); echo "ok   user text is not mixed in"; }
+head -c 5000 /dev/zero | tr '\0' 'x' > "$PROJ/.code-virtuoso/reminder.txt"
+rem "oversized reminder is capped"
+LEN="$(printf '%s' "$LAST_OUT" | jq -r '.hookSpecificOutput.additionalContext | length')"
+[ "$LEN" -le 600 ] && { PASS=$((PASS + 1)); echo "ok   reminder stays within 600 chars ($LEN)"; } \
+  || { FAIL=$((FAIL + 1)); echo "FAIL reminder too long ($LEN chars)"; }
+: > "$PROJ/.code-virtuoso/reminder.txt"
+rem "empty project file turns the reminder off"
+expect_empty "empty file prints nothing"
+rm -rf "$PROJ/.code-virtuoso" "$CFG/reminder.txt"
+mkdir -p "$WORK/xdg/code-virtuoso" && printf 'XDG reminder.\n' > "$WORK/xdg/code-virtuoso/reminder.txt"
+expect_exit "XDG_CONFIG_HOME is honored" 0 env "$(prompt)" -u CODE_VIRTUOSO_CONFIG_HOME XDG_CONFIG_HOME="$WORK/xdg" "$S"
+expect_contains "XDG text is used" "XDG reminder."
+expect_exit "missing HOME and files still exits 0" 0 env "$(prompt)" -u HOME -u XDG_CONFIG_HOME -u CODE_VIRTUOSO_CONFIG_HOME "$S"
+expect_contains "default text is used without HOME" "the installed skills"
+expect_exit "invalid stdin still exits 0" 0 env "not json" HOME="$WORK/rhome" "$S"
+expect_exit "unreadable reminder file still exits 0" 0 env "$(prompt)" HOME="$WORK/rhome" CODE_VIRTUOSO_CONFIG_HOME="$WORK/does-not-exist" "$S"
+
 printf '\n%s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

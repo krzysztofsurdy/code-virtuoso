@@ -1,6 +1,7 @@
 ## Contents
 
 - [Paste-ready settings.json](#paste-ready-settingsjson)
+- [Reminder hook against drift](#reminder-hook-against-drift)
 - [Where the files go](#where-the-files-go)
 - [How each event talks to the agent](#how-each-event-talks-to-the-agent)
 - [Notes on the config](#notes-on-the-config)
@@ -90,6 +91,29 @@ Setting `args` puts the hook in exec form with no shell, so the script path need
 
 `.claude/key-context.md` is the file `reinject-context.sh` reads. Keep it to a few lines: the test command, the generated directories not to edit, the one convention the agent keeps forgetting.
 
+## Reminder hook against drift
+
+`CLAUDE.md` loads once at session start. In a long session the model weighs it less and less, and compaction can drop details. A `UserPromptSubmit` hook adds a short reminder to every prompt, so the key rules stay near the newest message. Add this entry under `hooks` in the same file:
+
+```json
+"UserPromptSubmit": [
+  {
+    "hooks": [
+      {
+        "type": "command",
+        "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/prompt-reminder.sh",
+        "args": [],
+        "timeout": 10
+      }
+    ]
+  }
+]
+```
+
+`prompt-reminder.sh` prints the `additionalContext` JSON form. Plain stdout works too, but the JSON form is explicit and behaves the same in Codex. The default text points the agent at the skills list and at `CLAUDE.md` and `AGENTS.md`. To change it, write your own text to `.code-virtuoso/reminder.txt` in the project, or to `${CODE_VIRTUOSO_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}/code-virtuoso}/reminder.txt` for all projects. The project file wins, and an empty file turns the reminder off.
+
+Keep it to one or two sentences. The text is added to every message, so each extra line costs tokens on every turn. The script cuts the text at 600 characters. Claude Code itself caps hook output at 10,000 characters. State the rule the agent forgets most, not a summary of the rules file.
+
 ## Where the files go
 
 | File | Purpose |
@@ -109,6 +133,7 @@ Settings sources are merged, and a deny rule at any level blocks the call. Inter
 | PreToolUse | tool name | `tool_name`, `tool_input` | exit 2 with stderr, or JSON `hookSpecificOutput.permissionDecision: "deny"` with a reason | A deny rule still wins over a hook allow. A hook exit 2 wins over an allow rule |
 | PostToolUse | tool name | `tool_input.file_path`, `tool_response` | exit 2 shows stderr to the agent, or JSON `decision: "block"` with `reason` | The tool already ran, so this cannot undo the edit |
 | Stop | not used | `cwd`, `stop_hook_active`, `last_assistant_message` | JSON `decision: "block"` with `reason`, or exit 2 | `stop_hook_active` is true when already continuing from a stop hook. Eight consecutive continuations end the turn |
+| UserPromptSubmit | not used, always fires | `prompt`, `cwd` | exit 2 or JSON `decision: "block"` blocks the prompt | Plain stdout or `hookSpecificOutput.additionalContext` is added as context on every prompt. Output over 10,000 characters is saved to a file with a preview |
 | SessionStart | `startup`, `resume`, `clear`, `compact`, `fork` | `source`, `cwd` | none, adds context | Plain stdout or `hookSpecificOutput.additionalContext` becomes context. Over 10,000 characters is saved to a file with a preview |
 | PreCompact | `manual`, `auto` | `trigger`, `custom_instructions` | exit 2 or `decision: "block"` blocks compaction | Cannot inject context. Blocking an auto compaction near the limit makes the request fail |
 
@@ -124,6 +149,6 @@ All tool paths in `tool_input` are absolute. Tool names are case-sensitive: `Rea
 
 ## Sources
 
-- https://code.claude.com/docs/en/hooks (events, input and output, exit codes, security considerations)
+- https://code.claude.com/docs/en/hooks (events, input and output, exit codes, UserPromptSubmit context and the 10,000 character cap, security considerations)
 - https://code.claude.com/docs/en/permissions (rule syntax, precedence, hook and rule interaction)
 - https://code.claude.com/docs/en/settings-reference (permissions.deny example)

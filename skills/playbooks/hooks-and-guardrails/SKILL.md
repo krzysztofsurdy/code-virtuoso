@@ -41,8 +41,11 @@ An instruction in a rules file is a request. A hook is code that runs whether or
    | Run a formatter, linter, or syntax check after edits | PostToolUse | `scripts/post-edit-check.sh` | exit 2 sends the error to the agent |
    | Do not finish while tests fail | Stop | `scripts/stop-gate.sh "<test cmd>"` | JSON `decision: block` |
    | Restore branch, status, and key rules after compaction | SessionStart, matcher `compact` | `scripts/reinject-context.sh` | JSON `additionalContext` |
+   | Keep rules in view as a long session drifts from its start-of-session instructions | UserPromptSubmit | `scripts/prompt-reminder.sh` | JSON `additionalContext` |
 
    PreCompact can only block compaction or run side effects. It cannot add context, so re-inject through SessionStart.
+
+   Use the prompt reminder when long sessions start ignoring rules the agent followed early on. It adds text to every message, so keep it to a sentence or two.
 
 4. **Install.** Copy the scripts you chose to `.claude/hooks/` (Claude Code) or `.codex/hooks/` (Codex), make them executable, and register them. The exact config is in [claude-code-settings](references/claude-code-settings.md) and [codex-hooks](references/codex-hooks.md).
 
@@ -69,6 +72,7 @@ An instruction in a rules file is a request. A hook is code that runs whether or
 - [ ] Post-edit check installed and under two seconds on a typical file
 - [ ] Stop gate installed with the project's real test command
 - [ ] Context re-injection installed if sessions run long
+- [ ] Prompt reminder installed if the agent forgets rules in long sessions, kept to a sentence or two
 - [ ] `scripts/test-hooks.sh` passes
 - [ ] Hook and settings paths require code review
 - [ ] No hook or setting was installed into a user-level config without the owner agreeing
@@ -77,11 +81,11 @@ An instruction in a rules file is a request. A hook is code that runs whether or
 
 | Reference | Contents |
 |---|---|
-| [claude-code-settings](references/claude-code-settings.md) | Paste-ready `settings.json` with deny rules and all four hooks, plus event input and output details |
+| [claude-code-settings](references/claude-code-settings.md) | Paste-ready `settings.json` with deny rules and four hooks, the prompt reminder entry, and event input and output details |
 | [codex-hooks](references/codex-hooks.md) | The same guardrails in `hooks.json` and `config.toml` form, and where Codex differs |
 | [deny-rules-and-modes](references/deny-rules-and-modes.md) | Permission modes, sandbox settings, and deny-rule limits for Claude Code and Codex |
 
-Scripts live in `scripts/`: `block-secret-reads.sh`, `post-edit-check.sh`, `stop-gate.sh`, `reinject-context.sh`, and `test-hooks.sh`. They need bash and jq.
+Scripts live in `scripts/`: `block-secret-reads.sh`, `post-edit-check.sh`, `stop-gate.sh`, `reinject-context.sh`, `prompt-reminder.sh`, and `test-hooks.sh`. They need bash and jq.
 
 ## Integration with other skills
 
