@@ -1,6 +1,6 @@
 ---
 name: research
-description: "Researches a question across local files, official docs and the web, then reports sourced findings with confidence. Use for 'research X', 'what is the best practice for', 'compare A and B', 'find out', 'industry standard', 'what do people use', or 'is this still recommended'."
+description: "Researches a question across local files, official docs and the web, then reports sourced findings with confidence. Use whenever the user asks to research, compare or choose between tools, find best practice or an industry standard, check what changed recently, or asks what people use, even if they do not say 'research'."
 user-invocable: true
 argument-hint: "[question or topic, optional: quick|standard|deep]"
 ---

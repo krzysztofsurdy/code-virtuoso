@@ -107,6 +107,8 @@ Model under test `claude-sonnet-5-5`, judge `claude-haiku-5-5`, three runs per c
 | agent-security | 0.00 / 0.00 | 0.00 / 1.00 | 1.00 | Leads with acting on steps or commands from an issue, PR, README or unknown file, and MCP, skill or plugin access to a shell or .env. |
 | tdd | 0.33 / 0.00 | 0.67 / 0.00 | not re-run | Leads with 'fix this bug', 'add a function', 'use TDD', 'write the test first'. |
 | context-engineering | 0.33 / 1.00 | 1.00 / 1.00 | not re-run | Leads with trim, split or write AGENTS.md and CLAUDE.md ('CLAUDE.md is too long'), ignored instructions, drift. |
+| research (10.1.0) | 0.67 / 0.00 | 1.00 / 1.00 | 1.00 | Leads with research, compare or choose between tools, best practice, what changed recently. The near-miss grader also lacked `min: 0, max: 0`. |
+| skill-writer (10.1.0) | 1.00 / 1.00 | not needed | 1.00 | Passed on the first run. |
 
 Re-runs cost $4.43 in total ($0.56 to $1.34 per skill). Still open:
 
