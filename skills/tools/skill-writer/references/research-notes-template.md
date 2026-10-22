@@ -8,6 +8,7 @@ Fill this in during Phase 0 and keep it with the work. Headings and the table be
 Date: <YYYY-MM-DD>
 Depth: quick | standard | deep
 Research skill used: yes | no (inline) | skipped at user request
+Prior-art search: done | local only | skipped at user request
 
 ## Scope
 
@@ -18,6 +19,18 @@ What the skill covers, what it does not, and the questions the research answered
 | Source | Tier | Publisher | Published | Retrieved |
 |---|---|---|---|---|
 | <URL or local path> | official / standard / vendor / practitioner / community / local | <name> | <date or unknown> | <date> |
+
+## Prior art
+
+Queries run (commands and search terms), so the search can be repeated. One row per candidate, 3 to 5 candidates, read from the actual SKILL.md. See [prior-art.md](prior-art.md).
+
+| Name | Source URL | Maintainer | Adoption and last update | Scope | Does well | Gets wrong or misses | License |
+|---|---|---|---|---|---|---|---|
+| <owner/repo@skill> | <URL of the SKILL.md> | official / community | <stars or installs>, <YYYY-MM-DD> | <what it covers> | <specific strengths> | <stale facts, too long, textbook content, weak triggers, no verification, platform lock-in> | <SPDX id, per skill, or none stated> |
+
+Decision: install or extend `<candidate>` and stop | extend a local skill | write a new skill | nothing relevant found.
+
+If writing a new skill: strengths adopted (idea and candidate named), weaknesses avoided, and the gap this skill fills. No text was copied.
 
 ## Fact ledger
 

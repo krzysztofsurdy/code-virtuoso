@@ -11,10 +11,17 @@ Run before calling the skill done. Items marked for this library apply only when
 - [ ] Volatile facts are pointers to official pages, not copied numbers
 - [ ] No dates, "latest", or "as of" wording in the skill text
 
+## Prior art
+
+- [ ] Prior-art search done (repo, installed, registry, GitHub, official and community libraries), or skipped at user request and recorded
+- [ ] Prior-art table filled for 3 to 5 candidates, each read from its SKILL.md
+- [ ] Decision recorded: install or extend an existing skill, or write a new one
+- [ ] If writing a new one: strengths adopted and weaknesses avoided are named, ideas are credited, no text was copied, licenses were checked
+
 ## Purpose
 
 - [ ] The baseline showed the agent getting something wrong without the skill
-- [ ] No existing skill in this repo or installed set covers the same need
+- [ ] No existing skill in this repo, the installed set, or the prior-art candidates covers the same need
 - [ ] Each section traces to a baseline gap or a ledger fact
 - [ ] Nothing the model already knows
 

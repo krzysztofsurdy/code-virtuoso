@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Trigger evals for `research` and `skill-writer`
 
 ### Changed
+- skill-writer and agent-creator search for similar skills and agents online (skills.sh, GitHub, vendor and community libraries) and compare their strengths and weaknesses before writing a new one
 - `agent-creator` runs a research phase before the design questions
 - `plugin-creator` points to `skill-writer` for skill content, and to Anthropic's `skill-creator` as the eval loop when installed
 - `using-ecosystem` lists `research`, `skill-writer`, and `researcher` in its decision matrix and compass

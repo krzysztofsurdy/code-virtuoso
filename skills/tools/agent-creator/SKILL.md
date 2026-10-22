@@ -83,7 +83,7 @@ This skill uses guided phases. Each phase is a separate file, loaded one at a ti
 
 | Phase | File | What it covers |
 |---|---|---|
-| 0 | [Research gate](phases/00-research.md) | Research the role, the platform agent formats, and comparable agents. Build the fact ledger and research notes |
+| 0 | [Research gate](phases/00-research.md) | Research the role and the platform agent formats, search for prior art and decide, build the fact ledger and research notes |
 | 1 | [Purpose and trigger](phases/01-purpose-and-trigger.md) | What the agent does, when to delegate, out-of-scope, output shape, archetype |
 | 2 | [Name and identity](phases/02-name-and-identity.md) | Kebab-case name, collision check, user confirmation |
 | 3 | [Capabilities](phases/03-capabilities.md) | Tool permissions, isolation, memory, role reference files, preloaded skills |
@@ -91,7 +91,7 @@ This skill uses guided phases. Each phase is a separate file, loaded one at a ti
 | 5 | [Placement and scope](phases/05-placement-and-scope.md) | Where the file lives: this library, project, personal, plugin, session |
 | 6 | [Validate and write](phases/06-validate-and-write.md) | Checklist, file creation, registration, Codex build |
 
-Start by loading Phase 0. After the user confirms each phase, load the next. Never load multiple phases at once and never skip one. Skip Phase 0 only when the user says so in plain words ("no research", "skip research", "I know the role, just write it"). Record "research skipped at user request" in the notes and the PR, and do not state specific platform fields, versions, or limits from memory unless marked `(unverified)`.
+Start by loading Phase 0. After the user confirms each phase, load the next. Never load multiple phases at once and never skip one. Skip Phase 0 only when the user says so in plain words ("no research", "skip research", "I know the role, just write it"). That also skips the prior-art search. Record "research skipped at user request" in the notes and the PR, and do not state specific platform fields, versions, or limits from memory unless marked `(unverified)`.
 
 ---
 
@@ -104,6 +104,7 @@ Start by loading Phase 0. After the user confirms each phase, load the next. Nev
 | [tool-selection.md](references/tool-selection.md) | Least-privilege tool allowlists, per-archetype defaults, and denylist patterns |
 | [system-prompts.md](references/system-prompts.md) | System prompt patterns: role-input-process-rules-output contract, worked examples |
 | [platforms.md](references/platforms.md) | Scope paths, platform-specific frontmatter fields, Codex generation, and team considerations |
+| [prior-art.md](references/prior-art.md) | Where and how to search for similar agents, how to compare them, the install-or-design decision rule, license and safety notes |
 | [validation.md](references/validation.md) | Pre-publish checklist and common rejection reasons |
 
 ---

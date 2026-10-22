@@ -5,6 +5,10 @@ Run this checklist before writing the agent file. Most agent problems trace back
 ## Research
 
 - [ ] Research notes exist, or "research skipped at user request" is recorded in the notes and the PR
+- [ ] Prior-art search done (repo, installed, harness docs, official plugins, agent collections, GitHub), or skipped at user request and recorded
+- [ ] Prior-art table filled for 3 to 5 candidates, each read from its agent file
+- [ ] Decision recorded: install or extend an existing agent, or design a new one
+- [ ] If designing a new one: strengths adopted and weaknesses avoided are named, ideas are credited, no text was copied, licenses were checked
 - [ ] Platform field, tool, and version facts in the agent's reference files each have a source URL
 - [ ] No unverified platform fact is stated as settled in the agent body
 
