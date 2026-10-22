@@ -1,6 +1,6 @@
 ---
 name: web-screenshot
-description: Captures web page screenshots with shot-scraper (a Playwright-backed CLI), including full-page, element, mobile, dark mode, and batched captures. Use when asked to screenshot a URL or element, or to produce PNG or JPEG output from a web page.
+description: Captures web page screenshots with the best available browser tool (a real-browser extension, browser MCP, shot-scraper, or Playwright), including full-page, element, mobile, dark mode, and batch shots. Use when asked to screenshot a URL or element, or to produce PNG or JPEG from a page.
 user-invocable: true
 argument-hint: "<url-or-batch-yaml> [--full-page] [--selector CSS] [--output PATH] [--width N] [--height N] [--retina] [--dark]"
 ---
@@ -19,14 +19,22 @@ Before any capture, check what is available in the environment and pick the ligh
 
 | # | Tool | Detect with | Best for | Limits |
 |---|---|---|---|---|
-| 1 | **Browser MCP** (e.g. `mcp__*__browser_take_screenshot`) | Already loaded in this session - check the MCP tool list | Single ad-hoc shot, no install, full-page and element shots, navigation flows | Runs in docker with datacenter IP - bot walls block this; output path is inside the MCP container |
-| 2 | **shot-scraper** (CLI) | `which shot-scraper` | Repeated captures, batch YAML, scripted automation, CI jobs | Headless by default - some bot walls fire only on headless; requires `pip install shot-scraper && shot-scraper install` once |
-| 3 | **Playwright** (Python or Node) | `python -c "import playwright" 2>/dev/null` | Multi-step flows, headed mode with stealth, anti-bot escalation (see Cascade B Tier 1) | Library-level; more code per shot |
-| 4 | **Ask user before installing** | None of the above present | Long-term tooling decisions | Never install silently |
+| 1 | **Browser-extension MCP connected to the user's real browser** (e.g. Claude in Chrome, tools like `mcp__claude-in-chrome__*`) | Check the MCP tool list for browser-extension tools and that the connection is live | Logged-in pages, bot-walled sites (it is a real browser), flows recorded as GIF, viewport and region shots, no install | Needs the extension installed and connected; uses the user's own session, so cookies and logged-in state are visible; viewport-only (no stitched full page); visible window; not for batch, CI, or clean anonymous captures. See `references/browser-extension.md` |
+| 2 | **Browser MCP** (headless, e.g. `mcp__*__browser_take_screenshot`) | Already loaded in this session - check the MCP tool list | Single ad-hoc shot, no install, full-page and element shots, navigation flows, clean anonymous session | Often runs in docker with a datacenter IP - bot walls block this; output path may be inside the MCP container |
+| 3 | **shot-scraper** (CLI) | `which shot-scraper` | Repeated captures, batch YAML, multi-viewport, scripted automation, CI jobs | Headless by default - some bot walls fire only on headless; requires `pip install shot-scraper && shot-scraper install` once |
+| 4 | **Playwright** (Python or Node) | `python -c "import playwright" 2>/dev/null` | Multi-step flows, headed mode with stealth, anti-bot escalation (see Cascade B Tier 1) | Library-level; more code per shot |
+| 5 | **Ask user before installing** | None of the above present | Long-term tooling decisions | Never install silently |
+
+Pick tier 1 when it is connected and the page is fine to load in the user's own session. Start at tier 2 or 3 instead when:
+
+- the extension is missing or disconnected (say how to connect it, do not install anything),
+- the capture needs a clean anonymous session, or is a batch, multi-viewport set, or scheduled run,
+- the environment is CI, headless, or an agent without the extension,
+- the page is sensitive (banking, health, admin, secrets) and the user did not ask for that exact page.
 
 ### Cascade B: escalating around a bot wall
 
-When Cascade A's pick gets blocked (status 403/429/503 or a CAPTCHA/block page), do not retry the same tool with new flags. Escalate through the tiers in order. **Every tier aims at live content.** Archived snapshots are not an acceptable fallback: they show stale content with a third-party frame around it.
+When Cascade A's pick gets blocked (status 403/429/503 or a CAPTCHA/block page), do not retry the same tool with new flags. If a browser-extension MCP on the user's real browser is connected, try it first: a real browser with the user's own fingerprint, session, and home IP usually passes without stealth tricks. Otherwise escalate through the tiers in order. Stealth tiers are a last resort, and only where the site's terms allow automated access. **Every tier aims at live content.** Archived snapshots are not an acceptable fallback: they show stale content with a third-party frame around it.
 
 | # | Tier | What it does | When to pick it |
 |---|---|---|---|
@@ -42,7 +50,8 @@ When Cascade A's pick gets blocked (status 403/429/503 or a CAPTCHA/block page),
 
 | Principle | Meaning |
 |---|---|
-| **Default to shot-scraper** | One install, one command per shot. Move to Playwright only when shot-scraper hits a wall. |
+| **Lightest tool that fits** | Use a connected real-browser extension for logged-in or bot-walled pages, otherwise shot-scraper for repeatable shots. Move to Playwright only when shot-scraper hits a wall. |
+| **A real profile is not free** | The extension tier shows the user's logged-in pages. Never capture secrets, and ask before capturing authenticated pages that will be shared. |
 | **Wait on something real** | Wait for an element, a function, or a fixed delay. Never `networkidle`; Playwright's own docs discourage it. |
 | **Element beats full page** | A selector shot is smaller, more stable, and faster to diff than a stitched full-page capture. Use full-page only when layout is the subject. |
 | **Disable animations** | CSS animations are the top source of flaky shots. Pass options that freeze them for any shot that will be compared or reused. |
@@ -52,6 +61,18 @@ When Cascade A's pick gets blocked (status 403/429/503 or a CAPTCHA/block page),
 ---
 
 ## Quick start
+
+### Path 0: browser extension on the user's real browser (zero install)
+
+A connected browser-extension MCP (for example Claude in Chrome) loads the page in the user's own visible browser.
+
+1. Check the tool list for the extension tools; if missing, go to Path A
+2. Open a fresh tab, navigate, check for a login wall or block page, optionally resize
+3. Screenshot with save-to-disk on, so the tool returns a file path
+4. For a multi-step flow, record a GIF: start, act, stop, export
+5. Close the tabs you opened and report the absolute file path
+
+Ask before capturing an authenticated page that will be shared, and never capture secrets. Tool names, GIF export, limits, and privacy rules are in `references/browser-extension.md`.
 
 ### Path A: Browser MCP is in-session (zero install)
 
@@ -122,11 +143,15 @@ If any of these is true, treat the page as blocked and walk the escalation tiers
 
 #### Escalation tiers (in order)
 
-Every tier aims at the live content. If one tier is not viable, move to the next. Never settle for an archive.
+Every tier aims at the live content. If one tier is not viable, move to the next. Never settle for an archive. Treat Tiers 1 and 2 as a last resort: check the site's terms first, and stop if the site refuses automation.
 
-#### Tier 1: Playwright headed + stealth (recommended)
+#### Tier 0: real browser through a browser-extension MCP
 
-The most reproducible real-user path. Works on macOS, Linux, and Windows. Needs a one-time install with user approval.
+If an extension such as Claude in Chrome is connected, use it before any tier below. It is a real browser, so it normally avoids bot walls with no stealth patches and no debug-port setup. Login pages and CAPTCHAs pause the task for the user. The agent does not solve them. See `references/browser-extension.md`.
+
+#### Tier 1: Playwright headed + stealth
+
+The most reproducible scripted path when no real-browser extension is connected. Works on macOS, Linux, and Windows. Needs a one-time install with user approval.
 
 ```bash
 # One-time install (ask user first):
@@ -210,7 +235,7 @@ Why Tier 3 is the last resort: it depends on the user's current screen state, ne
 |---|---|
 | **Residential proxy** | Costs money and routes traffic through someone else's IP, so it needs explicit approval and a legitimate use case |
 | **CAPTCHA-solving service** | Defeats a security control the site put there on purpose. Report back; do not work around it silently |
-| **Stealth + scraping protected content** | A wall that can be bypassed is not permission to bypass it. Check the site's terms before pushing past explicit refusals |
+| **Stealth + scraping protected content** | A wall that can be bypassed is not permission to bypass it. Check the site's terms before pushing past explicit refusals. Prefer the real-browser tier over stealth patches |
 
 #### Report what was captured
 
@@ -389,7 +414,9 @@ Was the headless capture blocked or refused?
    |
    No -> done. Save the shot. Copy to host if it lives inside a container.
    |
-   Yes -> escalate to Tier 1 (capture_with_stealth.py).
+   Yes -> Is a browser-extension MCP connected, and is the page fine to load in the user's session?
+       Yes -> Tier 0 (see references/browser-extension.md). Done if it renders live content.
+       No  -> escalate to Tier 1 (capture_with_stealth.py), site terms permitting.
        Playwright installable (with user OK)?
           Yes -> install, run Tier 1.
           No  -> escalate to Tier 2 (connect_to_running_chrome.py or agent-browser).
@@ -404,32 +431,18 @@ Was the headless capture blocked or refused?
 
 ### Examples
 
-Capture a live page that requires a real-user fingerprint (Tier 1):
-
 ```bash
+# Tier 1: headed Chromium with stealth
 python scripts/capture_with_stealth.py https://example.com out.png \
   --width 1280 --height 800 --wait-for "document.fonts.ready"
-```
 
-Capture using the user's existing Chrome session (Tier 2):
-
-```bash
-# Once, in another terminal:
-google-chrome --remote-debugging-port=9222
-
-# Then:
+# Tier 2: attach to Chrome started with --remote-debugging-port=9222
 python scripts/connect_to_running_chrome.py https://example.com out.png
-```
 
-Last-resort system-native capture (Tier 3, no extra install):
-
-```bash
+# Tier 3: system browser plus OS capture, no extra install
 ./scripts/capture_via_system_browser.sh https://example.com out.png --wait 8
-```
 
-Multi-device capture (no anti-bot needs):
-
-```bash
+# Multi-device capture (no anti-bot needs)
 python scripts/multi_viewport.py https://example.com --out screenshots/
 ```
 
@@ -437,9 +450,9 @@ python scripts/multi_viewport.py https://example.com --out screenshots/
 
 ## Quick Reference: Checklist
 
-- [ ] **Preflight the URL with a text fetch first.** A quick `WebFetch` or `curl` confirms the URL returns real content (status 200, expected title, body word count). Opening a browser only to land on a 404 or a wrong redirect wastes a session and steals user focus.
+- [ ] If using a real-browser extension: the page is fine to load in the user's session, no secrets are visible, and the user approved before an authenticated page is shared
+- [ ] **Preflight the URL with a text fetch first** (reachable, no auth wall or geoblock). A quick `WebFetch` or `curl` confirms the URL returns real content (status 200, expected title, body word count). Opening a browser only to land on a 404 or a wrong redirect wastes a session and steals user focus.
 - [ ] `shot-scraper install` has been run on this machine (if using shot-scraper)
-- [ ] URL is reachable (no auth wall, no geoblock)
 - [ ] Viewport size matches the target device or use case
 - [ ] Output path is absolute and the directory exists
 - [ ] Wait strategy targets a real DOM marker, not `networkidle`
@@ -456,6 +469,7 @@ python scripts/multi_viewport.py https://example.com --out screenshots/
 
 | Reference | Contents |
 |---|---|
+| [browser-extension](references/browser-extension.md) | Real-browser tier: how Claude in Chrome connects, capture recipe, GIF recording, example tool names, limits, privacy rules for a logged-in profile |
 | [options](references/options.md) | Full shot-scraper option reference: viewport, device emulation, headers, auth, media queries, JS injection, output formats |
 | [wait-strategies](references/wait-strategies.md) | Waiting patterns: SPA route changes, font readiness, image decode, custom readiness signals, debugging slow-loading pages |
 | [platform-selectors](references/platform-selectors.md) | CSS selectors by content type and platform (articles, social posts, comments, code, video, products); verification routine; shadow-DOM tactics |
@@ -467,13 +481,14 @@ python scripts/multi_viewport.py https://example.com --out screenshots/
 | Situation | Recommended Skill |
 |---|---|
 | Apply frames, annotations, or compositing to the captured image | `image-annotate` |
+| Hand annotation (arrows, callouts, highlights placed by a person) on the saved file | The user can open it in [Snipaya](https://snipaya.app/), the user's own app. Programmatic annotation stays with `image-annotate` |
 | Diff screenshots across runs for visual regression | `testing` knowledge skill (component vs page strategy) |
 | Capture as part of an end-to-end test suite | Use `@playwright/test` directly; this skill is for ad-hoc captures |
 | Accessibility audit of the captured page | `accessibility` knowledge skill |
 
 ## Critical rules
 
-1. **Every capture must land on the host filesystem, not inside a container.** Browser MCP servers run in docker and save inside the container, so the inline image alone is not a deliverable. Always end an MCP-based capture with `scripts/copy_mcp_capture_to_host.sh` (or an equivalent `docker cp`) so the user has a real file they can open, attach, edit, or commit. Local tools (shot-scraper, Playwright) already write to the host; the rule applies to any tool that writes inside a container or remote sandbox.
+1. **Every capture must land on the host filesystem, not inside a container.** Browser MCP servers run in docker and save inside the container, so the inline image alone is not a deliverable. Always end an MCP-based capture with `scripts/copy_mcp_capture_to_host.sh` (or an equivalent `docker cp`) so the user has a real file they can open, attach, edit, or commit. Local tools (shot-scraper, Playwright) already write to the host, and a browser-extension MCP returns a host path when save-to-disk is on (a GIF export lands in the browser's download folder, so report where); the rule applies to any tool that writes inside a container or remote sandbox.
 2. **Two cascades, not one.** Cascade A picks the capture tool. Cascade B escalates around bot walls.
 3. **Never install dependencies silently.** That includes `pip install`, `brew install`, `playwright install chromium`, and `shot-scraper install`. Each needs explicit user approval. Surface what is missing and let the user decide.
 4. **`shot-scraper install` runs once per machine** before any shot-scraper capture - the browser is not bundled with the pip package. The same applies to `playwright install chromium`.
@@ -481,5 +496,5 @@ python scripts/multi_viewport.py https://example.com --out screenshots/
 6. **Output paths must be absolute and on the host.** Report the final host path with every capture. When the path is inside a container, copy out before reporting (see Rule 1).
 7. **Strip dynamic UI** (cookie banners, chat bubbles, ad slots) before any shot that will be reused or compared.
 8. **For visual regression, escalate to Playwright's test runner** - shot-scraper is for ad-hoc captures, not pixel-diff suites.
-9. **An anti-bot block page is a valid result.** Capture it, name it for what it is, and let the user decide whether to escalate. Do not silently retry with evasion tactics on sites that explicitly refuse automation, and never substitute archived content to make a capture succeed.
-10. **No archive substitutions.** Wayback Machine, archive.today, and similar mirrors serve stale content with someone else's UI wrapped around it. They are not a fallback for live content. If the live site refuses, escalate through Tiers 1-3; do not switch to an archive.
+9. **An anti-bot block page is a valid result.** Capture it, name it for what it is, and let the user decide whether to escalate. Do not silently retry with evasion tactics on sites that explicitly refuse automation.
+10. **No archive substitutions.** Wayback Machine, archive.today, and similar mirrors serve stale content in someone else's UI. If the live site refuses, escalate through the tiers; do not switch to an archive.
