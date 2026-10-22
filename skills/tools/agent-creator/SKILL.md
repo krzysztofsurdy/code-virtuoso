@@ -7,7 +7,7 @@ argument-hint: "[optional: archetype - specialist, role, team-lead]"
 
 # Agent Creator
 
-Create a sub-agent that earns its context window. Most agents fail because the definition is vague, not because the model is weak: the trigger is unclear, the tool list sprawls, the body mixes persona and procedure, and there is no output contract. This skill walks through a six-phase design that produces a focused, least-privileged agent with predictable output.
+Create a sub-agent that earns its context window. Most agents fail because the definition is vague, not because the model is weak: the trigger is unclear, the tool list sprawls, the body mixes persona and procedure, and there is no output contract. This skill researches first, then walks through a six-phase design that produces a focused, least-privileged agent with predictable output.
 
 ## Core Principles
 
@@ -33,7 +33,7 @@ Confirm an agent is the right primitive before creating one.
 | Passive knowledge | Active actor with tools and a workflow |
 | "Where do I learn about X" | "Do X for me and return a result" |
 
-If the answer is reference material, stop and use the `skill-creator` skill instead. If the answer is work, continue.
+If the answer is reference material, stop and use the `skill-writer` skill instead. If the answer is work, continue.
 
 ---
 
@@ -83,6 +83,7 @@ This skill uses guided phases. Each phase is a separate file, loaded one at a ti
 
 | Phase | File | What it covers |
 |---|---|---|
+| 0 | [Research gate](phases/00-research.md) | Research the role, the platform agent formats, and comparable agents. Build the fact ledger and research notes |
 | 1 | [Purpose and trigger](phases/01-purpose-and-trigger.md) | What the agent does, when to delegate, out-of-scope, output shape, archetype |
 | 2 | [Name and identity](phases/02-name-and-identity.md) | Kebab-case name, collision check, user confirmation |
 | 3 | [Capabilities](phases/03-capabilities.md) | Tool permissions, isolation, memory, role reference files, preloaded skills |
@@ -90,7 +91,7 @@ This skill uses guided phases. Each phase is a separate file, loaded one at a ti
 | 5 | [Placement and scope](phases/05-placement-and-scope.md) | Where the file lives: this library, project, personal, plugin, session |
 | 6 | [Validate and write](phases/06-validate-and-write.md) | Checklist, file creation, registration, Codex build |
 
-Start by loading Phase 1. After the user confirms each phase, load the next. Never load multiple phases at once and never skip one.
+Start by loading Phase 0. After the user confirms each phase, load the next. Never load multiple phases at once and never skip one. Skip Phase 0 only when the user says so in plain words ("no research", "skip research", "I know the role, just write it"). Record "research skipped at user request" in the notes and the PR, and do not state specific platform fields, versions, or limits from memory unless marked `(unverified)`.
 
 ---
 
@@ -111,7 +112,8 @@ Start by loading Phase 1. After the user confirms each phase, load the next. Nev
 
 | Situation | Recommended Skill |
 |---|---|
-| Creating a reference skill instead of an agent | `skill-creator` |
+| Creating a reference skill instead of an agent | `skill-writer` |
+| Researching the role, platform formats, or comparable agents in Phase 0 | `research` |
 | Writing AI rules files for an agent platform | `agentic-rules-writer` |
 | Designing how multiple agents interact in a workflow | `agent-orchestration` |
 | Deciding what belongs in an agent body versus instruction files | `context-engineering` |

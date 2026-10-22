@@ -9,6 +9,7 @@ Run the validation checklist, write the agent file, and register it when it ship
 ## Steps
 
 1. Run the checklist from [validation.md](../references/validation.md):
+   - [ ] Research notes exist (or "research skipped at user request" is recorded), and platform facts in the agent's reference files carry sources
    - [ ] Description contains both "what it does" and "when to delegate"
    - [ ] Tool allowlist is the minimum needed
    - [ ] `isolation: worktree` is set when the agent changes source code, and absent otherwise
@@ -30,9 +31,11 @@ Run the validation checklist, write the agent file, and register it when it ship
 
    Other projects need no marketplace entry: the agent file in the chosen directory is enough.
 
-5. Echo the final path and line count to the user.
+5. Save the research notes with the agent (or in the PR), and repeat "research skipped at user request" in the PR description when that applies.
 
-6. Offer: "Do you want to test-invoke this agent now?"
+6. Echo the final path and line count to the user.
+
+7. Offer: "Do you want to test-invoke this agent now?"
 
 ## Gate
 

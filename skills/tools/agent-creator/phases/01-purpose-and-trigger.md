@@ -8,7 +8,7 @@ Define what the agent does, when to delegate to it, what it must not do, and wha
 
 ## Steps
 
-1. Ask the user up to four questions in a single batch:
+1. Read the research notes from Phase 0 and pre-fill the answers they support. Ask the user up to four questions in a single batch:
    - **What task does this agent perform?** (one sentence, imperative form)
    - **When should the orchestrator delegate to it?** (trigger conditions - list phrases or situations)
    - **What should the agent NOT do?** (explicit out-of-scope items)

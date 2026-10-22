@@ -2,6 +2,12 @@
 
 Run this checklist before writing the agent file. Most agent problems trace back to one of these items.
 
+## Research
+
+- [ ] Research notes exist, or "research skipped at user request" is recorded in the notes and the PR
+- [ ] Platform field, tool, and version facts in the agent's reference files each have a source URL
+- [ ] No unverified platform fact is stated as settled in the agent body
+
 ## Identity
 
 - [ ] `name` is kebab-case, lowercase, starts with a letter
