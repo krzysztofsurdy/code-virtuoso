@@ -4,8 +4,8 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "56 skills, 19 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
-    "version": "10.0.1"
+    "description": "58 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
+    "version": "10.1.0"
   },
   "plugins": [
     {
@@ -35,7 +35,7 @@
     },
     {
       "name": "tools-virtuoso",
-      "description": "11 tool skills: rules writer, ticket writer, agent creator, plugin creator, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, web screenshot, and image annotate",
+      "description": "13 tool skills: rules writer, ticket writer, agent creator, skill writer, plugin creator, research, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, web screenshot, and image annotate",
       "source": "./skills",
       "strict": false,
       "skills": [
@@ -46,6 +46,8 @@
         "./tools/plugin-creator",
         "./tools/pr-message-writer",
         "./tools/report-writer",
+        "./tools/research",
+        "./tools/skill-writer",
         "./tools/stakeholder-update-writer",
         "./tools/ticket-writer",
         "./tools/using-ecosystem",
@@ -97,7 +99,7 @@
     },
     {
       "name": "agents-virtuoso",
-      "description": "19 agents (specialists and roles), 3 team workflows, and the agent-orchestration and verification skills, plus headless wrapper skills for CI review, test gaps, migration planning, dependency audit, and refactor scans",
+      "description": "20 agents (specialists and roles), 3 team workflows, and the agent-orchestration and verification skills, plus headless wrapper skills for CI review, test gaps, migration planning, dependency audit, and refactor scans",
       "source": "./",
       "strict": false,
       "skills": [
@@ -124,6 +126,7 @@
         "./agents/acceptance-verifier.md",
         "./agents/plan-auditor.md",
         "./agents/instruction-auditor.md",
+        "./agents/researcher.md",
         "./agents/product-manager.md",
         "./agents/architect.md",
         "./agents/backend-dev.md",

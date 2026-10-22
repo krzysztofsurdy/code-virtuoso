@@ -4,6 +4,19 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [10.1.0] - 2026-10-22
+
+### Added
+- `research` skill: answer a question from local files, official docs, and the web, with sources, confidence labels, and a list of what could not be confirmed
+- `researcher` agent (read-only, produces `research-report`) and the `research-question` and `research-report` artifact types
+- `skill-writer` skill: write or update a skill after researching the topic and verifying every checkable fact
+- Trigger evals for `research` and `skill-writer`
+
+### Changed
+- `agent-creator` runs a research phase before the design questions
+- `plugin-creator` points to `skill-writer` for skill content, and to Anthropic's `skill-creator` as the eval loop when installed
+- `using-ecosystem` lists `research`, `skill-writer`, and `researcher` in its decision matrix and compass
+
 ## [10.0.1] - 2026-10-22
 
 ### Changed

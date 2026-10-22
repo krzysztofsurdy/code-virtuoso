@@ -16,6 +16,8 @@ Artifact types are conventions, not file formats. The agent producing an artifac
 | `test-plan` | Risk areas, test cases, coverage criteria, sign-off conditions | qa-engineer | implementer, reviewer |
 | `test-gap-report` | Missing tests by priority, source-to-test file map | test-gap-analyzer | implementer |
 | `instruction-audit-report` | Files audited, size and contradiction findings, stale rules, secrets and hidden Unicode checks, ranked fixes | instruction-auditor | context-engineering skill, a person |
+| `research-question` | The question, the decision it serves, constraints (versions, dates), depth, paths to read first | a person, any agent | researcher |
+| `research-report` | Answer, findings with confidence labels, source disagreements, what was not confirmed, method, sources | researcher | a person, architect, product-manager |
 | `migration-plan` | Risk classification per operation, execution steps, rollback paths | migration-planner | implementer, reviewer |
 
 ## Using contracts

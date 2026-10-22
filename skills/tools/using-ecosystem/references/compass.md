@@ -22,6 +22,7 @@ Compass is conversational. Ask what the user completed, then match it against th
 | **spec-driven-development** (plan and tasks written) | `plan-auditor` agent, then `tdd` per task | Gate the plan, then build |
 | **tdd** (task done) | `verification-before-completion`, then the next task or `finishing-branch` | Prove it, then continue or merge |
 | **investigator** (report) | `architect` or `implementer` | Findings need a design or a direct fix |
+| **researcher** (report) | `architect` to decide, `brainstorming` to shape a feature, or `skill-writer` to turn it into a skill | The findings feed a decision or a document |
 | **product-manager** (requirements) | `architect` | Requirements need technical design |
 | **architect** (ADR or design) | `plan-auditor`, then `backend-dev`, `frontend-dev`, or the `development-team` workflow | Check the plan, then build |
 | **plan-auditor** (READY) | `implementer`, `backend-dev`, or `frontend-dev` | The gate passed |

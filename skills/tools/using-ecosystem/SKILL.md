@@ -71,11 +71,12 @@ Run the commands in [discovery-commands](references/discovery-commands.md) to li
 | Instruction files that get ignored or keep growing | `context-engineering`, with the `instruction-auditor` agent |
 | Hardening an agent setup | `hooks-and-guardrails`, with `agent-security` |
 | Library API questions | `docs-lookup` |
+| A question that needs sourced evidence: best practice, a comparison, "is this still recommended" | `research` skill, or the `researcher` agent for a separate context |
 | Designing an LLM agent or workflow | `agent-design`, plus `llm-evals`, `llm-observability`, `mcp-server-development` |
 | Building with the Vercel AI SDK or LangChain | `vercel-ai-sdk` or `langchain-components` |
 | Symfony, Django, or PHP version work | `symfony-components`, `symfony-upgrade`, `django-components`, `php-upgrade` |
 | Writing a ticket, report, or stakeholder update | `ticket-writer`, `report-writer`, `stakeholder-update-writer` |
-| Writing agent rules files, agents, or plugins | `agentic-rules-writer`, `agent-creator`, `plugin-creator` |
+| Writing agent rules files, agents, skills, or plugins | `agentic-rules-writer`, `agent-creator`, `skill-writer`, `plugin-creator` |
 | Running a compiled backlog with an objective gate | `loop-virtuoso` plugin (Claude Code) |
 | Claiming work is done | `verification-before-completion` |
 
@@ -119,7 +120,7 @@ Compass is conversational. Ask the user; do not scan the filesystem to guess wha
 
 | Tier | Scope | Examples |
 |---|---|---|
-| Specialist | One repeatable task, stateless | `investigator`, `reviewer`, `refactor-scout`, `plan-auditor` |
+| Specialist | One repeatable task, stateless | `investigator`, `researcher`, `reviewer`, `refactor-scout`, `plan-auditor` |
 | Role | A domain of responsibility, some keep project memory | `architect`, `product-manager`, `backend-dev`, `qa-engineer` |
 
 ## Installing

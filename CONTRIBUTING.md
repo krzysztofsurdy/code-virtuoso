@@ -502,7 +502,7 @@ All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` s
 | `playbooks-virtuoso` | `./skills` | Operational playbook skills |
 | `frameworks-virtuoso` | `./skills` | Framework skills (Symfony, Django, LangChain, PHP, Vercel AI SDK) |
 | `ai-virtuoso` | `./skills` | AI engineering skills (agent design, evals, observability, MCP servers) |
-| `agents-virtuoso` | `./` | All 19 agents, the team workflows in `workflows/`, `agent-orchestration`, `verification-before-completion`, and the headless wrapper skills |
+| `agents-virtuoso` | `./` | All 20 agents, the team workflows in `workflows/`, `agent-orchestration`, `verification-before-completion`, and the headless wrapper skills |
 | `loop-virtuoso` | `./plugins/loop-virtuoso` | Self-contained Claude Code plugin with its own `plugin.json` (not a bundle of repo skills) |
 
 When adding a new skill:

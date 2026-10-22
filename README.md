@@ -36,16 +36,16 @@ scripts/install-codex-agents.sh
 
 ## What is inside
 
-56 skills, 19 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
+58 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
 
 | Bundle | Holds |
 |---|---|
 | `knowledge-virtuoso` | 17 knowledge skills |
-| `tools-virtuoso` | 11 tool skills |
+| `tools-virtuoso` | 13 tool skills |
 | `playbooks-virtuoso` | 8 step-by-step procedures |
 | `frameworks-virtuoso` | 7 framework skills |
 | `ai-virtuoso` | 4 skills for building with LLMs and agents |
-| `agents-virtuoso` | 19 agents, 3 team workflows, 9 skills (see Agents and Teams) |
+| `agents-virtuoso` | 20 agents, 3 team workflows, 9 skills (see Agents and Teams) |
 | `loop-virtuoso` | Delivery loop plugin, Claude Code only |
 
 A skill marked "run by name" never loads on its own. It costs no context until you call it, for example `/solid`.
@@ -70,7 +70,9 @@ Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `t
 | `agentic-rules-writer` | Generate rules files for Claude Code, Cursor, Copilot, Codex, and more |
 | `ticket-writer` | Write a story, bug, epic, or other ticket of the right type |
 | `agent-creator` | Design a sub-agent |
+| `skill-writer` | Write or update a skill, researching the topic first |
 | `plugin-creator` | Scaffold a Claude Code plugin |
+| `research` | Answer a question from local files, official docs, and the web, with sources |
 | `brainstorming` | Turn a vague idea into an approved spec |
 | `using-ecosystem` | Find the skill, agent, or team that fits a task |
 | `pr-message-writer` | Write a pull request message with testing steps |
@@ -115,11 +117,12 @@ Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `t
 
 ### Agents
 
-Twelve specialists and seven roles, all in `agents-virtuoso`. Role agents read templates and checklists from [roles/](roles/README.md). Full specs and headless use are in [AGENTS.md](AGENTS.md).
+Thirteen specialists and seven roles, all in `agents-virtuoso`. Role agents read templates and checklists from [roles/](roles/README.md). Full specs and headless use are in [AGENTS.md](AGENTS.md).
 
 | Agent | Purpose |
 |---|---|
 | `investigator` | Explore a code area and map dependencies |
+| `researcher` | Sourced answers from docs and the web, with confidence labels |
 | `implementer` | TDD in a worktree |
 | `reviewer` | Structured code review |
 | `cold-reviewer` | Zero-context second review |

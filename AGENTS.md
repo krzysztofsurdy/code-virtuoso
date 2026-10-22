@@ -48,6 +48,7 @@ Agents follow a two-tier model:
 | [Acceptance Verifier](agents/acceptance-verifier.md) | File reading, code search, shell | - | verification-before-completion | Spec compliance checking, criteria coverage matrix |
 | [Plan Auditor](agents/plan-auditor.md) | File reading, code search, shell | - | verification-before-completion | Pre-implementation readiness gate and mid-work change impact |
 | [Instruction Auditor](agents/instruction-auditor.md) | File reading, code search, shell | - | context-engineering | Audit AGENTS.md, CLAUDE.md, rules files, and skill descriptions |
+| [Researcher](agents/researcher.md) | File reading, code search, shell, web search and fetch | - | research, docs-lookup | Sourced answers from local files, official docs, and the web |
 
 **Investigator** - Delegate when you need to understand how something works before changing it. It traces code paths, maps dependencies, and returns structured findings with file paths and line numbers.
 
@@ -72,6 +73,8 @@ Agents follow a two-tier model:
 **Plan Auditor** - Delegate before starting implementation, or when the plan breaks mid-work. It has two modes. Gate mode inventories the planning artifacts (requirements, design, stories, test plans), traces every requirement to a design element and story, checks for contradictions, and returns a READY, NEEDS WORK, or NOT READY verdict. Change-impact mode traces a requirement change, blocker, or scope shift across the plan, classifies the blast radius (minor, moderate, major), and drafts change proposals with old-to-new diffs.
 
 **Instruction Auditor** - Delegate when agent instructions are ignored, a rules file keeps growing, or before you publish instruction files. It reads `AGENTS.md`, `CLAUDE.md`, rules, Cursor and Copilot instructions, `GEMINI.md`, and skill descriptions, then reports size problems, contradictions, stale rules, secrets, and hidden Unicode. It never edits the files.
+
+**Researcher** - Delegate when a question needs evidence rather than recall: "what is the best practice for X", "compare A and B", "is this still recommended", or any fact that may have changed since training. It checks local files first, then official docs and the web, and returns a report with confidence labels, disagreements between sources, and what it could not confirm. It never edits files.
 
 ## Role agents
 

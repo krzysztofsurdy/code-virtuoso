@@ -101,7 +101,7 @@ Checked against the Claude Code plugin docs. Details are in the reference files.
 
 | Situation | Recommended skill |
 |---|---|
-| Creating the actual skill content inside a plugin | `skill-creator` |
+| Creating the actual skill content inside a plugin | `skill-writer`. Anthropic's `skill-creator`, if installed, adds an eval loop |
 | Writing the agent body for a plugin-shipped agent | Check existing agent definitions in `agents/` for patterns |
 | Generating rules files to pair with a plugin | `agentic-rules-writer` |
 | Writing tickets for plugin-related backlog items | `ticket-writer` |
