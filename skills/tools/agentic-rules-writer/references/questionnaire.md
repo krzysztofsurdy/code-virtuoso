@@ -840,3 +840,4 @@ of accurate, well-structured responses. Never sacrifice technical quality for ch
 
 - If the user provides text, include it verbatim in an `## Additional Rules` section at the end of the generated file
 - If the user says "no" or skips, omit the section entirely
+- If the text tells the agent to use a specific skill, confirm that the skill is installed before writing the line, and leave the line out (and say so) when it is not. Do not turn this answer into a list of skills or agents

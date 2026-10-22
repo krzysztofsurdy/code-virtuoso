@@ -7,14 +7,14 @@ argument-hint: "[optional: agent-name e.g. claude, cursor, windsurf, antigravity
 
 # Agentic Rules Writer
 
-Generate a tailored rules or instruction file for any AI coding agent. The skill runs an interactive questionnaire, takes the installed-skill and agent inventory from the `using-ecosystem` meta-skill, and writes the output in the format and location the chosen agent and scope require.
+Generate a tailored rules or instruction file for any AI coding agent. The skill runs an interactive questionnaire, checks that any skill it names is really installed, and writes the output in the format and location the chosen agent and scope require.
 
 ## When to use
 
 - Setting up a new AI coding agent for the first time
 - Creating team-shared project rules so developers get consistent behavior
 - Adding personal dev-specific rules to a project (gitignored)
-- After installing new skills to update the rules file with skill references
+- Shrinking a bloated or drifting rules file, or fixing references to skills that are not installed
 
 ## Quick start
 
@@ -71,10 +71,25 @@ Ask the user which scope to generate rules for, using a selectable menu (`AskUse
 | Scope | Description | Typical path (Claude Code example) |
 |---|---|---|
 | **Global** | User-level rules applied to every project. Personal workflow preferences. | `~/.claude/CLAUDE.md` |
-| **Project (team-shared)** | Committed to the repo. Shared conventions the whole team follows. | `.claude/rules/team-rules.md` |
+| **Project (team-shared)** | Committed to the repo. Shared conventions the whole team follows. | `AGENTS.md` at the repo root (see below) |
 | **Project (dev-specific)** | Local to this dev, gitignored. Personal preferences layered on top of team rules. | `.claude/rules/dev-rules.md` |
 
 See [references/agent-targets.md](references/agent-targets.md) for the exact path for each agent + scope combination.
+
+### One source of truth for project rules
+
+Write project rules once, in `AGENTS.md` at the repository root. Claude Code, Codex, Cursor, Copilot, Gemini or Antigravity, and Devin Desktop read it. Never copy the same rules into a second file.
+
+| Situation | What to write |
+|---|---|
+| Only Claude Code is used | Write `AGENTS.md` and no `CLAUDE.md`. Claude Code 2.1.277 or later reads `AGENTS.md` when no `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` exists in the working directory or above it |
+| Claude Code plus other tools | Write `AGENTS.md`, plus a thin `CLAUDE.md` that holds `@AGENTS.md` on the first line and only Claude-specific lines below it (for example plan mode for one directory) |
+| A `CLAUDE.md` already exists with rules | Move the shared rules into `AGENTS.md`, then reduce `CLAUDE.md` to the import and Claude-only lines |
+| Tool-specific scoping is needed (path-scoped rules, Cursor `alwaysApply` files) | Keep `AGENTS.md` as the base and add scoped files only for rules that apply to part of the repo |
+
+An `@AGENTS.md` import keeps one copy of the text, but the imported file still loads at launch, so it does not cut context cost. Sources: [Claude Code memory](https://code.claude.com/docs/en/memory#agents-md), [Cursor rules](https://cursor.com/docs/context/rules), [Copilot repository instructions](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions).
+
+For global scope there is no shared file. Codex reads `~/.codex/AGENTS.md`. Claude Code documents `~/.claude/CLAUDE.md` as its user file and does not list a user-level `AGENTS.md`, so keep a separate global file per tool and do not assume one is read by the other. Keep both short.
 
 **If the target file already exists**, present a selectable menu to ask the user:
 1. **Overwrite**: replace the file entirely with generated content
@@ -154,38 +169,33 @@ Questions that need more than a single menu pick:
 
 ---
 
-## Phase 4: Ecosystem discovery
+## Phase 4: Environment check
 
-Scan installed skills, agents, and teams at runtime. Do not rely on hardcoded inventories.
+Generated files hold rules only. They do not list skills, agents, or teams. Each skill and agent description already tells the agent when to use it, so a copy in a rules file goes stale, adds size, and can point at things that are not installed.
 
-### Scanning process
+### What to write about skills
 
-Scan for installed skills, agents, and teams using the platform's standard locations. Each AI coding tool stores skills in different places. Check the user-level and project-level directories for the agent chosen in Phase 1.
+| Case | Write |
+|---|---|
+| Always (global scope) | At most one line: `Before acting, check the available skills and invoke any whose description matches the task.` |
+| The user asks for a custom rule about a specific skill (for example "always use /communication-style before writing PR comments") | That one rule, only after confirming the skill is installed |
+| The skill is not installed | Do not write the reference. Tell the user it was left out and why |
+| Agents and teams | Nothing. Do not write an agent roster. Add a rule only when the user states one, such as "prefer custom agents over general-purpose when a matching agent exists" |
 
-Common locations to scan for `SKILL.md` files (skills), `*.md` agent definitions, and `*.md` team definitions:
+### Verify a skill exists before naming it
 
-- User-level skill/agent/team directories (varies per platform)
-- Project-level `.{agent}/skills/`, `.{agent}/agents/`, `.{agent}/teams/`
-- Plugin cache directories (if the platform uses a plugin system)
+Check the user-level and project-level skill directories for the agent chosen in Phase 1, and the plugin cache if the platform has one. For Claude Code that means `~/.claude/skills/<name>/SKILL.md`, `.claude/skills/<name>/SKILL.md`, and installed plugins under `~/.claude/plugins/cache`; also check `~/.agents/skills` and `.agents/skills`. A name that resolves nowhere does not go in the file. Never write a reference to a skill you could not find.
 
-If the `using-ecosystem` skill is installed, invoke it. It provides platform-aware discovery commands.
+### Many installed skills
 
-For each found file, read the YAML frontmatter (`name`, `description`) and build the rules sections:
+While scanning, count the installed skills. If there are many (as a rough guide, more than 50), tell the user that Claude Code caps the skill listing (1% of the context window, 1,536 characters per skill), drops descriptions of the least-used skills first, and that dropped skills show as bare names and are rarely picked. Recommend:
 
-1. **Skills section**: one bullet per installed skill: `When [trigger from description] -> use /skill-name`
-2. **Custom Agents section**: agents with capability summary (read-only vs worktree, specialist vs role)
-3. **Agent Roles section**: role agents with their domain of responsibility
-4. **Teams section**: pre-composed teams with lead and use case
+1. Run `/context` to see the Skills row, and `/skill-doctor` (Claude Code 2.1.252 or later) for per-skill cost and use.
+2. Disable plugins and skills that are not used. Plugin skills are managed through `/plugin`. `skillOverrides` does not apply to them.
+3. Set low-value personal or project skills to `"name-only"` or `"off"` in `skillOverrides`.
+4. Raise the budget only if needed, with `skillListingBudgetFraction` (for example `0.02`) or the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable.
 
-The AI coding agent itself is the primary discovery mechanism: it reads skill frontmatter (`name`, `description`) to decide when to activate each skill. The `using-ecosystem` skill is a secondary advisor for cases where the agent is unsure which skill or agent fits. If installed, it provides matching heuristics and chaining patterns.
-
-### Parallelization add-on
-
-If the user selected "Always parallelize" or "Parallel for large tasks" in Q15, add this line to the Custom Agents section:
-
-```
-When delegating to agent teams, prefer using custom agents over general-purpose when a matching agent exists.
-```
+Source: [Claude Code skills, "Skill descriptions are cut short"](https://code.claude.com/docs/en/skills#skill-descriptions-are-cut-short). Other tools have their own limits, so check their docs.
 
 ---
 
@@ -203,6 +213,8 @@ Instruction files are read on every turn, and long ones get followed less. Resea
 - Claude Code: stay under about 200 lines per file. Imports with `@path` organize a file but do not cut its cost. Move rules that matter for only part of the repo into path-scoped rules (`.claude/rules/*.md` with `paths:` frontmatter), which load only when matching files are touched. Other tools have similar scoping (Cursor `.cursor/rules`, Copilot `.github/instructions`, Devin `.devin/rules` with a `glob` trigger).
 - A rule that must hold every time belongs in a hook, linter, or test, not in this file.
 - Keep rules that must survive compaction in the always-on file.
+- Do not list skills, agents, or teams. See Phase 4.
+- Size check: the global file stays under about 200 lines. Count lines before writing. Above 200, cut the optional blocks first, then warn the user in Phase 6.
 - Check the budget for the target tool in [agent-targets](references/agent-targets.md) and report the size in Phase 6.
 - Point the user to the `instruction-auditor` agent to audit existing instruction files for size, contradictions, stale rules, secrets, and hidden Unicode.
 
@@ -279,34 +291,23 @@ Instruction files are read on every turn, and long ones get followed less. Resea
 - Never modify CI/CD pipelines without explicit approval
 
 ## Knowledge Sources
-- When a topic is covered by an installed skill, use the skill first. It contains curated, verified content
 - When a topic is NOT covered by installed skills, search the web for the official documentation of the technology (e.g., symfony.com for Symfony, php.net for PHP, react.dev for React)
 - Prefer official docs over blog posts, Stack Overflow, or AI-generated summaries. Official sources are the most accurate and current
 - When recommending MCPs, skills, or packages to install, always prefer official providers (e.g., Anthropic, Vercel, framework authors) over community alternatives
 - When no official option exists, prefer well-maintained community options with high adoption and recent activity
 
 ## Skills
-
-CRITICAL: When a situation matches an installed skill, you MUST use it. Do not rely on general knowledge when a dedicated skill exists. Skills contain curated reference material that is more precise than answers generated from scratch. Skipping a relevant skill is like ignoring documentation you already have open.
-
-[Auto-generated from Phase 4 runtime scan. One line per installed skill.]
-When [trigger from description] -> use /skill-name
-...
-
-## Custom Agents
-[If specialist agents are found during Phase 4 scan, list them with descriptions and capabilities. If none found, omit this section entirely.]
-
-## Agent Roles
-[If role agents are installed (per Phase 4), list them here with the domain they own. If none, omit this section entirely.]
+Before acting, check the available skills and invoke any whose description matches the task.
+[Custom rule about a specific installed skill, only if the user asked for it]
 
 ## Persona
 [If Q19 = Yes: persona description, catchphrases, and constraint. If No, omit this section entirely.]
 
-## Recommended (not installed)
-- Install [skill] from krzysztofsurdy/code-virtuoso: [what it helps with]
 ```
 
 ### Project team-shared structure
+
+Write this to `AGENTS.md` at the repository root (see "One source of truth for project rules" in Phase 2), not to a per-tool copy.
 
 ```markdown
 # Project Rules
@@ -363,7 +364,6 @@ When [trigger from description] -> use /skill-name
 - Never modify CI/CD pipelines without explicit approval
 
 ## Knowledge Sources
-- When a topic is covered by an installed skill, use the skill first. It contains curated, verified content
 - When a topic is NOT covered by installed skills, search the web for the official documentation of the technology
 - Prefer official docs over blog posts, Stack Overflow, or AI-generated summaries
 - When recommending MCPs, skills, or packages to install, always prefer official providers over community alternatives
@@ -411,7 +411,7 @@ alwaysApply: true
 
 **Claude Code / Amp (global)**: keep it under 200 lines. Add a note at the end: `For project-specific rules, use .claude/rules/*.md files.`
 
-**Claude Code (project)**: if the repository already has an `AGENTS.md` and no `CLAUDE.md`, Claude Code reads `AGENTS.md` by itself. Adding a `CLAUDE.md` or `CLAUDE.local.md` makes it read the `CLAUDE.md` files only, so a new `CLAUDE.md` should import it with `@AGENTS.md`.
+**Claude Code (project)**: write the rules to `AGENTS.md`. With no `CLAUDE.md`, Claude Code reads `AGENTS.md` by itself. If a `CLAUDE.md` or `CLAUDE.local.md` is present or wanted, it makes Claude Code read the `CLAUDE.md` files only, so the `CLAUDE.md` must start with `@AGENTS.md` and hold only Claude-specific lines. Never duplicate the rules in both files.
 
 **Codex**: use the `AGENTS.md` filename convention at the project root. Codex stops adding files once the combined chain reaches 32 KiB.
 
@@ -431,8 +431,10 @@ After writing the file, do the following:
 2. Show the **file path** where it was written
 3. Show the **line count** and **character count**
 4. If any agent-specific limits were applied (e.g., Windsurf char limit, Claude line limit), mention what was condensed
-5. Say how large the file is against the tool's budget, and offer the `instruction-auditor` agent for a later audit
-6. Offer: "Would you like to edit anything before we're done?"
+5. Say how large the file is against the tool's budget. For a global file, warn when it is over about 200 lines and name what was left out or could go
+6. Offer, without pressing, a `UserPromptSubmit` reminder hook to counter drift: instructions load once at session start, so their influence fades in long sessions. The hook re-injects two or three critical rules on every prompt. The `hooks-and-guardrails` skill (`skills/playbooks/hooks-and-guardrails`) covers hook setup. Do not install it unless the user agrees
+7. If Phase 4 found many installed skills, repeat the advice to check `/context` and disable unused plugins
+8. Offer the `instruction-auditor` agent for a later audit, and ask: "Would you like to edit anything before we're done?"
 
 ---
 
@@ -440,8 +442,8 @@ After writing the file, do the following:
 
 - If a target directory doesn't exist, create it
 - If the user aborts during the questionnaire, discard all progress and do not write a partial file
-- If the user reports no installed code-virtuoso plugins in Phase 4, skip the Skills, Custom Agents, and Agent Roles sections entirely and include a short "Recommended (not installed)" list pointing to `tool-using-ecosystem` and `agents-virtuoso` as starting installs
-- If `using-ecosystem` is not installed, do not fabricate the ecosystem inventory. Ask the user what they have
+- If the user asks for a rule about a skill you cannot find installed, leave it out of the file and say so. Never write a skill reference you could not verify
+- If no skills are installed, omit the `## Skills` section entirely
 - For project scopes, verify you are inside a git repository before writing
 
 ---

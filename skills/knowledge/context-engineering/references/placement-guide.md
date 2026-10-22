@@ -111,7 +111,9 @@ Teams that use more than one agent should keep one source of truth.
 | Symlink `CLAUDE.md` to `AGENTS.md` | Unix-only teams. Git checks a symlink out as a plain text file on Windows unless `core.symlinks` is enabled |
 | Point Gemini CLI at AGENTS.md with `context.fileName` | Avoids a second copy for GEMINI.md |
 
-Keep tool-specific files for tool-specific features only (Cursor globs, Copilot `applyTo`, Claude hooks).
+Keep tool-specific files for tool-specific features only (Cursor globs, Copilot `applyTo`, Claude hooks). Never write the same rules into `AGENTS.md` and `CLAUDE.md`. An `@AGENTS.md` import avoids the second copy but does not lower context cost.
+
+User-level files are separate per tool. Codex reads `~/.codex/AGENTS.md`. Claude Code documents `~/.claude/CLAUDE.md` as its user file and does not list a user-level `AGENTS.md`, so do not assume one reads the other.
 
 ## Migration steps
 
@@ -133,4 +135,5 @@ Skill names and descriptions load every session, and bodies load when invoked. M
 - Aim for 200 to 400 characters. The Claude Code cap is 1,536 for `description` plus `when_to_use`.
 - Merge skills that always trigger together. Remove skills nobody invokes (`/skill-doctor` shows usage in Claude Code).
 - For knowledge the agent needs on almost every task, prefer a compact always-on index over a skill. Vercel's eval showed agents often never invoke a skill they are not told to use.
+- Do not copy skill descriptions into the instruction file as a routing table. It duplicates text the agent already receives and goes stale.
 - For manual-only workflows, mark the skill so it stays out of the listing (`disable-model-invocation: true` in Claude Code), and invoke it by name.

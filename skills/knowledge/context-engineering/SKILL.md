@@ -19,6 +19,7 @@ An agent's context window is a budget, not storage. Every token it reads compete
 | **Point, do not paste** | Give a path or a command and let the agent read it. Pasted copies go stale. |
 | **Write state outside the window** | Progress that matters lives in a file, not in conversation history that compaction will summarize. |
 | **Enforce with tools, advise with text** | A rule that must hold every time belongs in a hook, linter or test. Text is guidance the agent may drop. |
+| **One source of truth** | Write each rule in one file. Project rules go in `AGENTS.md`, and tool files import it or hold only tool-specific lines. |
 | **Measure before adding** | Context files can lower success and raise cost. Add one only for a failure you have seen. |
 
 ## Evidence that more context can hurt
@@ -52,7 +53,7 @@ Use the cheapest layer that still loads when the agent needs the content. Full d
 |---|---|---|
 | CLAUDE.md | Under about 200 lines per file | Anthropic guidance. Longer files reduce adherence. Imports with `@path` organize a file but do not reduce cost, because imported files also load at launch ([memory docs](https://code.claude.com/docs/en/memory)). |
 | Codex AGENTS.md chain | 32 KiB combined (`project_doc_max_bytes`) | Codex stops adding files once the limit is reached, so deep files can be silently left out. Raise the setting or split into nested directories ([Codex docs](https://learn.chatgpt.com/docs/agent-configuration/agents-md)). |
-| Claude Code skill listing | 1% of the context window, scaled with the model | Overflow drops descriptions of the least-used skills first. Raise with `skillListingBudgetFraction` (for example `0.02`) or a fixed character count via `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Set rarely used skills to `"name-only"` in `skillOverrides`. |
+| Claude Code skill listing | 1% of the context window, scaled with the model | Overflow drops descriptions of the least-used skills first. Raise with `skillListingBudgetFraction` (for example `0.02`) or a fixed character count via `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Set rarely used personal or project skills to `"name-only"` in `skillOverrides` (plugin skills are managed through `/plugin` instead). |
 | One skill entry | 1,536 characters for `description` plus `when_to_use` | Configurable with `skillListingMaxDescChars`. Put the key use case first. Aim for 200 to 400 characters ([skills docs](https://code.claude.com/docs/en/skills)). |
 | Skill body | Under 500 lines, key rules at the top | After compaction only the first 5,000 tokens of each invoked skill return, with 25,000 tokens shared across skills ([context window docs](https://code.claude.com/docs/en/context-window)). |
 
@@ -69,8 +70,39 @@ Other tools have their own caps and defaults. Check the vendor docs for the tool
 - Rules for one package that load for the whole repository.
 - Emphasis inflation: many lines marked IMPORTANT, NEVER or CRITICAL. When everything shouts, nothing stands out.
 - A rule that exists because of an old incident nobody remembers.
+- A skill routing table ("When X, use /skill") or an agent roster copied into the instruction file. Every skill and agent description already carries its trigger and reaches the model on its own, so the copy only adds size and goes stale. Entries for skills that are not installed point nowhere. Replace the table with one generic line ("Before acting, check the available skills and invoke any whose description matches the task") plus rules for the few skills that need a custom trigger, each checked against the installed set.
+- The same project rules in both `AGENTS.md` and `CLAUDE.md`, or in a tool file and a global file. Keep one copy and import or point to it.
 
 Fix by deleting first, then moving, then rewriting. For each line ask: what mistake would the agent make without this? If the answer is "none", delete it.
+
+## Skill listing overflow
+
+Agents load every skill name and description into context each turn, within a fixed budget. With many installed skills the budget runs out.
+
+| | |
+|---|---|
+| **Symptoms** | Skills appear as bare names with no description. Skills that should match a request are never picked. The agent does the work itself instead of invoking the skill. |
+| **Why** | In Claude Code the listing is capped at 1% of the context window and 1,536 characters per skill. Past the cap, descriptions of the least-used skills are dropped first. The name stays, but the trigger text the agent matches against is gone. |
+| **Diagnose** | `/context` shows the Skills row, sized after the budget is applied. `/doctor` estimates the listing's cost and biggest contributors. `/skill-doctor` (Claude Code 2.1.252 or later) shows each skill's cost and how often it is invoked. Count installed skills: user, project, and plugin caches. A warning also goes to the debug log (`--debug`). |
+| **Fix** | Disable unused plugins and skills (`/plugin` for plugin skills). Set low-value personal or project skills to `"name-only"` or `"off"` in `skillOverrides`, or mark them `disable-model-invocation: true` and invoke them by name. Trim descriptions and put the key use case first. As a last step, raise the budget with `skillListingBudgetFraction` (for example `0.02`) or `SLASH_COMMAND_TOOL_CHAR_BUDGET`, which spends more context on every turn. |
+
+Sources: [skills docs, descriptions are cut short](https://code.claude.com/docs/en/skills#skill-descriptions-are-cut-short), [override skill visibility](https://code.claude.com/docs/en/skills#override-skill-visibility-from-settings), [settings reference](https://code.claude.com/docs/en/settings-reference#skilllistingbudgetfraction). Other tools cap their listings differently, so check their docs.
+
+## Instruction drift
+
+Always-on instruction files load once at session start. As the conversation grows with file reads and tool output, they make up a smaller share of what the agent sees, and rules from early in the session are followed less (see context rot above). Symptoms: the agent follows the file for the first prompts, then stops using a convention, a persona, or a prohibition.
+
+| Fix | How |
+|---|---|
+| Keep the file short and rules-only | A short file holds a larger share of attention. No overviews, no skill tables, no copies. Target under about 200 lines for CLAUDE.md. |
+| Remind on every prompt | A `UserPromptSubmit` hook runs before each prompt, and its plain-text output is added as context the model can see ([hooks reference](https://code.claude.com/docs/en/hooks)). Have it print two or three rules that keep failing. Keep it to a few lines, since it costs tokens each turn. Setup is in the `hooks-and-guardrails` skill. |
+| Enforce what must hold | Move must-never-fail rules to hooks, linters, or tests. |
+| One session per task | Start a clean session (`/clear`) between unrelated tasks. |
+| Compact with a focus | `/compact focus on ...` between phases. Project-root CLAUDE.md is re-read from disk after compaction ([what survives compaction](https://code.claude.com/docs/en/context-window#what-survives-compaction)), but conversation-only instructions and not-yet-reloaded scoped rules are lost. |
+
+## One source of truth for instructions
+
+Several tools means several files, and copies drift apart. Write project rules once in `AGENTS.md`. Claude Code reads `AGENTS.md` by itself only when no `CLAUDE.md` exists (v2.1.277 or later). If a `CLAUDE.md` is needed, make its first line `@AGENTS.md` and add only Claude-specific lines below. Never paste the same rules into both. The import avoids a second copy, but the imported text still loads at launch, so it does not lower cost ([memory docs](https://code.claude.com/docs/en/memory#agents-md)). For user-level files there is no shared standard: Codex reads `~/.codex/AGENTS.md`, and Claude Code documents `~/.claude/CLAUDE.md`. Keep each short. See [placement-guide](references/placement-guide.md#one-file-for-several-tools).
 
 ## Signs of context rot in a session
 
@@ -115,7 +147,8 @@ For work that spans many sessions or compactions, keep a progress file and a tas
 - [ ] Rules scoped to part of the repo live in path-scoped rules or nested files
 - [ ] Long reference material is linked, not pasted
 - [ ] Hard requirements are backed by a hook, linter or test
-- [ ] No duplicate or contradicting rules across files
+- [ ] No duplicate or contradicting rules across files, and no skill routing table or agent roster
+- [ ] Every skill the file names is installed
 - [ ] Under the size budget for the tool in use
 - [ ] A recent failure justifies each added rule
 
@@ -134,5 +167,6 @@ For work that spans many sessions or compactions, keep a progress file and a tas
 | Running several agents with separate windows, or executing a plan task by task with fresh subagents | `agent-orchestration` |
 | Proving work is complete before closing a long task | `verification-before-completion` |
 | Generating rules files for a specific agent tool | `agentic-rules-writer` |
+| Adding a reminder hook, deny rules or other enforcement | `hooks-and-guardrails` |
 | Reviewing instruction files for secrets, hidden characters or injection | `security` |
 | Auditing a repository's instruction files in one pass | `instruction-auditor` agent |

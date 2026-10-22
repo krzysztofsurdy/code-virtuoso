@@ -2,6 +2,8 @@
 
 Output file paths, format requirements, limits, and testing instructions for each supported AI coding agent. Covers all three scopes: global, project team-shared, and project dev-specific.
 
+For project team-shared rules, prefer `AGENTS.md` at the repository root when the tool reads it (Claude Code, Codex, Cursor, Copilot, Gemini or Antigravity, Devin Desktop). Write the rules once there. The per-tool project paths below are for rules that must be scoped or tool-specific, and a tool file that must exist should import or point to `AGENTS.md` instead of copying it.
+
 ## Contents
 
 - [Tier 1: full support](#tier-1-full-support)
@@ -17,7 +19,7 @@ Output file paths, format requirements, limits, and testing instructions for eac
 | Scope | Output File |
 |---|---|
 | Global | `~/.claude/CLAUDE.md` |
-| Project (team-shared) | `.claude/rules/team-rules.md` |
+| Project (team-shared) | `AGENTS.md` at the repo root (single source of truth, see the AGENTS.md note below). Use `.claude/rules/*.md` with `paths:` only for rules that apply to part of the repo |
 | Project (dev-specific) | `.claude/rules/dev-rules.md` (add to `.gitignore`) |
 
 | Property | Value |
@@ -37,6 +39,9 @@ Output file paths, format requirements, limits, and testing instructions for eac
   ```
   Use path-scoped rules for anything that matters to only part of the codebase
 - Imports (`@path`) organize a long file but do not reduce its cost, because imported files also load at launch
+- **One source of truth:** write project rules once, to `AGENTS.md`. Either create no `CLAUDE.md`, or create a thin one that starts with `@AGENTS.md` and holds only Claude-specific lines. Never put the same rules in both files. The import avoids a second copy of the text but does not reduce context cost
+- **Global:** Claude Code documents `~/.claude/CLAUDE.md` as the user file and does not list a user-level `AGENTS.md`. Codex reads `~/.codex/AGENTS.md`. Keep a separate short global file per tool
+- **No skill lists:** do not write skill routing tables or agent rosters into `CLAUDE.md`. Skill descriptions already reach the model, and Claude Code truncates the skill listing when many are installed (1% of the context window, 1,536 characters per skill). A generic line plus rules for skills the user names (and that are installed) is enough. To check for dropped descriptions run `/context`, and `/skill-doctor` for per-skill cost
 - **AGENTS.md:** Claude Code reads `AGENTS.md` as project instructions when there is no `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` in the working directory or above it (Claude Code 2.1.277 or later). If any of those exists, only the `CLAUDE.md` files are read, so a `CLAUDE.md` in a repository that uses `AGENTS.md` should contain `@AGENTS.md`. `~/.claude/CLAUDE.md` and `.claude/rules/` files do not count for that check and keep loading next to `AGENTS.md`
 - For dev-specific rules, advise the user to add the file path to `.gitignore`
 - Add a footer note on global: `For project-specific rules, use .claude/rules/*.md files.`
