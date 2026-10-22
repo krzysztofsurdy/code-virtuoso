@@ -36,13 +36,13 @@ scripts/install-codex-agents.sh
 
 ## What is inside
 
-67 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
+68 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
 
 | Bundle | Holds |
 |---|---|
 | `knowledge-virtuoso` | 18 knowledge skills |
 | `tools-virtuoso` | 14 tool skills |
-| `playbooks-virtuoso` | 10 step-by-step procedures |
+| `playbooks-virtuoso` | 11 step-by-step procedures |
 | `frameworks-virtuoso` | 12 framework skills |
 | `ai-virtuoso` | 4 skills for building with LLMs and agents |
 | `agents-virtuoso` | 20 agents, 3 team workflows, 9 skills (see Agents and Teams) |
@@ -97,6 +97,7 @@ Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `t
 | `worktree-ops` | Create, switch, and remove git worktrees safely |
 | `game-feature-loop` | One game mechanic at a time, proven in the running game, then a feel pass |
 | `video-production` | Brief to delivered video: engine choice, storyboard, review loop, audio, render |
+| `security-research` | Authorized vuln research: scope gate, lab repro, minimal PoC, coordinated disclosure, CVE |
 
 ### Frameworks
 

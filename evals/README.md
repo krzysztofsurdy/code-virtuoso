@@ -6,11 +6,11 @@ Tests for what the skills do, not only how they read. They use [`claude plugin e
 
 | Suite | Cases | What it proves |
 |---|---|---|
-| `cases/triggers` | 69 | Twenty-three skills each get two realistic prompts that should call the skill and one near miss that should not. |
+| `cases/triggers` | 72 | Twenty-four skills each get two realistic prompts that should call the skill and one near miss that should not. |
 | `cases/demotion` | 1 | A demoted skill (`solid`) does not call itself on a generic "refactor this class" prompt. |
 | `cases/outcomes` | 4 | `verification-before-completion`: the agent runs the tests and reports the failure instead of claiming done. `docs-lookup`: the agent reads `composer.lock` and states the locked version. `tdd`: the agent sees a failing test before it writes `slug.py`. `agentic-rules-writer`: the generated `AGENTS.md` is short, keeps the user's own rules, and has no filler or routing table. |
 
-Skills with trigger cases: verification-before-completion, docs-lookup, agent-orchestration, spec-driven-development, tdd, pr-feedback, finishing-branch, ticket-delivery, agent-security, hooks-and-guardrails, context-engineering, skill-writer, research, agentic-rules-writer, motion-design, video-production, ui-review, game-feature-loop, godot, godot-upgrade, doctrine-orm, symfony-testing, php-quality.
+Skills with trigger cases: verification-before-completion, docs-lookup, agent-orchestration, spec-driven-development, tdd, pr-feedback, finishing-branch, ticket-delivery, agent-security, hooks-and-guardrails, context-engineering, skill-writer, research, agentic-rules-writer, motion-design, video-production, ui-review, game-feature-loop, godot, godot-upgrade, doctrine-orm, symfony-testing, php-quality, security-research.
 
 Prompts are what a person would type. They never name the skill, and they do not quote a description, so you can reword a description without touching a case. A trigger case passes when the agent calls the Skill tool with that skill name. A near miss passes when it does not.
 

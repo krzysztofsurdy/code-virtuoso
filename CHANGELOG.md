@@ -4,6 +4,12 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [10.3.0] - 2026-10-22
+
+### Added
+- `security-research` playbook: a gated loop for authorized vulnerability research and coordinated disclosure. Authorization gate first (in-scope bounty target, open-source code run in your own lab, or a system you own), a mandatory live-research step that pulls current CVEs, write-ups and tooling every run, then hunt, reproduce with a minimal non-weaponized PoC, classify with CWE and CVSS, report privately, and write up after the patch. It points to `trailofbits/skills` and `rea` rather than rebuilding them, and to the repo's own `security`, `agent-security`, `research`, `docs-lookup` and `verification-before-completion` skills. References cover techniques, lab setup, disclosure and the CVE path, feeds to monitor, and the authorization and legal boundary (general information, not legal advice)
+- Research notes with a prior-art table and fact ledger, and three trigger evals for the skill
+
 ## [10.2.0] - 2026-10-22
 
 ### Added
