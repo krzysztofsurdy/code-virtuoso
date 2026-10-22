@@ -2,7 +2,7 @@
 name: symfony-upgrade
 description: Symfony version upgrade guide using the deprecation-first approach. Use to upgrade to a new minor or major version, fix deprecations, update recipes, check bundle compatibility, or move between LTS versions.
 allowed-tools: Read Grep Glob Bash
-user-invocable: false
+user-invocable: true
 ---
 
 # Symfony Framework Upgrade

@@ -104,7 +104,7 @@ The `user-invocable` field controls whether a skill appears as a runnable comman
 | Category | `user-invocable` | Reason |
 |---|---|---|
 | `knowledge/` | `false` | Background reference, auto-loaded by context or agents |
-| `frameworks/` | `false` | Background reference, auto-loaded |
+| `frameworks/` | `false` for reference skills, `true` for upgrade and update playbooks | Reference is auto-loaded background knowledge. `php-upgrade`, `symfony-upgrade` and `composer-dependencies` are step-by-step procedures a person starts on purpose |
 | `ai/` | `false` | Background reference, auto-loaded |
 | `playbooks/` | `true` | User runs these as step-by-step procedures |
 | `tools/` | `true` | User runs these directly to generate output |

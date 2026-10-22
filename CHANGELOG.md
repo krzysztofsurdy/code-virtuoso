@@ -4,6 +4,12 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [10.0.1] - 2026-10-22
+
+### Changed
+- `symfony-upgrade` is now a `/` command (`user-invocable: true`), like the other upgrade playbooks
+- CONTRIBUTING: framework skills are hidden from the `/` menu when they are reference material, shown when they are upgrade or update procedures
+
 ## [10.0.0] - 2026-10-21
 
 ### Added
