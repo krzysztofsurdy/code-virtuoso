@@ -90,8 +90,8 @@ The docs list options. These are the choices to make when the user has not said 
 
 ## Cross-cutting pitfalls
 
-- **N+1 queries from Doctrine lazy loading.** A loop that touches a relation issues one query per row. Fetch with a join (`addSelect`), use the profiler's query count, and test with realistic data volume.
-- **Long-running worker leaks.** Messenger workers, Swoole, RoadRunner and FrankenPHP workers keep the kernel alive. Stateful services need `ResetInterface` (or the `kernel.reset` tag), the entity manager must be cleared between messages, and no static caches may grow without bound. Restart workers on deploy with `messenger:stop-workers`.
+- **Doctrine N+1, fetch strategy, locking, batches and worker recovery:** see the `doctrine-orm` skill.
+- **Long-running worker leaks.** Messenger workers, Swoole, RoadRunner and FrankenPHP workers keep the kernel alive. Stateful services need `ResetInterface` (or the `kernel.reset` tag), and no static caches may grow without bound. Restart workers on deploy with `messenger:stop-workers`.
 - **Env var processors.** `%env(int:PORT)%` and friends resolve at runtime, but container parameters resolve at compile time. Do not use env values in anything built at compile time (compiler passes, bundle extension logic). Cast types with processors, not in code.
 - **Deprecations ratchet.** Run tests with deprecation reporting on and a baseline file, and fail CI when the count rises. Clear deprecations on the last minor of a major before upgrading to the next major.
 - **Dev and prod drift.** Debug mode hides container errors that `cache:clear --env=prod` and `lint:container` expose. Run both in CI.

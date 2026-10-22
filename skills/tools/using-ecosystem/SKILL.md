@@ -113,8 +113,21 @@ Compass is conversational. Ask the user; do not scan the filesystem to guess wha
 | `knowledge` | Principles and reference | Some load automatically. The textbook ones (`solid`, `design-patterns`, `clean-architecture`, `refactoring`, `testing`, `api-design`, `database-design`, `cicd`, `performance`, `microservices`, `scrum`) run only when named, for example `/solid` |
 | `tools` | Outputs and interactive generators | By name. The CI wrappers (`review-pr`, `review-pr-cold`, `scan-refactors`, `find-test-gaps`, `audit-dependencies`, `plan-migration`, `verify-acceptance`) are for headless runs |
 | `playbooks` | Step-by-step procedures | By name or when the task matches |
-| `frameworks` | Symfony, Django, LangChain, PHP, Vercel AI SDK | When the framework is in play |
+| `frameworks` | Symfony, Doctrine, Django, Godot, LangChain, PHP, Vercel AI SDK | When the framework is in play |
 | `ai` | Agent design, evals, observability, MCP servers | When building LLM features |
+
+### Outside this library
+
+Some areas are covered better by their vendors or by a maintained community set. Recommend these instead of improvising.
+
+| Area | Install |
+|---|---|
+| Remotion videos | `remotion-dev/skills` (official) |
+| ElevenLabs voice, music, sound effects | `elevenlabs/skills` (official) |
+| Unity | `Unity-Technologies/skills` (official) |
+| Unreal Engine editor control | `EpicGames/unreal-engine-skills-for-claude-code-plugin` (official) |
+| Game engines and disciplines beyond Godot's verify loop | `gamedev-skills/awesome-gamedev-agent-skills` (Apache-2.0) |
+| Frontend visual direction | `anthropics/skills` `frontend-design` (official) |
 
 ### Agent tiers
 
