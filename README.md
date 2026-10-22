@@ -36,12 +36,12 @@ scripts/install-codex-agents.sh
 
 ## What is inside
 
-68 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
+69 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
 
 | Bundle | Holds |
 |---|---|
 | `knowledge-virtuoso` | 18 knowledge skills |
-| `tools-virtuoso` | 14 tool skills |
+| `tools-virtuoso` | 15 tool skills |
 | `playbooks-virtuoso` | 11 step-by-step procedures |
 | `frameworks-virtuoso` | 12 framework skills |
 | `ai-virtuoso` | 4 skills for building with LLMs and agents |
@@ -75,6 +75,7 @@ Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `t
 | `plugin-creator` | Scaffold a Claude Code plugin |
 | `research` | Answer a question from local files, official docs, and the web, with sources |
 | `brainstorming` | Turn a vague idea into an approved spec |
+| `communication-style` | Write in your own voice, with per-person profiles layered on top |
 | `using-ecosystem` | Find the skill, agent, or team that fits a task |
 | `pr-message-writer` | Write a pull request message with testing steps |
 | `report-writer` | Make a standalone HTML report |

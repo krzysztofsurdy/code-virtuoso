@@ -4,6 +4,12 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [10.4.0] - 2026-10-22
+
+### Added
+- `communication-style` tool skill: writes messages in the user's own voice instead of a generic AI tone. An always-on default voice, a per-person overlay that tunes delivery only when a recipient is named (never replacing the voice, never switching mid-stream), and channel tuning for chat, PR comments, email and tickets. Profiles are saved per user under the config home, never in a repo. A setup mode builds the default voice and person profiles from samples or a few questions; person profiles come only from conversations the user provides, with no web research
+- Three trigger evals for the skill
+
 ## [10.3.0] - 2026-10-22
 
 ### Added

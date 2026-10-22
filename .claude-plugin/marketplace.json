@@ -4,8 +4,8 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "68 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
-    "version": "10.3.0"
+    "description": "69 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
+    "version": "10.4.0"
   },
   "plugins": [
     {
@@ -36,13 +36,14 @@
     },
     {
       "name": "tools-virtuoso",
-      "description": "14 tool skills: rules writer, ticket writer, agent creator, skill writer, plugin creator, research, brainstorming, ecosystem advisor, PR message writer, report writer, stakeholder update writer, UI review, web screenshot, and image annotate",
+      "description": "15 tool skills: rules writer, ticket writer, agent creator, skill writer, plugin creator, research, brainstorming, ecosystem advisor, communication style, PR message writer, report writer, stakeholder update writer, UI review, web screenshot, and image annotate",
       "source": "./skills",
       "strict": false,
       "skills": [
         "./tools/agent-creator",
         "./tools/agentic-rules-writer",
         "./tools/brainstorming",
+        "./tools/communication-style",
         "./tools/image-annotate",
         "./tools/plugin-creator",
         "./tools/pr-message-writer",
