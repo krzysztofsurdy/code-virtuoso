@@ -4,8 +4,8 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "69 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
-    "version": "10.4.0"
+    "description": "70 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
+    "version": "10.5.0"
   },
   "plugins": [
     {
@@ -59,7 +59,7 @@
     },
     {
       "name": "playbooks-virtuoso",
-      "description": "11 playbook skills: ticket delivery, spec-driven development, TDD, branch finishing, PR feedback, handoff, worktree ops, hooks and guardrails, game feature loop, video production, and security research",
+      "description": "12 playbook skills: ticket delivery, spec-driven development, TDD, branch finishing, PR feedback, handoff, worktree ops, hooks and guardrails, game feature loop, video production, security research, and retro",
       "source": "./skills",
       "strict": false,
       "skills": [
@@ -68,6 +68,7 @@
         "./playbooks/handoff",
         "./playbooks/hooks-and-guardrails",
         "./playbooks/pr-feedback",
+        "./playbooks/retro",
         "./playbooks/security-research",
         "./playbooks/spec-driven-development",
         "./playbooks/tdd",

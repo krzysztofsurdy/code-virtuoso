@@ -36,13 +36,13 @@ scripts/install-codex-agents.sh
 
 ## What is inside
 
-69 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
+70 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
 
 | Bundle | Holds |
 |---|---|
 | `knowledge-virtuoso` | 18 knowledge skills |
 | `tools-virtuoso` | 15 tool skills |
-| `playbooks-virtuoso` | 11 step-by-step procedures |
+| `playbooks-virtuoso` | 12 step-by-step procedures |
 | `frameworks-virtuoso` | 12 framework skills |
 | `ai-virtuoso` | 4 skills for building with LLMs and agents |
 | `agents-virtuoso` | 20 agents, 3 team workflows, 9 skills (see Agents and Teams) |
@@ -93,6 +93,7 @@ Run by name: `design-patterns`, `solid`, `clean-architecture`, `refactoring`, `t
 | `tdd` | Strict red-green-refactor for agents |
 | `finishing-branch` | Pre-push checks, merge strategy, PR message, cleanup |
 | `pr-feedback` | Triage review comments and failing CI, fix, reply |
+| `retro` | Turn a session's repeated mistakes into lint rules, hooks, or CI checks |
 | `handoff` | Write and resume from a handoff note |
 | `hooks-and-guardrails` | Deny rules, sandbox choices, and hooks for an agent setup |
 | `worktree-ops` | Create, switch, and remove git worktrees safely |

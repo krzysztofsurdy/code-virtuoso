@@ -4,6 +4,19 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [10.5.0] - 2026-10-23
+
+### Added
+- `retro` playbook: review an agent coding session for friction (repeated mistakes, wasted tool calls, missing checks, ignored rules) and turn each finding into the cheapest durable fix, preferring a lint rule, hook, or CI check over another prose rule. A repeated mistake with no guardrail is itself a finding. Cross-links `hooks-and-guardrails`, `agentic-rules-writer`, `context-engineering`, and the `instruction-auditor` agent. Three trigger evals
+- `context-engineering`: a `writing-levers` reference (leading words, positive phrasing over prohibitions, the no-op test) and a project glossary convention with banned synonyms
+- `spec-driven-development`: a `slicing` reference (vertical tracer-bullet slices sized to one context window with declared blockers, and expand/migrate/contract for wide refactors) and a glossary step
+
+### Changed
+- `implementer` agent no longer carries the full coding-standards document; the `reviewer` agent now owns enforcing documented standards, so the implementer spends its context on the code
+- `pr-message-writer`: every PR type now includes a Merge Danger section (reversibility as a one-way or two-way door, plus blast radius) and an Evidence tier order (screenshot, then execution output, then before/after); reversibility and rollback moved out of the migration-only path into Merge Danger
+- `ticket-writer`: prefer a vertical slice that declares its blockers
+- Ideas adopted from Matt Pocock's skills and Humanlayer's show-me (both MIT), re-authored, no text copied
+
 ## [10.4.0] - 2026-10-22
 
 ### Added
