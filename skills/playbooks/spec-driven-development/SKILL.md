@@ -56,6 +56,7 @@ Use [spec-template](references/spec-template.md). The spec describes behavior an
 3. **Write criteria as WHEN/THEN.** `WHEN a user submits an expired token THEN the API returns 401 with error code token_expired`. One behavior per criterion. Include the unhappy paths that are likely in production: invalid input, empty state, permission denied, upstream failure.
 4. **Mark every unknown.** Write `[NEEDS CLARIFICATION: question]` next to the requirement it affects. Do not guess a default to keep moving. A guessed requirement becomes a bug that passes review.
 5. **Record non-goals.** At least one. They stop scope creep during implementation.
+6. **Use the domain glossary.** Look for the project's `GLOSSARY.md` (or `docs/glossary.md`) and use its terms, and not its _Avoid_ synonyms, in the spec. If a needed term is missing, define it there in one sentence before using it. Keep the same words in the plan, tasks, test names and code. The concept is in `references/writing-levers.md` of the `context-engineering` skill.
 
 **Gate:** planning does not start while any `[NEEDS CLARIFICATION]` marker remains. Ask the user the questions one at a time, update the spec, remove the marker. Then get the spec approved.
 
@@ -85,6 +86,8 @@ Use [tasks-template](references/tasks-template.md). Task format:
 | Check | Every task names how to verify it: a test to pass or a command to run |
 
 Order tasks so each one leaves the build green and the repo committable. Foundational tasks first, then one slice per requirement, then cleanup and docs. Write the test task before the code task it covers; the code task is done only through the loop in `tdd`.
+
+Cut slices vertically: each one is a thin, demoable path through every layer, sized for one fresh session, with its blocking tasks declared. Pull wide mechanical refactors out and sequence them expand, migrate, contract. See [slicing](references/slicing.md).
 
 ## Step 5: Audit the artifacts
 
@@ -132,7 +135,9 @@ If behavior changed during implementation, update the spec to match what shipped
 - [ ] Requirements numbered, each with WHEN/THEN criteria
 - [ ] No `[NEEDS CLARIFICATION]` left; spec approved
 - [ ] Plan maps every requirement to files and a verification method
+- [ ] Glossary terms used consistently across spec, plan, and tasks
 - [ ] Tasks have IDs, requirement tags, paths, and checks; `[P]` only where safe
+- [ ] Tasks are vertical slices with declared blockers
 - [ ] `plan-auditor` gate returned READY
 - [ ] Each task: tdd loop, verified, committed, progress logged
 - [ ] Spec updated or archived after merge
@@ -144,6 +149,7 @@ If behavior changed during implementation, update the spec to match what shipped
 | [spec-template](references/spec-template.md) | Spec skeleton with requirement IDs, WHEN/THEN criteria, clarification markers |
 | [plan-template](references/plan-template.md) | Plan skeleton: requirement mapping, decisions, risks, verification |
 | [tasks-template](references/tasks-template.md) | Task list format, ordering rules, coverage table |
+| [slicing](references/slicing.md) | Vertical tracer-bullet slices, blocking edges, sizing for one context window, expand-migrate-contract for wide refactors |
 | [progress-log-template](references/progress-log-template.md) | Session log for multi-session work and resume procedure |
 | [delta-specs](references/delta-specs.md) | Writing ADDED, MODIFIED, REMOVED changes against existing specs |
 

@@ -73,7 +73,7 @@ Other tools have their own caps and defaults. Check the vendor docs for the tool
 - A skill routing table ("When X, use /skill") or an agent roster copied into the instruction file. Every skill and agent description already carries its trigger and reaches the model on its own, so the copy only adds size and goes stale. Entries for skills that are not installed point nowhere. Replace the table with one generic line ("Before acting, check the available skills and invoke any whose description matches the task") plus rules for the few skills that need a custom trigger, each checked against the installed set.
 - The same project rules in both `AGENTS.md` and `CLAUDE.md`, or in a tool file and a global file. Keep one copy and import or point to it.
 
-Fix by deleting first, then moving, then rewriting. For each line ask: what mistake would the agent make without this? If the answer is "none", delete it.
+Fix by deleting first, then moving, then rewriting. For each line ask: what mistake would the agent make without this? If the answer is "none", delete it. For wording of the lines that stay (one word per concept, positive phrasing, a project glossary), see [writing-levers](references/writing-levers.md).
 
 ## Skill listing overflow
 
@@ -158,6 +158,7 @@ For work that spans many sessions or compactions, keep a progress file and a tas
 |---|---|
 | [placement-guide](references/placement-guide.md) | Decision flow for where each kind of instruction goes, per-tool file names and scoping, before and after examples, migration steps |
 | [long-task-notes](references/long-task-notes.md) | Progress file and task list layouts, one-feature-per-session pattern, handoff notes, compaction checklist |
+| [writing-levers](references/writing-levers.md) | Leading words, positive phrasing instead of prohibitions, the no-op test, project glossary with _Avoid_ lists |
 
 ## Integration with Other Skills
 

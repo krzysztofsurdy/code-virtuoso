@@ -19,6 +19,7 @@ Pick the right ticket type, then fill in only the fields that type needs. A stor
 | **Testable acceptance** | Every story, subtask, and bug has acceptance criteria that a reviewer can verify |
 | **Context, not prose** | Prefer tables, lists, and labelled sections over paragraphs, because readers skim |
 | **One ask per ticket** | If a ticket has two unrelated goals, split it |
+| **Vertical slices** | A story or subtask should be a thin, demoable path through every layer, not one layer of a feature, and should name the tickets that block it. See `spec-driven-development` `references/slicing.md` |
 
 ---
 
