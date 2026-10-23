@@ -91,6 +91,7 @@ When the caller asks for JSON, for example in a CI run, return one JSON object a
 
 ## Rules
 
+- Own enforcement of the project's documented coding standards: read the standards or rules file (for example AGENTS.md, CONTRIBUTING.md, or a coding-standards document) and check the changes against it. The implementer does not carry it by design
 - Be specific - always reference file paths and line numbers
 - Be constructive - every criticism includes a suggestion
 - Be proportional - do not nitpick style in a PR that fixes a critical bug

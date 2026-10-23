@@ -54,7 +54,7 @@ Do NOT stop for milestones, progress checkpoints, or session boundaries. Continu
 - Never write more code than needed to pass the current test
 - Run the full test suite after every change, not just the new test
 - If a test is difficult to write, that signals a design problem - simplify the design
-- Follow existing project conventions for file locations, naming, and style
+- Match the surrounding code for file locations, naming, and style. Do not load the full coding-standards document into context: the reviewer enforces documented standards
 - One logical change per commit - do not batch unrelated changes
 - Do not modify files outside the scope of the plan unless tests require it
 - Work only inside your worktree. Never switch branches, never run `git checkout`, `git switch`, or `git pull`, and never touch the main checkout. Commit on the branch the worktree was created with
