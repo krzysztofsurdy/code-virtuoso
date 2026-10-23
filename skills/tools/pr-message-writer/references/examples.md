@@ -41,6 +41,11 @@ Cache key `product_avg_rating:{productId}` with 1-hour TTL, invalidated on admin
 
 New "Product Reviews" admin page: list with filters (status, rating range), bulk approve/reject, detail view with moderation buttons.
 
+### Merge danger
+
+- **Reversibility:** Two-way door. The migration only adds a table, so a revert plus a down migration leaves existing data untouched.
+- **Blast radius:** public API consumers (the `product` query gains fields) and the admin panel.
+
 ### Testing instructions
 
 **Prerequisites:**
@@ -129,6 +134,10 @@ LEFT JOIN product_review pr ON pr.product_id = p.id AND pr.status = 'approved'
 GROUP BY p.id HAVING COUNT(pr.id) > 0 LIMIT 10;
 ```
 
+### Evidence
+
+Tier 1: screen recording of the moderation flow in the admin panel, plus a screenshot of the product page showing the average rating.
+
 ### Product changes
 - Users can leave 1-5 star reviews on purchased products
 - Reviews require admin approval before becoming visible
@@ -161,6 +170,11 @@ Reordered to validate first, persist second:
 - Stock availability validator - extracted standalone validation
 - Unit tests - quantity preservation test
 - Integration tests - full checkout flow test
+
+### Merge danger
+
+- **Reversibility:** Two-way door. Logic only, no data or schema change.
+- **Blast radius:** checkout and cart for every customer.
 
 ### Testing instructions
 
@@ -229,6 +243,10 @@ mutation {
 ```
 Expected: `errors` contains a stock validation message, and `cart.items` shows the original quantity (not 9999).
 
+### Evidence
+
+Tier 2: output of the new unit and integration tests (red before the fix, green after), plus a before/after of the cart quantity field on a failed update.
+
 ### Product changes
 - Cart quantities no longer reset on validation errors during checkout
 
@@ -264,6 +282,11 @@ EDU-2103 Add quiz question pool system with admin CRUD and ordering
 #### Event Handling
 
 `QuizPoolQuestionAdded` and `QuizPoolQuestionRemoved` events dispatched on changes. Handler updates pool `updated_at`.
+
+### Merge danger
+
+- **Reversibility:** Two-way door. Three new tables, nothing reads them yet, and no existing rows change.
+- **Blast radius:** isolated to the admin panel.
 
 ### Testing instructions
 
@@ -329,6 +352,10 @@ SELECT quiz_pool_id, quiz_question_id, COUNT(*) FROM quiz_question_pool
 GROUP BY quiz_pool_id, quiz_question_id HAVING COUNT(*) > 1;
 ```
 
+### Evidence
+
+Tier 1: screen recording of creating a pool, assigning questions and reordering them by drag and drop.
+
 ### Product changes
 - Administrators can organize questions into named, ordered pools
 - Questions can be shared across pools
@@ -363,6 +390,11 @@ ALTER TABLE "user" ADD COLUMN notification_preference VARCHAR(20) DEFAULT NULL;
 #### Security and Permissions
 
 Auth check ensures user matches target. Admins can set any user's preference via `adminSetNotificationPreference`. Rate limited to 10 calls/minute/user.
+
+### Merge danger
+
+- **Reversibility:** One-way door for the schema. The column is nullable and unused by old code, so a code revert is safe, but dropping the column later loses any stored preferences. Roll back by reverting the code and leaving the column in place.
+- **Blast radius:** public API consumers (new mutation, new field on `me`) and the user table.
 
 ### Testing instructions
 
@@ -464,6 +496,10 @@ SELECT notification_preference, COUNT(*) FROM "user"
 GROUP BY notification_preference ORDER BY COUNT(*) DESC;
 ```
 
+### Evidence
+
+Tier 2: GraphQL responses for set, read, unauthenticated and invalid-value calls, plus the output of the `information_schema` query.
+
 ### Product changes
 - Users can set notification preference from profile settings
 - Default is unset until user makes explicit choice
@@ -492,6 +528,11 @@ Added a 15-second cooldown on the checkout confirm button. On click, the button 
 - Checkout payment form - added cooldown logic to submit handler
 - Checkout confirm template - added processing text data attribute to button
 - Payment form tests - button state tests
+
+### Merge danger
+
+- **Reversibility:** Two-way door. Front-end behavior only, and a revert restores the old button.
+- **Blast radius:** every customer who pays at checkout, on web and mobile web.
 
 ### Testing instructions
 
@@ -575,6 +616,10 @@ WHERE created_at > NOW() - INTERVAL '1 hour'
 GROUP BY checkout_session_id
 HAVING COUNT(*) > 1;
 ```
+
+### Evidence
+
+Tier 1: screen recording of the button disabling on click and re-enabling after a declined card.
 
 ### Product changes
 - Checkout confirm button shows "Processing..." and disables during payment

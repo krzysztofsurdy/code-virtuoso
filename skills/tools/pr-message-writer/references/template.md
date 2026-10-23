@@ -60,6 +60,15 @@ Describe changes grouped by logical area. Use sub-headings or bullet points for 
 - Message queue changes
 - Async processing additions
 
+### Merge danger
+
+Required for every PR type. Two lines, no more unless the change is a one-way door.
+
+- **Reversibility:** `Two-way door` (a revert undoes it cleanly) or `One-way door` (hard to undo once merged or shipped). One line saying which and why. For a one-way door, add the rollback or recovery path in the same line or one bullet under it.
+- **Blast radius:** the scope of impact in a word or short phrase, such as `isolated`, `shared layout`, `public API consumers`, `mobile`, or `data`. Name what could break beyond the obvious.
+
+Typical one-way doors: destructive or lossy migrations, data backfills, published API contracts, sent emails or events, removed flags or endpoints.
+
 ### Testing instructions
 
 **Audience: QA with zero codebase knowledge.** No code references: no file names, class names, method names, or internal architecture terms.
@@ -181,13 +190,23 @@ LEFT JOIN parent_table p ON c.parent_id = p.id
 WHERE p.id IS NULL;
 ```
 
+### Evidence
+
+Required for every PR type. Show that the change works, using the highest tier the change allows:
+
+1. Screenshot or screen recording (strongest): any change with visible behavior.
+2. Execution or test output: command output, test run, API response, query result.
+3. Before/after: old and new behavior side by side, when neither of the above fits.
+
+State the tier used. If a higher tier was possible and is missing, say why.
+
 ### Product changes
 
 If the PR affects user-facing behavior, describe:
 - What changes the end user will see
-- Screenshots or screen recordings if applicable
 - Any feature flags controlling the rollout
-- Rollback plan if issues are discovered
+
+Reversibility and rollback belong in Merge danger, not here.
 
 ---
 

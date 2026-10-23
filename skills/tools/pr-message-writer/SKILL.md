@@ -9,6 +9,8 @@ argument-hint: "[optional: branch-name or ticket-id]"
 
 Write structured pull request descriptions by analyzing the code changes and following the template in this skill.
 
+<!-- Merge danger and Evidence sections: idea from Humanlayer's show-me, via Matt Pocock's pr skill. Re-authored, no text copied. -->
+
 ## Workflow
 
 ### Step 1: Gather context
@@ -49,6 +51,11 @@ Read every changed file and understand:
 Use the PR message template for structure: [template](references/template.md)
 
 Review real-world examples for tone and detail level: [examples](references/examples.md)
+
+Every PR, whatever its type, carries two short sections after "What have I changed":
+
+- **Merge danger:** Reversibility (one-way or two-way door, with one line of why) and Blast radius (the scope of impact in a word or phrase). Judge both from the diff, not from the ticket.
+- **Evidence:** a screenshot or recording is strongest, then execution or test output, then a before/after. Ask the user for the highest tier the change allows, and state which tier the PR uses.
 
 ### Step 4: Match change type to categories
 
@@ -141,6 +148,8 @@ Before finalizing the PR message, check that:
 - [ ] Database verification queries are included for any schema changes
 - [ ] Product-facing changes are called out explicitly
 - [ ] No sensitive data (secrets, tokens, internal URLs) is included
+- [ ] "Merge danger" states reversibility (one-way or two-way door, with why) and blast radius
+- [ ] "Evidence" uses the highest tier the change allows and names the tier
 - [ ] Migration steps are documented if applicable
 - [ ] Breaking changes are highlighted prominently
 
@@ -166,9 +175,8 @@ Before finalizing the PR message, check that:
 
 ### Database migration
 - List all schema changes (new tables, columns, indexes)
-- Note if migration is reversible
 - Flag any data migrations that touch existing rows
-- Include rollback instructions if applicable
+- Reversibility and rollback go in Merge danger (a lossy or irreversible migration is a one-way door, with the recovery path), not in a separate list
 
 ## Reference files
 
