@@ -14,10 +14,8 @@ Copy-paste HTML for every component that `template.html` styles. All components 
 Icons come from [Bootstrap Icons](https://icons.getbootstrap.com/) via CDN (already included in the template).
 
 ```html
-<div class="section mb-9">
-    <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
-        <i class="bi bi-search"></i> Root Cause Analysis
-    </h2>
+<div class="section">
+    <h2><i class="bi bi-search"></i> Root Cause Analysis</h2>
     <p>Description text here...</p>
 </div>
 ```
