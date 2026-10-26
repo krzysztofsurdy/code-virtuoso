@@ -30,6 +30,8 @@ source "$SCRIPT_DIR/lib/pipelines.sh"
 source "$SCRIPT_DIR/lib/preflight.sh"
 # shellcheck source=./lib/migrate.sh
 source "$SCRIPT_DIR/lib/migrate.sh"
+# shellcheck source=./lib/invoke.sh
+source "$SCRIPT_DIR/lib/invoke.sh"
 
 loop_migrate_start "${1:-}" || exit 1
 backlog_file="${LOOP_BACKLOG_ARG:-$(loop_default_backlog .)}"
@@ -189,18 +191,12 @@ while true; do
   # common under a Claude subscription rather than API billing) the plan's
   # usage/rate limit. That gets its own stop reason instead of silently
   # counting as a stall or burning through retries against an active limit.
-  claude_stderr_file="$(mktemp)"
-  claude_json="$( (cd "$repo_dir" && claude "${claude_args[@]}") 2>"$claude_stderr_file" )" || true
-  claude_stderr="$(cat "$claude_stderr_file")"
-  rm -f "$claude_stderr_file"
+  invoke_claude "$repo_dir" "${claude_args[@]}"
+  claude_json="$INVOKE_JSON"
 
   if ! echo "$claude_json" | jq -e '.result // empty' >/dev/null 2>&1; then
     stop_reason="invocation_failed"
-    hint="other (see detail)"
-    echo "$claude_stderr" | grep -qiE 'usage limit|rate limit|quota|too many requests|overloaded|billing' \
-      && hint="likely a usage/rate limit"
-    detail="$(echo "$claude_stderr" | tr '\n' ' ' | cut -c1-200)"
-    log_line "stop reason=invocation_failed hint=\"$hint\" detail=\"$detail\""
+    log_line "stop reason=invocation_failed hint=\"$(invoke_failure_hint "$INVOKE_STDERR")\" detail=\"$(invoke_failure_detail "$INVOKE_STDERR")\""
     break
   fi
 

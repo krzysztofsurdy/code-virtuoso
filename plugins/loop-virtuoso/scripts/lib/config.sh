@@ -11,6 +11,7 @@
 # local). A key set in the backlog's own "config" object wins over them.
 
 CV_DIR_NAME=".code-virtuoso"
+CV_DEFAULT_TEST_GLOBS='["tests/**","**/*Test.php","**/*_test.*","**/*.spec.*","**/test_*.py"]'
 
 # cv_root_for <path-to-backlog-or-dir>
 # <root> for a backlog at <root>/.code-virtuoso/loop/backlog.json; otherwise the
@@ -62,6 +63,19 @@ cv_merged_config() {
 # cv_loop_setting <root> <key>: one key of the "loop" namespace as compact JSON; nothing if unset.
 cv_loop_setting() {
   cv_merged_config "$1" | jq -c --arg key "$2" '.loop[$key] // empty'
+}
+
+# cv_guard_setting <root> <key>: one key of loop.guard as compact JSON; nothing if unset or false.
+cv_guard_setting() {
+  cv_merged_config "$1" | jq -c --arg key "$2" '(.loop.guard[$key])? // empty'
+}
+
+# cv_test_globs <root>: loop.guard.testGlobs when it is an array, else the default.
+cv_test_globs() {
+  local globs
+  globs="$(cv_guard_setting "$1" testGlobs)"
+  [[ "$(echo "${globs:-null}" | jq -r 'type')" == "array" ]] || globs="$CV_DEFAULT_TEST_GLOBS"
+  echo "$globs"
 }
 
 # cv_ensure_gitignore <root>

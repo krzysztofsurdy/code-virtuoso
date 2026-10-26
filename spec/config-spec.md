@@ -93,7 +93,7 @@ JSON with a top-level `"version": 1` and one namespace per consumer.
 |---|---|---|
 | `ticket-delivery` | Ticket workflow settings, read by the loop plugin | Tracker, VCS, tooling, test, and PR conventions for the ticket workflow |
 | `agents.<agent-name>` | The agent with that name | The agent's tuning settings, one object per agent |
-| `loop` | The loop plugin | Delivery loop settings only: `maxIterations`, `permissionMode`, `allowedPaths`, `protectedPaths` |
+| `loop` | The loop plugin | Delivery loop settings: `maxIterations`, `permissionMode`, `allowedPaths`, `protectedPaths`. `guard` holds the opt-in guard hooks, all off by default: `blockSecrets` (boolean), `protectTests` (`"ask"`, `"deny"` or `false`), `testGlobs` (array of globs), `stopGate` (boolean; runs `ticket-delivery.commands`; stopGate is read only from the user and local layers). `evalSetup.vanillaArgs` (array of strings) replaces the default `["--safe-mode"]` arguments of the eval-setup vanilla arm |
 
 `protectedPaths` is the one exception to the array-replace rule: the loop plugin combines the lists from every layer instead of replacing them, so a project can add protected paths but never remove a user's.
 

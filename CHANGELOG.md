@@ -4,6 +4,21 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.1.0] - 2026-10-26
+
+### Added
+- `loop-virtuoso` 2.1.0: guardrails and setup tooling for Claude Code sessions outside a loop. All new guards are off by default, so existing installs see no change
+  - Opt-in guard hooks in the `loop.guard` config namespace: `blockSecrets` blocks tool calls on secret files, `protectTests` asks before or denies edits to committed test files, `stopGate` runs the lint, static analysis and test commands from `ticket-delivery.commands` before a session stops
+  - `/loop-virtuoso:harden`: a dry-run diff of a settings baseline (attribution, deny and ask rules, `loop.guard` defaults, optional statusline, telemetry and sandbox), applied only after approval
+  - `/loop-virtuoso:doctor`: a read-only audit of the Claude Code setup (duplicate skills and agents, skill listing size, dead CLAUDE.md references, plaintext MCP secrets by key name, settings gaps, orphan plugin caches)
+  - `/loop-virtuoso:eval-setup`: measures the setup against vanilla Claude Code on a task suite (pass@k, pass^k, delta, cost)
+  - `/loop-virtuoso:scaffold`: devcontainer, issue-to-PR workflow and pilot backlog templates
+  - `iteration-loop` references `guardrails.md`, `observability.md` and `setup-evals.md`
+- `test-scripts` GitHub Actions workflow: runs the Python script tests, the `loop-virtuoso` shell suite and the `hooks-and-guardrails` hook tests on pushes and pull requests to `main`
+
+### Changed
+- `spec/config-spec.md` documents the `loop.guard` and `loop.evalSetup.vanillaArgs` keys
+
 ## [11.0.0] - 2026-10-26
 
 ### Removed

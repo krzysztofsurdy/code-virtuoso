@@ -68,7 +68,7 @@ verify_gate_run() {
     has_changes=1
     # Layer 2 of the write-boundary guard: checks the resulting tree state,
     # not which tool produced it, so it catches what PreToolUse misses.
-    if backlog_path_is_protected "$path" "$protected"; then
+    if paths_match_any "$path" "$protected"; then
       violating+=("$path")
     elif ! git -C "$repo_dir" cat-file -e "${start_sha}:${path}" 2>/dev/null \
          && ! _verify_gate_new_file_allowed "$path" "$allowed"; then
@@ -144,7 +144,7 @@ _verify_gate_new_file_allowed() {
   local rel="$1" allowed="$2"
   _verify_gate_is_sensitive "$rel" && return 1
   [[ -z "$allowed" || "$allowed" == "null" ]] && return 0
-  backlog_path_is_protected "$rel" "$allowed"
+  paths_match_any "$rel" "$allowed"
 }
 
 # _verify_gate_revert_paths <repo_dir> <start_sha> <repo_relative_path>...
@@ -197,7 +197,7 @@ _verify_gate_checkpoint() {
   while IFS= read -r path; do
     [[ -z "$path" ]] && continue
     _verify_gate_in_cv_dir "$path" && continue
-    backlog_path_is_protected "$path" "$protected" && continue
+    paths_match_any "$path" "$protected" && continue
     _verify_gate_new_file_allowed "$path" "$allowed" || continue
     git -C "$repo_dir" add -- "$path" >/dev/null 2>&1 || true
   done < <(git -C "$repo_dir" -c core.quotepath=off ls-files --others --exclude-standard 2>/dev/null)

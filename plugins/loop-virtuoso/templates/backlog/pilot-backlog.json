@@ -1,0 +1,70 @@
+{
+  "project": "pilot",
+  "branch": "chore/loop_pilot",
+  "description": "Pilot run from /loop-virtuoso:scaffold: two behaviour-preserving cleanups that show how the loop works on this repository. EDIT BEFORE STARTING: every verifyCommand and the Bash entries in allowedTools assume `make lint` (static analysis) and `make test` (test suite); replace them with your project's real commands, and list your analyser config files in protectedPaths so the loop cannot weaken them.",
+  "config": {
+    "maxIterations": 8,
+    "maxAttemptsPerItem": 3,
+    "maxStallIterations": 2,
+    "maxViolations": 2,
+    "protectedPaths": [
+      "tests/**",
+      "Makefile",
+      "phpstan*.neon*",
+      "psalm.xml*",
+      "eslint.config.*",
+      ".eslintrc*",
+      "tsconfig*.json",
+      "pyproject.toml",
+      "mypy.ini",
+      "setup.cfg",
+      ".github/**",
+      ".devcontainer/**"
+    ],
+    "permissionMode": "acceptEdits",
+    "allowedTools": ["Read", "Edit", "Write", "Glob", "Grep",
+      "Bash(make lint*)", "Bash(make test*)",
+      "Bash(git status*)", "Bash(git diff*)", "Bash(git log*)", "Bash(git add *)", "Bash(git commit *)"],
+    "totalBudgetUsd": 5,
+    "perIterationBudgetUsd": 1,
+    "perIterationMaxTurns": 30
+  },
+  "items": [
+    {
+      "id": "ITEM-001",
+      "title": "Fix static analysis findings one level stricter",
+      "description": "Before starting the loop, raise your static analyser by one level (for example the PHPStan level, a stricter mypy or tsc flag, or one more ESLint rule) and commit that change on the pilot branch. The analyser config is protected, so the loop has to fix the code, not the config. Fix every finding without changing behaviour.",
+      "acceptanceCriteria": [
+        "`make lint` exits 0 at the stricter level",
+        "No ignore comments, baseline entries or config changes were added to silence findings",
+        "`make test` still exits 0"
+      ],
+      "priority": 1,
+      "steps": [
+        {
+          "id": "implement",
+          "instructions": "Run `make lint`, fix each reported finding in the source code without changing behaviour, and repeat until it passes. Do not add suppressions, baseline entries or ignore comments.",
+          "verifyCommand": "make lint && make test"
+        }
+      ]
+    },
+    {
+      "id": "ITEM-002",
+      "title": "Remove unused imports and unreachable private code",
+      "description": "Delete imports, private methods and private constants that nothing references. Public API stays untouched.",
+      "acceptanceCriteria": [
+        "No unused imports remain in the source tree",
+        "No public class, function or route was removed or renamed",
+        "`make lint` and `make test` exit 0"
+      ],
+      "priority": 2,
+      "steps": [
+        {
+          "id": "implement",
+          "instructions": "Find unused imports and unreferenced private members with Grep and the analyser output, delete them, and keep every public symbol as it is.",
+          "verifyCommand": "make lint && make test"
+        }
+      ]
+    }
+  ]
+}
