@@ -31,6 +31,10 @@ An agent that can write the files grading its own work will sometimes game the c
 | `/loop-virtuoso:start [backlog]` | Start the session-supervised loop (Mode A) over the backlog (default `<git root>/.code-virtuoso/loop/backlog.json`). Refuses to start on a dirty tree or on the default branch; see "Start-of-run checks". |
 | `/loop-virtuoso:status [backlog]` | Report verified/pending/blocked counts (item and step level), iteration vs. max, stall/violation counts, and the progress-log/events tail. Cost is Mode B-only, tracked in its own run output, not shown here. |
 | `/loop-virtuoso:cancel` | Remove the session-local file to stop the loop and record a `run_stopped` event with reason `cancelled`; the backlog is left untouched. |
+| `/loop-virtuoso:harden [--scope user\|project] [--with statusline,telemetry,sandbox]` | Show a dry-run diff of a guardrail baseline for your Claude Code settings and the `loop.guard` defaults; applies it only after you approve. See "Harden and the statusline". |
+| `/loop-virtuoso:doctor` | Read-only audit of your Claude Code setup: duplicate skills and agents, skill listing size, dead CLAUDE.md skill references, plaintext MCP secrets (key names only), settings gaps, orphan plugin caches. |
+| `/loop-virtuoso:eval-setup [suite] [-k N] [--arms setup,vanilla] [--max-cost-usd N]` | Measure your setup against vanilla Claude Code on a fixed task suite: pass@k, pass^k, delta, cost. Dry run first; real runs cost money. |
+| `/loop-virtuoso:scaffold <devcontainer\|issue-to-pr\|pilot-backlog> [--force]` | Copy a starter template to the git root. Refuses to overwrite; `--force` backs up first. |
 | `/loop-virtuoso:help` | Show a short overview of the plugin and its commands. |
 
 ## Two modes
@@ -116,6 +120,65 @@ Starting a run never moves its backlog (apart from the one-time migration above)
 `/loop-virtuoso:cancel` is not one of these: it records `run_stopped` with reason `cancelled` and removes the session file.
 
 For the authoritative detail on stop reasons, the write-boundary guard, and the backlog schema, see the `iteration-loop` and `backlog-compiler` skills shipped with this plugin.
+
+## Guard hooks (opt-in)
+
+The loop's own hooks act only while a loop runs. Three more hooks cover ordinary sessions. Each is off until you turn it on in the `loop` namespace of any config layer, so installing or updating the plugin changes nothing by itself:
+
+```json
+{ "loop": { "guard": { "blockSecrets": true, "protectTests": "ask", "stopGate": true } } }
+```
+
+| Key | Hook | Effect |
+|---|---|---|
+| `blockSecrets: true` | `guard-secrets.sh` (`PreToolUse`) | Blocks Read, Grep, Glob, Edit, Write, MultiEdit, NotebookEdit and Bash calls aimed at `.env` files, private keys, `.ssh/`, `.aws/`, `.gnupg/` and similar, and bare `printenv` or `env`. Template files such as `.env.example` stay readable. Also acts inside a loop. |
+| `protectTests: "ask"` or `"deny"` | `guard-tests.sh` (`PreToolUse`) | Asks before, or denies, an edit to a file that matches `testGlobs` and already exists in `HEAD`. New test files are always allowed, so test-first work is never interrupted. |
+| `testGlobs` | `guard-tests.sh` | Which files count as tests. Default: `tests/**`, `**/*Test.php`, `**/*_test.*`, `**/*.spec.*`, `**/test_*.py`. |
+| `stopGate: true` | `guard-stop.sh` (`Stop`) | With uncommitted changes, runs `ticket-delivery.commands.lint`, `.staticAnalysis` and `.test` (those that are set) before the session ends, and blocks the stop with the last 40 lines of the first failing command. |
+
+Inside a loop, `protectedPaths` and the verify gate take over from `protectTests` and `stopGate`, which then do nothing. The test guard sees tool calls only: a Bash command that rewrites a test file is caught by the loop's git-diff audit, not outside a loop. Full detail: `references/guardrails.md` in the `iteration-loop` skill.
+
+## Harden and the statusline
+
+A plugin cannot set `permissions`, `attribution`, `sandbox`, `statusLine` or `env`. `/loop-virtuoso:harden` runs `scripts/harden.sh`, which proposes them as a unified diff to your own settings and changes nothing until you approve:
+
+- **Baseline:** empty commit and PR attribution, `permissions.deny` for `.env` files, `~/.ssh` and `~/.aws`, `permissions.ask` for `git push`, `git branch -D`, `git reset --hard` and `composer require|remove|update`, and `loop.guard` with `blockSecrets: true` and `protectTests: "ask"`.
+- **Options:** `--with sandbox` (sandbox on, minimal network allowlist), `--with telemetry` (OpenTelemetry with the console exporter), `--with statusline` (installs the loop statusline). Telemetry and the statusline need `--scope user`.
+- **Merge:** nothing you set is removed or replaced, arrays gain only the entries they lack, each changed file gets a `<file>.bak.<timestamp>` backup, and a second apply writes nothing.
+
+`--scope user` (the default) writes `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json` and your user `config.json`; `--scope project` writes `<git root>/.claude/settings.json` and `.code-virtuoso/config.json`.
+
+The statusline (`scripts/statusline.sh`) prints directory, branch, model, session cost, context use and, while a loop runs, `loop i/max`. `harden --with statusline` copies it into the code-virtuoso config home, so the `statusLine` path survives plugin updates. Detail: `references/observability.md` in the `iteration-loop` skill.
+
+## Doctor
+
+`/loop-virtuoso:doctor` runs `scripts/doctor.sh`, a read-only audit of `${CLAUDE_CONFIG_DIR:-~/.claude}` and `~/.claude.json`. It writes nothing. Each finding has a check id, a severity (high, medium, low), where it is, and the fix:
+
+- duplicate skill and agent names across your own files, synced skills and enabled plugins;
+- the skill listing size against an estimated budget of about 8,000 characters (1% of a 200k-token context);
+- a global CLAUDE.md over 200 lines, and `/name` references to skills that are missing or have `disable-model-invocation: true`;
+- plaintext secrets in MCP server `env` and `headers`, reported by server and key name only, never the value;
+- settings gaps (attribution, deny and ask rules, statusline, telemetry, no `loop.guard` hook on) and plugin cache directories that nothing references.
+
+`doctor.sh --json` prints the same report as JSON. Settings findings point to `/loop-virtuoso:harden`.
+
+## Measuring your setup
+
+`/loop-virtuoso:eval-setup` runs `scripts/eval-setup.sh`, which answers whether your CLAUDE.md, skills, plugins, hooks and MCP servers help on your own work. It runs every task in `.code-virtuoso/loop/evals/suite.json` k times in two arms: **setup** (a plain `claude -p`) and **vanilla** (the same call with `--safe-mode`, or `loop.evalSetup.vanillaArgs` when set). Each trial runs in a throwaway git worktree and is graded by the task's literal `verifyCommand`.
+
+The report gives pass@k, pass^k and cost per task and arm, and the setup minus vanilla delta. Each run appends a line to `.code-virtuoso/loop/evals/history.jsonl`, so you can compare runs over time. A real run makes tasks x arms x k paid calls, so the command always does a `--dry-run` first and asks before running; `--max-cost-usd` caps the spend. How to pick tasks and read the results: `references/setup-evals.md` in the `iteration-loop` skill.
+
+## Templates
+
+`/loop-virtuoso:scaffold <kind>` copies a starter template to the git root:
+
+| Kind | Writes |
+|---|---|
+| `devcontainer` | `.devcontainer/` with `devcontainer.json`, `Dockerfile` and `init-firewall.sh`: a non-root user, a default-deny egress firewall with an allowlist, no host credential mounts |
+| `issue-to-pr` | `.github/workflows/claude-issue-to-pr.yml`: a labelled issue or an `@claude` mention becomes a draft pull request from a `claude/issue-<n>` branch |
+| `pilot-backlog` | `.code-virtuoso/loop/backlog.json`: two low-risk items for a first `/loop-virtuoso:start` run |
+
+It refuses to overwrite an existing file and then writes nothing. `--force` first copies each existing file to `<file>.bak.<timestamp>`. It never replaces the backlog while a loop is active.
 
 ## Fits with other Code Virtuoso skills
 

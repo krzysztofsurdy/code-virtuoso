@@ -18,7 +18,21 @@ loop-virtuoso runs a deterministic, backlog-driven autonomous execution loop. It
 | `/loop-virtuoso:start [backlog]` | Start Mode A over the backlog (default `.code-virtuoso/loop/backlog.json` at the git root). Needs a clean working tree and refuses to run on the default branch. |
 | `/loop-virtuoso:status [backlog]` | Report counts, iteration, stall/violation counts, and the progress-log and events tails. |
 | `/loop-virtuoso:cancel` | Stop the loop and record a `cancelled` event; backlog state is preserved. |
+| `/loop-virtuoso:harden [--scope user\|project] [--with statusline,telemetry,sandbox]` | Show a dry-run diff of a guardrail baseline for your Claude Code settings; applies it only after you approve. |
+| `/loop-virtuoso:doctor` | Read-only audit of your Claude Code setup: duplicate skills and agents, skill listing size, dead CLAUDE.md skill references, plaintext MCP secrets (key names only), settings gaps, orphan plugin caches. |
+| `/loop-virtuoso:eval-setup [suite] [-k N]` | Measure your setup (CLAUDE.md, skills, plugins) against vanilla Claude Code (`--safe-mode`) on a fixed task suite: pass@k, pass^k, delta, cost. Dry run first; real runs cost money. |
+| `/loop-virtuoso:scaffold <devcontainer\|issue-to-pr\|pilot-backlog> [--force]` | Copy a starter template to the git root. Refuses to overwrite; `--force` backs up first. |
 | `/loop-virtuoso:help` | Show this overview. |
+
+## Guard hooks (opt-in)
+
+Three hooks guard ordinary sessions that run no loop (the secrets guard also acts inside one). All are off until you set them in the `loop.guard` config namespace:
+
+- `blockSecrets: true` blocks tool calls aimed at secret files (`.env`, keys, `~/.ssh`).
+- `protectTests: "ask"` or `"deny"` asks before, or denies, edits to test files already committed; `testGlobs` sets which files count. New test files are always allowed.
+- `stopGate: true` runs the lint, static analysis and test commands from `ticket-delivery.commands` before the session stops, and blocks the stop when one fails.
+
+`/loop-virtuoso:harden` can turn on `blockSecrets` and `protectTests` for you. See `references/guardrails.md` in the `iteration-loop` skill.
 
 ## Getting a backlog
 

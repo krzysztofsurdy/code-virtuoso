@@ -2,6 +2,16 @@
 
 A CLAUDE.md, a set of skills, plugins, hooks and MCP servers all cost context and attention on every call. Whether they pay for it is an empirical question: the same model with none of them may do as well on your work. `scripts/eval-setup.sh` (or `/loop-virtuoso:eval-setup`) answers it on a fixed task suite: each task runs k times with your setup and k times with a vanilla Claude Code, and a literal `verifyCommand` grades every trial.
 
+## Contents
+
+- [Pick the tasks](#pick-the-tasks)
+- [Suite format](#suite-format)
+- [Run it](#run-it)
+- [Read the results](#read-the-results)
+- [The vanilla arm](#the-vanilla-arm)
+- [Cost control](#cost-control)
+- [Going deeper](#going-deeper)
+
 ## Pick the tasks
 
 About 20 tasks is enough to see a real difference and cheap enough to rerun. Take them from work that went wrong, not from invented exercises:

@@ -2,6 +2,16 @@
 
 The loop's own hooks (`guard-protected-paths.sh`, `stop-hook.sh`) only act while a loop session is active. The three guard hooks below cover the rest of the time: an ordinary interactive session in a project that has the plugin installed. Each one is off until the `loop.guard` namespace of the shared config turns it on. With no config, every guard exits 0 without output and has no effect.
 
+## Contents
+
+- [Configuration](#configuration)
+- [`guard-secrets.sh`](#guard-secretssh)
+- [`guard-tests.sh`](#guard-testssh)
+- [`guard-stop.sh`](#guard-stopsh)
+- [Coexisting with the loop's own hooks](#coexisting-with-the-loops-own-hooks)
+- [Limits](#limits)
+- [Settings and audit](#settings-and-audit)
+
 ## Configuration
 
 Set the keys in any config layer (user `config.json`, project `.code-virtuoso/config.json`, or `.code-virtuoso/config.local.json`). Layers deep-merge as described in `spec/config-spec.md`.
@@ -78,4 +88,33 @@ A loop session means `<git root>/.code-virtuoso/loop/state/session.local.json` e
 
 ## Settings and audit
 
-The `harden` and `doctor` commands are documented in their own sections.
+The guard hooks cover what a plugin can enforce. Two commands cover the rest of the setup.
+
+### Harden
+
+`/loop-virtuoso:harden` proposes the settings a plugin cannot ship (`permissions`, `attribution`, `sandbox`, `statusLine`, `env`) plus the `loop.guard` defaults `blockSecrets: true` and `protectTests: "ask"`, as a diff you approve before anything is written. It leaves `stopGate` for you to set per project, next to `ticket-delivery.commands`. Baseline, merge rules and options: `observability.md`, section "Settings: harden".
+
+### Doctor
+
+`/loop-virtuoso:doctor` runs `scripts/doctor.sh [--json]`, a read-only audit of `${CLAUDE_CONFIG_DIR:-~/.claude}` and `~/.claude.json`. It never writes a file and exits 0 whether or not it finds anything (2 on bad usage or an internal error).
+
+| Check id | Severity | Finds |
+|---|---|---|
+| `duplicate-skill` | medium | One skill name defined more than once across `~/.claude/skills`, `skills/synced/` and the enabled plugins |
+| `duplicate-agent` | medium | One agent name defined more than once across `~/.claude/agents` and the enabled plugins |
+| `skill-listing` | medium over budget, low above 80% of it | The listing of model-invocable skills (name plus description and `when_to_use`, each capped at 1,536 characters) against the budget |
+| `claude-md-size` | medium | A global CLAUDE.md over 200 lines |
+| `claude-md-ref` | medium | A `-> use /name` or `` `/name` `` reference in the global CLAUDE.md that resolves to no installed skill or command, or to a skill with `disable-model-invocation: true`. Built-in commands are skipped |
+| `mcp-secret` | high | A literal value for a secret-like key (`key`, `token`, `secret`, `passw`, `auth`, `credential`) in an MCP server's `env` or `headers`, top-level or per project. Values that reference `${VAR}` are skipped |
+| `settings-attribution`, `settings-deny` | medium | No `attribution` key; no `permissions.deny` rules |
+| `settings-ask`, `settings-statusline`, `settings-telemetry` | low | No `permissions.ask` rules; no `statusLine`; `env.CLAUDE_CODE_ENABLE_TELEMETRY` not `1` or `true` |
+| `loop-guard` | low | None of `blockSecrets`, `protectTests`, `stopGate` turned on in the user config layer |
+| `orphan-cache` | low | A `plugins/cache/<marketplace>/<plugin>/<version>/` directory that `installed_plugins.json` does not reference |
+| `invalid-json` | medium | `settings.json`, `installed_plugins.json`, `known_marketplaces.json`, `~/.claude.json` or the user `config.json` that is not valid JSON; the file is skipped |
+
+- **Listing budget.** The budget is 1% of the context window. The script assumes a 200k-token window and about 4 characters per token, so about 8,000 characters. `/context` shows the real figure.
+- **Secrets by name only.** An `mcp-secret` finding names the server and the key, never the value, so the report is safe to paste. Rotate the key after moving it to an environment variable.
+- **Settings scope.** The `settings-*` checks read the user `settings.json` only; project settings are not audited.
+- **`--json` shape.** `{"configDir", "listing": {"skills", "chars", "budget"}, "findings": [{"check", "severity", "what", "where", "fix"}], "summary": {"high", "medium", "low"}}`, with findings sorted high to low.
+
+The `/loop-virtuoso:doctor` command relays the report verbatim, offers `harden` for `settings-*` and `loop-guard` findings, and never deletes skills, agents or caches without asking.

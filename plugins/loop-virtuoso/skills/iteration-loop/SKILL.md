@@ -1,6 +1,6 @@
 ---
 name: iteration-loop
-description: Explains how the autonomous delivery loop runs over .code-virtuoso/loop/backlog.json, where it keeps its plan and state, and what each stop reason means. Use after backlog-compiler produces a backlog or when asked how the loop works. The /loop-virtuoso:start command runs it.
+description: Explains how the autonomous delivery loop runs over .code-virtuoso/loop/backlog.json, its state and stop reasons, the opt-in loop.guard hooks, and the harden, doctor and eval-setup commands. Use after backlog-compiler produces a backlog, or when asked how the loop or its guardrails work.
 user-invocable: false
 ---
 
@@ -43,7 +43,7 @@ Starting never archives the backlog. The one exception is the one-time migration
 
 `/loop-virtuoso:start [path-to-backlog]` (defaults to `.code-virtuoso/loop/backlog.json` at the git root) runs `scripts/setup-start.sh`, which:
 1. Runs the start-of-run checks above and requires a Claude Code session id, so only the session that started the loop can drive it.
-2. Writes `<git root>/.code-virtuoso/loop/state/session.local.json`, the only thing that arms the hooks in `hooks/hooks.json`. The hooks find it from the git root, so the session's working directory does not matter. Without this file, both hooks no-op immediately and the plugin has zero effect on a normal session.
+2. Writes `<git root>/.code-virtuoso/loop/state/session.local.json`, the only thing that arms the hooks in `hooks/hooks.json`. The hooks find it from the git root, so the session's working directory does not matter. Without this file, both loop hooks no-op immediately. In a normal session only the opt-in guard hooks act, and only when `loop.guard` turns them on (see `references/guardrails.md`).
 3. Creates `.code-virtuoso/.gitignore` (`*.local.json`, `loop/state/`) if it is missing, starts `state/progress.log`, and prints the first step's prompt.
 
 From there, every time you try to end the turn, the `Stop` hook in `hooks/stop-hook.sh` intercepts: it runs the verification gate against the step you just worked on, applies the result via `scripts/lib/backlog.sh`, and either feeds back the next step's prompt (`{"decision":"block","reason":...}`) or lets the session end because a stop-reason below was reached.
@@ -100,3 +100,13 @@ A run that ends with `complete` leaves the plan, the archive, and the checkpoint
 Good fit: well-defined backlogs with objective, scriptable acceptance criteria - schema changes, endpoint implementations, component additions, dependency bumps, test-coverage gaps.
 
 Bad fit: work whose "done" genuinely requires human judgment (visual design review, UX calls, architectural decisions), or a backlog item you couldn't write a `verifyCommand` for - if `backlog-compiler` couldn't turn a criterion into a command, don't run it through this loop; do it directly instead.
+
+## Reference Files
+
+| Reference | Open when |
+|---|---|
+| [stop-reasons](references/stop-reasons.md) | A run stopped and you need what each reason means and what to do next |
+| [write-boundary](references/write-boundary.md) | You need the full protected-path guard, tamper check and git-diff audit |
+| [guardrails](references/guardrails.md) | Configuring the opt-in `loop.guard` hooks (secrets, test files, stop gate), or reading `/loop-virtuoso:doctor` findings |
+| [observability](references/observability.md) | Setting up the statusline or telemetry, reading loop cost and events, or applying `/loop-virtuoso:harden` |
+| [setup-evals](references/setup-evals.md) | Measuring the setup against vanilla Claude Code with `/loop-virtuoso:eval-setup`: suite format, pass@k vs pass^k, cost control |
