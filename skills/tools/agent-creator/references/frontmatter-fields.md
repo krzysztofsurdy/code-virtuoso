@@ -98,9 +98,8 @@ Skills whose content is injected into the agent's context at startup. Sub-agents
 
 ```yaml
 skills:
-  - clean-architecture
-  - design-patterns
-  - api-design
+  - security
+  - debugging
 ```
 
 Rules:

@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "70 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
-    "version": "10.5.0"
+    "version": "11.0.0"
   },
   "plugins": [
     {
@@ -15,23 +15,11 @@
       "strict": false,
       "skills": [
         "./knowledge/accessibility",
-        "./knowledge/agent-security",
-        "./knowledge/api-design",
-        "./knowledge/cicd",
-        "./knowledge/clean-architecture",
         "./knowledge/context-engineering",
-        "./knowledge/database-design",
         "./knowledge/debugging",
-        "./knowledge/design-patterns",
         "./knowledge/docs-lookup",
-        "./knowledge/microservices",
-        "./knowledge/motion-design",
         "./knowledge/performance",
-        "./knowledge/refactoring",
-        "./knowledge/scrum",
-        "./knowledge/security",
-        "./knowledge/solid",
-        "./knowledge/testing"
+        "./knowledge/security"
       ]
     },
     {
@@ -44,17 +32,15 @@
         "./tools/agentic-rules-writer",
         "./tools/brainstorming",
         "./tools/communication-style",
-        "./tools/image-annotate",
         "./tools/plugin-creator",
         "./tools/pr-message-writer",
         "./tools/report-writer",
         "./tools/research",
-        "./tools/skill-writer",
+        "./tools/skill-creator",
+        "./tools/skill-measure",
         "./tools/stakeholder-update-writer",
         "./tools/ticket-writer",
-        "./tools/ui-review",
-        "./tools/using-ecosystem",
-        "./tools/web-screenshot"
+        "./tools/ui-review"
       ]
     },
     {
@@ -68,13 +54,9 @@
         "./playbooks/handoff",
         "./playbooks/hooks-and-guardrails",
         "./playbooks/pr-feedback",
-        "./playbooks/retro",
         "./playbooks/security-research",
         "./playbooks/spec-driven-development",
-        "./playbooks/tdd",
-        "./playbooks/ticket-delivery",
-        "./playbooks/video-production",
-        "./playbooks/worktree-ops"
+        "./playbooks/tdd"
       ]
     },
     {
@@ -83,16 +65,10 @@
       "source": "./skills",
       "strict": false,
       "skills": [
-        "./frameworks/django/django-components",
         "./frameworks/godot/godot",
         "./frameworks/godot/godot-upgrade",
-        "./frameworks/langchain/langchain-components",
         "./frameworks/php/php-upgrade",
         "./frameworks/php/composer-dependencies",
-        "./frameworks/php/php-quality",
-        "./frameworks/symfony/doctrine-orm",
-        "./frameworks/symfony/symfony-components",
-        "./frameworks/symfony/symfony-testing",
         "./frameworks/symfony/symfony-upgrade",
         "./frameworks/vercel/vercel-ai-sdk"
       ]
@@ -103,10 +79,8 @@
       "source": "./skills",
       "strict": false,
       "skills": [
-        "./ai/agent-design",
         "./ai/llm-evals",
-        "./ai/llm-observability",
-        "./ai/mcp-server-development"
+        "./ai/llm-observability"
       ]
     },
     {
@@ -115,7 +89,6 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/knowledge/agent-orchestration",
         "./skills/knowledge/verification-before-completion",
         "./skills/tools/review-pr",
         "./skills/tools/review-pr-cold",

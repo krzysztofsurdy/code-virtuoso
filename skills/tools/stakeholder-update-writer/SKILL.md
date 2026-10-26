@@ -100,4 +100,3 @@ When iterating, apply the feedback and present the full updated message. Don't a
 |---|---|
 | When generating a full project report instead of a message | `report-writer` |
 | When writing a PR description, not a stakeholder message | `pr-message-writer` |
-| When planning sprint goals to reference in the update | `scrum` |

@@ -79,7 +79,6 @@ stopWhen: [isStepCount(10), hasToolCall('finalAnswer')]
 - `prepareStep` can change tools, instructions, or messages per step. In v7, returned `instructions` and `messages` carry into later steps. Code that relied on one-step overrides must rebuild them from the initial values.
 - `activeTools` limits what the model may call without changing types. Use it to shrink the tool list per step.
 - Check `result.steps` in tests to assert how many steps ran and which tools were called.
-- For design choices beyond the SDK (workflow versus agent, caps, memory), see `agent-design`.
 
 For runs that must survive restarts or pause for days, use `WorkflowAgent` from `@ai-sdk/workflow`. It runs inside a workflow, retries tool steps, and keeps approvals across suspension. Its context must be serializable: pass identifiers, not clients or functions.
 
@@ -89,7 +88,7 @@ Use `output: Output.object({ schema })` on `generateText` or `streamText` and re
 
 - Catch `NoObjectGeneratedError`. It carries `text`, `cause`, `response`, and `usage`, which is the raw evidence you need for evals.
 - Streamed partial objects are not validated against the schema. Show them as a preview and validate at the end.
-- Keep schemas small, with field descriptions. Provider-side limits and failure modes are in `agent-design` (structured-output-and-tools reference).
+- Keep schemas small, with field descriptions.
 
 ## Tool approval
 
@@ -173,12 +172,7 @@ The vercel/ai repository includes a migration skill for v6 to v7 that lists ever
 | Situation | Recommended skill |
 |---|---|
 | Fetching current library docs | `docs-lookup` |
-| Designing the agent, caps, memory, multi-agent | `agent-design` |
-| Building the MCP server your agent calls | `mcp-server-development` |
-| Test strategy beyond mocks | `testing` |
-| Prompt injection, secrets, approval policy review | `agent-security` |
 | Evals and regression tests for the app | `llm-evals` |
 | OpenTelemetry traces, token cost, and latency | `llm-observability` |
-| The Python equivalent | `langchain-components` |
 | Tuning latency and token cost | `performance` |
 | Debugging a failing run | `debugging` |

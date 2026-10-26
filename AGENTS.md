@@ -148,7 +148,7 @@ The Test Gap Analyzer identifies missing test cases by priority. The Implementer
 
 ### Teams
 
-Three recurring multi-agent patterns are packaged as teams. Each team is a Claude Code workflow script in [workflows/](workflows) plus a Markdown recipe in [teams.md](skills/knowledge/agent-orchestration/references/teams.md) that any harness can follow. See [spec/team-spec.md](spec/team-spec.md) for the format.
+Three recurring multi-agent patterns are packaged as teams. Each team is a Claude Code workflow script in [workflows/](workflows) plus a Markdown recipe in [teams.md](workflows/teams.md) that any harness can follow. See [spec/team-spec.md](spec/team-spec.md) for the format.
 
 | Team | Claude Code command | Pattern |
 |------|---------------------|---------|

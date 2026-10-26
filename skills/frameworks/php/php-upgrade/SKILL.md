@@ -172,4 +172,3 @@ Items that most often break real upgrades. Each one is taken from the php.net mi
 | Upgrading Symfony alongside PHP | Use the `symfony-upgrade` skill in `frameworks/symfony/` |
 | Updating Composer dependencies after PHP upgrade | Use the `composer-dependencies` skill |
 | Modernizing PHP code patterns (DTOs, enums, strict types) | Install `php-modernization` from `dirnbauer/webconsulting-skills` or `netresearch/php-modernization-skill` |
-| Running static analysis after upgrade | `testing` |

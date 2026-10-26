@@ -35,11 +35,11 @@ agents/              - Sub-agent definitions (specialist and role agents)
 roles/{role}/        - Templates and checklists that role agents read by path (not skills)
 workflows/           - Team workflow scripts for Claude Code (review-squad, development-team, war-room)
 skills/
-  knowledge/         - Decision rules and pitfalls (security, debugging, agent orchestration, design references)
+  knowledge/         - Decision rules and pitfalls (security, debugging, performance, verification)
   tools/             - Interactive generators and headless agent wrappers
-  playbooks/         - Step-by-step operational procedures (ticket delivery, TDD, PR feedback)
-  frameworks/{name}/ - Framework-specific skills (Symfony, Django, Godot, LangChain, PHP, Vercel AI SDK)
-  ai/                - Building with LLMs and agents (agent design, evals, observability, MCP servers)
+  playbooks/         - Step-by-step operational procedures (spec-driven development, TDD, PR feedback)
+  frameworks/{name}/ - Framework-specific skills (Symfony, Godot, PHP, Vercel AI SDK)
+  ai/                - Building with LLMs and agents (evals, observability)
 codex/               - Codex support: generated agent TOML files and install notes
 examples/ci/         - Example GitHub Actions workflows for headless agents
 plugins/             - Self-contained Claude Code plugins with hooks and scripts (loop-virtuoso)
@@ -59,11 +59,11 @@ See the [README](README.md) for the full directory tree and skill tables.
 
 | Category | When to use | Example |
 |---|---|---|
-| `skills/knowledge/` | Decision rules, pitfalls, and reference the model needs on request | Security, debugging, agent orchestration |
+| `skills/knowledge/` | Decision rules, pitfalls, and reference the model needs on request | Security, debugging, performance |
 | `skills/tools/` | Interactive tools that generate output, and headless agent wrappers | Rules writer, ticket writer |
-| `skills/playbooks/` | Step-by-step procedures for recurring tasks | Ticket delivery, TDD, PR feedback |
-| `skills/frameworks/{name}/` | Framework-specific version facts, opinions, and upgrade guides | Symfony components, PHP upgrade |
-| `skills/ai/` | Building software with LLMs and agents | LLM evals, MCP server development |
+| `skills/playbooks/` | Step-by-step procedures for recurring tasks | Spec-driven development, TDD, PR feedback |
+| `skills/frameworks/{name}/` | Framework-specific version facts, opinions, and upgrade guides | Symfony upgrade, PHP upgrade |
+| `skills/ai/` | Building software with LLMs and agents | LLM evals, LLM observability |
 
 There is no `skills/roles/`. Role material is reference files for a role agent, not a skill: put it in `roles/{role}/` and point to it from the agent (see [Adding a new agent](#adding-a-new-agent)).
 
@@ -113,7 +113,7 @@ Every SKILL.md **must** include this field. If omitted, behavior varies by platf
 
 #### Run-by-name skills
 
-Textbook references the model already knows (design patterns, SOLID, testing theory) and headless agent wrappers should not sit in every session's context. Mark them with both fields:
+Textbook references the model already knows (design theory, language basics) and headless agent wrappers should not sit in every session's context. Mark them with both fields:
 
 ```yaml
 user-invocable: true
@@ -350,7 +350,7 @@ Every new agent requires a `marketplace.json` update. This is non-negotiable.
   "description": "...",
   "source": "./",
   "strict": false,
-  "skills": ["./skills/knowledge/agent-orchestration"],
+  "skills": ["./skills/knowledge/verification-before-completion"],
   "agents": ["./agents/reviewer.md", "./agents/your-agent-name.md"]
 }
 ```
@@ -388,7 +388,7 @@ The most common rejection reasons:
 
 A team is a Markdown recipe plus a Claude Code workflow script that encodes it. Follow [`spec/team-spec.md`](spec/team-spec.md):
 
-1. Add the recipe as a section of `skills/knowledge/agent-orchestration/references/teams.md`. Every agent it names must exist in `agents/`
+1. Add the recipe as a section of `workflows/teams.md`. Every agent it names must exist in `agents/`
 2. Copy `template/workflow-template.js` to `workflows/{name}.js` and fill it in. `meta.name` equals the file name
 3. Test the script against a mock `agent` before committing, including each early return
 4. Add the team to the Teams table in [README.md](README.md) and [AGENTS.md](AGENTS.md), and bump the marketplace version. The `agents-virtuoso` entry picks `workflows/` up on its own, so `marketplace.json` needs no new path
@@ -500,9 +500,9 @@ All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` s
 | `knowledge-virtuoso` | `./skills` | Knowledge skills (security, debugging, design references, and so on) |
 | `tools-virtuoso` | `./skills` | Interactive tool skills |
 | `playbooks-virtuoso` | `./skills` | Operational playbook skills |
-| `frameworks-virtuoso` | `./skills` | Framework skills (Symfony, Django, Godot, LangChain, PHP, Vercel AI SDK) |
-| `ai-virtuoso` | `./skills` | AI engineering skills (agent design, evals, observability, MCP servers) |
-| `agents-virtuoso` | `./` | All 20 agents, the team workflows in `workflows/`, `agent-orchestration`, `verification-before-completion`, and the headless wrapper skills |
+| `frameworks-virtuoso` | `./skills` | Framework skills (Symfony, Godot, PHP, Vercel AI SDK) |
+| `ai-virtuoso` | `./skills` | AI engineering skills (evals, observability) |
+| `agents-virtuoso` | `./` | All 20 agents, the team workflows in `workflows/`, `verification-before-completion`, and the headless wrapper skills |
 | `loop-virtuoso` | `./plugins/loop-virtuoso` | Self-contained Claude Code plugin with its own `plugin.json` (not a bundle of repo skills) |
 
 When adding a new skill:
@@ -535,7 +535,7 @@ The version field lives in `metadata.version` inside `marketplace.json`.
 - Descriptive commit messages summarizing what was added or changed
 - One logical change per commit
 - Example: `Add Kubernetes deployment skill with 5 reference files`
-- Example: `Update design-patterns skill with Specification pattern`
+- Example: `Update security skill with OWASP Top 10:2025 changes`
 
 ## Quality standards
 
@@ -565,7 +565,7 @@ All content must be **language-agnostic** and **LLM provider-agnostic** by defau
 | Playbooks | May be language-specific if the procedure is (e.g., PHP upgrade). State the scope clearly. |
 | Plugins (`plugins/`) | Claude Code only, by design. They ship hooks and scripts that run inside Claude Code. State this in the plugin README. |
 
-**The only exceptions** are skills that explicitly exist for a specific language, framework, or LLM provider (e.g., `symfony-components`, `django-components`, `php-upgrade`), and the self-contained plugins under `plugins/`. These should state their scope in the description.
+**The only exceptions** are skills that explicitly exist for a specific language, framework, or LLM provider (e.g., `symfony-upgrade`, `php-upgrade`), and the self-contained plugins under `plugins/`. These should state their scope in the description.
 
 ### Content guidelines
 

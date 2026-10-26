@@ -202,10 +202,7 @@ Before claiming any work is complete:
 
 | Situation | Recommended Skill |
 |---|---|
-| Writing tests before implementation | `testing` |
 | Systematic bug investigation before claiming fix | `debugging` |
-| Reviewing code quality after verification passes | `refactoring` |
 | Writing PR description after all checks pass | `pr-message-writer` |
-| Checking that the CI pipeline covers all verification tiers | `cicd` |
 | Checking security implications before marking done | `security` |
 | Verifying performance impact of changes | `performance` |

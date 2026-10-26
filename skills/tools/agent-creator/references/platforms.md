@@ -56,7 +56,7 @@ Preloaded `skills` resolve by bare name across all installed plugins, are skippe
 
 ### Teams
 
-A team in this library is a workflow: a Markdown recipe plus a script in `workflows/`, run as `/<plugin>:<name>`. It needs no team config file, and there is no `TeamCreate` tool. See the `agent-orchestration` skill and `spec/team-spec.md` in the repository.
+A team in this library is a workflow: a Markdown recipe plus a script in `workflows/`, run as `/<plugin>:<name>`. It needs no team config file, and there is no `TeamCreate` tool. See `spec/team-spec.md` and `workflows/teams.md` in the repository.
 
 Claude Code also has experimental agent teams, enabled with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, where teammates run in parallel and message each other. The lead spawns each teammate with the `Agent` tool and a `name`. Teammates can reference sub-agent definitions by name, inheriting their `tools` and `model`. When a sub-agent definition runs as a teammate:
 

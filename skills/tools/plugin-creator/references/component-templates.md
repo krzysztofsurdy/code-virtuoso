@@ -250,7 +250,7 @@ const report = await agent(`<lead brief>\n${JSON.stringify(reports)}`, {
 return { status: 'approved', target: input.target, report }
 ```
 
-Use plugin-scoped `agentType` names, filter `null` results, and return a status object instead of looping at a gate. Pass a JSON `schema` wherever a later step reads the result. A team is also written as a Markdown recipe so other agent harnesses can follow it: see the `agent-orchestration` skill.
+Use plugin-scoped `agentType` names, filter `null` results, and return a status object instead of looping at a gate. Pass a JSON `schema` wherever a later step reads the result. A team is also written as a Markdown recipe so other agent harnesses can follow it: see `workflows/teams.md`.
 
 ## hooks/hooks.json
 

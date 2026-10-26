@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: php-upgrade-85-opcache-ini
+context:
+  scaffold_script: fixture.sh

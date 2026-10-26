@@ -22,7 +22,7 @@ You receive one of:
 1. **Discover** - Find relevant files using Glob patterns and directory structure
 2. **Measure** - Assess each file for size, complexity, and coupling
 3. **Classify** - Categorize findings by code smell type
-4. **Recommend** - Map each smell to a specific refactoring technique using the table below. When the right technique is unclear or you need its steps, read the catalog entry on demand at `<plugin root>/skills/knowledge/refactoring/references/<technique>.md`, which is `${CLAUDE_PLUGIN_ROOT}` in Claude Code or the repository root otherwise. Read only the entries you need.
+4. **Recommend** - Map each smell to a specific refactoring technique using the table below.
 
 ## Code smell categories
 

@@ -122,7 +122,6 @@ For the authoritative detail on stop reasons, the write-boundary guard, and the 
 | Situation | Skill |
 |---|---|
 | You have a ticket to turn into a loop-ready backlog | `ticket-writer` produces the ticket; give it to `backlog-compiler` |
-| You are following the ticket workflow and Phase 6 (implementation) is a set of small, testable steps | `ticket-delivery` can hand execution to this loop: compile the plan with `backlog-compiler`, run `/loop-virtuoso:start` |
 | A run ended with `complete` | `finishing-branch` to verify, commit the plan and archive, and open the pull request |
 | You need branch and commit conventions | Save them once in `.code-virtuoso/config.json` (`ticket-delivery` namespace); the loop reads them |
 

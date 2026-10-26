@@ -5,7 +5,7 @@ A team is a pre-composed recipe: a roster of agents, the phases they work in, an
 | Artifact | Where | Runs on |
 |---|---|---|
 | **Workflow script** | `workflows/{name}.js` at the repository root | Claude Code, as `/{plugin}:{name}`. Deterministic: the script holds the loop, the gates, and the intermediate results |
-| **Markdown recipe** | A section of `skills/knowledge/agent-orchestration/references/teams.md` | Any harness. A person or a lead agent follows the phases, sequentially or with parallel subagents |
+| **Markdown recipe** | A section of `../workflows/teams.md` | Any harness. A person or a lead agent follows the phases, sequentially or with parallel subagents |
 
 Write the recipe first. It is the source of truth for roster, phases, and gates. The workflow is the Claude Code encoding of it.
 

@@ -91,7 +91,7 @@ JSON with a top-level `"version": 1` and one namespace per consumer.
 
 | Namespace | Owner | Holds |
 |---|---|---|
-| `ticket-delivery` | `ticket-delivery` skill | Tracker, VCS, tooling, test, and PR conventions for the ticket workflow |
+| `ticket-delivery` | Ticket workflow settings, read by the loop plugin | Tracker, VCS, tooling, test, and PR conventions for the ticket workflow |
 | `agents.<agent-name>` | The agent with that name | The agent's tuning settings, one object per agent |
 | `loop` | The loop plugin | Delivery loop settings only: `maxIterations`, `permissionMode`, `allowedPaths`, `protectedPaths` |
 

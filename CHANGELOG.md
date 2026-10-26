@@ -4,6 +4,28 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.0.0] - 2026-10-26
+
+### Removed
+- 28 skills that a fair, fixture-backed A/B measurement (with-skill vs without-skill arms, blind judge) showed a strong current model already matches unaided, so they no longer earned their context cost. This is breaking: these skills no longer install.
+  - AI: `agent-design`, `mcp-server-development`
+  - Frameworks: `doctrine-orm`, `symfony-testing`, `symfony-components`, `django-components`, `langchain-components`, `php-quality`
+  - Knowledge: `agent-orchestration`, `agent-security`, `api-design`, `cicd`, `clean-architecture`, `database-design`, `design-patterns`, `microservices`, `motion-design`, `refactoring`, `scrum`, `solid`, `testing`
+  - Playbooks: `video-production`, `retro`, `ticket-delivery`, `worktree-ops`
+  - Tools: `using-ecosystem`, `web-screenshot`, `image-annotate`
+- The trigger, outcome, and demotion eval cases for the removed skills
+- Agent preloads were unaffected: every skill still preloaded by an agent (`security`, `debugging`, `accessibility`, `context-engineering`, `docs-lookup`, `tdd`, `verification-before-completion`, `research`) was kept
+
+### Added
+- `skill-measure` tool skill (run by name): audits whether a skill or reference changes a strong model's output enough to earn its context cost, using a fair-fixture A/B ablation and a blind judge that also returns a worth-improving verdict. Two trigger evals
+
+### Changed
+- Renamed the `skill-writer` tool skill to `skill-creator`, with its references and eval cases. Anthropic's separate `skill-creator` is disambiguated by plugin prefix (`tools-virtuoso:skill-creator` vs `anthropic-skills:skill-creator`)
+- Trimmed the auto-loaded bodies of `security`, `debugging`, `context-engineering`, `accessibility`, `docs-lookup`, and `llm-evals` to their load-bearing content (version facts, gates, decision tables, pitfalls), cutting slogan and restated-knowledge sections; reference files unchanged
+- Fixed a WCAG citation in `accessibility` (`keyboard-and-focus.md`): 2.4.11 is Focus Not Obscured, Minimum (AA); the 2px and 3:1 contrast rule is 2.4.13 Focus Appearance (AAA)
+- Moved the team recipe `teams.md` out of the removed `agent-orchestration` skill to `workflows/teams.md`; the review-squad, development-team, and war-room workflows and commands are unchanged
+- Bundle sizes are now knowledge-virtuoso 6, ai-virtuoso 2, frameworks-virtuoso 6, playbooks-virtuoso 8, tools-virtuoso 13
+
 ## [10.5.0] - 2026-10-23
 
 ### Added

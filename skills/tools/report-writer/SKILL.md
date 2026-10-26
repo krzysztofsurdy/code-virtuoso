@@ -11,7 +11,7 @@ Generate a standalone HTML report summarizing the work you just completed: bug f
 
 ## When to use
 
-- After completing work on a ticket (use with the `ticket-delivery` skill)
+- After completing work on a ticket
 - After a debug/investigation session
 - To document architectural decisions
 - To summarize a refactoring effort
@@ -336,19 +336,9 @@ Read [references/components.md](references/components.md) before writing the rep
 5. **Printable** - The report should look right when printed (the template includes print styles).
 6. **Accurate** - File names, line counts, and code snippets must match the work actually done.
 
-## Integration with ticket-delivery
+## After a ticket
 
-When using `report-writer` after completing a ticket with `ticket-delivery`:
-
-```
-# 1. Complete the ticket work
-/ticket-delivery PROJ-1234
-
-# 2. Generate a report summarizing what was done
-/report-writer PROJ-1234
-```
-
-The report generator gathers git diff data, commit history, and file changes from your working branch.
+Once the ticket work is done, run `/report-writer PROJ-1234`. The report generator gathers git diff data, commit history, and file changes from your working branch.
 
 ## Reference files
 
@@ -363,7 +353,6 @@ The report generator gathers git diff data, commit history, and file changes fro
 
 | Situation | Recommended Skill |
 |---|---|
-| When completing a ticket end-to-end | `ticket-delivery` |
 | When writing a PR description | `pr-message-writer` |
 
 ## Examples

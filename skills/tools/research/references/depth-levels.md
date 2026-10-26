@@ -45,7 +45,7 @@ Say which depth you chose and why in one sentence, so the user can change it.
 
 ## Deep
 
-- **Where it runs**: a lead (you) plus 3-10 parallel agents, one per independent sub-question. The lead plans, briefs, merges and verifies. See the `agent-orchestration` skill.
+- **Where it runs**: a lead (you) plus 3-10 parallel agents, one per independent sub-question. The lead plans, briefs, merges and verifies.
 - **Budget per agent**: about 15-20 tool calls, with a cap near 20 calls or about 100 sources so an agent cannot search forever. Total sources typically 15-50.
 - **Process**:
   1. Frame, local pass, and clarify only what changes the plan.

@@ -7,26 +7,11 @@ user-invocable: false
 
 # Security
 
-Security is a property of every feature, not a feature of its own. Design every endpoint, form, data flow, and integration point with security in mind from the start. Adding security afterward is expensive, error-prone, and usually incomplete.
-
-This skill gives stack-agnostic guidance for building secure applications. It covers the OWASP Top 10, input validation, authentication and authorization patterns, data protection, secrets management, security headers, and common antipatterns.
-
-## When to use
-
-Consult this skill when:
-
-- Designing a new feature that handles user input, authentication, or sensitive data
-- Reviewing code for security concerns
-- Implementing authentication or authorization flows
-- Handling secrets, API keys, or credentials
-- Configuring HTTP security headers
-- Assessing whether a dependency or design choice introduces risk
-- Preparing for a security audit or penetration test
-- Responding to a security incident or vulnerability report
+Security is a property of every feature: design every endpoint, form, data flow, and integration point with it from the start. Stack-agnostic guidance follows.
 
 ## OWASP Top 10
 
-The OWASP Top 10 lists the most serious security risks to web applications. Use it as a starting checklist, not a full list. The table follows the 2025 edition (OWASP Top 10:2025). Mapping from the 2021 edition and per-category prevention steps are in the [reference](references/owasp-top-10.md).
+Use the OWASP Top 10 as a starting checklist, not a full list. The table follows the 2025 edition (OWASP Top 10:2025). Mapping from the 2021 edition and per-category prevention steps are in the [reference](references/owasp-top-10.md).
 
 | # | Vulnerability | What it is | Primary defense | Reference |
 |---|---|---|---|---|
@@ -41,13 +26,11 @@ The OWASP Top 10 lists the most serious security risks to web applications. Use 
 | A09 | Security Logging and Alerting Failures | Attacks go unnoticed for lack of logs and alerts | Log security events, alert on suspicious patterns | [reference](references/owasp-top-10.md) |
 | A10 | Mishandling of Exceptional Conditions | Errors and edge cases handled badly or fail open | Fail closed, roll back partial work, handle every error path | [reference](references/owasp-top-10.md) |
 
-Related: LLM and agent security. Systems that embed an LLM or run autonomous agents have their own risk lists: the OWASP Top 10 for LLM Applications 2025 and the OWASP Top 10 for Agentic Applications 2026. See the `agent-security` skill.
+Related: LLM and agent security. Systems that embed an LLM or run autonomous agents have their own risk lists: the OWASP Top 10 for LLM Applications 2025 and the OWASP Top 10 for Agentic Applications 2026.
 
 ## Input validation
 
 Input validation is the first line of defense. Validate at every system boundary, not just at the UI.
-
-**Core principles:**
 
 - **Validate on the server**: client-side validation is a UX convenience, not a security control
 - **Allowlist over denylist**: define what is acceptable rather than trying to block what is dangerous
@@ -136,7 +119,7 @@ Authorization determines permissions: "what are you allowed to do?" It is not th
 
 **Encryption at rest:**
 
-- Encrypt sensitive data stored in databases, files, and backups
+- Encrypt sensitive data stored in databases, files, and backups (backups included)
 - Use AES-256 or equivalent for symmetric encryption
 - Manage encryption keys separately from encrypted data
 - Rotate encryption keys on a schedule and when compromise is suspected
@@ -214,55 +197,21 @@ Set these HTTP response headers on every response. Each addresses a specific cla
 These mistakes show up often and create vulnerabilities:
 
 - **Security through obscurity**: hiding URLs, using unpredictable IDs, or obfuscating code is not a security control. It supplements real controls and never replaces them.
-- **Client-side validation only**: any validation done in JavaScript or mobile code can be bypassed. Always validate server-side.
 - **Homegrown cryptography**: never implement your own encryption, hashing, or random number generation. Use well-tested libraries.
-- **Overly permissive CORS**: `Access-Control-Allow-Origin: *` combined with credentials is a vulnerability. Be specific about allowed origins.
 - **Storing secrets in repositories**: even in "private" repos, secrets in code spread through forks, CI systems, and developer machines.
 - **Disabling security features for convenience**: turning off CSRF protection, SSL verification, or authentication in a "development" mode that leaks to production.
 - **Trusting internal networks**: zero-trust means verifying identity and authorization even for internal service-to-service calls.
 - **Ignoring dependency vulnerabilities**: known vulnerabilities in dependencies are among the easiest attack vectors. Scan and update regularly.
-- **Logging sensitive data**: passwords, tokens, credit card numbers, and PII in logs create a second exposure surface.
 - **Catching and silencing exceptions**: swallowing errors hides security failures. Log them (without sensitive details) and fail safely.
 
-## Security review checklist
+## Other controls
 
-Use this checklist when reviewing code, designing features, or preparing for release:
+Items to check in review that are not covered above:
 
-**Input and output:**
-- [ ] All user input is validated server-side
-- [ ] Parameterized queries used for all database operations
-- [ ] Output is encoded/escaped for the appropriate context (HTML, URL, JavaScript, SQL)
-- [ ] File uploads validate type, size, and content; stored outside web root
-
-**Authentication:**
-- [ ] Passwords hashed with bcrypt/Argon2id
-- [ ] Session IDs regenerated after login
-- [ ] Secure cookie attributes set (HttpOnly, Secure, SameSite)
-- [ ] Rate limiting on login endpoints
-- [ ] Account lockout or progressive delays after failed attempts
-
-**Authorization:**
-- [ ] Authorization enforced server-side on every request
-- [ ] Principle of least privilege applied
-- [ ] Direct object references validated against the current user
-- [ ] Admin functions protected and not accessible through URL guessing
-
-**Data:**
-- [ ] Sensitive data encrypted at rest and in transit
-- [ ] PII not logged
-- [ ] Data retention policies implemented
-- [ ] Backups encrypted
-
-**Configuration:**
-- [ ] No secrets in source code or config files
-- [ ] Security headers configured
-- [ ] Debug mode disabled in production
-- [ ] Error messages do not leak internal details to clients
-- [ ] Dependencies scanned for known vulnerabilities
-- [ ] TLS 1.2+ enforced; older protocols disabled
-
-**Monitoring:**
-- [ ] Security events logged (login failures, authorization denials, input validation failures)
-- [ ] Alerts configured for suspicious patterns
-- [ ] Logs protected from tampering
-- [ ] Incident response plan documented
+- Output is encoded or escaped for its context (HTML, URL, JavaScript, SQL)
+- File uploads validate type, size, and content, and are stored outside the web root
+- Rate limiting on login endpoints, plus account lockout or progressive delays after failed attempts
+- Admin functions are protected and not reachable by URL guessing
+- Debug mode is disabled in production, and error messages do not leak internal details to clients
+- Security events are logged (login failures, authorization denials, input validation failures), alerts exist for suspicious patterns, logs are protected from tampering
+- An incident response plan is documented

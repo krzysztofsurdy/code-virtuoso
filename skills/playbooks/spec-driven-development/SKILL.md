@@ -9,7 +9,7 @@ argument-hint: "[spec slug, ticket id, or path to an approved brainstorming spec
 
 A spec is a file in the repo that says what to build and how to know it works. A plan says how. A task list says in what order. Writing them down lets a fresh session, a sub-agent, or a teammate pick up the work with no memory of the conversation that produced it. Chat history is lost at compaction and between sessions; files are not.
 
-This playbook starts where `brainstorming` or a ticket ends: the idea is approved, and the question is how to build it. It does not explore vague ideas (use `brainstorming`) or drive a ticket through branch and PR (use `ticket-delivery`, which can call this playbook for its planning and execution phases).
+This playbook starts where `brainstorming` or a ticket ends: the idea is approved, and the question is how to build it. It does not explore vague ideas (use `brainstorming`) or drive a ticket through branch and PR.
 
 ## Core principles
 
@@ -110,7 +110,7 @@ The rule that makes multi-session work reliable: **one task per session or per l
 5. Tick the task in `tasks.md` and append an entry to the progress log ([progress-log-template](references/progress-log-template.md)): what was done, evidence, anything the next session must know.
 6. Stop, or take the next task if the session has room. Do not batch several unverified tasks.
 
-`[P]` tasks can go to parallel sub-agents only when their files do not overlap (see `agent-orchestration`). Each sub-agent gets one task ID, the spec path, and the check; the coordinator merges and updates the log.
+`[P]` tasks can go to parallel sub-agents only when their files do not overlap. Each sub-agent gets one task ID, the spec path, and the check; the coordinator merges and updates the log.
 
 ### When the plan breaks
 
@@ -158,9 +158,7 @@ If behavior changed during implementation, update the spec to match what shipped
 | Situation | Recommended skill |
 |---|---|
 | The idea is still vague, no approved spec yet | `brainstorming` |
-| Starting from a ticket and going through to a PR | `ticket-delivery` |
 | Implementing a task | `tdd` |
 | Claiming a task or the whole change is done | `verification-before-completion` |
 | Gate check before implementation, or a mid-flight change | `plan-auditor` agent |
-| Several independent `[P]` tasks | `agent-orchestration` |
 | A design decision needs an ADR | `architect` role |

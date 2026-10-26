@@ -33,7 +33,7 @@ Confirm an agent is the right primitive before creating one.
 | Passive knowledge | Active actor with tools and a workflow |
 | "Where do I learn about X" | "Do X for me and return a result" |
 
-If the answer is reference material, stop and use the `skill-writer` skill instead. If the answer is work, continue.
+If the answer is reference material, stop and use the `skill-creator` skill instead. If the answer is work, continue.
 
 ---
 
@@ -113,9 +113,8 @@ Start by loading Phase 0. After the user confirms each phase, load the next. Nev
 
 | Situation | Recommended Skill |
 |---|---|
-| Creating a reference skill instead of an agent | `skill-writer` |
+| Creating a reference skill instead of an agent | `skill-creator` |
 | Researching the role, platform formats, or comparable agents in Phase 0 | `research` |
 | Writing AI rules files for an agent platform | `agentic-rules-writer` |
-| Designing how multiple agents interact in a workflow | `agent-orchestration` |
 | Deciding what belongs in an agent body versus instruction files | `context-engineering` |
 | Authoring a ticket or PRD that spawns the agent | `ticket-writer` |

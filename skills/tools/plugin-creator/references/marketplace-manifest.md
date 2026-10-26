@@ -109,7 +109,7 @@ An entry accepts every `plugin.json` field. With a `plugin.json` present these s
 }
 ```
 
-Skill paths in an entry resolve from that entry's `source`, not from the repository root. For a skill-only bundle in a repository that also holds `agents/` or `workflows/` at its root, use `"source": "./skills"` and list `"./knowledge/solid"` style paths.
+Skill paths in an entry resolve from that entry's `source`, not from the repository root. For a skill-only bundle in a repository that also holds `agents/` or `workflows/` at its root, use `"source": "./skills"` and list `"./knowledge/security"` style paths.
 
 **Warning**: relative paths work only when the marketplace is added via Git (GitHub, GitLab, or git URL). If users add your marketplace via a direct URL to `marketplace.json`, relative paths will not resolve. For URL-distributed marketplaces, use `github`, `url`, or `npm` sources instead.
 

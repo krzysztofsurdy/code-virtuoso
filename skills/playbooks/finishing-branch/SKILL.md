@@ -319,6 +319,5 @@ Run through this before considering the branch done.
 |---|---|
 | Writing a full PR message | `pr-message-writer` |
 | Reviewing code before merging | `reviewer` agent |
-| Managing git worktrees | `worktree-ops` |
 | Running verification before declaring done | `verification-before-completion` |
 | Getting a fresh-eyes review before merging | `cold-reviewer` agent |

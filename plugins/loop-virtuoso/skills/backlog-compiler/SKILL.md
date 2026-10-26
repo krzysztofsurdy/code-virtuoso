@@ -22,7 +22,7 @@ files=(); for f in "$home/config.json" "$root/.code-virtuoso/config.json" "$root
 
 Two namespaces matter here:
 
-- `ticket-delivery`: `commands.test` and `commands.staticAnalysis` answer the test and static analysis questions below; `branchPattern`, `ticketIdPattern` and `mainBranch` shape the branch (Step 1). The legacy ticket-delivery supplement file is not read here; if the namespace is empty, run the `ticket-delivery` setup once to save it.
+- `ticket-delivery`: `commands.test` and `commands.staticAnalysis` answer the test and static analysis questions below; `branchPattern`, `ticketIdPattern` and `mainBranch` shape the branch (Step 1). The legacy ticket-delivery supplement file is not read here; if the namespace is empty, save the values in the config file once.
 - `loop`: defaults for `config` in Step 6 (`maxIterations`, `permissionMode`, `allowedTools`, `allowedPaths`, `protectedPaths`, and the other limits). Seed the backlog's `config` from these values instead of the table in Step 6. Never save a credential there.
 
 For each answer the config does not give, ask the user directly:
@@ -154,6 +154,5 @@ See `references/example-conversion.md` for a full worked example.
 | Situation | Skill |
 |---|---|
 | The work starts as a rough idea that needs a well-formed ticket first | `ticket-writer`, then feed the ticket to this skill |
-| You follow the ticket workflow and Phase 6 (implementation) breaks into small steps with commands that check them | `ticket-delivery`, which can hand execution to the loop: compile here, run `/loop-virtuoso:start` |
 | The loop ended with `complete` | `finishing-branch` to commit the plan and archive and open the pull request |
 | You need to run or explain the loop | `iteration-loop` |

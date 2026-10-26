@@ -7,18 +7,7 @@ user-invocable: false
 
 # Web Accessibility
 
-Accessibility is a quality attribute, not a feature to bolt on at the end. Consider it from the first line of markup. Accessible interfaces let people with visual, motor, auditory, or cognitive disabilities perceive, navigate, and use your application. They also help keyboard power users, people on slow connections, users with temporary injuries, and anyone in a constrained environment.
-
-## Why accessibility matters
-
-| Dimension | Impact |
-|---|---|
-| **Legal** | Legislation in most jurisdictions (ADA, EAA, Section 508, EN 301 549) requires digital products to be accessible. Non-compliance carries litigation risk and financial penalties. |
-| **Ethical** | Roughly 16% of the global population lives with some form of disability. Excluding them from digital services is a choice, not an inevitability. |
-| **Business** | Accessible products reach a wider audience, improve SEO (structured content helps crawlers), reduce support costs, and correlate with higher overall usability scores. |
-| **Technical quality** | Accessibility constraints force clean markup, proper semantics, and separation of concerns, which improves maintainability. |
-
----
+Accessibility is a quality attribute, not a feature to bolt on at the end. Consider it from the first line of markup. Legislation in most jurisdictions (ADA, EAA, Section 508, EN 301 549) requires digital products to be accessible.
 
 ## WCAG principles: POUR
 
@@ -149,14 +138,3 @@ Color must never be the only way to convey information. Pair it with text, icons
 | [ARIA Patterns](references/aria-patterns.md) | When to use ARIA, roles and properties, widget patterns (tabs, modals, accordions, dropdowns), live regions, landmark roles |
 | [Keyboard and Focus](references/keyboard-and-focus.md) | Tab order, arrow key navigation, focus trapping, skip links, focus restoration, visible focus indicators, touch targets |
 | [Testing Strategies](references/testing-strategies.md) | Automated tools, manual testing checklist, screen reader testing, contrast verification, accessibility tree, CI integration |
-
----
-
-## Integration with Other Skills
-
-| Situation | Recommended Skill |
-|---|---|
-| Building REST or GraphQL APIs with accessible error responses | `api-design` |
-| Security headers that affect accessibility (CSP, iframe restrictions) | `security` |
-| Testing accessible components with unit and integration tests | `testing` |
-| Performance optimization that does not sacrifice accessibility | `performance` |

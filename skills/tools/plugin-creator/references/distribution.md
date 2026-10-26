@@ -100,7 +100,7 @@ A marketplace entry without a `plugin.json` is the manifest, and it accepts ever
 |---|---|
 | One entry with `"source": "./"` that owns the root `agents/`, `commands/`, `workflows/`, and hooks | Registers each of them once |
 | A second entry with `"source": "./"` | Registers every root agent, command, workflow, and hook again under its own name |
-| Skill-only bundles with `"source": "./skills"` and paths like `./knowledge/solid` | Register only the listed skills, since `skills/` holds no agents, commands, workflows, or hooks |
+| Skill-only bundles with `"source": "./skills"` and paths like `./knowledge/security` | Register only the listed skills, since `skills/` holds no agents, commands, workflows, or hooks |
 | Self-contained plugins under `plugins/<name>/` with `"source": "./plugins/<name>"` | Each keeps its own components |
 
 `"agents": []` does not stop the default scan, and neither does a placeholder file. Pick the source so that only one entry sees each root component directory. Skills in a bundle cannot link to files outside the source, because those files are not copied into the cache: keep links inside the bundle and give full URLs for anything else, such as a spec on GitHub.

@@ -21,7 +21,7 @@ This is assembled from the sourced facts below plus standard practice. Adapt it 
 3. Remove egress. A Docker container on the `none` network driver has only a loopback interface. Otherwise use a host-only network. Mount no home directory and put no real credentials in the lab.
 4. Run the target yourself. Never run the exploit path against someone else's instance, even "just to check".
 5. Make the reproduction one command: a Dockerfile or a script that rebuilds from the pinned source.
-6. Treat the target source and any PoC you download as untrusted. Read them before running, and see `agent-security`.
+6. Treat the target source and any PoC you download as untrusted. Read them before running.
 7. Reproduce at least twice on a clean build before you believe it.
 8. Minimize the input to the smallest case that still triggers the sanitizer report. Stop there.
 9. Find the affected and fixed versions by bisecting or checking release tags. Record them.

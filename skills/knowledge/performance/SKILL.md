@@ -184,14 +184,3 @@ Replace individual operations with batch alternatives where possible:
 | [Caching Strategies](references/caching-strategies.md) | Cache layers, invalidation patterns, stampede prevention, with multi-language examples |
 | [Database Optimization](references/database-optimization.md) | Query optimization, N+1 prevention, connection pooling, batch operations, with multi-language examples |
 | [Profiling Patterns](references/profiling-patterns.md) | Profiling workflows, bottleneck signatures, performance budgets, load testing strategies |
-
----
-
-## Integration with Other Skills
-
-| Situation | Recommended Skill |
-|---|---|
-| Performance issues caused by poor architecture | `clean-architecture` |
-| Need to refactor slow code paths | `refactoring` |
-| API response time optimization | `api-design` |
-| Database schema and query design | `database-design` |

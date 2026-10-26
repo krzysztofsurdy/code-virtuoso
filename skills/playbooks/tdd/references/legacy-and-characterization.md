@@ -54,7 +54,7 @@ These changes are low risk once the seam is covered:
 - Replace a magic number with a named constant
 - Delete code that tests and a search both show is unused
 
-Do each as its own step, run the tests after each, and keep behavior changes in separate commits. See `refactoring` for the catalog.
+Do each as its own step, run the tests after each, and keep behavior changes in separate commits.
 
 ## Pitfalls
 

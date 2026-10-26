@@ -293,5 +293,4 @@ Support multiple versions with flexible constraints:
 |---|---|
 | Upgrading PHP version alongside Symfony | Use the `php-upgrade` skill |
 | Updating Composer dependencies | Use the `composer-dependencies` playbook skill |
-| Working with Symfony components | Use the `symfony-components` skill in `frameworks/symfony/` |
 | Modernizing PHP code patterns | Install `php-modernization` from `dirnbauer/webconsulting-skills` |

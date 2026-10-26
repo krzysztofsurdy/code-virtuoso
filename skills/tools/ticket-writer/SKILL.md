@@ -164,10 +164,8 @@ Which fields are required (R), optional (O), or not used (-) per type.
 | Writing the PRD that the stories will flow from | `product-manager` |
 | Designing the architecture behind an epic | `architect` |
 | Writing acceptance criteria and test plans for a story | `qa-engineer` |
-| Planning sprints and setting sprint goals | `scrum` |
 | Tracking initiatives as part of a delivery plan | `project-manager` |
 | Writing the commit and PR for a story once implemented | `pr-message-writer` |
-| Kicking off the ticket workflow after writing | `ticket-delivery` |
 
 ---
 

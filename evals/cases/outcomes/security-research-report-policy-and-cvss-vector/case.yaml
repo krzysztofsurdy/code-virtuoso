@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: security-research-report-policy-and-cvss-vector
+context:
+  scaffold_script: fixture.sh

@@ -8,9 +8,9 @@ Confirmation gates: approved by the maintainer in the build brief.
 
 ## Scope
 
-A user-invocable skill that reviews UI code and the rendered page against a local, pinned, sourced rule set in eleven areas (focus and keyboard, forms, motion, typography, images, contrast and dark mode, touch targets, i18n and RTL, states, layout shift, hydration). Procedure: static pass, rendered pass (web-screenshot and image-annotate named as capabilities), findings with file:line, rule id, P0 to P2 severity, fix.
+A user-invocable skill that reviews UI code and the rendered page against a local, pinned, sourced rule set in eleven areas (focus and keyboard, forms, motion, typography, images, contrast and dark mode, touch targets, i18n and RTL, states, layout shift, hydration). Procedure: static pass, rendered pass (screenshot capture and image annotation named as capabilities), findings with file:line, rule id, P0 to P2 severity, fix.
 
-Out of scope: designing UI (frontend-design), ARIA widget depth and screen reader testing (accessibility), motion timing (motion-design), performance profiling.
+Out of scope: designing UI (frontend-design), ARIA widget depth and screen reader testing (accessibility), motion timing, performance profiling.
 
 Questions answered: which existing skills already give a pinned, sourced review; which rules have a normative source; exact thresholds and levels for each rule; what is stale or discontinued.
 
@@ -31,7 +31,7 @@ Questions answered: which existing skills already give a pinned, sourced review;
 | MDN pages: focus-visible, prefers-reduced-motion, color-scheme, forced-colors, autocomplete, inputmode, input, input/number, dir, translate, tabindex, aria-busy, viewport meta, aspect-ratio, CSS logical properties, Intl | vendor docs | Mozilla | various | 2026-10-22 |
 | web.dev: optimize-cls, cls, optimize-lcp, fetch-priority, browser-level-image-lazy-loading, prefers-reduced-motion, color-scheme, font-best-practices, accessible-tap-targets | vendor docs | Google | various | 2026-10-22 |
 | React hydrateRoot, Next.js react-hydration-error, Vue SSR guide | official docs | Meta, Vercel, Vue | various | 2026-10-22 |
-| skills/knowledge/accessibility (this repo), skills/tools/web-screenshot, image-annotate, motion-design | local | this repo | n/a | 2026-10-22 |
+| skills/knowledge/accessibility (this repo) | local | this repo | n/a | 2026-10-22 |
 
 All 67 URLs in rules.md returned HTTP 200 on 2026-10-22 (curl).
 
@@ -114,7 +114,7 @@ Confidence: confirmed = a primary source plus an independent second, or reproduc
 | Trigger evals run | Costs real model calls | Only `evals/run.sh check` and `bash evals/tests/test-stage.sh` ran (both pass). Run `evals/run.sh triggers --case 'ui-review-*'` before release |
 | Impeccable detector rules | Read README, SKILL.src.md and audit.md only, not the 61 detector rules | Left as an adopt-ideas comparison, no text reused |
 | Lighthouse touch-target thresholds | Not found on the sources read | Not stated in the skill |
-| A rendered pass on a real site | No browser run during authoring | Procedure is written from the web-screenshot and image-annotate skills as read. Run once on a real page and adjust |
+| A rendered pass on a real site | No browser run during authoring | Procedure is written from the capture and annotation steps as designed. Run once on a real page and adjust |
 | Practice rules: ST-03 empty state content, ST-04 pending state, IR-03 icon mirroring, IR-04 fragment concatenation, FM-04 reasoning for codes | No normative source | Marked "practice" in rules.md and capped at P2 |
 
 ## Left out

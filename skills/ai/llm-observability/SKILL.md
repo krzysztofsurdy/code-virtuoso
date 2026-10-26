@@ -143,9 +143,7 @@ Endpoints, headers, and regions change. Copy them from each vendor's current doc
 |---|---|
 | Reading traces to find failures and build graders | `llm-evals` |
 | General latency and bottleneck diagnosis | `performance` |
-| Designing the agent being traced | `agent-design` |
-| Treating PII, secrets, and access control | `security`, `agent-security` |
-| Instrumenting a Vercel AI SDK or LangChain app | `vercel-ai-sdk`, `langchain-components` |
+| Treating PII, secrets, and access control | `security` |
+| Instrumenting a Vercel AI SDK app | `vercel-ai-sdk` |
 | A slow or looping agent run to diagnose | `debugging` |
-| Tracing and alerting in a delivery pipeline | `cicd` |
 | Confirming instrumentation works before shipping | `verification-before-completion` |

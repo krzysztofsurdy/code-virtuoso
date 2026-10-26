@@ -91,6 +91,4 @@ Scripts live in `scripts/`: `block-secret-reads.sh`, `post-edit-check.sh`, `stop
 
 | Situation | Recommended skill |
 |---|---|
-| Deciding what an agent session may hold at once (untrusted input, secrets, outbound access) | `agent-security` |
 | Defining what "done" evidence the Stop gate should demand | `verification-before-completion` |
-| Wiring the same checks into CI | `cicd` |

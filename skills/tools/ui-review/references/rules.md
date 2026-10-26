@@ -76,7 +76,7 @@ Depth on widgets and testing lives in the `accessibility` skill (keyboard and fo
 
 ## MO: motion
 
-Timing, easing and choreography rules belong to the `motion-design` skill. This area only gates safety and user preference.
+This area only gates safety and user preference. Timing, easing and choreography are out of scope.
 
 | ID | Sev | Check | Source |
 |---|---|---|---|

@@ -106,10 +106,7 @@ See [anti-patterns](references/anti-patterns.md) for the full guide.
 | Situation | Recommended skill |
 |---|---|
 | Spec approved, next step: turn it into a plan and tasks and build it | `spec-driven-development` |
-| Spec approved, deliver it end to end from a ticket to a PR | `ticket-delivery` |
 | Complex requirements, need stakeholder analysis | `product-manager` role |
 | Spec reveals architectural decisions needed | `architect` role |
 | Spec approved and small enough to build directly | `tdd`, or the `implementer` agent |
 | Acceptance criteria need test plan detail | `qa-engineer` role |
-| API design decisions | `api-design` |
-| Database schema decisions | `database-design` |

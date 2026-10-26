@@ -11,7 +11,7 @@ Write one failing test, make it pass with the least code, clean up while the tes
 
 Each step produces evidence: command output you can quote. Without it the loop has not been run, only described.
 
-For test strategy, the pyramid, and test-double theory (mocks, stubs, fakes, London versus Chicago school), see the `testing` skill. This playbook covers the procedure, not those concepts.
+This playbook covers the procedure, not test strategy or test-double theory.
 
 ## Core principles
 
@@ -73,7 +73,7 @@ These are the reasons agents give for skipping the first step. Each has a respon
 | "Let me write the full implementation, I already see it" | You are writing untested code. Write the test for the first behavior and only that code |
 | "The test suite is slow" | Run the single test during the loop and the suite at the end of each cycle. If one test is slow, the seam is too high |
 | "This is just config, a script, or glue" | Test the behavior it produces, or state why no automated check exists and what you verified by hand, with output |
-| "Mocking everything is faster" | Over-mocked tests pass while the system is broken. Use real collaborators unless they are slow, nondeterministic, or external (see `testing`) |
+| "Mocking everything is faster" | Over-mocked tests pass while the system is broken. Use real collaborators unless they are slow, nondeterministic, or external |
 | "The existing test is wrong, I will just fix it" | Maybe. But follow the rule on editing tests below, and say so |
 | "I am running out of time, I will skip refactor" | Refactor is where the design gets paid for. Skip it only by saying you skipped it, and add a task to do it |
 
@@ -96,8 +96,6 @@ Rules of thumb:
 - Inject the clock, randomness, and I/O so tests control them.
 - If a test needs more than a few lines of setup, the code under test has too many dependencies. Treat that as a design signal.
 - A test that breaks when you rename a private method but behavior is unchanged is coupled to implementation. Move it up a seam.
-
-For doubles and school choices, see `testing`.
 
 ## Never edit a test just to make it pass
 
@@ -157,9 +155,6 @@ Do not refactor or change untested code blind. First pin what it does now:
 
 | Situation | Recommended skill |
 |---|---|
-| Choosing a test strategy, doubles, London versus Chicago | `testing` |
 | Implementing tasks from a spec and task list | `spec-driven-development` |
 | A test fails and the cause is unclear | `debugging` |
-| Cleaning up after green, naming refactorings | `refactoring` |
 | Claiming the work is done | `verification-before-completion` |
-| Running the loop inside a full ticket workflow | `ticket-delivery` |

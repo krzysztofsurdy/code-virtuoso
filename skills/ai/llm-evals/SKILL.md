@@ -6,19 +6,7 @@ user-invocable: false
 
 # LLM evals
 
-An eval is a test for behavior you cannot specify with an exact expected output. The method is the same as any good test practice: look at real failures, write a check for each one, run the checks on every change. Most teams skip the first step and start with a dashboard of generic scores. Those scores look precise and tell you nothing about what breaks for your users.
-
-## Core Principles
-
-| Principle | Meaning |
-|---|---|
-| **Look at data first** | Read real traces before writing any grader. The failure list comes from the data, not from a metrics catalog. |
-| **Binary verdicts** | Each grader answers pass or fail for one specific failure. Scales hide disagreement and invite the middle score. |
-| **Code before models** | Use an assertion when the property is checkable in code. A model judge is a last resort for what code cannot see. |
-| **One judge per failure** | A judge that scores "overall quality" cannot be validated. A judge for one named failure can. |
-| **Validate the grader** | An unvalidated LLM judge is an opinion. Measure it against human labels before trusting its number. |
-| **Grade outcomes** | Check the end state of the world, not only what the agent said or the path it took. |
-| **Evals are code** | Version them, run them in CI, and treat a drop as a failing test. |
+An eval is a test for behavior you cannot specify with an exact expected output. The method: look at real failures, write a check for each one, run the checks on every change. Most teams skip the first step and start with a dashboard of generic scores, which look precise and say nothing about what breaks for users.
 
 ## Workflow
 
@@ -96,19 +84,6 @@ A 75 percent per-trial success rate gives about 98 percent pass@3 and about 42 p
 | Eval set built once and never refreshed | Re-run error analysis on new traces regularly |
 | Raw judge pass rate reported as the truth | Correct for judge error and give an interval |
 
-## Quality checklist
-
-- [ ] At least 30 traces annotated by a human, taxonomy written down with counts
-- [ ] Review continued until new traces showed nothing new
-- [ ] Every grader is binary and tied to one named failure
-- [ ] Code assertions used wherever the property is checkable in code
-- [ ] Each LLM judge validated on a held-out split, TPR and TNR recorded
-- [ ] Judge model, prompt, and dataset versions pinned
-- [ ] Agent tasks have a clean environment per trial and an outcome check
-- [ ] pass@k or pass^k chosen deliberately, with k stated
-- [ ] Regression suite runs in CI with documented thresholds
-- [ ] Production traces sampled on a schedule and fed back into the suite
-
 ## Reference Files
 
 | Reference | Contents |
@@ -117,17 +92,3 @@ A 75 percent per-trial success rate gives about 98 percent pass@3 and about 42 p
 | [judge-calibration](references/judge-calibration.md) | Judge prompt design, label splits, TPR and TNR, bias correction, intervals, drift |
 | [agent-evals](references/agent-evals.md) | Tasks, trials, isolation, transcript and outcome grading, pass@k vs pass^k, suites, saturation |
 | [tooling](references/tooling.md) | Eval tools and their status as of 2026-10-21, selection guide, CI wiring, plugin evals |
-
-## Integration with Other Skills
-
-| Situation | Recommended Skill |
-|---|---|
-| Tracing the app so there are traces to read | `llm-observability` |
-| General test strategy, isolation, flaky tests | `testing` |
-| Wiring the suite into a pipeline and quality gates | `cicd` |
-| Diagnosing why an eval started failing | `debugging` |
-| Designing the agent being evaluated | `agent-design` |
-| Red-teaming and injection checks for LLM apps | `agent-security` |
-| Building the app with the Vercel AI SDK or LangChain | `vercel-ai-sdk`, `langchain-components` |
-| Latency and cost regressions found by evals | `performance` |
-| Confirming a change works before calling it done | `verification-before-completion` |

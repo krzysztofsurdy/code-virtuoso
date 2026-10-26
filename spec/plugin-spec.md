@@ -235,7 +235,7 @@ Claude Code also scans the entry's `source` directory for the default component 
 The result: several entries with `"source": "./"` each register every agent in the root `agents/` directory, so installing a skills-only bundle would also register `<bundle>:reviewer`, `<bundle>:investigator`, and so on. Rules that prevent this:
 
 - Only the entry that owns the root component directories (`agents-virtuoso`) uses `"source": "./"`.
-- Skill-only bundles use `"source": "./skills"` and list skill paths relative to it (`./knowledge/solid`). `skills/` holds no `agents/`, `commands/`, `workflows/`, or `hooks/` directory, so nothing extra registers.
+- Skill-only bundles use `"source": "./skills"` and list skill paths relative to it (`./knowledge/security`). `skills/` holds no `agents/`, `commands/`, `workflows/`, or `hooks/` directory, so nothing extra registers.
 - Adding a root `commands/`, `workflows/`, `hooks/hooks.json`, `output-styles/`, or `.mcp.json` has the same effect as `agents/`. Before adding one, make sure exactly one entry has the repository root as its source, or move the component into a self-contained plugin under `plugins/`.
 - Do not use `"agents": []` or a placeholder `.md` file to suppress the scan. Neither works.
 - Files outside an entry's `source` are not copied into the cache, so a skill in a bundle that links to `../../../spec/...` has a broken link once installed. Keep links inside `skills/`.

@@ -64,7 +64,7 @@ Skills are organized into five categories:
 | `frameworks` | `skills/frameworks/{name}/` | Framework-specific version facts, opinions, and pitfalls (also PHP upgrade and Composer playbooks under `php/`) |
 | `tools` | `skills/tools/` | Interactive generators, setup utilities, and headless agent wrappers |
 | `playbooks` | `skills/playbooks/` | Step-by-step procedures for recurring work |
-| `ai` | `skills/ai/` | Building with LLMs and agents: agent design, evals, observability, MCP servers |
+| `ai` | `skills/ai/` | Building with LLMs and agents: evals, observability |
 
 Role reference material is not a skill category. It lives in `roles/{name}/` and is read by role agents (see [agent-spec.md](agent-spec.md)).
 
@@ -78,18 +78,18 @@ A skill earns its place by changing what the model does. Keep what the model get
 
 ## Run-by-name skills
 
-Reference skills that cover well-known material (design patterns, SOLID, testing theory) are useful on request but waste context when their descriptions sit in every session. Mark them:
+Reference skills that cover well-known material (design theory, language basics) are useful on request but waste context when their descriptions sit in every session. Mark them:
 
 ```yaml
 ---
-name: solid
-description: SOLID principles for object-oriented design. Use to review class design or reduce coupling.
+name: performance
+description: Profiling-driven performance optimization. Use to find bottlenecks and tune caching and queries.
 user-invocable: true
 disable-model-invocation: true
 ---
 ```
 
-The skill stays installed and the user runs it as `/solid`. Headless wrapper skills that fork an agent use the same pair, because only a person or a script should start them.
+The skill stays installed and the user runs it as `/performance`. Headless wrapper skills that fork an agent use the same pair, because only a person or a script should start them.
 
 ## References
 

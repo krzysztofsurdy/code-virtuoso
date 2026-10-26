@@ -189,7 +189,6 @@ Before finalizing the PR message, check that:
 
 | Situation | Recommended Skill |
 |---|---|
-| Starting work on a ticket end-to-end | `ticket-delivery` |
 | Generating a summary report after completing work | `report-writer` |
 | Reviewing code before writing the PR | `reviewer` agent |
 | Getting a fresh-eyes review before requesting one from teammates | `cold-reviewer` agent |

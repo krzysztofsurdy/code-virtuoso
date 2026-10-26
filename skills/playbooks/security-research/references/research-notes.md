@@ -27,7 +27,7 @@ The skill stays open by design. The 2025 to 2026 changes in the ledger (HackerOn
 
 ## Gate approval record
 
-No user was available. The maintainer approved the skill-writer confirmation gates through the sr-build brief on 2026-10-22:
+No user was available. The maintainer approved the skill-creator confirmation gates through the sr-build brief on 2026-10-22:
 
 | Gate | Decision |
 |---|---|
@@ -62,7 +62,7 @@ The `timeout` wrapper was not available on this machine, so the two confirmation
 | trailofbits/skills | https://github.com/trailofbits/skills | official (established security firm) | 7.7k stars, pushed 2026-10-22 | Technique skills: c-review, variant-analysis, differential-review, fp-check, static-analysis, testing-handbook skills, patching-bugs | Best-in-class technique content | No authorization gate, no disclosure or CVE steps, no ongoing monitoring, not an end-to-end workflow | CC-BY-SA-4.0 (confirmed with `gh api` in this build) |
 | morluto/rea | https://github.com/morluto/rea | community | npm `rea-agents` 6.7.0, 2026-10-18. Star counts looked implausible and were not used | MCP server plus skill for reverse engineering software you own or are authorized to examine | Local analysis, scoped disclaimer, reviewable setup | Not a methodology, disclosure or live-research skill. Setup rewrites agent config. Two skills.sh audits showed Warn | MIT |
 | Seen in search only, not read: superagent-ai `security-disclosure-triage`, yaklang `recon-and-methodology`, transilienceai `hackerone`, trilwu `reporting-security-findings`, waybarrios `vuln-report` | https://skills.sh | community | 34 to 3.9K installs | Vendor-side triage, recon, report writing | n/a | Not evaluated | not checked |
-| This repo: `security`, `agent-security`, `research`, `docs-lookup` | skills/ in this repository | project | local | Defensive security and OWASP, untrusted content handling, sourced research, version-correct docs | The research engine and the safety rules this skill points to | None cover the finder-side workflow | project license |
+| This repo: `security`, `research`, `docs-lookup` | skills/ in this repository | project | local | Defensive security and OWASP, sourced research, version-correct docs | The research engine and the safety rules this skill points to | None cover the finder-side workflow | project license |
 
 Decision: write a new skill. No official or clearly better skill covers the end-to-end loop of authorization gate, lab reproduction, minimal PoC, coordinated disclosure, post-patch write-up and ongoing live research.
 
@@ -75,11 +75,11 @@ Strengths adopted (ideas only, credited, no text copied):
 
 Weaknesses avoided: live-target recon tooling, very long bodies, no authorization or disclosure steps, no live research, textbook content the model already knows.
 
-Point to rather than rebuild: trailofbits/skills for technique depth (variant analysis, C review, fuzzing and sanitizer how-tos), morluto/rea for reverse engineering of closed binaries, and the repo skills `security`, `agent-security`, `research`, `docs-lookup`, `verification-before-completion`, `debugging`.
+Point to rather than rebuild: trailofbits/skills for technique depth (variant analysis, C review, fuzzing and sanitizer how-tos), morluto/rea for reverse engineering of closed binaries, and the repo skills `security`, `research`, `docs-lookup`, `verification-before-completion`, `debugging`.
 
 ## Fact ledger
 
-Every row was retrieved 2026-10-22. "Origin" is the row in the research pass that read the page. Confidence uses the skill-writer labels. A page read once on a primary source is "likely", two independent sources is "confirmed".
+Every row was retrieved 2026-10-22. "Origin" is the row in the research pass that read the page. Confidence uses the skill-creator labels. A page read once on a primary source is "likely", two independent sources is "confirmed".
 
 ### Authorization and law (authorization-and-law.md, SKILL.md)
 

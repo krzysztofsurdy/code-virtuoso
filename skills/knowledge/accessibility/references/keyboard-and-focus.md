@@ -196,7 +196,7 @@ When an overlay closes, return focus to the element that opened it. Store `docum
 
 ## Visible focus indicators
 
-Never remove focus outlines without a visible alternative. WCAG 2.4.7 (AA) requires visible focus indicators. WCAG 2.4.11 (2.2) requires 2px minimum outline with 3:1 contrast.
+Never remove focus outlines without a visible alternative. WCAG 2.4.7 Focus Visible (AA) requires a visible focus indicator. WCAG 2.4.11 Focus Not Obscured, Minimum (AA, new in 2.2) requires that a focused component is not entirely hidden by author content such as a sticky header or footer. The minimum-area and 3:1 contrast rule for the indicator itself (roughly a 2px-thick outline with 3:1 contrast against adjacent colors) is WCAG 2.4.13 Focus Appearance (AAA, new in 2.2).
 
 ```css
 :focus-visible {

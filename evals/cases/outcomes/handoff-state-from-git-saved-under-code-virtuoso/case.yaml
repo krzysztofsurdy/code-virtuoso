@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: handoff-state-from-git-saved-under-code-virtuoso
+context:
+  scaffold_script: fixture.sh

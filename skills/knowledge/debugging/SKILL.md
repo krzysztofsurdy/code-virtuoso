@@ -7,20 +7,9 @@ user-invocable: false
 
 # Debugging
 
-Systematic methodology for finding and fixing bugs. It puts root cause analysis ahead of symptom treatment, evidence ahead of intuition, and prevention ahead of recurrence.
-
 ## Iron law
 
 **No fix without root cause.** Never apply a fix until you can explain WHY the bug exists, not only WHERE it shows up. Symptom-level fixes create new bugs.
-
-## When to use
-
-- Bug report from QA or production alert
-- Test failure with unclear cause
-- Intermittent/flaky behavior
-- Performance degradation
-- Unexpected behavior that "used to work"
-- Integration failures between components
 
 ## Workflow
 
@@ -64,14 +53,7 @@ Form competing hypotheses ranked by evidence strength.
 3. Rate each on evidence strength (strong/medium/weak), testability (easy/hard), and likelihood
 4. Pick the most likely AND most testable hypothesis first
 5. Define what would CONFIRM and what would FALSIFY each hypothesis
-
-**Example hypothesis table:**
-
-| # | Hypothesis | Category | Evidence | Testability | Test plan |
-|---|---|---|---|---|---|
-| 1 | Cache returns stale data after update | State | Log shows old value 2s after write | Easy | Bypass cache and compare |
-| 2 | Race condition between two workers | Race condition | Intermittent, high load correlation | Medium | Add locking, stress test |
-| 3 | Upstream API returns unexpected format | Integration | No evidence yet | Easy | Log raw response |
+6. Log evidence, not hunches: "I think it might be X" is not a hypothesis; "log line Y shows value Z when it should show W" is
 
 **Output**: Ranked hypothesis list with evidence and test plan
 
@@ -102,12 +84,6 @@ Implement the fix at the source, not at the symptom.
 3. Verify the failing test now passes
 4. Run the full test suite to catch regressions
 5. Review your own fix: is this the simplest correct solution?
-
-**Fix principles:**
-- Fix at the SOURCE where bad data/state originates, not where the error appears
-- Add defense-in-depth: validate at boundaries even after fixing the source
-- Prefer making invalid states unrepresentable over runtime validation
-- One bug = one fix = one commit = one test
 
 **Output**: Fix with regression test, clean test suite
 
@@ -180,64 +156,3 @@ Stop debugging and escalate when:
 - **Patch**: isolated bug, clear root cause, code is otherwise sound
 - **Rewrite**: 3+ bugs in the same module, the root cause is structural, and the fix would be more complex than a rewrite
 - **Rollback**: production is burning and the previous version worked. Roll back first, debug second
-
----
-
-## Integration with team roles
-
-This debugging workflow connects to broader team processes:
-
-| Phase | Team integration |
-|---|---|
-| Reproduce | QA provides bug reports with reproduction steps; request more detail if insufficient |
-| Investigate | Architect can help map component dependencies and blast radius |
-| Fix | A peer reviews the code before merge, since a second pair of eyes catches fix-induced regressions |
-| Prevent | Post-mortem shared with the team; action items tracked in the backlog |
-
-When using other skills from this library:
-
-| Situation | Recommended Skill |
-|---|---|
-| Bug fix reveals design problems | `design-patterns` |
-| Fix involves refactoring | `refactoring` |
-| SOLID violation is root cause | `solid` |
-| PR for the fix | `pr-message-writer` |
-
----
-
-## Quality checklist
-
-Before marking a bug fix done:
-
-- [ ] Root cause is identified and documented
-- [ ] Failing test existed before the fix
-- [ ] Fix addresses root cause, not symptom
-- [ ] Full test suite passes
-- [ ] Fix is the simplest correct solution
-- [ ] Error messages improved where relevant
-- [ ] Post-mortem written for significant bugs
-- [ ] Team notified if the bug affects shared components
-
----
-
-## Critical rules
-
-1. **No fix without root cause.** This is the iron law. If you cannot explain why the bug exists, you are not done investigating.
-
-2. **Reproduce first.** Do not investigate what you cannot reproduce. If reproduction fails, add observability and wait.
-
-3. **Single-variable testing.** Change one thing at a time during hypothesis testing. Changing several variables makes results uninterpretable.
-
-4. **Evidence over intuition.** Log your evidence. "I think it might be X" is not a hypothesis. "Log line Y shows value Z when it should show W" is.
-
-5. **Test before and after.** A fix without a regression test will break again.
-
-6. **Escalate without ego.** Knowing when to stop and ask for help is a skill. See the escalation criteria above.
-
-7. **Document for the next person.** The next person debugging this area might be you in six months. Leave the codebase more observable than you found it.
-
-8. **Never debug production by modifying production.** Investigate read-only. Fixes go through the normal deployment pipeline.
-
-9. **Scope discipline.** Fix the bug. Only the bug. Other improvements are separate tickets.
-
-10. **Share what you learn.** Every significant bug is a learning opportunity for the team. Post-mortems are not about blame. They are institutional memory.

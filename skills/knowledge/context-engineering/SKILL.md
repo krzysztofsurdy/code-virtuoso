@@ -7,20 +7,7 @@ user-invocable: false
 
 # Context engineering
 
-An agent's context window is a budget, not storage. Every token it reads competes for attention with every other token, and reliability falls as the window fills (context rot). The job is to give the agent the smallest set of high-signal tokens for the step it is on, and to load everything else only when needed.
-
-## Core Principles
-
-| Principle | Meaning |
-|---|---|
-| **Smallest high-signal set** | Each line in an always-loaded file must change behavior. If the agent would do the right thing without it, delete it. |
-| **Load by need, not by default** | Always-on files cost tokens on every turn. Path-scoped rules, skills and docs cost tokens only when used. |
-| **Instructions, not overviews** | Agents follow specific rules well. Repository tours and architecture summaries mostly add cost. |
-| **Point, do not paste** | Give a path or a command and let the agent read it. Pasted copies go stale. |
-| **Write state outside the window** | Progress that matters lives in a file, not in conversation history that compaction will summarize. |
-| **Enforce with tools, advise with text** | A rule that must hold every time belongs in a hook, linter or test. Text is guidance the agent may drop. |
-| **One source of truth** | Write each rule in one file. Project rules go in `AGENTS.md`, and tool files import it or hold only tool-specific lines. |
-| **Measure before adding** | Context files can lower success and raise cost. Add one only for a failure you have seen. |
+An agent's context window is a budget, not storage: reliability falls as the window fills (context rot). Give the agent the smallest set of high-signal tokens for the step it is on, and load everything else only when needed. Each line in an always-loaded file must change behavior, and a rule that must always hold belongs in a hook, linter or test, not text. Add a context file only for a failure you have seen.
 
 ## Evidence that more context can hurt
 
@@ -138,20 +125,6 @@ A subagent works in its own window. It may read tens of thousands of tokens and 
 
 For work that spans many sessions or compactions, keep a progress file and a task list in the repository, update them at each step, and begin every session by reading them. See [long-task-notes](references/long-task-notes.md) for the file layouts, the one-feature-per-session pattern, and handoff notes.
 
-## Writing an instruction file: checklist
-
-- [ ] Every line passes the test "what mistake does this prevent?"
-- [ ] Commands are exact and runnable (build, test, lint, single-test)
-- [ ] Only non-obvious conventions are listed, not what the code or a linter shows
-- [ ] No repository overview, directory tree or stack list
-- [ ] Rules scoped to part of the repo live in path-scoped rules or nested files
-- [ ] Long reference material is linked, not pasted
-- [ ] Hard requirements are backed by a hook, linter or test
-- [ ] No duplicate or contradicting rules across files, and no skill routing table or agent roster
-- [ ] Every skill the file names is installed
-- [ ] Under the size budget for the tool in use
-- [ ] A recent failure justifies each added rule
-
 ## Reference Files
 
 | Reference | Contents |
@@ -159,15 +132,3 @@ For work that spans many sessions or compactions, keep a progress file and a tas
 | [placement-guide](references/placement-guide.md) | Decision flow for where each kind of instruction goes, per-tool file names and scoping, before and after examples, migration steps |
 | [long-task-notes](references/long-task-notes.md) | Progress file and task list layouts, one-feature-per-session pattern, handoff notes, compaction checklist |
 | [writing-levers](references/writing-levers.md) | Leading words, positive phrasing instead of prohibitions, the no-op test, project glossary with _Avoid_ lists |
-
-## Integration with Other Skills
-
-| Situation | Recommended Skill |
-|---|---|
-| Fetching version-correct library docs instead of pasting them | `docs-lookup` |
-| Running several agents with separate windows, or executing a plan task by task with fresh subagents | `agent-orchestration` |
-| Proving work is complete before closing a long task | `verification-before-completion` |
-| Generating rules files for a specific agent tool | `agentic-rules-writer` |
-| Adding a reminder hook, deny rules or other enforcement | `hooks-and-guardrails` |
-| Reviewing instruction files for secrets, hidden characters or injection | `security` |
-| Auditing a repository's instruction files in one pass | `instruction-auditor` agent |
