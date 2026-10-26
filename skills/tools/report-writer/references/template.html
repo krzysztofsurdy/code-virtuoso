@@ -30,6 +30,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        .table-wrap { overflow-x: auto; margin: 1.25rem 0; border: 1px solid #D9D9D9; border-radius: 12px; background: #fff; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .data-table th, .data-table td { padding: 10px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid #F2F2F2; }
+        .data-table td { min-width: 6em; overflow-wrap: anywhere; }
+        .data-table th { background: #FAFAFA; border-bottom: 2px solid #D9D9D9; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #475569; white-space: nowrap; }
+        .data-table tbody tr:last-child td { border-bottom: 0; }
+        .data-table tbody tr:hover { background: #FAFAFA; }
+        .data-table td code { font-family: 'JetBrains Mono', 'SF Mono', monospace; font-size: 13px; background: #F2F2F2; padding: 1px 5px; border-radius: 4px; }
+        .data-table td.positive { color: #15803D; font-weight: 600; }
+        .data-table td.negative { color: #B91C1C; font-weight: 600; }
+        .data-table td.neutral { color: #64748B; }
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
         }
@@ -44,6 +55,7 @@
             .section { page-break-inside: avoid; }
             .section h2 { page-break-after: avoid; }
             table { page-break-inside: avoid; }
+            .table-wrap { overflow: visible !important; }
             tr { page-break-inside: avoid; }
             .relative.pl-9 { page-break-inside: avoid; }
             .grid { page-break-inside: avoid; }
@@ -220,18 +232,10 @@
     =====================================
     DATA TABLE
     =====================================
-    <div class="my-5 rounded-xl overflow-hidden border border-surface-dark shadow-sm">
-        <table class="w-full border-collapse bg-white/80">
-            <thead>
-                <tr>
-                    <th class="bg-surface/60 p-3.5 px-5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 border-b-2 border-surface-dark">Column</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="hover:bg-surface-light transition-colors">
-                    <td class="p-3 px-5 border-b border-surface text-sm">Data</td>
-                </tr>
-            </tbody>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>Column</th></tr></thead>
+            <tbody><tr><td>Data</td></tr></tbody>
         </table>
     </div>
 

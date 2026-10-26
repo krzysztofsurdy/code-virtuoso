@@ -501,7 +501,7 @@ function renderTable(rows) {
   let html = "<thead><tr>";
   for (const col of COLUMNS) {
     const arrow = col === sortField ? (sortDir === 1 ? " ▲" : " ▼") : "";
-    html += `<th data-col="${col}">${col}${arrow}</th>`;
+    html += `<th data-col="${escapeHtml(col)}">${escapeHtml(col)}${arrow}</th>`;
   }
   html += "</tr></thead><tbody>";
   for (const r of shown) {

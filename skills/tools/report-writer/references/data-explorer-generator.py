@@ -41,6 +41,27 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 
+class RaggedRowError(ValueError):
+    pass
+
+
+def read_csv(path: Path) -> tuple[list[str], list[dict[str, str]]]:
+    with path.open(encoding="utf-8", newline="") as fh:
+        reader = csv.DictReader(fh, restval="")
+        columns = list(reader.fieldnames or [])
+        records: list[dict[str, str]] = []
+        for record in reader:
+            if None in record:
+                raise RaggedRowError(f"{path} line {reader.line_num}: more cells than the {len(columns)} header columns")
+            records.append(record)
+    return columns, records
+
+
+def script_json(value: object) -> str:
+    text = json.dumps(value, separators=(",", ":"), ensure_ascii=False)
+    return text.replace("&", "\\u0026").replace("<", "\\u003c").replace(">", "\\u003e")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--csv", type=Path, required=True, help="Input CSV file")
@@ -51,10 +72,10 @@ def main() -> None:
 
     config = json.loads(args.config.read_text(encoding="utf-8"))
 
-    with args.csv.open(encoding="utf-8", newline="") as fh:
-        reader = csv.DictReader(fh)
-        columns = list(reader.fieldnames or [])
-        records = list(reader)
+    try:
+        columns, records = read_csv(args.csv)
+    except RaggedRowError as exc:
+        parser.error(str(exc))
 
     template = args.template.read_text(encoding="utf-8")
 
@@ -65,21 +86,19 @@ def main() -> None:
         total=len(records),
     )
 
-    dumps = lambda v: json.dumps(v, separators=(",", ":"), ensure_ascii=False)  # noqa: E731
-
     html = (
         template
         .replace("{{REPORT_TITLE}}", str(config.get("title") or "Data Explorer"))
         .replace("{{REPORT_SUBTITLE}}", subtitle)
         .replace("{{REQUIREMENTS_HTML}}", config.get("requirements_html") or "")
-        .replace("{{DEFAULT_FILTERS_JSON}}", dumps(config.get("default_filters") or []))
-        .replace("{{CHARTS_CONFIG_JSON}}", dumps(config.get("charts") or []))
-        .replace("{{STATS_CONFIG_JSON}}", dumps(config.get("stats") or []))
-        .replace("{{SEARCH_FIELDS_JSON}}", dumps(config.get("search_fields") or []))
-        .replace("{{MULTI_VALUED_FIELDS_JSON}}", dumps(config.get("multi_valued_fields") or {}))
-        .replace("{{COLOR_MAP_JSON}}", dumps(config.get("color_map") or {}))
-        .replace("{{RECORDS_JSON}}", dumps(records))
-        .replace("{{COLUMNS_JSON}}", dumps(columns))
+        .replace("{{DEFAULT_FILTERS_JSON}}", script_json(config.get("default_filters") or []))
+        .replace("{{CHARTS_CONFIG_JSON}}", script_json(config.get("charts") or []))
+        .replace("{{STATS_CONFIG_JSON}}", script_json(config.get("stats") or []))
+        .replace("{{SEARCH_FIELDS_JSON}}", script_json(config.get("search_fields") or []))
+        .replace("{{MULTI_VALUED_FIELDS_JSON}}", script_json(config.get("multi_valued_fields") or {}))
+        .replace("{{COLOR_MAP_JSON}}", script_json(config.get("color_map") or {}))
+        .replace("{{RECORDS_JSON}}", script_json(records))
+        .replace("{{COLUMNS_JSON}}", script_json(columns))
     )
     args.out.write_text(html, encoding="utf-8")
     print(f"wrote {args.out} ({len(records)} records)")

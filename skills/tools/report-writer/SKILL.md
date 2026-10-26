@@ -322,6 +322,8 @@ REPORT_EOF
 
 All components go inside the `{{REPORT_CONTENT}}` placeholder. Every component is styled by `references/template.html`; use only the class names listed in the component reference.
 
+**Tables:** write every table as the `table-wrap` + `data-table` HTML from components.md, never a markdown pipe table: nothing renders markdown in the report. Escape `&`, `<` and `>` in every cell, code included. Every row has the header's cell count, an empty cell is `<td></td>`, and there is no `rowspan` or `colspan`.
+
 Read [references/components.md](references/components.md) before writing the report body. It has copy-paste HTML and class variants for:
 
 - Core: section with icon (plus the icon-to-section table), info card, highlighted card, timeline, code block, impact grid (`low`/`medium`/`high`), decision log, file list (`added`/`modified`/`deleted` badges), stats bar

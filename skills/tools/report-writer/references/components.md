@@ -244,32 +244,47 @@ Phase classes: (none) = pending, `active` = current, `completed` = done.
 
 ### Data table
 
+Tables are always this HTML. Nothing in the report renders markdown, so a `| a | b |` pipe table shows up as one line of raw text.
+
 ```html
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>Endpoint</th>
-            <th>Before</th>
-            <th>After</th>
-            <th>Improvement</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><code>/api/orders</code></td>
-            <td>2,340ms</td>
-            <td>45ms</td>
-            <td class="positive">98% faster</td>
-        </tr>
-        <tr>
-            <td><code>/api/users</code></td>
-            <td>180ms</td>
-            <td>165ms</td>
-            <td class="neutral">8% faster</td>
-        </tr>
-    </tbody>
-</table>
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Endpoint</th>
+                <th>Signature</th>
+                <th>Before</th>
+                <th>After</th>
+                <th>Improvement</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>/api/orders</code></td>
+                <td><code>find(ids: Array&lt;string&gt;)</code></td>
+                <td>2,340ms</td>
+                <td>45ms</td>
+                <td class="positive">98% faster</td>
+            </tr>
+            <tr>
+                <td><code>/api/users</code></td>
+                <td></td>
+                <td>180ms</td>
+                <td>165ms</td>
+                <td class="neutral">8% faster</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 ```
+
+| Rule | Why |
+|---|---|
+| Wrap every table in `<div class="table-wrap">` | Wide tables scroll inside the wrapper instead of overflowing the page |
+| Escape `&` as `&amp;`, `<` as `&lt;`, `>` as `&gt;` in every cell, inside `<code>` too | `Array<string>` loses `<string>` as an unknown tag, and a literal `<td>` in text opens a new cell and shifts the row |
+| Every `<tr>` has exactly as many cells as the header row; write an empty cell as `<td></td>` | A missing cell moves every later value into the wrong column |
+| No `rowspan` or `colspan` | They make rows ragged; repeat the value or split the table |
+| A pipe character needs no escaping in HTML cells | Only markdown treats it as a column separator |
 
 Table cell classes: `positive` (green), `negative` (red), `neutral` (gray).
 
