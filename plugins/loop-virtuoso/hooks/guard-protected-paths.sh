@@ -36,50 +36,13 @@ TOOL_NAME=$(echo "$HOOK_INPUT" | jq -r '.tool_name // empty')
 FILE_PATH=$(echo "$HOOK_INPUT" | jq -r '.tool_input.file_path // .tool_input.notebook_path // empty')
 [[ -n "$FILE_PATH" ]] || exit 0
 
-# _guard_resolve_path <path>
-# Resolves the longest EXISTING prefix of <path> via `pwd -P`, re-appending
-# whatever trailing segments don't exist yet unresolved - a path that isn't
-# there yet can't itself be a symlink, so there's nothing to resolve in it.
-# A brand-new file inside a not-yet-created directory (e.g. Write creating
-# the first file under a fresh tests/ dir) used to fall straight back to the
-# fully-unresolved path when `cd` failed outright, which broke the
-# comparison below whenever an ancestor ABOVE the missing directory was
-# itself a symlink (macOS's /tmp -> /private/tmp, the same case already
-# handled for existing paths) - walking up to the nearest real ancestor
-# closes that gap for missing paths too.
-_guard_resolve_path() {
-  local path="$1"
-  if [[ -d "$path" ]]; then
-    (cd "$path" 2>/dev/null && pwd -P) || echo "$path"
-    return
-  fi
-  local dir base suffix=""
-  dir="$(dirname "$path")"
-  base="$(basename "$path")"
-  while [[ ! -d "$dir" && "$dir" != "/" ]]; do
-    suffix="$(basename "$dir")/${suffix}"
-    dir="$(dirname "$dir")"
-  done
-  local resolved_dir
-  resolved_dir="$(cd "$dir" 2>/dev/null && pwd -P || echo "$dir")"
-  echo "${resolved_dir}/${suffix}${base}"
-}
-
 # protectedPaths globs are relative to the project root (the git root that holds
-# .code-virtuoso). Resolve both sides through the same normalization before
-# comparing: comparing raw strings broke whenever Claude Code resolved one of
-# them through a symlink and not the other.
-PROJECT_RESOLVED="$(_guard_resolve_path "$(cv_root_for "$BACKLOG_FILE")")"
-FILE_PATH_RESOLVED="$(_guard_resolve_path "$FILE_PATH")"
-
-REL_PATH="$FILE_PATH_RESOLVED"
-case "$FILE_PATH_RESOLVED" in
-  "$PROJECT_RESOLVED"/*) REL_PATH="${FILE_PATH_RESOLVED#"$PROJECT_RESOLVED"/}" ;;
-esac
+# .code-virtuoso).
+REL_PATH="$(paths_relative_to "$(cv_root_for "$BACKLOG_FILE")" "$FILE_PATH")"
 
 PROTECTED_JSON=$(backlog_protected_paths "$BACKLOG_FILE")
 
-if backlog_path_is_protected "$REL_PATH" "$PROTECTED_JSON"; then
+if paths_match_any "$REL_PATH" "$PROTECTED_JSON"; then
   jq -n --arg reason "Protected verification path for the active loop: $REL_PATH. The worker may not modify test, CI, or grading files -- this is enforced structurally, not by instruction." '
     {
       hookSpecificOutput: {

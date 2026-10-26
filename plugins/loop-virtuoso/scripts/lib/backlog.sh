@@ -22,6 +22,8 @@ LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$LIB_DIR/config.sh"
 # shellcheck source=./events.sh
 source "$LIB_DIR/events.sh"
+# shellcheck source=./paths.sh
+source "$LIB_DIR/paths.sh"
 
 backlog_atomic_write() {
   local file="$1" content="$2"
@@ -258,22 +260,6 @@ backlog_protected_paths() {
   [[ -n "$extra" ]] || extra='[]'
   jq -c --argjson extra "$extra" --arg cv "${CV_DIR_NAME}/**" \
     '(.config.protectedPaths // []) + (if ($extra | type) == "array" then $extra else [] end) + [$cv]' "$file"
-}
-
-# backlog_path_is_protected <path> <protected_paths_json_array>
-# Bash's case-pattern glob already matches "*" across "/", so "tests/**" and
-# "tests/*" behave identically here - no special globstar handling needed.
-backlog_path_is_protected() {
-  local path="$1" patterns_json="$2"
-  local pattern
-  while IFS= read -r pattern; do
-    [[ -z "$pattern" ]] && continue
-    # shellcheck disable=SC2254
-    case "$path" in
-      $pattern) return 0 ;;
-    esac
-  done < <(echo "$patterns_json" | jq -r '.[]')
-  return 1
 }
 
 # backlog_build_step_prompt <item_json> <step_json> <participant_json>

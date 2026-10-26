@@ -64,6 +64,11 @@ cv_loop_setting() {
   cv_merged_config "$1" | jq -c --arg key "$2" '.loop[$key] // empty'
 }
 
+# cv_guard_setting <root> <key>: one key of loop.guard as compact JSON; nothing if unset or false.
+cv_guard_setting() {
+  cv_merged_config "$1" | jq -c --arg key "$2" '(.loop.guard[$key])? // empty'
+}
+
 # cv_ensure_gitignore <root>
 # Creates <root>/.code-virtuoso/.gitignore with the spec lines, or appends the
 # lines an existing file lacks. Never rewrites what is already there.
