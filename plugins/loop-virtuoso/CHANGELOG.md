@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-10-26
+
+### Added
+
+- `doctor` groups findings per check by default, with one line per item and the fix printed once; `--verbose` prints the previous full output. `--json` adds a `satisfiedBy` map, and dead CLAUDE.md references are reported apart from references to skills the model cannot invoke.
+
+### Changed
+
+- `doctor` settings checks also read `settings.local.json` in the config directory and, inside a git repository, the project's `.claude/settings.json` and `.claude/settings.local.json`; deny and ask rules from all layers are combined. Telemetry is still read from the user `settings.json` only. `loop-guard` reads the merged code-virtuoso config, project layers included.
+
+### Fixed
+
+- Batch mode no longer stops with `invocation_failed` when a step hits `--max-turns`: the cutoff is graded by the verify gate and its cost is recorded. `run-batch.sh` and `eval-setup.sh` share one result check (`invoke_result_ok` in `scripts/lib/invoke.sh`).
+
 ## [2.1.0] - 2026-10-26
 
 Guardrails and setup tooling for sessions outside a loop. Every new guard is off by default: installing or updating the plugin changes nothing until you set `loop.guard` in a config layer or approve a `harden` diff.
