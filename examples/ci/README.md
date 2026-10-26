@@ -14,11 +14,12 @@ Workflow files that run the read-only agents in GitHub Actions. They are example
 1. Copy the file into `.github/workflows/` of your repository.
 2. Add the secret it names: `ANTHROPIC_API_KEY` for the Claude workflows, `OPENAI_API_KEY` for Codex. Install the [Claude GitHub App](https://github.com/apps/claude) for the Claude workflows.
 3. Read the comments at the top of the file, then adjust the lines that depend on your project: the matrix of skills, `--allowedTools`, `--max-budget-usd`, and the toolchain setup in the scheduled audit.
-4. Pin the third-party actions and the `ref:` of the Code Virtuoso checkout to a commit SHA or release tag before relying on them.
+4. The third-party actions are pinned to commit SHAs, with the release tag in a comment. Update them with your usual tooling (Dependabot, Renovate), and pin the `ref:` of the Code Virtuoso checkout in `codex-review.yml` to a release tag or commit SHA before relying on it.
 
 ## Security choices
 
 - The review workflows use `pull_request`, never `pull_request_target`. Fork PRs run without secrets, so the examples skip them instead of failing.
+- `actions/checkout` runs with `persist-credentials: false`, so the workflow token is not left in `.git/config` for the agent to read. No step pushes.
 - Each job declares its own `permissions:` and the workflow default is none. The review jobs get read access only. The scheduled report job is the only one that can write, and it only writes issues.
 - `--allowedTools` lists the exact commands each skill needs (`git diff`, `npm audit`, and so on). The agents cannot run anything else without a prompt, and a headless run has nobody to answer one.
 - `--max-turns`, `--max-budget-usd`, and `timeout-minutes` cap cost and run time.

@@ -74,7 +74,8 @@ guard_hook() {
 
 # install_fake_claude: puts a stub `claude` first on PATH. The stub appends its
 # argv to $FAKE_CLAUDE_LOG, optionally runs $FAKE_CLAUDE_ACTION, and prints an
-# envelope that satisfies run-batch.sh.
+# envelope that satisfies run-batch.sh. $FAKE_CLAUDE_JSON replaces that envelope
+# and $FAKE_CLAUDE_RC sets the exit code.
 install_fake_claude() {
   local bin
   bin="$(new_tmp_dir bin)"
@@ -82,7 +83,9 @@ install_fake_claude() {
 #!/bin/bash
 printf 'CALL %s\n' "$*" >> "${FAKE_CLAUDE_LOG:-/dev/null}"
 [[ -n "${FAKE_CLAUDE_ACTION:-}" ]] && eval "$FAKE_CLAUDE_ACTION"
-echo '{"result":"ok","total_cost_usd":0.01}'
+default_json='{"result":"ok","total_cost_usd":0.01}'
+echo "${FAKE_CLAUDE_JSON:-$default_json}"
+exit "${FAKE_CLAUDE_RC:-0}"
 STUB
   chmod +x "$bin/claude"
   export PATH="$bin:$PATH"

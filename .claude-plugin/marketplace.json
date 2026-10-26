@@ -4,13 +4,13 @@
     "name": "Krzysztof Surdy"
   },
   "metadata": {
-    "description": "70 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
-    "version": "11.1.0"
+    "description": "45 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
+    "version": "11.1.1"
   },
   "plugins": [
     {
       "name": "knowledge-virtuoso",
-      "description": "18 knowledge skills: design patterns, refactoring, SOLID, debugging, clean architecture, testing, API design, security, agent security, context engineering, docs lookup, scrum, performance, microservices, CI/CD, accessibility, database design, and motion design",
+      "description": "6 knowledge skills: accessibility, context engineering, debugging, docs lookup, performance, and security",
       "source": "./skills",
       "strict": false,
       "skills": [
@@ -24,7 +24,7 @@
     },
     {
       "name": "tools-virtuoso",
-      "description": "15 tool skills: rules writer, ticket writer, agent creator, skill writer, plugin creator, research, brainstorming, ecosystem advisor, communication style, PR message writer, report writer, stakeholder update writer, UI review, web screenshot, and image annotate",
+      "description": "13 tool skills: rules writer, ticket writer, agent creator, skill writer, skill measure, plugin creator, research, brainstorming, communication style, PR message writer, report writer, stakeholder update writer, and UI review",
       "source": "./skills",
       "strict": false,
       "skills": [
@@ -45,7 +45,7 @@
     },
     {
       "name": "playbooks-virtuoso",
-      "description": "12 playbook skills: ticket delivery, spec-driven development, TDD, branch finishing, PR feedback, handoff, worktree ops, hooks and guardrails, game feature loop, video production, security research, and retro",
+      "description": "8 playbook skills: spec-driven development, TDD, branch finishing, PR feedback, handoff, hooks and guardrails, game feature loop, and security research",
       "source": "./skills",
       "strict": false,
       "skills": [
@@ -61,7 +61,7 @@
     },
     {
       "name": "frameworks-virtuoso",
-      "description": "12 framework skills: Symfony components, upgrade, Doctrine ORM and testing, Django components, LangChain components, PHP upgrade and quality, Composer dependencies, Godot and Godot upgrade, and Vercel AI SDK",
+      "description": "6 framework skills: Symfony upgrade, PHP upgrade, Composer dependencies, Godot and Godot upgrade, and Vercel AI SDK",
       "source": "./skills",
       "strict": false,
       "skills": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "ai-virtuoso",
-      "description": "4 AI engineering skills: agent design, LLM evals, LLM observability, and MCP server development",
+      "description": "2 AI engineering skills: LLM evals and LLM observability",
       "source": "./skills",
       "strict": false,
       "skills": [
@@ -85,7 +85,7 @@
     },
     {
       "name": "agents-virtuoso",
-      "description": "20 agents (specialists and roles), 3 team workflows, and the agent-orchestration and verification skills, plus headless wrapper skills for CI review, test gaps, migration planning, dependency audit, and refactor scans",
+      "description": "20 agents (specialists and roles), 3 team workflows, and the verification skill, plus headless wrapper skills for CI review, test gaps, migration planning, dependency audit, and refactor scans",
       "source": "./",
       "strict": false,
       "skills": [

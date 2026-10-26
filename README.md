@@ -36,7 +36,7 @@ scripts/install-codex-agents.sh
 
 ## What is inside
 
-43 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
+45 skills, 20 agents, and 3 team workflows, in seven bundles. Install any of them with `/plugin install <bundle>@code-virtuoso`.
 
 | Bundle | Holds |
 |---|---|
@@ -46,7 +46,7 @@ scripts/install-codex-agents.sh
 | `frameworks-virtuoso` | 6 framework skills |
 | `ai-virtuoso` | 2 skills for building with LLMs and agents |
 | `agents-virtuoso` | 20 agents, 3 team workflows, 8 skills (see Agents and Teams) |
-| `loop-virtuoso` | Delivery loop plugin with opt-in guard hooks, setup audit and setup evals, Claude Code only |
+| `loop-virtuoso` | Delivery loop plugin with 2 skills, opt-in guard hooks, setup audit and setup evals, Claude Code only |
 
 A skill marked "run by name" never loads on its own. It costs no context until you call it, for example `/performance`.
 

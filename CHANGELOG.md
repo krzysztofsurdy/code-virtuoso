@@ -4,6 +4,17 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.1.1] - 2026-10-26
+
+### Changed
+- `loop-virtuoso` 2.2.0: `doctor` groups findings per check (`--verbose` for the full list) and reads the local and project settings layers
+- Example CI workflows pin every action to a commit SHA and check out with `persist-credentials: false`
+- Corrected stale skill and eval counts in `marketplace.json`, `README.md` and `evals/README.md`
+
+### Fixed
+- `report-writer`: data tables render styled, scroll when wide and keep their column alignment; cell text is escaped; every component documented in `components.md` now has CSS in the template; data-explorer reports no longer break on `</script>`, ragged CSV rows or special characters in column names
+- `loop-virtuoso`: batch mode treats a `--max-turns` cutoff as a normal result instead of stopping with `invocation_failed`
+
 ## [11.1.0] - 2026-10-26
 
 ### Added

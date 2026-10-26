@@ -209,7 +209,7 @@ for (( i = 0; i < task_count; i++ )); do
       started="$(date +%s)"
       invoke_claude "$worktree" "${claude_args[@]}" </dev/null
       duration=$(( $(date +%s) - started ))
-      if ! echo "$INVOKE_JSON" | jq -e 'type == "object" and (.type == "result" or has("result"))' >/dev/null 2>&1; then
+      if ! invoke_result_ok "$INVOKE_JSON"; then
         stop_reason="invocation_failed"
         echo "stop reason=invocation_failed task=$task_id arm=$arm hint=\"$(invoke_failure_hint "$INVOKE_STDERR")\" detail=\"$(invoke_failure_detail "$INVOKE_STDERR")\""
         break 3

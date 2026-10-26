@@ -15,6 +15,13 @@ invoke_claude() {
   rm -f "$stderr_file"
 }
 
+# invoke_result_ok <json>
+# True for any result envelope, including a max-turns/max-budget cutoff
+# (type "result", an error_* subtype, no .result field).
+invoke_result_ok() {
+  echo "$1" | jq -e 'type == "object" and (.type == "result" or has("result"))' >/dev/null 2>&1
+}
+
 # invoke_failure_hint <stderr>
 # Most common cause of no JSON at all under a Claude subscription is the
 # plan's usage/rate limit; say so when stderr points there.

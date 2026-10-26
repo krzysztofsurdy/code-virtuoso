@@ -6,10 +6,10 @@ Tests for what the skills do, not only how they read. They use [`claude plugin e
 
 | Suite | Cases | What it proves |
 |---|---|---|
-| `cases/triggers` | 56 | Nineteen skills each get up to two realistic prompts that should call the skill and one near miss that should not. |
-| `cases/outcomes` | 4 | `verification-before-completion`: the agent runs the tests and reports the failure instead of claiming done. `docs-lookup`: the agent reads `composer.lock` and states the locked version. `tdd`: the agent sees a failing test before it writes `slug.py`. `agentic-rules-writer`: the generated `AGENTS.md` is short, keeps the user's own rules, and has no filler or routing table. |
+| `cases/triggers` | 53 | Eighteen skills each get up to two realistic prompts that should call the skill and one near miss that should not. |
+| `cases/outcomes` | 33 | One behavior per case that the skill should cause, run with and without the plugin. For example, `verification-before-completion`: the agent runs the tests and reports the failure instead of claiming done. `docs-lookup`: the agent reads `composer.lock` and states the locked version. `tdd`: the agent sees a failing test before it writes `slug.py`. `agentic-rules-writer`: the generated `AGENTS.md` is short, keeps the user's own rules, and has no filler or routing table. |
 
-Skills with trigger cases: verification-before-completion, docs-lookup, spec-driven-development, tdd, pr-feedback, finishing-branch, hooks-and-guardrails, context-engineering, skill-creator, skill-measure, research, agentic-rules-writer, dependabot-config, ui-review, game-feature-loop, godot, godot-upgrade, security-research, communication-style.
+Skills with trigger cases: verification-before-completion, docs-lookup, spec-driven-development, tdd, pr-feedback, finishing-branch, hooks-and-guardrails, context-engineering, skill-creator, skill-measure, research, agentic-rules-writer, ui-review, game-feature-loop, godot, godot-upgrade, security-research, communication-style.
 
 Prompts are what a person would type. They never name the skill, and they do not quote a description, so you can reword a description without touching a case. A trigger case passes when the agent calls the Skill tool with that skill name. A near miss passes when it does not.
 

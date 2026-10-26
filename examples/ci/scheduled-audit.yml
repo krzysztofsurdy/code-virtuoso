@@ -29,14 +29,16 @@ jobs:
             prompt: /agents-virtuoso:scan-refactors
             tools: Read,Grep,Glob
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
 
       # Install your toolchain here (setup-php, setup-node, ...) and run the package
       # install, so the audit commands have a lock file and a package manager to use.
 
       - name: Run the skill
         id: claude
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1.0.262
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           plugin_marketplaces: https://github.com/krzysztofsurdy/code-virtuoso.git
@@ -56,7 +58,7 @@ jobs:
             | sed '/^```/d' > "$NAME.json"
           jq -e . "$NAME.json" > /dev/null
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ${{ matrix.name }}
           path: ${{ matrix.name }}.json
@@ -69,7 +71,7 @@ jobs:
     permissions:
       issues: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           merge-multiple: true
 
