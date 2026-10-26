@@ -11,16 +11,32 @@ permissions:
 
 jobs:
   test-scripts:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Check jq (preinstalled on ubuntu-latest)
-        run: jq --version
+      - name: Use the system bash 3.2 on macOS
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p "$RUNNER_TEMP/system-bash"
+          ln -sf /bin/bash "$RUNNER_TEMP/system-bash/bash"
+          echo "$RUNNER_TEMP/system-bash" >> "$GITHUB_PATH"
+
+      - name: Check bash and jq
+        run: |
+          bash --version | head -n 1
+          command -v jq || brew install jq
+          jq --version
 
       - name: Run Python script tests
         run: python3 -m unittest discover scripts/tests

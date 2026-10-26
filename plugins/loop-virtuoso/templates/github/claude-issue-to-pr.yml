@@ -58,14 +58,17 @@ jobs:
       pull-requests: write # the last step opens the draft pull request
       id-token: write # the action exchanges an OIDC token for its GitHub App token
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          # claude-code-action configures git with its own token; keep the workflow token off disk.
+          persist-credentials: false
 
       # Set up your toolchain here so Claude can run the tests, for example
       # shivammathur/setup-php, actions/setup-node or actions/setup-python.
 
       - name: Implement the issue
         id: claude
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1.0.262
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           # Or, with a Claude subscription instead of an API key:
