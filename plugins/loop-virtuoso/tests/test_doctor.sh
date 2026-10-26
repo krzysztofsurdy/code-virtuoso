@@ -83,7 +83,9 @@ dirty_fixture() {
   }' > "$HOME/.claude.json"
 }
 
-doctor_json() { bash "$SCRIPTS/doctor.sh" --json; }
+# doctor [args...]: run the doctor from $HOME, outside any git repo, so no project layer leaks in.
+doctor() { (cd "$HOME" && bash "$SCRIPTS/doctor.sh" "$@"); }
+doctor_json() { doctor --json; }
 
 # findings_of <json> <check>: the findings of one check, one compact JSON per line.
 findings_of() { echo "$1" | jq -c --arg c "$2" '.findings[] | select(.check == $c)'; }
@@ -155,7 +157,7 @@ test_doctor_checks_every_ref_in_a_comma_list() {
 test_doctor_reports_invalid_settings_json_and_still_exits_0() {
   clean_fixture
   echo '{"broken":' > "$HOME/.claude/settings.json"
-  capture bash "$SCRIPTS/doctor.sh" --json
+  capture doctor --json
   assert_eq "$RC" "0"
   assert_contains "$(findings_of "$OUT" invalid-json)" "$HOME/.claude/settings.json"
 }
@@ -170,7 +172,7 @@ test_doctor_flags_long_claude_md() {
 
 test_doctor_flags_plaintext_mcp_secrets_without_printing_values() {
   dirty_fixture
-  local out human; out="$(doctor_json)"; human="$(bash "$SCRIPTS/doctor.sh")"
+  local out human; out="$(doctor_json)"; human="$(doctor)$(doctor --verbose)"
   local f; f="$(findings_of "$out" mcp-secret)"
   assert_eq "$(echo "$f" | grep -c .)" "2"
   assert_contains "$f" "magic"
@@ -209,12 +211,12 @@ test_doctor_clean_setup_has_no_findings() {
   local out; out="$(doctor_json)"
   assert_eq "$(echo "$out" | jq -c '.findings')" "[]"
   assert_eq "$(echo "$out" | jq '.listing.skills')" "2"
-  assert_contains "$(bash "$SCRIPTS/doctor.sh")" "No findings"
+  assert_contains "$(doctor)" "No findings"
 }
 
 test_doctor_human_output_lists_findings_and_exits_0() {
   dirty_fixture
-  capture bash "$SCRIPTS/doctor.sh"
+  capture doctor
   assert_eq "$RC" "0"
   assert_contains "$OUT" "[high]"
   assert_contains "$OUT" "/ghost-skill"
@@ -226,8 +228,9 @@ test_doctor_writes_nothing() {
   local before after
   snapshot() { (cd "$HOME" && find . -print | sort && find . -type f -exec cksum {} + | sort); }
   before="$(snapshot)"
-  bash "$SCRIPTS/doctor.sh" >/dev/null
-  bash "$SCRIPTS/doctor.sh" --json >/dev/null
+  doctor >/dev/null
+  doctor --json >/dev/null
+  doctor --verbose >/dev/null
   after="$(snapshot)"
   assert_eq "$after" "$before" "doctor must not write"
 }
@@ -241,6 +244,154 @@ test_doctor_honors_claude_config_dir() {
 }
 
 test_doctor_rejects_unknown_option() {
-  capture bash "$SCRIPTS/doctor.sh" --bogus
+  capture doctor --bogus
   assert_eq "$RC" "2"
+}
+
+# second_dup_skill: a second duplicated skill and a second orphan cache for the dirty fixture.
+second_dup_skill() {
+  write_skill "$HOME/.claude/skills/dup-two" dup-two "Standalone copy."
+  write_skill "$HOME/.claude/plugins/cache/mkt/alpha/1.0.0/skills/dup-two" dup-two "Plugin copy."
+  mkdir -p "$HOME/.claude/plugins/cache/mkt/alpha/0.8.0"
+}
+
+# count_of <text> <fixed string>: how many lines contain the string.
+count_of() { printf '%s\n' "$1" | grep -cF -- "$2" || true; }
+
+test_doctor_groups_findings_of_one_check() {
+  dirty_fixture
+  second_dup_skill
+  local out; out="$(doctor)"
+  assert_contains "$out" "[medium] duplicate-skill: 2 findings - "
+  assert_contains "$out" "  - dup-skill: alpha@mkt, user"
+  assert_contains "$out" "  - dup-two: alpha@mkt, user"
+  assert_eq "$(count_of "$out" "Keep one copy: delete the extra standalone")" "1" "the fix prints once per group"
+  assert_not_contains "$out" "$HOME/.claude/skills/dup-skill/SKILL.md" "grouped items omit paths"
+  assert_contains "$out" "[low] orphan-cache: 2 findings - "
+  assert_contains "$out" "  - mkt/alpha/0.8.0"
+  assert_contains "$out" "  - mkt/alpha/0.9.0"
+  assert_contains "$out" "[high] mcp-secret: 2 findings - "
+  assert_contains "$out" "magic: env.API_KEY"
+}
+
+test_doctor_splits_claude_md_refs_by_kind() {
+  dirty_fixture
+  printf -- '- -> use /ghost-one\n- -> use /ghost-two\n- Run `/hidden` by hand.\n' > "$HOME/.claude/CLAUDE.md"
+  local out; out="$(doctor)"
+  assert_contains "$out" "[medium] claude-md-ref: 2 findings - "
+  assert_contains "$out" "  - /ghost-one (line 1)"
+  assert_contains "$out" "  - /ghost-two (line 2)"
+  assert_contains "$out" "[medium] claude-md-ref: /hidden points to a skill with disable-model-invocation"
+}
+
+test_doctor_single_finding_keeps_full_format() {
+  dirty_fixture
+  local out; out="$(doctor)"
+  assert_contains "$out" "[low] orphan-cache: Plugin cache directory is not referenced by installed_plugins.json"
+  assert_contains "$out" "where: $HOME/.claude/plugins/cache/mkt/alpha/0.9.0"
+  assert_contains "$out" "[medium] duplicate-agent: Agent \"dup-agent\" is defined 2 times"
+}
+
+test_doctor_verbose_prints_every_finding() {
+  dirty_fixture
+  second_dup_skill
+  local out; out="$(doctor --verbose)"
+  assert_eq "$(count_of "$out" "Keep one copy: delete the extra standalone")" "2"
+  assert_contains "$out" "$HOME/.claude/skills/dup-skill/SKILL.md"
+  assert_contains "$out" "$HOME/.claude/skills/dup-two/SKILL.md"
+  assert_not_contains "$out" "findings - "
+  assert_eq "$(doctor --verbose --json)" "$(doctor_json)" "--json wins over --verbose"
+}
+
+test_doctor_json_findings_keep_their_shape() {
+  dirty_fixture
+  second_dup_skill
+  local out; out="$(doctor_json)"
+  assert_eq "$(echo "$out" | jq -c '[.findings[] | keys] | unique')" '[["check","fix","severity","what","where"]]'
+  assert_eq "$(echo "$out" | jq -c 'keys - ["satisfiedBy"]')" '["configDir","findings","listing","summary"]'
+}
+
+# gap_fixture: the clean fixture without any settings key in the user settings.json or a user loop config.
+gap_fixture() {
+  clean_fixture
+  jq '{enabledPlugins}' "$HOME/.claude/settings.json" > "$HOME/.claude/settings.json.tmp"
+  mv "$HOME/.claude/settings.json.tmp" "$HOME/.claude/settings.json"
+  rm -f "$XDG_CONFIG_HOME/code-virtuoso/config.json"
+}
+
+test_doctor_reads_user_settings_local_layer() {
+  gap_fixture
+  jq -n '{attribution: {commit: ""}, permissions: {deny: ["Read(./private/**)"], ask: ["Bash(git reset --hard*)"]},
+    statusLine: {type: "command", command: "s.sh"}}' > "$HOME/.claude/settings.local.json"
+  local out; out="$(doctor_json)"
+  local c
+  for c in settings-attribution settings-deny settings-ask settings-statusline; do
+    [[ -z "$(findings_of "$out" "$c")" ]] || die "settings.local.json should satisfy $c"
+  done
+  assert_eq "$(echo "$out" | jq -r '.satisfiedBy["settings-deny"][0]')" "$HOME/.claude/settings.local.json"
+}
+
+test_doctor_reads_project_settings_layers_inside_a_repo() {
+  gap_fixture
+  local repo; repo="$(mk_repo)"
+  mkdir -p "$repo/.claude"
+  jq -n '{attribution: {pr: ""}, permissions: {deny: ["Read(./private/**)"]}, env: {CLAUDE_CODE_ENABLE_TELEMETRY: "1"}}' \
+    > "$repo/.claude/settings.json"
+  jq -n '{permissions: {ask: ["Bash(git push --force*)"]}, statusLine: {type: "command", command: "s.sh"}}' \
+    > "$repo/.claude/settings.local.json"
+  local out; out="$(cd "$repo/src" && bash "$SCRIPTS/doctor.sh" --json)"
+  local c
+  for c in settings-attribution settings-deny settings-ask settings-statusline; do
+    [[ -z "$(findings_of "$out" "$c")" ]] || die "project settings should satisfy $c"
+  done
+  assert_eq "$(echo "$out" | jq -r '.satisfiedBy["settings-ask"][0]')" "$repo/.claude/settings.local.json"
+  local tel; tel="$(findings_of "$out" settings-telemetry)"
+  [[ -n "$tel" ]] || die "telemetry is honoured only from the user settings.json"
+  assert_contains "$(echo "$tel" | jq -r .fix)" "user settings.json"
+  [[ -n "$(findings_of "$(doctor_json)" settings-deny)" ]] || die "outside the repo the project layer does not apply"
+}
+
+test_doctor_combines_deny_rules_across_layers() {
+  gap_fixture
+  jq '. + {permissions: {deny: []}}' "$HOME/.claude/settings.json" > "$HOME/.claude/s.tmp"
+  mv "$HOME/.claude/s.tmp" "$HOME/.claude/settings.json"
+  local repo; repo="$(mk_repo)"
+  mkdir -p "$repo/.claude"
+  echo '{"permissions": {"deny": ["Read(./private/**)"]}}' > "$repo/.claude/settings.local.json"
+  local out; out="$(cd "$repo" && bash "$SCRIPTS/doctor.sh" --json)"
+  [[ -z "$(findings_of "$out" settings-deny)" ]] || die "a deny rule in any layer satisfies the check"
+}
+
+test_doctor_reports_invalid_project_settings() {
+  gap_fixture
+  local repo; repo="$(mk_repo)"
+  mkdir -p "$repo/.claude"
+  echo '{"broken":' > "$repo/.claude/settings.json"
+  local out; out="$(cd "$repo" && bash "$SCRIPTS/doctor.sh" --json)"
+  assert_contains "$(findings_of "$out" invalid-json)" "$repo/.claude/settings.json"
+}
+
+test_doctor_loop_guard_reads_project_config() {
+  gap_fixture
+  local repo; repo="$(mk_repo)"
+  mkdir -p "$repo/.code-virtuoso"
+  echo '{"loop": {"guard": {"protectTests": true}}}' > "$repo/.code-virtuoso/config.json"
+  local out; out="$(cd "$repo" && bash "$SCRIPTS/doctor.sh" --json)"
+  [[ -z "$(findings_of "$out" loop-guard)" ]] || die "the project config layer enables a guard"
+  assert_eq "$(echo "$out" | jq -r '.satisfiedBy["loop-guard"][0]')" "$repo/.code-virtuoso/config.json"
+  [[ -n "$(findings_of "$(doctor_json)" loop-guard)" ]] || die "outside the repo only the user layer counts"
+}
+
+test_doctor_writes_nothing_inside_a_repo() {
+  dirty_fixture
+  local repo; repo="$(mk_repo)"
+  mkdir -p "$repo/.claude"
+  echo '{"permissions": {"deny": ["Read(./private/**)"]}}' > "$repo/.claude/settings.json"
+  local before after
+  snapshot() { (cd "$1" && find . -print | sort && find . -type f -exec cksum {} + | sort); }
+  before="$(snapshot "$HOME")$(snapshot "$repo")"
+  (cd "$repo" && bash "$SCRIPTS/doctor.sh" >/dev/null && bash "$SCRIPTS/doctor.sh" --verbose >/dev/null &&
+    bash "$SCRIPTS/doctor.sh" --json >/dev/null)
+  after="$(snapshot "$HOME")$(snapshot "$repo")"
+  assert_eq "$after" "$before" "doctor must not write"
 }

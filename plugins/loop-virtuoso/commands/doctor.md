@@ -11,7 +11,9 @@ Run the doctor script:
 ${CLAUDE_PLUGIN_ROOT}/scripts/doctor.sh
 ```
 
-It reads `${CLAUDE_CONFIG_DIR:-~/.claude}` and `~/.claude.json` and writes nothing. Each finding has a severity (high, medium, low), what is wrong, where (a path), and the fix.
+It reads `${CLAUDE_CONFIG_DIR:-~/.claude}` and `~/.claude.json` and, inside a git repo, the project `.claude/settings.json` and `.claude/settings.local.json`. It writes nothing. Each finding has a severity (high, medium, low), what is wrong, where (a path), and the fix.
+
+The default report groups findings of one check: a header line with the count, one short line per item, and the fix once. Add `--verbose` only when the user asks for every finding in full with its paths, or `--json` when they want machine-readable output.
 
 Relay the output verbatim. Don't summarize or add commentary unless the user asks a follow-up. Then:
 

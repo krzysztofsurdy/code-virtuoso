@@ -103,7 +103,7 @@ The guard hooks cover what a plugin can enforce. Two commands cover the rest of 
 
 ### Doctor
 
-`/loop-virtuoso:doctor` runs `scripts/doctor.sh [--json]`, a read-only audit of `${CLAUDE_CONFIG_DIR:-~/.claude}` and `~/.claude.json`. It never writes a file and exits 0 whether or not it finds anything (2 on bad usage or an internal error).
+`/loop-virtuoso:doctor` runs `scripts/doctor.sh [--json | --verbose]`, a read-only audit of `${CLAUDE_CONFIG_DIR:-~/.claude}` and `~/.claude.json`, plus the project settings and code-virtuoso config when run inside a git repo. It never writes a file and exits 0 whether or not it finds anything (2 on bad usage or an internal error).
 
 | Check id | Severity | Finds |
 |---|---|---|
@@ -113,15 +113,16 @@ The guard hooks cover what a plugin can enforce. Two commands cover the rest of 
 | `claude-md-size` | medium | A global CLAUDE.md over 200 lines |
 | `claude-md-ref` | medium | A `-> use /name` or `` `/name` `` reference in the global CLAUDE.md that resolves to no installed skill or command, or to a skill with `disable-model-invocation: true`. Built-in commands are skipped |
 | `mcp-secret` | high | A literal value for a secret-like key (`key`, `token`, `secret`, `passw`, `auth`, `credential`) in an MCP server's `env` or `headers`, top-level or per project. Values that reference `${VAR}` are skipped |
-| `settings-attribution`, `settings-deny` | medium | No `attribution` key; no `permissions.deny` rules |
-| `settings-ask`, `settings-statusline`, `settings-telemetry` | low | No `permissions.ask` rules; no `statusLine`; `env.CLAUDE_CODE_ENABLE_TELEMETRY` not `1` or `true` |
-| `loop-guard` | low | None of `blockSecrets`, `protectTests`, `stopGate` turned on in the user config layer |
+| `settings-attribution`, `settings-deny` | medium | No `attribution` key; no `permissions.deny` rules in any settings layer |
+| `settings-ask`, `settings-statusline`, `settings-telemetry` | low | No `permissions.ask` rules or `statusLine` in any settings layer; `env.CLAUDE_CODE_ENABLE_TELEMETRY` not `1` or `true` in the user `settings.json` |
+| `loop-guard` | low | None of `blockSecrets`, `protectTests`, `stopGate` turned on in the merged code-virtuoso config (user layer, plus the project layers inside a repo) |
 | `orphan-cache` | low | A `plugins/cache/<marketplace>/<plugin>/<version>/` directory that `installed_plugins.json` does not reference |
-| `invalid-json` | medium | `settings.json`, `installed_plugins.json`, `known_marketplaces.json`, `~/.claude.json` or the user `config.json` that is not valid JSON; the file is skipped |
+| `invalid-json` | medium | A settings layer, `installed_plugins.json`, `known_marketplaces.json`, `~/.claude.json` or a code-virtuoso `config.json` that is not valid JSON; the file is skipped |
 
 - **Listing budget.** The budget is 1% of the context window. The script assumes a 200k-token window and about 4 characters per token, so about 8,000 characters. `/context` shows the real figure.
 - **Secrets by name only.** An `mcp-secret` finding names the server and the key, never the value, so the report is safe to paste. Rotate the key after moving it to an environment variable.
-- **Settings scope.** The `settings-*` checks read the user `settings.json` only; project settings are not audited.
-- **`--json` shape.** `{"configDir", "listing": {"skills", "chars", "budget"}, "findings": [{"check", "severity", "what", "where", "fix"}], "summary": {"high", "medium", "low"}}`, with findings sorted high to low.
+- **Settings layers.** The `settings-*` checks read `settings.json` and `settings.local.json` in the config dir and, inside a git repo, `<root>/.claude/settings.json` and `<root>/.claude/settings.local.json`. A key in any layer satisfies its check; `permissions.deny` and `permissions.ask` rules combine across layers. Telemetry counts only from the user `settings.json`, because Claude Code reads that env from user settings. A finding still points at the user `settings.json`, where `harden` writes.
+- **Grouped report.** The human report groups the findings of one check: `[severity] check: N findings - <what>`, one short line per item, and the fix once. A check with one finding prints it in full. `--verbose` prints every finding in full with its paths.
+- **`--json` shape.** `{"configDir", "listing": {"skills", "chars", "budget"}, "findings": [{"check", "severity", "what", "where", "fix"}], "summary": {"high", "medium", "low"}, "satisfiedBy": {"<check>": ["<file>", ...]}}`, with findings sorted high to low. `satisfiedBy` lists, for each settings or `loop-guard` check that passed, the layers that satisfied it.
 
 The `/loop-virtuoso:doctor` command relays the report verbatim, offers `harden` for `settings-*` and `loop-guard` findings, and never deletes skills, agents or caches without asking.

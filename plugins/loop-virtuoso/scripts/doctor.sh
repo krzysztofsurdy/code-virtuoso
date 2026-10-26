@@ -1,12 +1,15 @@
 #!/bin/bash
 # Read-only audit of the user's Claude Code setup. Never writes any file.
 #
-#   doctor.sh [--json]
+#   doctor.sh [--json | --verbose]
 #
 # Reads ${CLAUDE_CONFIG_DIR:-$HOME/.claude} (skills, agents, CLAUDE.md,
-# settings.json, plugins) and $HOME/.claude.json. Each finding has a check id,
-# a severity (high, medium, low), what, where and fix. Exits 0 whether or not
-# there are findings; 2 on bad usage or an internal error.
+# settings.json, settings.local.json, plugins) and $HOME/.claude.json; inside a
+# git repo also <root>/.claude/settings*.json and the project code-virtuoso
+# config. Each finding has a check id, a severity (high, medium, low), what,
+# where and fix. The human report groups findings of one check; --verbose
+# prints each one in full. Exits 0 whether or not there are findings; 2 on bad
+# usage or an internal error.
 set -Eeuo pipefail
 trap 'echo "doctor: internal error at line $LINENO" >&2; exit 2' ERR
 
@@ -15,11 +18,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/config.sh"
 
 json=false
-case "${1:-}" in
-  "") ;;
-  --json) json=true ;;
-  *) echo "usage: doctor.sh [--json]" >&2; exit 2 ;;
-esac
+verbose=false
+for arg in "$@"; do
+  case "$arg" in
+    --json) json=true ;;
+    --verbose) verbose=true ;;
+    *) echo "usage: doctor.sh [--json | --verbose]" >&2; exit 2 ;;
+  esac
+done
 command -v jq >/dev/null 2>&1 || { echo "doctor: jq is required" >&2; exit 2; }
 
 CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
@@ -36,10 +42,11 @@ SKILLS=""
 AGENTS=""
 COMMANDS=""
 
-# finding <check> <severity> <what> <where> <fix>
+# finding <check> <severity> <what> <where> <fix> [<group> <item>]
+# group and item feed the grouped human report and never reach --json.
 finding() {
-  FINDINGS+="$(jq -nc --arg c "$1" --arg s "$2" --arg w "$3" --arg p "$4" --arg f "$5" \
-    '{check: $c, severity: $s, what: $w, where: $p, fix: $f}')"$'\n'
+  FINDINGS+="$(jq -nc --arg c "$1" --arg s "$2" --arg w "$3" --arg p "$4" --arg f "$5" --arg g "${6:-}" --arg i "${7:-}" \
+    '{check: $c, severity: $s, what: $w, where: $p, fix: $f} + (if $g == "" then {} else {group: $g, item: $i} end)')"$'\n'
 }
 
 # read_json <file>: the file's JSON, {} when missing or invalid.
@@ -52,7 +59,8 @@ check_json() {
   local file
   for file in "$@"; do
     if [[ -f "$file" ]] && ! jq empty "$file" >/dev/null 2>&1; then
-      finding invalid-json medium "Not valid JSON, so it was skipped" "$file" "Fix the JSON syntax."
+      finding invalid-json medium "Not valid JSON, so it was skipped" "$file" "Fix the JSON syntax." \
+        "files that are not valid JSON, so they were skipped" "$file"
     fi
   done
 }
@@ -151,10 +159,19 @@ marketplace_entry() {
   fi
 }
 
+# physical_dir <dir>: the dir with symlinks resolved, empty when it does not exist.
+physical_dir() { (cd "$1" 2>/dev/null && pwd -P) || true; }
+
 # --- Collect skills, agents and commands ---------------------------------
 CV_USER_CONFIG="$(cv_config_home)/config.json"
-check_json "$CFG/settings.json" "$CFG/plugins/installed_plugins.json" "$CFG/plugins/known_marketplaces.json" \
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+SETTINGS_FILES=("$CFG/settings.json" "$CFG/settings.local.json")
+if [[ -n "$ROOT" && "$(physical_dir "$ROOT/.claude")" != "$(physical_dir "$CFG")" ]]; then
+  SETTINGS_FILES+=("$ROOT/.claude/settings.json" "$ROOT/.claude/settings.local.json")
+fi
+check_json "${SETTINGS_FILES[@]}" "$CFG/plugins/installed_plugins.json" "$CFG/plugins/known_marketplaces.json" \
   "$HOME/.claude.json" "$CV_USER_CONFIG"
+if [[ -n "$ROOT" ]]; then check_json "$ROOT/$CV_DIR_NAME/config.json" "$ROOT/$CV_DIR_NAME/config.local.json"; fi
 if [[ "$CFG" != "$HOME" ]]; then check_json "$CFG/.claude.json"; fi
 SETTINGS="$(read_json "$CFG/settings.json")"
 INSTALLED="$(read_json "$CFG/plugins/installed_plugins.json")"
@@ -210,9 +227,11 @@ COMMANDS_JSON="$(tsv_to_json "$COMMANDS" '["origin","name"]')"
 add_findings < <(jq -nc --argjson skills "$SKILLS_JSON" --argjson agents "$AGENTS_JSON" '
   def dups($items; $check; $kind; $fix):
     $items | group_by(.name)[] | select(length > 1)
+    | (map(.origin) | join(", ")) as $origins
     | {check: $check, severity: "medium",
-       what: ("\($kind) \"\(.[0].name)\" is defined \(length) times: " + (map(.origin) | join(", "))),
-       where: (map(.path) | join(", ")), fix: $fix};
+       what: ("\($kind) \"\(.[0].name)\" is defined \(length) times: " + $origins),
+       where: (map(.path) | join(", ")), fix: $fix,
+       group: "\($kind | ascii_downcase) names defined more than once (name: sources)", item: "\(.[0].name): \($origins)"};
   dups($skills; "duplicate-skill"; "Skill";
     "Keep one copy: delete the extra standalone or synced copies, or disable the plugin that ships one (/plugin)."),
   dups($agents; "duplicate-agent"; "Agent";
@@ -261,10 +280,13 @@ if [[ -f "$claude_md" ]]; then
     | if $skill[$n] == false then
         {check: "claude-md-ref", severity: "medium",
          what: "\(.ref) points to a skill with disable-model-invocation: true, so the model cannot invoke it",
-         where: "\($file):\(.line)", fix: "Drop the routing line, or remove disable-model-invocation from the skill."}
+         where: "\($file):\(.line)", fix: "Drop the routing line, or remove disable-model-invocation from the skill.",
+         group: "references in \($file) to skills with disable-model-invocation: true, which the model cannot invoke",
+         item: "\(.ref) (line \(.line))"}
       else
         {check: "claude-md-ref", severity: "medium", what: "\(.ref) resolves to no installed skill or command",
-         where: "\($file):\(.line)", fix: "Delete the reference or install the skill it names."}
+         where: "\($file):\(.line)", fix: "Delete the reference or install the skill it names.",
+         group: "references in \($file) that resolve to no installed skill or command", item: "\(.ref) (line \(.line))"}
       end')
 fi
 
@@ -285,30 +307,64 @@ for claude_json in "$HOME/.claude.json" "$CFG/.claude.json"; do
     | {check: "mcp-secret", severity: "high",
        what: "MCP server \"\($s.server)\" has a plaintext \(.kind) value for \(.key)",
        where: "\($file) (\($s.at).\(.kind).\(.key))",
-       fix: "Move the value to an environment variable, reference it as ${VAR}, and rotate the key."}')
+       fix: "Move the value to an environment variable, reference it as ${VAR}, and rotate the key.",
+       group: "plaintext secret values in MCP server config (names only, values are never printed)",
+       item: "\($s.server): \(.kind).\(.key) (\($file), \($s.at))"}')
 done
 
 # --- 5. Settings gaps ----------------------------------------------------
+# A setting in any layer satisfies its check; deny and ask rules combine across
+# layers. Telemetry env counts only from the user settings.json.
+# layers_json <file>...: [{file, config}] for each file, {} when missing or invalid.
+layers_json() {
+  local f
+  for f in "$@"; do read_json "$f" | jq -c --arg f "$f" '{file: $f, config: .}'; done | jq -s -c .
+}
+if [[ -n "$ROOT" ]]; then
+  GUARD_CONFIG="$(cv_merged_config "$ROOT")"
+  GUARD_FILES=()
+  while IFS= read -r f; do
+    if [[ -n "$f" ]]; then GUARD_FILES+=("$f"); fi
+  done < <(cv_config_files "$ROOT")
+else
+  GUARD_CONFIG="$(read_json "$CV_USER_CONFIG")"
+  GUARD_FILES=("$CV_USER_CONFIG")
+fi
+SATISFIED="$(jq -nc --argjson settings "$(layers_json "${SETTINGS_FILES[@]}")" \
+  --argjson guard "$(layers_json ${GUARD_FILES[@]+"${GUARD_FILES[@]}"})" --argjson merged "$GUARD_CONFIG" '
+  def obj: if type == "object" then . else {} end;
+  def rules($kind): .permissions?[$kind]? // [] | type == "array" and length > 0;
+  def guarded: (.loop?.guard? // {}) | obj | [.blockSecrets, .protectTests, .stopGate] | any(. != null and . != false);
+  def by($layers; f): [$layers[] | select(.config | obj | f) | .file];
+  {"settings-attribution": by($settings; has("attribution")),
+   "settings-deny": by($settings; rules("deny")),
+   "settings-ask": by($settings; rules("ask")),
+   "settings-statusline": by($settings; has("statusLine")),
+   "settings-telemetry": by($settings[0:1]; .env?.CLAUDE_CODE_ENABLE_TELEMETRY? // "" | tostring | IN("1", "true")),
+   "loop-guard": (if $merged | obj | guarded then by($guard; guarded) else [] end)}')"
+# gap <check>: true when no layer satisfies the check.
+gap() { [[ "$(echo "$SATISFIED" | jq --arg c "$1" '.[$c] | length')" == "0" ]]; }
+
 settings_file="$CFG/settings.json"
-if [[ "$(echo "$SETTINGS" | jq 'has("attribution")')" != "true" ]]; then
+if gap settings-attribution; then
   finding settings-attribution medium "No attribution setting; commits and PRs get the default AI attribution" "$settings_file" \
     "Set \"attribution\": {\"commit\": \"\", \"pr\": \"\"} (or your own lines). $HARDEN"
 fi
-if [[ "$(echo "$SETTINGS" | jq '.permissions.deny // [] | length')" == "0" ]]; then
+if gap settings-deny; then
   finding settings-deny medium "No permissions.deny rules; secrets such as .env and ~/.ssh are readable" "$settings_file" "$HARDEN"
 fi
-if [[ "$(echo "$SETTINGS" | jq '.permissions.ask // [] | length')" == "0" ]]; then
+if gap settings-ask; then
   finding settings-ask low "No permissions.ask rules; force pushes and hard resets run without a prompt" "$settings_file" "$HARDEN"
 fi
-if [[ "$(echo "$SETTINGS" | jq 'has("statusLine")')" != "true" ]]; then
+if gap settings-statusline; then
   finding settings-statusline low "No statusLine; cost, context use and loop progress are not visible" "$settings_file" \
     "Run /loop-virtuoso:harden --with statusline."
 fi
-if [[ "$(echo "$SETTINGS" | jq '.env.CLAUDE_CODE_ENABLE_TELEMETRY // "" | tostring | IN("1", "true")')" != "true" ]]; then
+if gap settings-telemetry; then
   finding settings-telemetry low "Telemetry is off (env.CLAUDE_CODE_ENABLE_TELEMETRY)" "$settings_file" \
-    "Run /loop-virtuoso:harden --with telemetry once you have an OpenTelemetry backend."
+    "Run /loop-virtuoso:harden --with telemetry once you have an OpenTelemetry backend. Only the user settings.json is read for telemetry; project settings do not turn it on."
 fi
-if [[ "$(read_json "$CV_USER_CONFIG" | jq '.loop.guard // {} | [.blockSecrets, .protectTests, .stopGate] | any(. != null and . != false)')" != "true" ]]; then
+if gap loop-guard; then
   finding loop-guard low "No loop.guard hook is enabled (blockSecrets, protectTests, stopGate)" "$CV_USER_CONFIG" "$HARDEN"
 fi
 
@@ -322,20 +378,23 @@ for dir in "$CFG"/plugins/cache/*/*/*/; do
   dir="${dir%/}"
   if ! printf '%s\n' "$installed_paths" | grep -qxF -- "$(cd "$dir" && pwd -P)"; then
     finding orphan-cache low "Plugin cache directory is not referenced by installed_plugins.json" "$dir" \
-      "Delete the directory after checking no session uses it."
+      "Delete the directory after checking no session uses it." \
+      "plugin cache directories under $CFG/plugins/cache not referenced by installed_plugins.json" \
+      "${dir#"$CFG/plugins/cache/"}"
   fi
 done
 
 # --- Report ---------------------------------------------------------------
-REPORT="$(printf '%s' "$FINDINGS" | jq -s -c --arg cfg "$CFG" --argjson listing "$LISTING" '
+REPORT="$(printf '%s' "$FINDINGS" | jq -s -c --arg cfg "$CFG" --argjson listing "$LISTING" --argjson satisfied "$SATISFIED" '
   def rank: {high: 0, medium: 1, low: 2}[.severity];
   {configDir: $cfg, listing: ($listing | del(.top)), findings: sort_by(rank),
    summary: {high: map(select(.severity == "high")) | length,
              medium: map(select(.severity == "medium")) | length,
-             low: map(select(.severity == "low")) | length}}')"
+             low: map(select(.severity == "low")) | length},
+   satisfiedBy: ($satisfied | with_entries(select(.value | length > 0)))}')"
 
 if [[ "$json" == "true" ]]; then
-  echo "$REPORT"
+  echo "$REPORT" | jq -c '.findings |= map(del(.group, .item))'
   exit 0
 fi
 
@@ -348,7 +407,15 @@ echo
 if [[ "$(echo "$REPORT" | jq '.findings | length')" == "0" ]]; then
   echo "  No findings."
 else
-  echo "$REPORT" | jq -r '.findings[] | "  [\(.severity)] \(.check): \(.what)\n      where: \(.where)\n      fix:   \(.fix)\n"'
+  echo "$REPORT" | jq -r --argjson verbose "$verbose" '
+    def full: "  [\(.severity)] \(.check): \(.what)\n      where: \(.where)\n      fix:   \(.fix)\n";
+    .findings | to_entries | group_by([.value.severity, .value.check, .value.group // ""]) | sort_by(.[0].key)
+    | map(map(.value))[]
+    | if length == 1 or $verbose or (.[0].group == null) then .[] | full
+      else "  [\(.[0].severity)] \(.[0].check): \(length) findings - \(.[0].group)\n"
+        + (map("      - \(.item)\n") | join(""))
+        + "      fix:   \(map(.fix) | unique | join(" "))\n"
+      end'
   echo "$REPORT" | jq -r '"  Findings: \(.summary.high) high | \(.summary.medium) medium | \(.summary.low) low"'
 fi
 echo "================================================================"
