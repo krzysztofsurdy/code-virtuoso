@@ -194,10 +194,15 @@ while true; do
   invoke_claude "$repo_dir" "${claude_args[@]}"
   claude_json="$INVOKE_JSON"
 
-  if ! echo "$claude_json" | jq -e '.result // empty' >/dev/null 2>&1; then
+  if ! invoke_result_ok "$claude_json"; then
     stop_reason="invocation_failed"
     log_line "stop reason=invocation_failed hint=\"$(invoke_failure_hint "$INVOKE_STDERR")\" detail=\"$(invoke_failure_detail "$INVOKE_STDERR")\""
     break
+  fi
+
+  result_subtype="$(echo "$claude_json" | jq -r '.subtype // "success"')"
+  if [[ "$result_subtype" != "success" ]]; then
+    log_line "iteration=$iterations_run subtype=$result_subtype"
   fi
 
   iter_cost="$(cost_extract "$claude_json")"
