@@ -5,6 +5,29 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-10-26
+
+Guardrails and setup tooling for sessions outside a loop. Every new guard is off by default: installing or updating the plugin changes nothing until you set `loop.guard` in a config layer or approve a `harden` diff.
+
+### Added
+
+- Opt-in guard hooks, configured in the `loop.guard` config namespace:
+  - `guard-secrets.sh` (`PreToolUse`, `blockSecrets: true`) blocks Read, Grep, Glob, Edit, Write, MultiEdit, NotebookEdit and Bash calls aimed at `.env` files, private keys, `.ssh/`, `.aws/`, `.gnupg/` and similar, and bare `printenv` or `env`. Its matching is a copy of the `hooks-and-guardrails` playbook's `block-secret-reads.sh`, kept in sync by a parity test.
+  - `guard-tests.sh` (`PreToolUse`, `protectTests: "ask"` or `"deny"`) asks before, or denies, edits to files that match `testGlobs` and already exist in `HEAD`. New test files are always allowed.
+  - `guard-stop.sh` (`Stop`, `stopGate: true`) runs `ticket-delivery.commands.lint`, `.staticAnalysis` and `.test` before a session with uncommitted changes ends, and blocks the stop with the last 40 lines of the first failing command.
+  - `guard-tests.sh` and `guard-stop.sh` do nothing while a loop session is active; `protectedPaths` and the verify gate own that case.
+- `/loop-virtuoso:harden` (`scripts/harden.sh [--scope user|project] [--apply] [--with statusline,telemetry,sandbox]`): merges a guardrail baseline into Claude Code `settings.json` (empty attribution, `permissions.deny` for secrets, `permissions.ask` for force pushes, hard resets and dependency changes) and the `loop.guard` defaults into the matching config layer. Dry-run diff by default; `--apply` backs up each changed file, never removes a user value, and is idempotent.
+- `scripts/statusline.sh`: a statusline with directory, branch, model, session cost, context use and loop progress. `harden --with statusline` installs a copy in the config home so the path survives plugin updates.
+- `/loop-virtuoso:doctor` (`scripts/doctor.sh [--json]`): a read-only audit of the Claude Code setup. Reports duplicate skills and agents, the skill listing size against an estimated budget, an oversized global CLAUDE.md and dead skill references in it, plaintext MCP secrets (server and key name only), settings gaps, guards not enabled, and orphan plugin caches, each with a severity and a fix.
+- `/loop-virtuoso:eval-setup` (`scripts/eval-setup.sh [suite.json] [-k N] [--arms setup,vanilla] [--max-cost-usd N] [--dry-run]`): runs a task suite k times with the user's setup and with vanilla Claude Code (`--safe-mode`, overridable with `loop.evalSetup.vanillaArgs`), each trial in a throwaway worktree graded by its `verifyCommand`. Reports pass@k, pass^k, cost and the setup minus vanilla delta, and appends each run to `.code-virtuoso/loop/evals/history.jsonl`. The command always runs a dry run first.
+- `/loop-virtuoso:scaffold <devcontainer|issue-to-pr|pilot-backlog> [--force]` and `templates/`: a devcontainer with a non-root user and an egress-allowlist firewall, a GitHub Actions workflow that turns a labelled issue or an `@claude` mention into a draft pull request, and a small pilot backlog. It refuses to overwrite; `--force` backs up first.
+- `iteration-loop` references: `guardrails.md` (guard config, limits, doctor checks), `observability.md` (statusline, telemetry, loop cost and events, harden), `setup-evals.md` (building a suite, reading pass@k and pass^k, the vanilla arm, cost control), and a Reference Files table in `SKILL.md`.
+
+### Changed
+
+- Path resolution and glob matching moved from `hooks/guard-protected-paths.sh` and `scripts/lib/backlog.sh` to `scripts/lib/paths.sh`, shared by the loop guard, the verify gate and the new test guard. Matching behaviour is unchanged.
+- The `claude -p` invocation and the `invocation_failed` hint moved from `scripts/run-batch.sh` to `scripts/lib/invoke.sh`, shared with `eval-setup.sh`. `run-batch.sh` behaves as before.
+
 ## [2.0.0] - 2026-10-21
 
 First release inside code-virtuoso. Versions 1.0.0 to 1.1.2 shipped from the standalone loop-virtuoso repository. This major release moves the storage layout and also carries the fixes made since 1.1.2.

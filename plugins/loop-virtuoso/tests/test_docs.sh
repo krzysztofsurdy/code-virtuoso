@@ -77,6 +77,6 @@ test_plugin_docs_cross_link_related_skills() {
   assert_contains "$text" "finishing-branch"
 }
 
-test_plugin_version_is_2_0_0() {
-  assert_eq "$(jq -r .version "$PLUGIN_ROOT/.claude-plugin/plugin.json")" "2.0.0"
+test_plugin_version_is_2_1_0() {
+  assert_eq "$(jq -r .version "$PLUGIN_ROOT/.claude-plugin/plugin.json")" "2.1.0"
 }

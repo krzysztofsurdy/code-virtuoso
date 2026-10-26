@@ -46,7 +46,7 @@ scripts/install-codex-agents.sh
 | `frameworks-virtuoso` | 6 framework skills |
 | `ai-virtuoso` | 2 skills for building with LLMs and agents |
 | `agents-virtuoso` | 20 agents, 3 team workflows, 8 skills (see Agents and Teams) |
-| `loop-virtuoso` | Delivery loop plugin, Claude Code only |
+| `loop-virtuoso` | Delivery loop plugin with opt-in guard hooks, setup audit and setup evals, Claude Code only |
 
 A skill marked "run by name" never loads on its own. It costs no context until you call it, for example `/performance`.
 
@@ -152,7 +152,7 @@ A team is a fixed recipe of agents, phases, and gates. In Claude Code, run it as
 
 ### Delivery loop
 
-`loop-virtuoso` works in Claude Code only, because it ships hooks and scripts. It feeds the agent one small backlog item at a time and accepts the item only when its verify command passes and a write-boundary guard approves. Install it with `/plugin install loop-virtuoso@code-virtuoso`. See [plugins/loop-virtuoso/README.md](plugins/loop-virtuoso/README.md).
+`loop-virtuoso` works in Claude Code only, because it ships hooks and scripts. It feeds the agent one small backlog item at a time and accepts the item only when its verify command passes and a write-boundary guard approves. It also ships opt-in guard hooks for ordinary sessions (secret files, edits to committed tests, a lint and test gate before stopping), `/loop-virtuoso:harden` for a settings baseline, `/loop-virtuoso:doctor` to audit your setup, `/loop-virtuoso:eval-setup` to measure your setup against vanilla Claude Code, and `/loop-virtuoso:scaffold` for starter templates. Install it with `/plugin install loop-virtuoso@code-virtuoso`. See [plugins/loop-virtuoso/README.md](plugins/loop-virtuoso/README.md).
 
 ## More
 

@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "70 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
-    "version": "11.0.0"
+    "version": "11.1.0"
   },
   "plugins": [
     {
@@ -124,7 +124,7 @@
     {
       "name": "loop-virtuoso",
       "source": "./plugins/loop-virtuoso",
-      "description": "Claude Code only. A backlog-driven delivery loop that feeds the agent one small item at a time and accepts it only when verify commands pass and a write-boundary guard approves. Ships hooks, scripts, commands, and 2 skills"
+      "description": "Claude Code only. A backlog-driven delivery loop that feeds the agent one small item at a time and accepts it only when verify commands pass and a write-boundary guard approves. Also opt-in guard hooks, a settings hardener, a setup audit (doctor), setup evals against vanilla Claude Code, and starter templates. Ships hooks, scripts, commands, and 2 skills"
     }
   ]
 }
