@@ -142,7 +142,7 @@ Inside a loop, `protectedPaths` and the verify gate take over from `protectTests
 
 A plugin cannot set `permissions`, `attribution`, `sandbox`, `statusLine` or `env`. `/loop-virtuoso:harden` runs `scripts/harden.sh`, which proposes them as a unified diff to your own settings and changes nothing until you approve:
 
-- **Baseline:** empty commit and PR attribution, `permissions.deny` for `.env` files, `~/.ssh` and `~/.aws`, `permissions.ask` for `git push`, `git branch -D`, `git reset --hard` and `composer require|remove|update`, and `loop.guard` with `blockSecrets: true` and `protectTests: "ask"`.
+- **Baseline:** empty commit and PR attribution, `permissions.deny` for `.env` files, `~/.ssh` and `~/.aws`, `permissions.ask` for force pushes, `git branch -D`, `git reset --hard` and `composer require|remove|update`, and `loop.guard` with `blockSecrets: true` and `protectTests: "ask"`.
 - **Options:** `--with sandbox` (sandbox on, minimal network allowlist), `--with telemetry` (OpenTelemetry with the console exporter), `--with statusline` (installs the loop statusline). Telemetry and the statusline need `--scope user`.
 - **Merge:** nothing you set is removed or replaced, arrays gain only the entries they lack, each changed file gets a `<file>.bak.<timestamp>` backup, and a second apply writes nothing.
 

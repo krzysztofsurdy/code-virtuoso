@@ -18,6 +18,7 @@ test_harden_dry_run_prints_diff_and_writes_nothing() {
 }
 
 test_harden_apply_writes_baseline_and_guard_config() {
+  umask 022
   harden --apply
   assert_eq "$RC" "0" "apply rc: $OUT"
   local s c
@@ -25,12 +26,13 @@ test_harden_apply_writes_baseline_and_guard_config() {
   assert_eq "$(jq -c '.attribution' "$s")" '{"commit":"","pr":""}'
   assert_eq "$(jq -r '.permissions.deny | index("Read(./.env)") != null' "$s")" "true"
   assert_eq "$(jq -r '.permissions.deny | index("Read(~/.ssh/**)") != null' "$s")" "true"
-  assert_eq "$(jq -r '.permissions.ask | index("Bash(git push *)") != null' "$s")" "true"
+  assert_eq "$(jq -r '.permissions.ask | index("Bash(git push *)") != null' "$s")" "false"
   assert_eq "$(jq -r '.permissions.ask | index("Bash(git reset --hard *)") != null' "$s")" "true"
   assert_eq "$(jq -r '.permissions.ask | index("Bash(composer update *)") != null' "$s")" "true"
   assert_eq "$(jq -c '.loop.guard' "$c")" '{"blockSecrets":true,"protectTests":"ask"}'
   assert_eq "$(jq -r 'has("statusLine") or has("env") or has("sandbox")' "$s")" "false"
   assert_eq "$(backups_of "$s")" "0" "a new file needs no backup"
+  assert_eq "$(ls -l "$s" | cut -c1-10)" "-rw-r--r--"
 }
 
 test_harden_keeps_existing_values_and_unions_arrays() {
@@ -188,4 +190,73 @@ test_harden_command_doc_gates_apply_on_approval() {
   assert_file "$doc"
   assert_contains "$(cat "$doc")" 'allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/scripts/harden.sh:*)"]'
   assert_contains "$(cat "$doc")" "--apply"
+}
+
+# install_failing_jq_empty: `jq empty <file>` fails, every other jq call runs the real jq.
+install_failing_jq_empty() {
+  local bin real
+  bin="$(new_tmp_dir bin)"
+  real="$(command -v jq)"
+  printf '#!/bin/bash\n[[ "${1:-}" == empty ]] && exit 5\nexec "%s" "$@"\n' "$real" > "$bin/jq"
+  chmod +x "$bin/jq"
+  export PATH="$bin:$PATH"
+}
+
+test_harden_failed_write_leaves_the_original_intact() {
+  local s; s="$(user_settings)"
+  mkdir -p "$(dirname "$s")"
+  echo '{"model":"opus"}' > "$s"
+  install_failing_jq_empty
+  harden --apply
+  [[ $RC -ne 0 ]] || die "a failed validation must fail the run: $OUT"
+  assert_eq "$(cat "$s")" '{"model":"opus"}'
+  assert_eq "$(ls -A "$(dirname "$s")" | grep -v -e '^settings.json$' -e '^settings.json.bak' || true)" "" "no temp file left"
+}
+
+test_harden_apply_keeps_mode_and_symlink() {
+  local s target; s="$(user_settings)"
+  target="$HOME/dotfiles/claude-settings.json"
+  mkdir -p "$(dirname "$s")" "$(dirname "$target")"
+  echo '{"model":"opus"}' > "$target"
+  chmod 600 "$target"
+  ln -s "$target" "$s"
+  harden --apply
+  assert_eq "$RC" "0" "$OUT"
+  [[ -L "$s" ]] || die "settings.json is no longer a symlink"
+  assert_eq "$(jq -r '.model' "$target")" "opus"
+  assert_eq "$(jq -r '.attribution.pr' "$target")" ""
+  assert_eq "$(ls -l "$target" | cut -c1-10)" "-rw-------"
+}
+
+# rule_matches <rule> <command>: Claude Code's Bash rule wildcard as documented
+# in https://code.claude.com/docs/en/permissions: `*` matches any text, and a
+# lone trailing " *" also matches the bare command.
+rule_matches() {
+  local pattern="${1#Bash(}"
+  pattern="${pattern%)}"
+  # shellcheck disable=SC2053
+  [[ "$2" == $pattern ]] && return 0
+  [[ "$pattern" == *" *" && "${pattern% \*}" != *"*"* && "$2" == "${pattern% \*}" ]]
+}
+
+asks_for() {
+  local rule
+  while IFS= read -r rule; do
+    rule_matches "$rule" "$1" && return 0
+  done < <(jq -r '.permissions.ask[]' "$(user_settings)")
+  return 1
+}
+
+test_harden_asks_for_force_pushes_only() {
+  harden --apply
+  assert_eq "$RC" "0" "$OUT"
+  local c
+  for c in "git push --force" "git push -f" "git push -f origin main" "git push origin main -f" \
+    "git push origin -f main" "git push --force-with-lease" "git push origin feat/x --force-with-lease=feat/x" \
+    "git push -u origin main --force" "git branch -D x" "git reset --hard" "composer update"; do
+    asks_for "$c" || die "no ask rule matches: $c"
+  done
+  for c in "git push" "git push origin main" "git push -u origin feat/x" "git push origin my-feature-fix"; do
+    ! asks_for "$c" || die "an ask rule matches a plain push: $c"
+  done
 }

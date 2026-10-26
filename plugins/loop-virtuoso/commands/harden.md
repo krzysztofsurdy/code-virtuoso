@@ -30,7 +30,7 @@ Never run `--apply` without the user's explicit approval of the diff in this con
 What the script does:
 
 - **Targets.** `--scope user` (the default) writes `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json` and the user config layer `config.json` in the code-virtuoso config home. `--scope project` writes `<git root>/.claude/settings.json` and `<git root>/.code-virtuoso/config.json`.
-- **Baseline.** Empty commit and PR attribution, deny rules for `.env` files and the `~/.ssh` and `~/.aws` keys, ask rules for `git push`, `git branch -D`, `git reset --hard` and `composer require|remove|update`, and the `loop.guard` defaults `blockSecrets: true` and `protectTests: "ask"`.
+- **Baseline.** Empty commit and PR attribution, deny rules for `.env` files and the `~/.ssh` and `~/.aws` keys, ask rules for force pushes (`--force`, `--force-with-lease`, `-f`), `git branch -D`, `git reset --hard` and `composer require|remove|update`, and the `loop.guard` defaults `blockSecrets: true` and `protectTests: "ask"`.
 - **Merge.** It never removes or replaces a value the user set. Arrays gain only the entries they lack. A user value that differs from the baseline stays, with a `note:` line.
 - **Options.** `--with sandbox` turns on the sandbox with a minimal network allowlist. `--with telemetry` turns on OpenTelemetry with the console exporter. `--with statusline` installs the loop statusline and sets `statusLine`, unless one is already set. Telemetry and statusline need `--scope user`.
 

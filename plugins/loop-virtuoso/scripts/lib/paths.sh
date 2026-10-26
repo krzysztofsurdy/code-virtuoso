@@ -70,3 +70,10 @@ paths_match_any() {
   done < <(echo "$patterns_json" | jq -r '.[]')
   return 1
 }
+
+# paths_with_root_variants <globs_json_array>
+# Adds each "**/x" glob again as "x", so "**/*Test.php" also matches a
+# FooTest.php at the root.
+paths_with_root_variants() {
+  echo "$1" | jq -c '. + [.[] | strings | select(startswith("**/")) | ltrimstr("**/")]'
+}

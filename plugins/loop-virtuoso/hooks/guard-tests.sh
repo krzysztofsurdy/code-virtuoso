@@ -16,8 +16,6 @@ source "$HOOK_DIR/../scripts/lib/preflight.sh"
 # shellcheck source=../scripts/lib/paths.sh
 source "$HOOK_DIR/../scripts/lib/paths.sh"
 
-DEFAULT_TEST_GLOBS='["tests/**","**/*Test.php","**/*_test.*","**/*.spec.*","**/test_*.py"]'
-
 HOOK_INPUT=$(cat)
 CWD=$(echo "$HOOK_INPUT" | jq -r '.cwd // "."')
 
@@ -44,10 +42,7 @@ esac
 REL_PATH="$(paths_relative_to "$REPO_ROOT" "$FILE_PATH")"
 [[ "$REL_PATH" != /* ]] || exit 0
 
-# A leading "**/" also matches at the root, so "**/*Test.php" covers FooTest.php.
-GLOBS=$(cv_guard_setting "$REPO_ROOT" testGlobs)
-[[ "$(echo "${GLOBS:-null}" | jq -r 'type')" == "array" ]] || GLOBS="$DEFAULT_TEST_GLOBS"
-GLOBS=$(echo "$GLOBS" | jq -c '. + [.[] | strings | select(startswith("**/")) | ltrimstr("**/")]')
+GLOBS=$(paths_with_root_variants "$(cv_test_globs "$REPO_ROOT")")
 
 # committed_in_head <rel_path>
 committed_in_head() {

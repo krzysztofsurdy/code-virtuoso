@@ -26,7 +26,7 @@ test_status_docs_do_not_claim_cost() {
 
 test_scripts_never_bypass_hooks_or_stage_everything() {
   local hits
-  hits="$(grep -rn -e "--no-verify" -e "add -A" "$PLUGIN_ROOT/scripts" "$PLUGIN_ROOT/hooks" || true)"
+  hits="$(grep -rn -e "--no-verify" -e "add -A" "$PLUGIN_ROOT/scripts" "$PLUGIN_ROOT/hooks" | grep -v 'GIT_INDEX_FILE=' || true)"
   [[ -z "$hits" ]] || die "unsafe git usage: $hits"
 }
 

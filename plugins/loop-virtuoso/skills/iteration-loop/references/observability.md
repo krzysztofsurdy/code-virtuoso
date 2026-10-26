@@ -124,13 +124,13 @@ What it adds:
 |---|---|
 | `attribution` | `{"commit": "", "pr": ""}` |
 | `permissions.deny` | `Read(./.env)`, `Read(./.env.*)`, `Read(!.env.example)`, `Read(./secrets/**)`, `Read(./config/credentials.json)`, `Read(~/.ssh/**)`, `Read(~/.aws/**)`, `Edit(./.env)`, `Edit(./.env.*)` |
-| `permissions.ask` | `Bash(git push *)`, `Bash(git branch -D *)`, `Bash(git reset --hard *)`, `Bash(composer require *)`, `Bash(composer remove *)`, `Bash(composer update *)` |
+| `permissions.ask` | `Bash(git push *--force*)`, `Bash(git push -f*)`, `Bash(git push * -f*)`, `Bash(git branch -D *)`, `Bash(git reset --hard *)`, `Bash(composer require *)`, `Bash(composer remove *)`, `Bash(composer update *)` |
 | `loop.guard` (config layer) | `{"blockSecrets": true, "protectTests": "ask"}`. `stopGate` is left for you to set per project, next to `ticket-delivery.commands` |
 | `sandbox` (`--with sandbox`) | `enabled: true`, `allowUnsandboxedCommands: false`, `filesystem.denyRead: ["~/.ssh", "~/.aws"]`, `network.allowedDomains: ["github.com"]` |
 | `env` (`--with telemetry`, user scope only) | `CLAUDE_CODE_ENABLE_TELEMETRY: "1"`, `OTEL_METRICS_EXPORTER` and `OTEL_LOGS_EXPORTER`: `"console"` |
 | `statusLine` (`--with statusline`, user scope only) | `{"type": "command", "command": "<config home>/statusline.sh"}`, plus the copy of the script. Skipped with a note when you already have a `statusLine` |
 
-The deny and ask rules follow the `hooks-and-guardrails` skill's `claude-code-settings.md`. A trailing ` *` also matches the bare command, so `Bash(git reset --hard *)` asks for `git reset --hard` too, and `Bash(git push *)` covers force pushes. The deny list leaves out that file's `Bash(curl *)` and `Bash(wget *)`: as user-wide rules they block every download in every project, and they are easy to get around anyway. The sandbox network allowlist is the control that holds. Domains outside the allowlist prompt instead of failing, so add the registries you use (`*.npmjs.org`, `repo.packagist.org`) when the prompts get in the way.
+The deny and ask rules follow the `hooks-and-guardrails` skill's `claude-code-settings.md`. A trailing ` *` also matches the bare command, so `Bash(git reset --hard *)` asks for `git reset --hard` too. Only force pushes ask, so an ordinary `git push` runs without a prompt. A `*` matches any text, spaces included, so the three push rules catch `--force`, `--force-with-lease` and `-f` in any argument position: `git push --force`, `git push origin main --force-with-lease`, `git push -f origin main`, `git push origin main -f`. Like every Bash rule they only match a command that starts with `git push`; `git -C . push -f` or a `+branch` refspec gets past them. An earlier harden added `Bash(git push *)`, which asks on every push; merging never removes it, so delete it by hand if you want plain pushes to stop prompting. The deny list leaves out that file's `Bash(curl *)` and `Bash(wget *)`: as user-wide rules they block every download in every project, and they are easy to get around anyway. The sandbox network allowlist is the control that holds. Domains outside the allowlist prompt instead of failing, so add the registries you use (`*.npmjs.org`, `repo.packagist.org`) when the prompts get in the way.
 
 Merge rules:
 
@@ -142,7 +142,7 @@ Merge rules:
 Dry run and apply:
 
 - Without `--apply` it prints a unified diff per file and writes nothing. Files are compared as `jq .` prints them (2-space indent, your key order, new keys last), so a file with other formatting shows only the content changes, and is rewritten in that format when applied.
-- `--apply` copies each changed file to `<file>.bak.<YYYYmmdd-HHMMSS>` next to it, then writes the merged result through the existing file, which keeps its mode and any symlink.
+- `--apply` copies each changed file to `<file>.bak.<YYYYmmdd-HHMMSS>` next to it, then writes the merged result to a temp file in the same directory as the real file (the symlink target when the file is a symlink), checks that it parses, and renames it over the file. The file keeps its mode and the symlink stays a symlink. If any step fails, the original is left as it was and harden exits 1.
 - An unchanged file is not touched, so a second apply writes nothing and makes no backup.
 - The `/loop-virtuoso:harden` command always runs the dry run first and applies only after you approve the diff.
 

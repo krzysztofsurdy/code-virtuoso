@@ -6,7 +6,8 @@
 # Default suite: <git root>/.code-virtuoso/loop/evals/suite.json. For each
 # task, k trials per arm, interleaved (trial 1 of every arm, then trial 2...)
 # so a cost cap cuts every arm at the same depth. A trial is a throwaway
-# detached worktree at HEAD: run the task's setup, one `claude -p`, then the
+# detached worktree at HEAD: run the task's setup, one `claude -p`, a tamper
+# audit (a changed or deleted protected file fails the trial), then the
 # literal verifyCommand (exit 0 = pass). The worktree is always removed.
 #
 # Arms:
@@ -107,6 +108,7 @@ done < <(echo "$vanilla_args_json" | jq -r '.[]')
 
 task_count="$(jq '.tasks | length' "$suite")"
 tasks_json="$(jq -c '[.tasks[].id]' "$suite")"
+protected_globs="$(evals_protected_globs "$root" "$suite")"
 head_sha="$(git -C "$root" rev-parse --verify -q HEAD)" || {
   echo "error: the repository has no commits; trials start from HEAD" >&2
   exit 1
@@ -121,6 +123,11 @@ fi
 arm_args() {
   [[ "$1" == vanilla ]] || return 0
   printf '%s\n' "${vanilla_args[@]+"${vanilla_args[@]}"}"
+}
+
+# remaining_budget <cap> <spent>: the cap minus the spend, without trailing zeros.
+remaining_budget() {
+  awk -v cap="$1" -v spent="$2" 'BEGIN { s = sprintf("%.6f", cap - spent); sub(/0+$/, "", s); sub(/\.$/, "", s); print s }'
 }
 
 echo "Suite      : $suite ($task_count tasks)"
@@ -191,7 +198,10 @@ for (( i = 0; i < task_count; i++ )); do
         break 3
       fi
 
+      base_tree="$(evals_snapshot "$worktree")"
+
       claude_args=(-p "$prompt" "${base_args[@]}")
+      [[ -z "$max_cost" ]] || claude_args+=(--max-budget-usd "$(remaining_budget "$max_cost" "$cumulative_cost")")
       while IFS= read -r a; do
         [[ -n "$a" ]] && claude_args+=("$a")
       done < <(arm_args "$arm")
@@ -209,20 +219,26 @@ for (( i = 0; i < task_count; i++ )); do
       turns="$(echo "$INVOKE_JSON" | jq -r '.num_turns // 0')"
       cumulative_cost="$(awk -v a="$cumulative_cost" -v b="$cost" 'BEGIN { printf "%.6f", a + b }')"
 
-      pass=false
-      (cd "$worktree" && bash -c "$verify_cmd" >/dev/null 2>&1 </dev/null) && pass=true
+      tampered_paths="$(evals_tampered_paths "$worktree" "$base_tree" "$(evals_snapshot "$worktree")" "$protected_globs")"
+      pass=false tampered=false verdict=fail
+      if [[ -n "$tampered_paths" ]]; then
+        tampered=true
+        verdict="tampered ($(echo "$tampered_paths" | paste -sd ' ' -))"
+      elif (cd "$worktree" && bash -c "$verify_cmd" >/dev/null 2>&1 </dev/null); then
+        pass=true verdict=pass
+      fi
       remove_worktree
 
       jq -nc --arg task "$task_id" --arg arm "$arm" --argjson trial "$trial" --argjson pass "$pass" \
-        --argjson cost "$cost" --argjson turns "$turns" --argjson dur "$duration" \
-        '{task: $task, arm: $arm, trial: $trial, pass: $pass, costUsd: $cost, turns: $turns, durationSec: $dur}' >> "$trials_file"
-      echo "$task_id $arm trial $trial/$k: $([[ "$pass" == true ]] && echo pass || echo fail) cost=$cost turns=$turns ${duration}s"
+        --argjson tampered "$tampered" --argjson cost "$cost" --argjson turns "$turns" --argjson dur "$duration" \
+        '{task: $task, arm: $arm, trial: $trial, pass: $pass, tampered: $tampered, costUsd: $cost, turns: $turns, durationSec: $dur}' >> "$trials_file"
+      echo "$task_id $arm trial $trial/$k: $verdict cost=$cost turns=$turns ${duration}s"
     done
   done
 done
 remove_worktree
 
-summary="$(evals_summarize "$trials_file" "$tasks_json" "$arms_json")"
+summary="$(evals_summarize "$trials_file" "$tasks_json" "$arms_json" "$k")"
 
 mkdir -p "$evals_dir"
 echo "$summary" | jq -c \
@@ -248,6 +264,14 @@ while IFS=$'\t' read -r a n at ht p tr c; do
 done < <(echo "$summary" | jq -r '.arms | to_entries[] | [.key, .value.tasks, .value.passAtK, .value.passHatK, .value.passes, .value.trials, .value.costUsd] | @tsv')
 if [[ "$(echo "$summary" | jq -r '.delta != null')" == true ]]; then
   echo "Delta (setup - vanilla): pass@k $(signed "$(echo "$summary" | jq -r .delta.passAtK)")  pass^k $(signed "$(echo "$summary" | jq -r .delta.passHatK)")  pass rate $(signed "$(echo "$summary" | jq -r .delta.passRate)")"
+fi
+excluded="$(echo "$summary" | jq -r .excludedPartialTasks)"
+if (( excluded > 0 )); then
+  echo "Excluded    : $excluded partial task(s) with fewer than k=$k trials in an arm; totals and delta leave them out"
+fi
+tampered_total="$(echo "$summary" | jq -r .tamperedTrials)"
+if (( tampered_total > 0 )); then
+  echo "Tampered    : $tampered_total trial(s) changed a protected file and were failed without running verifyCommand"
 fi
 echo "Total cost  : \$$(echo "$summary" | jq -r .totalCostUsd)"
 echo "Stop reason : $stop_reason"

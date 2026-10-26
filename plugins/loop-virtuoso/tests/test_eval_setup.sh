@@ -5,6 +5,7 @@
 # $FAKE_VANILLA_MARK (default --safe-mode) in its argv. Each arm consumes its
 # own pass sequence, FAKE_SEQ_setup / FAKE_SEQ_vanilla ("1" = write done.txt,
 # "0" = do nothing; exhausted or unset = 1). FAKE_EMPTY=1 prints no JSON.
+# FAKE_ACTION is a shell command the stub runs in the trial worktree.
 install_eval_claude() {
   local bin
   bin="$(new_tmp_dir bin)"
@@ -19,6 +20,7 @@ echo "$n" > "$count_file"
 if [[ "$arm" == vanilla ]]; then seq="${FAKE_SEQ_vanilla:-}"; else seq="${FAKE_SEQ_setup:-}"; fi
 bit="${seq:$((n - 1)):1}"
 [[ "${bit:-1}" == 1 ]] && echo done > done.txt
+[[ -z "${FAKE_ACTION:-}" ]] || bash -c "$FAKE_ACTION"
 [[ "${FAKE_EMPTY:-}" == 1 ]] && { echo "usage limit reached" >&2; exit 1; }
 echo "{\"type\":\"result\",\"result\":\"ok\",\"total_cost_usd\":${FAKE_COST:-0.01},\"num_turns\":2}"
 STUB
@@ -249,4 +251,117 @@ test_batch_invocation_failure_still_reports_hint_via_shared_invoke() {
   [[ $RC -ne 0 ]] || die "invocation failure stops the batch"
   local log; log="$(cat "$repo/.code-virtuoso/loop/state/progress.log")"
   assert_contains "$log" 'stop reason=invocation_failed hint="likely a usage/rate limit" detail="usage limit reached'
+}
+
+test_eval_summary_counts_only_tasks_complete_in_every_arm() {
+  source "$SCRIPTS/lib/evals.sh"
+  local trials; trials="$(new_tmp_dir sum)/trials.jsonl"
+  printf '%s\n' \
+    '{"task":"T1","arm":"setup","trial":1,"pass":true,"costUsd":0.01,"turns":1,"durationSec":1}' \
+    '{"task":"T1","arm":"vanilla","trial":1,"pass":true,"costUsd":0.01,"turns":1,"durationSec":1}' \
+    '{"task":"T2","arm":"setup","trial":1,"pass":true,"costUsd":0.01,"turns":1,"durationSec":1}' > "$trials"
+  local s; s="$(evals_summarize "$trials" '["T1","T2"]' '["setup","vanilla"]' 1)"
+  assert_eq "$(echo "$s" | jq -c '[.tasks[] | [.task, .arm, .complete]]')" \
+    '[["T1","setup",true],["T1","vanilla",true],["T2","setup",true],["T2","vanilla",false]]'
+  assert_eq "$(echo "$s" | jq -c '[.arms.setup.tasks, .arms.vanilla.tasks]')" '[1,1]'
+  assert_eq "$(echo "$s" | jq -c '.delta | [.passAtK, .passHatK, .passRate]')" '[0,0,0]'
+  assert_eq "$(echo "$s" | jq -r '.excludedPartialTasks')" "1"
+}
+
+test_eval_summary_pass_hat_k_needs_k_passes() {
+  source "$SCRIPTS/lib/evals.sh"
+  local trials; trials="$(new_tmp_dir sum)/trials.jsonl"
+  printf '%s\n' '{"task":"T1","arm":"setup","trial":1,"pass":true,"costUsd":0.01,"turns":1,"durationSec":1}' > "$trials"
+  local s; s="$(evals_summarize "$trials" '["T1"]' '["setup"]' 3)"
+  assert_eq "$(echo "$s" | jq -c '.tasks[0] | [.complete, .passAtK, .passHatK]')" '[false,true,false]'
+  assert_eq "$(echo "$s" | jq -c '.arms.setup | [.tasks, .passHatK, .trials]')" '[0,0,0]'
+  assert_eq "$(echo "$s" | jq -r '.excludedPartialTasks')" "1"
+}
+
+test_eval_cost_cap_between_arms_keeps_the_delta_fair() {
+  local repo; repo="$(mk_repo)"
+  install_eval_claude
+  write_suite "$repo" '{"k": 1, "maxCostUsd": 0.03}'
+  capture eval_setup "$repo"
+  [[ $RC -ne 0 ]] || die "a cost-capped run exits non-zero"
+  local h; h="$(history_of "$repo")"
+  assert_eq "$(echo "$h" | jq -c '[.arms.setup.tasks, .arms.vanilla.tasks, .delta.passAtK, .excludedPartialTasks]')" '[1,1,0,1]'
+  assert_contains "$OUT" "Excluded    : 1 partial task"
+}
+
+test_eval_passes_the_remaining_budget_to_each_trial() {
+  local repo; repo="$(mk_repo)"
+  install_eval_claude
+  write_suite "$repo" '{"maxCostUsd": 0.025}'
+  capture eval_setup "$repo"
+  local budgets; budgets="$(grep -o -- '--max-budget-usd [^ ]*' "$FAKE_CLAUDE_LOG" | cut -d' ' -f2 | paste -sd, -)"
+  assert_eq "$budgets" "0.025,0.015,0.005"
+}
+
+test_eval_without_a_cap_passes_no_budget() {
+  local repo; repo="$(mk_repo)"
+  install_eval_claude
+  write_suite "$repo" '{"k": 1}'
+  eval_setup "$repo" >/dev/null
+  assert_not_contains "$(cat "$FAKE_CLAUDE_LOG")" "--max-budget-usd"
+}
+
+test_eval_marks_a_trial_that_edits_a_committed_test_as_tampered() {
+  local repo; repo="$(mk_repo)"
+  install_eval_claude
+  write_suite "$repo" '{"k": 1}' '[{"id": "T1", "prompt": "p", "verifyCommand": "true"}]'
+  export FAKE_ACTION="echo hacked >> tests/t.txt"
+  capture eval_setup "$repo"
+  assert_eq "$RC" "0" "$OUT"
+  local h; h="$(history_of "$repo")"
+  assert_eq "$(echo "$h" | jq -c '[.tasks[] | [.arm, .passes, .tampered]]')" '[["setup",0,1],["vanilla",0,1]]'
+  assert_eq "$(echo "$h" | jq -c '[.arms.setup.tampered, .arms.vanilla.tampered, .tamperedTrials]')" '[1,1,2]'
+  assert_contains "$OUT" "tampered (tests/t.txt)"
+  assert_contains "$OUT" "Tampered    : 2"
+}
+
+test_eval_tamper_audit_catches_deletes_and_allows_new_tests() {
+  local repo; repo="$(mk_repo)"
+  install_eval_claude
+  write_suite "$repo" '{"k": 1}' '[{"id": "T1", "prompt": "p", "verifyCommand": "true"}]'
+  export FAKE_ACTION="echo new > tests/new_test.txt; echo x >> src/seed.txt"
+  eval_setup "$repo" --arms setup >/dev/null
+  assert_eq "$(history_of "$repo" | jq -c '.tasks[0] | [.passes, .tampered]')" '[1,0]'
+  export FAKE_ACTION="rm tests/t.txt"
+  eval_setup "$repo" --arms setup >/dev/null
+  assert_eq "$(history_of "$repo" | tail -n 1 | jq -c '.tasks[0] | [.passes, .tampered]')" '[0,1]'
+}
+
+test_eval_tamper_audit_skips_changes_made_by_task_setup() {
+  local repo; repo="$(mk_repo)"
+  install_eval_claude
+  write_suite "$repo" '{"k": 1}' '[{"id": "T1", "prompt": "p", "setup": "echo seeded >> tests/t.txt", "verifyCommand": "true"}]'
+  eval_setup "$repo" --arms setup >/dev/null
+  assert_eq "$(history_of "$repo" | jq -c '.tasks[0] | [.passes, .tampered]')" '[1,0]'
+}
+
+test_eval_protected_paths_come_from_the_suite_then_test_globs() {
+  local repo; repo="$(mk_repo)"
+  install_eval_claude
+  write_suite "$repo" '{"k": 1, "protectedPaths": ["src/**"]}' '[{"id": "T1", "prompt": "p", "verifyCommand": "true"}]'
+  export FAKE_ACTION="echo x >> tests/t.txt"
+  eval_setup "$repo" --arms setup >/dev/null
+  assert_eq "$(history_of "$repo" | jq -r '.tasks[0].tampered')" "0"
+  export FAKE_ACTION="echo x >> src/seed.txt"
+  eval_setup "$repo" --arms setup >/dev/null
+  assert_eq "$(history_of "$repo" | tail -n 1 | jq -r '.tasks[0].tampered')" "1"
+
+  write_suite "$repo" '{"k": 1}' '[{"id": "T1", "prompt": "p", "verifyCommand": "true"}]'
+  echo '{"loop": {"guard": {"testGlobs": ["src/**"]}}}' > "$repo/.code-virtuoso/config.json"
+  eval_setup "$repo" --arms setup >/dev/null
+  assert_eq "$(history_of "$repo" | tail -n 1 | jq -r '.tasks[0].tampered')" "1"
+}
+
+test_eval_rejects_protected_paths_that_are_not_strings() {
+  local repo; repo="$(mk_repo)"
+  install_eval_claude
+  write_suite "$repo" '{"protectedPaths": "tests/**"}'
+  capture eval_setup "$repo" --dry-run
+  [[ $RC -ne 0 ]] || die "a bad protectedPaths must be rejected"
+  assert_contains "$OUT" "config.protectedPaths"
 }

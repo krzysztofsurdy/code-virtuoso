@@ -12,11 +12,14 @@
 # with a note when it differs from the baseline. A file is compared and written
 # the way `jq .` prints it (2-space indent, key order kept, new keys last), so
 # the diff shows content changes only. --apply copies a changed file to
-# <file>.bak.<timestamp> first; an unchanged file is not touched, so a second
+# <file>.bak.<timestamp> first, then writes a temp file and renames it over the
+# file (or its symlink target); an unchanged file is not touched, so a second
 # apply writes nothing.
 #
 # The deny and ask rules come from skills/playbooks/hooks-and-guardrails/
-# references/claude-code-settings.md. The telemetry variables follow
+# references/claude-code-settings.md, except that only force pushes ask: the
+# three git push rules catch --force, --force-with-lease and -f in any argument
+# position, per the wildcard rules in https://code.claude.com/docs/en/permissions. The telemetry variables follow
 # https://code.claude.com/docs/en/monitoring-usage; Claude Code ignores them in
 # project settings, so telemetry (and the statusline, whose path is per user)
 # is --scope user only.
@@ -46,7 +49,9 @@ BASE_SETTINGS='{
       "Edit(./.env.*)"
     ],
     "ask": [
-      "Bash(git push *)",
+      "Bash(git push *--force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * -f*)",
       "Bash(git branch -D *)",
       "Bash(git reset --hard *)",
       "Bash(composer require *)",
@@ -182,6 +187,41 @@ fi
 
 changed=0
 
+# symlink_target <file>: <file> with every symlink in its last component followed.
+symlink_target() {
+  local target="$1" link
+  while [[ -L "$target" ]]; do
+    link="$(readlink "$target")"
+    case "$link" in
+      /*) target="$link" ;;
+      *) target="$(dirname "$target")/$link" ;;
+    esac
+  done
+  echo "$target"
+}
+
+# write_json_atomic <file> <json>
+# Writes a temp file next to the symlink target, seeded from the target so the
+# mode carries over, checks that it parses, then renames it over the target.
+# On any failure the target is left as it was.
+write_json_atomic() {
+  local target tmp
+  target="$(symlink_target "$1")"
+  mkdir -p "$(dirname "$target")"
+  tmp="$(mktemp "$(dirname "$target")/.$(basename "$target").XXXXXX")"
+  if [[ -f "$target" ]]; then
+    cp -p "$target" "$tmp"
+  else
+    chmod "$(printf '%o' $(( 0666 & ~$(umask) )))" "$tmp"
+  fi
+  if printf '%s\n' "$2" > "$tmp" && jq empty "$tmp" >/dev/null 2>&1 && mv -f "$tmp" "$target"; then
+    return 0
+  fi
+  rm -f "$tmp"
+  echo "Error: could not write $target; it is unchanged" >&2
+  exit 1
+}
+
 # harden_file <label> <file> <current> <baseline-json>
 harden_file() {
   local label="$1" file="$2" current="$3" want="$4" have proposed backup
@@ -205,12 +245,10 @@ harden_file() {
     backup="${file}.bak.$(date +%Y%m%d-%H%M%S)"
     [[ ! -e "$backup" ]] || backup="${backup}.$$"
     cp -p "$file" "$backup"
-    # Writing through the existing file keeps its mode and any symlink.
-    printf '%s\n' "$proposed" > "$file"
+    write_json_atomic "$file" "$proposed"
     echo "$label: wrote $file (backup: $backup)"
   else
-    mkdir -p "$(dirname "$file")"
-    printf '%s\n' "$proposed" > "$file"
+    write_json_atomic "$file" "$proposed"
     echo "$label: created $file"
   fi
 }
