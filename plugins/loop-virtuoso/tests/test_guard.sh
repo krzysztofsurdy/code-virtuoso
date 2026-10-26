@@ -34,9 +34,20 @@ tests_hook() {
   tool_input_json "$1" "$2" "$(jq -nc --arg p "$3" '{file_path: $p}')" | bash "$HOOKS/guard-tests.sh"
 }
 
-# gate_hook <cwd>: runs guard-stop.sh; prints its stdout.
+# gate_hook <cwd> [stop_hook_active]: runs guard-stop.sh; prints its stdout.
 gate_hook() {
-  jq -nc --arg cwd "$1" '{cwd: $cwd, session_id: "s", stop_hook_active: false}' | bash "$HOOKS/guard-stop.sh"
+  jq -nc --arg cwd "$1" --argjson active "${2:-false}" '{cwd: $cwd, session_id: "s", stop_hook_active: $active}' | bash "$HOOKS/guard-stop.sh"
+}
+
+# no_jq_rc <hook_script> <hook_input_json>: the hook's exit code with jq off PATH.
+no_jq_rc() {
+  local rc=0 bin cmd
+  bin="$(new_tmp_dir nojq)"
+  for cmd in bash cat dirname git tail tr sed grep awk date; do
+    ln -s "$(command -v "$cmd")" "$bin/$cmd"
+  done
+  printf '%s' "$2" | PATH="$bin" bash "$1" >/dev/null 2>&1 || rc=$?
+  echo "$rc"
 }
 
 # assert_silent <cmd...>: the command exits 0 and prints nothing on stdout.
@@ -59,8 +70,14 @@ secrets_cases() {
   tool_input_json "$d" NotebookEdit "$(jq -nc --arg p "$d/a.ipynb" '{notebook_path: $p}')"
   tool_input_json "$d" Grep '{"pattern":"KEY","path":".env"}'
   tool_input_json "$d" Grep '{"pattern":"KEY","path":"src"}'
-  tool_input_json "$d" Glob '{"pattern":"*","glob":"**/*.pem"}'
+  tool_input_json "$d" Grep '{"pattern":"KEY","glob":"*.env"}'
+  tool_input_json "$d" Grep '{"pattern":"process.env.KEY","glob":"*.ts"}'
+  tool_input_json "$d" Glob '{"pattern":"**/*.pem"}'
+  tool_input_json "$d" Glob '{"pattern":"**/.env"}'
+  tool_input_json "$d" Glob '{"pattern":"*.env"}'
   tool_input_json "$d" Glob '{"pattern":"*.ts"}'
+  tool_input_json "$d" Glob '{"pattern":"**/{.env,.npmrc}"}'
+  tool_input_json "$d" Glob '{"pattern":"{.ssh,src}/*"}'
   for t in 'cat .env' 'cat .env.example' 'grep -r KEY ~/.ssh' 'printenv' 'env | sort' 'env FOO=1 make test' \
            'ls -la' 'make test' 'source .env && run' 'cat ~/.aws/credentials' 'echo ok; printenv' 'cat src/key.txt'; do
     tool_input_json "$d" Bash "$(jq -nc --arg c "$t" '{command: $c}')"
@@ -194,6 +211,95 @@ test_stop_gate_blocks_on_first_failure_with_output() {
   assert_not_contains "$reason" $'\n21\n'
   assert_contains "$reason" $'\n22\n'
   assert_eq "$(tr '\n' ' ' < "$repo/ran.log")" "lint "
+}
+
+test_secrets_reads_glob_pattern_and_star_prefixed_globs() {
+  local repo; repo="$(mk_repo)"
+  guard_config '{"loop":{"guard":{"blockSecrets":true}}}'
+  local hook
+  for hook in "$HOOKS/guard-secrets.sh" "$SKILL_SECRETS"; do
+    assert_eq "$(secrets_rc "$hook" "$(tool_input_json "$repo" Glob '{"pattern":"**/.env"}')")" "2" "$hook Glob **/.env"
+    assert_eq "$(secrets_rc "$hook" "$(tool_input_json "$repo" Glob '{"pattern":"*.env"}')")" "2" "$hook Glob *.env"
+    assert_eq "$(secrets_rc "$hook" "$(tool_input_json "$repo" Grep '{"pattern":"KEY","glob":"*.env"}')")" "2" "$hook Grep glob *.env"
+    assert_eq "$(secrets_rc "$hook" "$(tool_input_json "$repo" Glob '{"pattern":"src/**/*.ts"}')")" "0" "$hook Glob *.ts"
+    assert_eq "$(secrets_rc "$hook" "$(tool_input_json "$repo" Grep '{"pattern":"process.env.KEY","path":"src"}')")" "0" "$hook Grep content pattern"
+  done
+}
+
+test_tests_guard_matches_case_insensitively_when_git_ignores_case() {
+  local repo; repo="$(mk_repo)"
+  echo "a" > "$repo/tests/test_a.py"
+  git -C "$repo" add tests && git -C "$repo" commit -q -m tests
+  git -C "$repo" config core.ignorecase true
+  guard_config '{"loop":{"guard":{"protectTests":"deny"}}}'
+  assert_eq "$(deny_of "$(tests_hook "$repo" Edit "$repo/TESTS/test_a.py")")" "deny"
+  assert_eq "$(deny_of "$(tests_hook "$repo" Edit "$repo/Tests/Test_A.py")")" "deny"
+  assert_silent tests_hook "$repo" Write "$repo/Tests/Test_New.py"
+  guard_config '{"loop":{"guard":{"protectTests":"deny","testGlobs":["TESTS/**"]}}}'
+  assert_eq "$(deny_of "$(tests_hook "$repo" Edit "$repo/tests/test_a.py")")" "deny"
+}
+
+test_tests_guard_resolves_a_symlinked_file() {
+  local repo; repo="$(mk_repo)"
+  ln -s tests/t.txt "$repo/alias.txt"
+  ln -s "$repo/alias.txt" "$repo/src/alias2.txt"
+  guard_config '{"loop":{"guard":{"protectTests":"deny"}}}'
+  assert_eq "$(deny_of "$(tests_hook "$repo" Edit "$repo/alias.txt")")" "deny"
+  assert_eq "$(deny_of "$(tests_hook "$repo" Write "$repo/src/alias2.txt")")" "deny"
+}
+
+test_loop_guard_resolves_a_symlinked_file() {
+  local repo; repo="$(mk_repo)"
+  on_feature "$repo"
+  write_backlog "$repo" feat/x
+  ln -s tests/t.txt "$repo/alias.txt"
+  git -C "$repo" add alias.txt && git -C "$repo" commit -q -m alias
+  start_loop "$repo" >/dev/null
+  assert_eq "$(deny_of "$(guard_hook "$repo" Edit file_path "$repo/alias.txt")")" "deny"
+}
+
+test_stop_gate_allows_a_continued_stop() {
+  local repo; repo="$(mk_repo)"
+  guard_config '{"loop":{"guard":{"stopGate":true}},"ticket-delivery":{"commands":{"test":"echo ran >> ran.log; exit 1"}}}'
+  echo "changed" >> "$repo/src/seed.txt"
+  assert_eq "$(decision_of "$(gate_hook "$repo" false)")" "block"
+  assert_silent gate_hook "$repo" true
+  assert_eq "$(wc -l < "$repo/ran.log" | tr -d ' ')" "1"
+}
+
+test_stop_gate_ignores_stop_gate_from_committed_project_config() {
+  local repo; repo="$(mk_repo)"
+  mkdir -p "$repo/.code-virtuoso"
+  echo '{"loop":{"guard":{"stopGate":true}},"ticket-delivery":{"commands":{"test":"touch pwned; exit 1"}}}' > "$repo/.code-virtuoso/config.json"
+  echo "changed" >> "$repo/src/seed.txt"
+  assert_silent gate_hook "$repo"
+  assert_no_file "$repo/pwned"
+  echo '{"loop":{"guard":{"stopGate":true}}}' > "$repo/.code-virtuoso/config.local.json"
+  assert_eq "$(decision_of "$(gate_hook "$repo")")" "block"
+  rm -f "$repo/pwned"
+  git -C "$repo" add -f .code-virtuoso/config.local.json
+  assert_silent gate_hook "$repo"
+  assert_no_file "$repo/pwned"
+}
+
+test_stop_gate_skips_right_after_the_loop_stopped() {
+  local repo state; repo="$(mk_repo)"
+  guard_config '{"loop":{"guard":{"stopGate":true}},"ticket-delivery":{"commands":{"test":"exit 1"}}}'
+  echo "changed" >> "$repo/src/seed.txt"
+  state="$repo/.code-virtuoso/loop/state"
+  mkdir -p "$state"
+  jq -nc --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '{ts: $ts, event: "run_stopped", reason: "complete"}' > "$state/events.jsonl"
+  assert_silent gate_hook "$repo"
+  echo '{"ts":"2020-01-01T00:00:00Z","event":"run_stopped","reason":"complete"}' > "$state/events.jsonl"
+  assert_eq "$(decision_of "$(gate_hook "$repo")")" "block"
+}
+
+test_opt_in_guards_fail_open_without_jq() {
+  local repo edit stop; repo="$(mk_repo)"
+  edit="$(tool_input_json "$repo" Edit "$(jq -nc --arg p "$repo/src/seed.txt" '{file_path: $p}')")"
+  stop="$(jq -nc --arg cwd "$repo" '{cwd: $cwd, stop_hook_active: false}')"
+  assert_eq "$(no_jq_rc "$HOOKS/guard-tests.sh" "$edit")" "0"
+  assert_eq "$(no_jq_rc "$HOOKS/guard-stop.sh" "$stop")" "0"
 }
 
 test_guards_are_registered_in_hooks_json() {

@@ -6,7 +6,9 @@
 # exists in HEAD. New test files are always allowed. Exits 0 silently when
 # protectTests is unset or false, outside a git repository, and while a loop
 # session is active: guard-protected-paths.sh and verify-gate.sh own that case.
+# With core.ignorecase true, globs and the HEAD check ignore case.
 set -euo pipefail
+command -v jq >/dev/null 2>&1 || exit 0
 
 HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=../scripts/lib/preflight.sh
@@ -47,8 +49,21 @@ GLOBS=$(cv_guard_setting "$REPO_ROOT" testGlobs)
 [[ "$(echo "${GLOBS:-null}" | jq -r 'type')" == "array" ]] || GLOBS="$DEFAULT_TEST_GLOBS"
 GLOBS=$(echo "$GLOBS" | jq -c '. + [.[] | strings | select(startswith("**/")) | ltrimstr("**/")]')
 
+# committed_in_head <rel_path>
+committed_in_head() {
+  if [[ "$IGNORE_CASE" != "true" ]]; then
+    git -C "$REPO_ROOT" cat-file -e "HEAD:$1" 2>/dev/null
+    return
+  fi
+  git -C "$REPO_ROOT" ls-tree -r -z --name-only HEAD 2>/dev/null | tr '\0' '\n' \
+    | P="$1" awk 'tolower($0) == tolower(ENVIRON["P"]) { found = 1 } END { exit !found }'
+}
+
+IGNORE_CASE=$(git -C "$REPO_ROOT" config --bool core.ignorecase 2>/dev/null || echo false)
+[[ "$IGNORE_CASE" != "true" ]] || shopt -s nocasematch
+
 paths_match_any "$REL_PATH" "$GLOBS" || exit 0
-git -C "$REPO_ROOT" cat-file -e "HEAD:$REL_PATH" 2>/dev/null || exit 0
+committed_in_head "$REL_PATH" || exit 0
 
 jq -n --arg decision "$MODE" --arg reason "$REL_PATH is a committed test file (loop.guard.protectTests). Fix the code under test instead of the test; change the test only if the user agrees the test itself is wrong." '
   {

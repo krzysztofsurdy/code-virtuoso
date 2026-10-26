@@ -30,7 +30,8 @@ TOOL=$(printf '%s' "$HOOK_INPUT" | jq -er '.tool_name' 2>/dev/null) || secrets_b
 case "$TOOL" in
   Read | Edit | Write | MultiEdit) FIELDS='.tool_input.file_path // empty' ;;
   NotebookEdit) FIELDS='.tool_input.notebook_path // empty' ;;
-  Grep | Glob) FIELDS='.tool_input.path // empty, .tool_input.glob // empty' ;;
+  Grep) FIELDS='.tool_input.path // empty, .tool_input.glob // empty' ;;
+  Glob) FIELDS='.tool_input.path // empty, .tool_input.pattern // empty' ;;
   Bash) FIELDS='.tool_input.command // empty' ;;
   *) exit 0 ;;
 esac
@@ -41,15 +42,15 @@ TARGETS=$(printf '%s' "$HOOK_INPUT" | jq -r "$FIELDS") || secrets_block "hook in
 # Template files are meant to be read.
 TARGETS=$(printf '%s' "$TARGETS" | sed -E 's/\.env\.(example|sample|template|dist)//Ig')
 
-# Token boundaries: start, slash, whitespace, quote, = < > : before; end or separator after.
-PRE='(^|[/[:space:]"'"'"'=<>:])'
-POST='([[:space:]"'"'"';|&)<>*]|$)'
+# Token boundaries: start, slash, whitespace, quote, = < > : or a glob character before; end or separator after.
+PRE='(^|[/[:space:]"'"'"'=<>:*{,])'
+POST='([[:space:]"'"'"';|&)<>*,}]|$)'
 
 SECRET_PATTERNS=(
   "${PRE}\\.env(\\.[A-Za-z0-9_.-]+)?${POST}"
   "\\.(pem|key|p12|pfx)${POST}"
   "${PRE}id_(rsa|dsa|ecdsa|ed25519)${POST}"
-  "\\.(ssh|aws|gnupg)(/|[[:space:]\"';|&)]|\$)"
+  "\\.(ssh|aws|gnupg)(/|[[:space:]\"';|&),}]|\$)"
   "${PRE}\\.(netrc|npmrc|pypirc)${POST}"
 )
 

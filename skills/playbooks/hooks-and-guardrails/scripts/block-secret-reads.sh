@@ -21,7 +21,8 @@ tool="$(printf '%s' "$input" | jq -er '.tool_name')" || block "hook input is not
 case "$tool" in
   Read | Edit | Write | MultiEdit) fields='.tool_input.file_path // empty' ;;
   NotebookEdit) fields='.tool_input.notebook_path // empty' ;;
-  Grep | Glob) fields='.tool_input.path // empty, .tool_input.glob // empty' ;;
+  Grep) fields='.tool_input.path // empty, .tool_input.glob // empty' ;;
+  Glob) fields='.tool_input.path // empty, .tool_input.pattern // empty' ;;
   Bash) fields='.tool_input.command // empty' ;;
   apply_patch) fields='(.tool_input.command // "") | split("\n") | map(select(test("^\\*\\*\\* (Add|Update|Delete) File: "))) | join("\n")' ;;
   *) exit 0 ;;
@@ -33,15 +34,15 @@ targets="$(printf '%s' "$input" | jq -r "$fields")" || block "hook input is not 
 # Template files are meant to be read.
 targets="$(printf '%s' "$targets" | sed -E 's/\.env\.(example|sample|template|dist)//Ig')"
 
-# Token boundaries: start, slash, whitespace, quote, = < > : before; end or separator after.
-pre='(^|[/[:space:]"'"'"'=<>:])'
-post='([[:space:]"'"'"';|&)<>*]|$)'
+# Token boundaries: start, slash, whitespace, quote, = < > : or a glob character before; end or separator after.
+pre='(^|[/[:space:]"'"'"'=<>:*{,])'
+post='([[:space:]"'"'"';|&)<>*,}]|$)'
 
 secret_patterns=(
   "${pre}\\.env(\\.[A-Za-z0-9_.-]+)?${post}"
   "\\.(pem|key|p12|pfx)${post}"
   "${pre}id_(rsa|dsa|ecdsa|ed25519)${post}"
-  "\\.(ssh|aws|gnupg)(/|[[:space:]\"';|&)]|\$)"
+  "\\.(ssh|aws|gnupg)(/|[[:space:]\"';|&),}]|\$)"
   "${pre}\\.(netrc|npmrc|pypirc)${post}"
 )
 

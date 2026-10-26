@@ -12,9 +12,18 @@
 # comparison whenever an ancestor ABOVE the missing directory was itself a
 # symlink (macOS's /tmp -> /private/tmp, the same case already handled for
 # existing paths) - walking up to the nearest real ancestor closes that gap
-# for missing paths too.
+# for missing paths too. A symlinked last component is followed first (at
+# most 40 hops), so an alias of a protected file resolves to that file.
 paths_resolve() {
-  local path="$1"
+  local path="$1" target hops=0
+  while [[ -L "$path" && $hops -lt 40 ]]; do
+    target="$(readlink "$path")"
+    case "$target" in
+      /*) path="$target" ;;
+      *) path="$(dirname "$path")/$target" ;;
+    esac
+    hops=$((hops + 1))
+  done
   if [[ -d "$path" ]]; then
     (cd "$path" 2>/dev/null && pwd -P) || echo "$path"
     return
