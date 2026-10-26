@@ -30,7 +30,7 @@ Three hooks guard ordinary sessions that run no loop (the secrets guard also act
 
 - `blockSecrets: true` blocks tool calls aimed at secret files (`.env`, keys, `~/.ssh`).
 - `protectTests: "ask"` or `"deny"` asks before, or denies, edits to test files already committed; `testGlobs` sets which files count. New test files are always allowed.
-- `stopGate: true` runs the lint, static analysis and test commands from `ticket-delivery.commands` before the session stops, and blocks the stop when one fails.
+- `stopGate: true` runs the lint, static analysis and test commands from `ticket-delivery.commands` before the session stops, and blocks the stop when one fails. It is read only from the user config or an untracked `config.local.json`.
 
 `/loop-virtuoso:harden` can turn on `blockSecrets` and `protectTests` for you. See `references/guardrails.md` in the `iteration-loop` skill.
 

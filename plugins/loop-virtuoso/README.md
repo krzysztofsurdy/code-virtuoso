@@ -123,7 +123,7 @@ For the authoritative detail on stop reasons, the write-boundary guard, and the 
 
 ## Guard hooks (opt-in)
 
-The loop's own hooks act only while a loop runs. Three more hooks cover ordinary sessions. Each is off until you turn it on in the `loop` namespace of any config layer, so installing or updating the plugin changes nothing by itself:
+The loop's own hooks act only while a loop runs. Three more hooks cover ordinary sessions. Each is off until you turn it on in the `loop` namespace of a config layer, so installing or updating the plugin changes nothing by itself. `stopGate` runs shell commands, so it is read only from the user layer and an untracked `.code-virtuoso/config.local.json`, never from a committed project config:
 
 ```json
 { "loop": { "guard": { "blockSecrets": true, "protectTests": "ask", "stopGate": true } } }
