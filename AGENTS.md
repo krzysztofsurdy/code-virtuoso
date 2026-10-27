@@ -242,6 +242,6 @@ Do not use em dashes (`—`), en dashes (`–`), or the double-dash (`--`) as a 
 
 ## Plugins
 
-Skills and agents in this repo are agent-agnostic markdown. The `plugins/` directory is the one deliberate exception: each entry is a self-contained Claude Code plugin with its own `.claude-plugin/plugin.json`, and it may ship hooks, scripts, commands, and skills that run inside Claude Code. `plugins/loop-virtuoso` is the first one. It is Claude Code only. Install it with `/plugin install loop-virtuoso@code-virtuoso`.
+Skills and agents in this repo are agent-agnostic markdown. The `plugins/` directory is the one deliberate exception: each entry is a self-contained Claude Code plugin with its own `.claude-plugin/plugin.json`, and it may ship hooks, scripts, commands, and skills that run inside Claude Code. Plugins of this kind are Claude Code only. `plugins/` currently holds none: `loop-virtuoso` used to live there and now has its own repository, [krzysztofsurdy/loop-virtuoso](https://github.com/krzysztofsurdy/loop-virtuoso). The marketplace entry references it with a GitHub source, and the install command is unchanged: `/plugin install loop-virtuoso@code-virtuoso`.
 
-Plugins under `plugins/` are listed in `.claude-plugin/marketplace.json` with `name`, `source`, and `description` only. The plugin's own `plugin.json` is the source of truth for its version and components.
+An in-repo plugin under `plugins/` is listed in `.claude-plugin/marketplace.json` with `name`, `source`, and `description` only. The external `loop-virtuoso` entry uses the same three fields, with `source` set to a GitHub object (`repo` and `ref`) instead of a relative path. In both cases the plugin's own `plugin.json` is the source of truth for its version and components.

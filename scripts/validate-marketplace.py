@@ -56,10 +56,40 @@ def self_contained_source(plugin: dict) -> Path | None:
     plugin that ships its own .claude-plugin/plugin.json. Entries that point at
     the repo root or at skills/ are bundles: the entry is the manifest.
     """
+    if is_external_source(plugin):
+        return None
     base = plugin_base(plugin)
     if base == PLUGINS_DIR or PLUGINS_DIR in base.parents:
         return base
     return None
+
+
+def is_external_source(plugin: dict) -> bool:
+    """True when the entry points at a plugin in another repo or registry.
+
+    External sources are objects: {"source": "github"|"url"|"git-subdir"|"npm", ...}.
+    The plugin's own files live in that other repo, so this validator cannot scan
+    them and must not treat the entry as a repo-root bundle.
+    """
+    return isinstance(plugin.get("source"), dict)
+
+
+def check_external_plugin(plugin: dict) -> None:
+    pname = plugin.get("name", "<unnamed>")
+    source = plugin["source"]
+    kind = source.get("source")
+    known = {"github", "url", "git-subdir", "npm"}
+    if kind not in known:
+        error(f"{pname}: unknown external source type '{kind}' (expected one of {', '.join(sorted(known))})")
+        return
+    conflicts = [f for f in CONFLICTING_ENTRY_FIELDS if f in plugin]
+    if conflicts:
+        error(
+            f"{pname}: marketplace entry sets {', '.join(conflicts)} but points at an external "
+            "plugin with its own manifest; remove them from the entry"
+        )
+        return
+    ok(f"{pname}: external plugin ({kind})")
 
 
 def check_self_contained_plugin(plugin: dict, plugin_dir: Path) -> None:
@@ -134,6 +164,10 @@ def check_marketplace(data: dict) -> None:
     for plugin in plugins:
         pname = plugin.get("name", "<unnamed>")
 
+        if is_external_source(plugin):
+            check_external_plugin(plugin)
+            continue
+
         plugin_dir = self_contained_source(plugin)
         if plugin_dir is not None:
             check_self_contained_plugin(plugin, plugin_dir)
@@ -168,6 +202,8 @@ def check_default_component_scan(plugins: list[dict]) -> None:
     """
     by_source: dict[Path, list[str]] = {}
     for plugin in plugins:
+        if is_external_source(plugin):
+            continue
         if self_contained_source(plugin) is None:
             by_source.setdefault(plugin_base(plugin), []).append(plugin.get("name", "<unnamed>"))
 
@@ -213,6 +249,9 @@ def check_orphans(data: dict) -> None:
     repo_auto_discovery = False
 
     for plugin in data.get("plugins", []):
+        # External plugins live in another repo; nothing here references them.
+        if is_external_source(plugin):
+            continue
         # Self-contained plugins (own plugin.json) auto-discover inside their
         # own source directory only, so they never cover skills/ or agents/.
         if self_contained_source(plugin) is not None:

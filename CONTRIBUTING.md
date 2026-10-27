@@ -20,7 +20,7 @@ Code Virtuoso is a collection of AI agent skills and sub-agent definitions built
 
 ## Getting started
 
-The skills and agents have no build step, test suite, or runtime: "development" means writing and editing markdown files that follow specific conventions. The exception is `plugins/`, which holds Claude Code plugins with hooks and scripts. Run the validators in `scripts/` before you commit. To contribute:
+The skills and agents have no build step, test suite, or runtime: "development" means writing and editing markdown files that follow specific conventions. The exception is `plugins/`, which can hold Claude Code plugins with hooks and scripts (it is currently empty: `loop-virtuoso` now lives in its own repository). Run the validators in `scripts/` before you commit. To contribute:
 
 1. Clone the repository
 2. Read this guide and the [README](README.md) for project context
@@ -42,14 +42,14 @@ skills/
   ai/                - Building with LLMs and agents (evals, observability)
 codex/               - Codex support: generated agent TOML files and install notes
 examples/ci/         - Example GitHub Actions workflows for headless agents
-plugins/             - Self-contained Claude Code plugins with hooks and scripts (loop-virtuoso)
+plugins/             - Self-contained Claude Code plugins with hooks and scripts (currently empty; loop-virtuoso is now external)
 scripts/             - Repository validators and the Codex agent builder (python3 scripts/validate-*.py)
 spec/                - Format specifications
 template/            - Starter templates
 .claude-plugin/      - Marketplace configuration (Claude Code format; adaptable to other platforms)
 ```
 
-`plugins/` is the one deliberate exception to the agent-agnostic rule. Each plugin there is a Claude Code plugin with its own `.claude-plugin/plugin.json` and may ship hooks, scripts, commands, and skills. Everything else in the repo stays agent-agnostic.
+`plugins/` is the one deliberate exception to the agent-agnostic rule. Each plugin there is a Claude Code plugin with its own `.claude-plugin/plugin.json` and may ship hooks, scripts, commands, and skills. The directory is currently empty: `loop-virtuoso` now lives in its own repository, [krzysztofsurdy/loop-virtuoso](https://github.com/krzysztofsurdy/loop-virtuoso), and the marketplace references it with a GitHub source. Everything else in the repo stays agent-agnostic.
 
 See the [README](README.md) for the full directory tree and skill tables.
 
@@ -503,7 +503,7 @@ All plugins follow the `{category}-virtuoso` pattern. One plugin per `skills/` s
 | `frameworks-virtuoso` | `./skills` | Framework skills (Symfony, Godot, PHP, Vercel AI SDK) |
 | `ai-virtuoso` | `./skills` | AI engineering skills (evals, observability) |
 | `agents-virtuoso` | `./` | All 20 agents, the team workflows in `workflows/`, `verification-before-completion`, and the headless wrapper skills |
-| `loop-virtuoso` | `./plugins/loop-virtuoso` | Self-contained Claude Code plugin with its own `plugin.json` (not a bundle of repo skills) |
+| `loop-virtuoso` | `github:krzysztofsurdy/loop-virtuoso` | Self-contained Claude Code plugin in its own repository, with its own `plugin.json` (not a bundle of repo skills) |
 
 When adding a new skill:
 - Identify which `skills/` subdirectory it belongs to

@@ -56,7 +56,6 @@ The docs require the eval directory to sit inside a plugin root that has a manif
 |---|---|---|---|
 | knowledge, tools, playbooks, frameworks, ai | `./skills` | `skills/` | none |
 | agents-virtuoso | `./` | repo root | none |
-| loop-virtuoso | `./plugins/loop-virtuoso` | that folder | yes |
 
 Pointing `claude plugin eval` at the repo root prints `Plugin under test: none resolved`, runs every case as plain Claude Code, and no skill loads (tried; `skills/` has no manifest either). The CLI has no `--plugin-dir` flag. Targeting `name@marketplace` would mean adding this checkout as a local marketplace and installing from it in your own Claude Code config, where the name `code-virtuoso` is already taken by the published marketplace. So `evals/stage.sh` builds a throwaway plugin instead:
 
@@ -75,7 +74,7 @@ evals/
 
 - The staged plugin holds the skills of all bundles at once, which is what a user with several bundles installed has. A near miss can only pass if no other skill steals the prompt either, and trigger names appear as `code-virtuoso-evals:<skill>` (the graders accept any prefix).
 - A skill missing from `marketplace.json` is missing from the eval, so a dropped skill fails its trigger cases.
-- `loop-virtuoso` is not staged. It has its own manifest, so you can add `plugins/loop-virtuoso/evals/` and run `claude plugin eval plugins/loop-virtuoso` directly.
+- `loop-virtuoso` is not staged. It lives in its own repository ([krzysztofsurdy/loop-virtuoso](https://github.com/krzysztofsurdy/loop-virtuoso)) and has its own manifest, so its evals live and run there.
 
 `cases/` follows the docs layout: one directory per case with `prompt.md` (frontmatter and prompt), `graders/<name>.md`, and `case.yaml` plus `fixture.sh` only where a fixture is needed. Tags are `trigger`, `near-miss`, `outcome`, plus the skill name, so `--tag tdd` selects one skill.
 
