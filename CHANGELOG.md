@@ -4,6 +4,11 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.1.2] - 2026-10-27
+
+### Fixed
+- loop-virtuoso 2.2.1: `/loop-virtuoso:doctor` and other config-merging commands no longer print spurious "internal error" lines. `cv_config_files` ended on a `[[ -f ]]` test that returned non-zero when the last config layer was absent, tripping the `set -e` ERR trap inside a subshell; it now returns 0 explicitly. All 219 loop-virtuoso tests pass.
+
 ## [11.1.1] - 2026-10-26
 
 ### Changed

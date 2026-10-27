@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2026-10-27
+
+### Fixed
+
+- `doctor` (and any command that merges config layers) no longer prints spurious "internal error" lines. `cv_config_files` in `scripts/lib/config.sh` ended on a `[[ -f ... ]]` test that returned non-zero when the last config layer was absent, tripping the `set -e` ERR trap inside a command-substitution subshell. The function now returns 0 explicitly.
+
 ## [2.2.0] - 2026-10-26
 
 ### Added

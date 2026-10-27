@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "45 skills, 20 agents, and 3 team workflows for software engineering: knowledge, tools, playbooks, frameworks, AI engineering, and agents, plus the loop-virtuoso Claude Code plugin",
-    "version": "11.1.1"
+    "version": "11.1.2"
   },
   "plugins": [
     {

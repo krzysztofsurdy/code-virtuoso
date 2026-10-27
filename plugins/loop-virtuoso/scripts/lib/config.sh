@@ -43,6 +43,7 @@ cv_config_files() {
   for f in "$(cv_config_home)/config.json" "$root/$CV_DIR_NAME/config.json" "$root/$CV_DIR_NAME/config.local.json"; do
     [[ -f "$f" ]] && echo "$f"
   done
+  return 0
 }
 
 # cv_merged_config <root>
