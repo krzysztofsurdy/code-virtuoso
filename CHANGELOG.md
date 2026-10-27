@@ -4,6 +4,11 @@ All notable changes to Code Virtuoso are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.2.1] - 2026-10-27
+
+### Changed
+- Point the `loop-virtuoso` marketplace entry at `v2.3.0` of the external repo, which adds the self-improvement compound loop (`/init-setup`, on-the-go signal capture, `/improve`). `/plugin install loop-virtuoso@code-virtuoso` installs it.
+
 ## [11.2.0] - 2026-10-27
 
 ### Changed
